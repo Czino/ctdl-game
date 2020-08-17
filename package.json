@@ -25,6 +25,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "planck-js": "^0.3.21"
+    "matter-js": "^0.14.2"
   }
 }
