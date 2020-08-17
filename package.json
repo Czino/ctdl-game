@@ -1,0 +1,30 @@
+{
+  "name": "ctdl-game",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Eric Lehmann",
+  "scripts": {
+    "start": "webpack-dev-server --mode development --open",
+    "build": "npm run lint && webpack",
+    "build:dev": "npm run lint && webpack --mode development",
+    "lint": "eslint src/**/*.js --color"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/register": "^7.4.4",
+    "babel-eslint": "^10.0.2",
+    "babel-loader": "^8.1.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-jsdoc": "^8.4.1",
+    "eslint-plugin-react": "^7.13.0",
+    "html-webpack-plugin": "^4.3.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "planck-js": "^0.3.21"
+  }
+}
