@@ -34,6 +34,7 @@ let blocks = [
   ground
 ]
 const hodlonaut = new Character('hodlonaut', charContext, {x: 0, y: gameCanvas.height - groundHeight})
+const katoshi = new Character('katoshi', charContext, {x: gameCanvas.width / 2, y: gameCanvas.height - groundHeight})
 init()
 
 async function init() {
@@ -51,6 +52,8 @@ async function init() {
   }
 
   await hodlonaut.load()
+  await katoshi.load()
+  katoshi.direction = 'left'
   blocks.forEach(block => quadTree.insert(block))
   blocks.forEach(renderBlock)
 
@@ -60,19 +63,31 @@ function tick() {
   if (frame % 8 === 0) {
     charContext.clearRect(0, 0, charCanvas.width, charCanvas.height)
 
-    if (keys.indexOf(' ') !== -1) {
+    if (keys.indexOf('e') !== -1) {
       hodlonaut.jump()
-    } else if (keys.indexOf('ArrowLeft') !== -1) {
+    } else if (keys.indexOf('a') !== -1) {
       hodlonaut.moveLeft()
-    } else if (keys.indexOf('ArrowRight') !== -1) {
+    } else if (keys.indexOf('d') !== -1) {
       hodlonaut.moveRight()
-    } else if (keys.indexOf('ArrowUp') !== -1) {
+    } else if (keys.indexOf('w') !== -1) {
       hodlonaut.back()
     } else {
       hodlonaut.idle()
     }
+    if (keys.indexOf(' ') !== -1) {
+      katoshi.jump()
+    } else if (keys.indexOf('ArrowLeft') !== -1) {
+      katoshi.moveLeft()
+    } else if (keys.indexOf('ArrowRight') !== -1) {
+      katoshi.moveRight()
+    } else if (keys.indexOf('ArrowUp') !== -1) {
+      katoshi.back()
+    } else {
+      katoshi.idle()
+    }
 
     hodlonaut.draw()
+    katoshi.draw()
     blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     quadTree.clear()
     if (window.SHOWQUAD) gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height)

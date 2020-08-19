@@ -1,10 +1,16 @@
 import hodlonaut from './sprites/hodlonaut'
 import hodlonautSprite from './sprites/hodlonaut.png'
+import katoshi from './sprites/katoshi'
+import katoshiSprite from './sprites/katoshi.png'
 
 const sprites = {
     hodlonaut: {
         img: hodlonautSprite,
         data: hodlonaut
+    },
+    katoshi: {
+        img: katoshiSprite,
+        data: katoshi
     }
 }
 
@@ -16,7 +22,7 @@ export default function(name, context, pos) {
     this.context = context
     this.pos = pos
     this.status = 'idle'
-    this.direction = 'left'
+    this.direction = 'right'
     this.frame = 0
 
     this.idle = () => {
@@ -36,6 +42,7 @@ export default function(name, context, pos) {
         this.pos.x += 2
     }
     this.jump = () => {
+        if (this.status === 'jump') return
         this.frame = 0
         this.status = 'jump'
     }
