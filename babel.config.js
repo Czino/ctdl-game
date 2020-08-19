@@ -4,6 +4,10 @@ module.exports = api => {
     presets: [
       '@babel/preset-env'
     ],
-    plugins: []
+    plugins: [
+      '@babel/plugin-transform-spread',
+      '@babel/plugin-proposal-object-rest-spread',
+      '@babel/plugin-transform-runtime'
+    ]
   }
 }
