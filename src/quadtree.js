@@ -1,22 +1,10 @@
+import { contains } from './geometryUtils'
+
 export const Boundary = function ({ x, y, w, h }) {
     this.x = x
     this.y = y
     this.w = w
     this.h = h
-    this.contains = point => {
-        return point.x + point.w / 2 >= this.x &&
-        point.x + point.w / 2 <= this.x + this.w &&
-        point.y + point.h / 2 >= this.y &&
-        point.y + point.h / 2 <= this.y + this.h
-    }
-    this.intersects = range => {
-        return !(
-            range.x > this.x + this.w ||
-            range.x + range.w < this.x ||
-            range.y > this.y + this.w ||
-            range.y + range.h < this.y
-        )
-    }
 }
 
 export const QuadTree = function (boundary, capacity) {
@@ -26,7 +14,7 @@ export const QuadTree = function (boundary, capacity) {
     this.points = []
 
     this.insert = point => {
-        if (!this.boundary.contains(point)) {
+        if (!contains(this.boundary, point)) {
             return false
         }
 
@@ -97,7 +85,8 @@ export const QuadTree = function (boundary, capacity) {
     }
     this.query = range => {
         let result = []
-        if (!this.boundary.contains(range)) {
+        range = new Boundary(range)
+        if (!contains(this.boundary, range)) {
             return result
         }
 
@@ -114,7 +103,7 @@ export const QuadTree = function (boundary, capacity) {
     this.show = context => {
         context.fillStyle = 'transparent'
         context.strokeStyle = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`
-        context.strokeWidth = 1
+        context.lineWidth = .5
         context.strokeRect(this.boundary.x, this.boundary.y, this.boundary.w, this.boundary.h)
         this.subs.forEach(sub => sub.show(context))
         this.points.forEach(point => {

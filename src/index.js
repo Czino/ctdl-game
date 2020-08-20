@@ -1,5 +1,7 @@
-import { QuadTree, Boundary } from './quadtree'
+import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
+import Block from './block'
+import { intersects } from './geometryUtils'
 
 const checkBlockTime = 1000 * 60 * 2 // minutues
 const gameCanvas = document.getElementById('ctdl-game')
@@ -18,18 +20,16 @@ let quadTree = new QuadTree(new Boundary({
   x: 0,
   y: 0,
   w: gameCanvas.width,
-  h: gameCanvas.height,
+  h: gameCanvas.height
 }))
-let ground = {
-  id: 'ground',
+let ground = new Block('ground', gameContext, {
   x: 0,
-  y: Math.round(gameCanvas.height - groundHeight) + .5,
+  y: gameCanvas.height + .5,
   w: gameCanvas.width,
   h: groundHeight,
   isStatic: true,
-  fillStyle: '#FFF',
-  strokeStyle: 'transparent'
-}
+  isSolid: true
+})
 let blocks = [
   ground
 ]
@@ -38,25 +38,30 @@ const katoshi = new Character('katoshi', charContext, {x: gameCanvas.width / 2, 
 init()
 
 async function init() {
-  for (let i = 0; i < 0; i++) {
-    blocks.push({
-        id: i,
-        x: Math.floor(Math.random() * gameCanvas.width) + .5,
-        y: Math.floor(Math.random() * gameCanvas.height) + .5,
-        w: 6,
-        h: 6,
-        idle: 0,
-        fillStyle: '#FFF',
-        strokeStyle: '#000'
-    })
-  }
+  blocks.push(new Block(
+    '1',
+    gameContext,
+    {
+      x: 21,
+      y: gameCanvas.height - groundHeight,
+      w: 6,
+      h: 6,
+      isSolid: true,
+      isStatic: true
+    }
+  ))
 
+  blocks.forEach(block => block.load())
+  await ground.load()
   await hodlonaut.load()
   await katoshi.load()
   katoshi.direction = 'left'
+  quadTree.insert(hodlonaut)
+  quadTree.insert(katoshi)
   blocks.forEach(block => quadTree.insert(block))
-  blocks.forEach(renderBlock)
-
+  blocks.forEach(block => block.draw())
+  hodlonaut.draw()
+  katoshi.draw()
   tick()
 }
 function tick() {
@@ -85,12 +90,18 @@ function tick() {
     } else {
       katoshi.idle()
     }
+    moveObject(hodlonaut, {x: 0, y: 3}, quadTree)
+    moveObject(katoshi, {x: 0, y: 3}, quadTree)
 
     hodlonaut.draw()
     katoshi.draw()
-    blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
+
+    window.SHOWQUAD = true
+    // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     quadTree.clear()
     if (window.SHOWQUAD) gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height)
+    quadTree.insert(hodlonaut)
+    quadTree.insert(katoshi)
     blocks.forEach(block => quadTree.insert(block))
     if (window.SHOWQUAD) quadTree.show(gameContext)
   }
@@ -100,7 +111,6 @@ function tick() {
 }
 
 window.addEventListener('keydown', e => {
-  console.log(e.key)
   keys.push(e.key);
 })
 
@@ -110,65 +120,17 @@ window.addEventListener('keyup', e => {
   })
 })
 
-function renderBlock(block) {
-  gameContext.fillStyle = block.fillStyle
-  gameContext.strokeStyle = block.strokeStyle
-  gameContext.lineWidth = 1
-  gameContext.fillRect(block.x, block.y, block.w, block.h)
-  gameContext.strokeRect(block.x, block.y, block.w, block.h)
-}
-function moveBlock(block, vector) {
-  if (block.isStatic) return block
 
-  let result = quadTree.query(new Boundary(block))
-  let wouldCollide = result
-    .filter(otherBlock => otherBlock.id !== block.id)
-    .some(otherBlock => {
-      let ghostBlock = {
-        ...block,
-        x: block.x + vector.x,
-        y: block.y + vector.y,
-      }
-
-      return !(ghostBlock.x > otherBlock.x + otherBlock.w ||
-        ghostBlock.x + ghostBlock.w < otherBlock.x ||
-        ghostBlock.y > otherBlock.y + otherBlock.h ||
-        ghostBlock.y + ghostBlock.h < otherBlock.y)
-    })
-
-  if (wouldCollide) {
-    block.idle++
-
-    if (block.idle > 10) block.isStatic = true
-    return block
-  }
-  block.idle = 0
-
-  gameContext.clearRect(block.x, block.y, block.w, block.h)
-  block = {
-    ...block,
-    x: block.x + vector.x,
-    y: block.y + vector.y,
-  }
-  renderBlock(block)
-
-  return block;
-}
-
-// checkBlocks()
-
-// setInterval(checkBlocks, checkBlockTime)
-
-function checkBlocks() {
-  fetch('https://blockstream.info/api/blocks/', {
-    method: 'GET',
-    redirect: 'follow'
-  })
-    .then(response => response.json())
-    .then(blocks => addBlock(blocks.pop()))
-    .catch(error => console.log('error', error));
-}
-
-function addBlock(block) {
-  console.log(block)
+function moveObject(object, vector, tree) {
+  object.x += vector.x
+  object.y += vector.y
+  tree.query(object)
+      .filter(point => point.isSolid && point.id !== object.id)
+      .some(point => {
+        if (intersects(object, point)) {
+            object.x -= vector.x
+            object.y -= vector.y
+            return true
+          }
+      })
 }
