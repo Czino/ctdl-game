@@ -1,4 +1,5 @@
 import blockSprite from './sprites/block.png'
+import groundSprite from './sprites/ground.png'
 
 function moveBlock(block, vector) {
   if (block.isStatic) return block
@@ -56,31 +57,28 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }
   this.frame = 0
 
   this.draw = () => {
-    if (this.sprite) {
+    if (this.id === 'ground') {
+      this.context.fillStyle = this.context.createPattern(this.sprite, 'repeat')
+      
+      this.context.fillRect(this.x, this.y, this.w, this.h)
+    } else {
       this.context.drawImage(
         this.sprite,
         this.spriteData.x, this.spriteData.y, this.w, this.h,
         this.x, this.y, this.w, this.h
       )
-      return
     }
-    this.context.fillStyle = '#FFF'
-    this.context.fillRect(this.x, this.y, this.w, this.h)
   }
   this.getBoundingBox = () => this
 
   this.load = () => {
     return new Promise(resolve => {
-      if (this.id === 'ground') {
-        resolve()
-        return
-      }
       const newImg = new Image;
       newImg.onload = () => {
           this.sprite = newImg
           resolve(this.sprite)
       }
-      newImg.src = blockSprite;
+      newImg.src = this.id === 'ground' ? groundSprite : blockSprite;
     })
   }
 }
