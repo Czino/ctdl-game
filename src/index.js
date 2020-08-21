@@ -1,7 +1,7 @@
 import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
 import Block from './block'
-import { intersects } from './geometryUtils'
+import { intersects, moveObject } from './geometryUtils'
 
 const checkBlockTime = 1000 * 60 * 2 // minutues
 const gameCanvas = document.getElementById('ctdl-game')
@@ -22,9 +22,10 @@ let quadTree = new QuadTree(new Boundary({
   w: gameCanvas.width,
   h: gameCanvas.height
 }))
-let ground = new Block('ground', gameContext, {
+window.tree = quadTree
+let ground = new Block('ground', gameContext, quadTree, {
   x: 0,
-  y: gameCanvas.height + .5,
+  y: gameCanvas.height + 1,
   w: gameCanvas.width,
   h: groundHeight,
   isStatic: true,
@@ -33,23 +34,41 @@ let ground = new Block('ground', gameContext, {
 let blocks = [
   ground
 ]
-const hodlonaut = new Character('hodlonaut', charContext, {x: 0, y: gameCanvas.height - groundHeight})
-const katoshi = new Character('katoshi', charContext, {x: gameCanvas.width / 2, y: gameCanvas.height - groundHeight})
+const hodlonaut = new Character('hodlonaut', charContext, quadTree, {x: 0, y: gameCanvas.height - groundHeight})
+const katoshi = new Character('katoshi', charContext, quadTree, {x: gameCanvas.width / 2, y: gameCanvas.height - groundHeight})
 init()
 
 async function init() {
-  blocks.push(new Block(
-    '1',
-    gameContext,
-    {
-      x: 21,
-      y: gameCanvas.height - groundHeight,
-      w: 6,
-      h: 6,
-      isSolid: true,
-      isStatic: true
-    }
-  ))
+  for (let i = 0; i < 5; i++) {
+    blocks.push(new Block(
+      i,
+      gameContext,
+      quadTree,
+      {
+        x: 21 + i * 6,
+        y: gameCanvas.height - groundHeight,
+        w: 6,
+        h: 6,
+        isSolid: true,
+        isStatic: true
+      }
+    ))
+  }
+  for (let i = 0; i < 4; i++) {
+    blocks.push(new Block(
+      '1-' + i,
+      gameContext,
+      quadTree,
+      {
+        x: 24 + i * 6,
+        y: gameCanvas.height - groundHeight - 6,
+        w: 6,
+        h: 6,
+        isSolid: true,
+        isStatic: true
+      }
+    ))
+  }
 
   blocks.forEach(block => block.load())
   await ground.load()
@@ -90,18 +109,20 @@ function tick() {
     } else {
       katoshi.idle()
     }
+
+    // apply gravity
     moveObject(hodlonaut, {x: 0, y: 3}, quadTree)
     moveObject(katoshi, {x: 0, y: 3}, quadTree)
 
     hodlonaut.draw()
     katoshi.draw()
 
-    window.SHOWQUAD = true
+    // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     quadTree.clear()
     if (window.SHOWQUAD) gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height)
-    quadTree.insert(hodlonaut)
-    quadTree.insert(katoshi)
+    quadTree.insert(hodlonaut.getBoundingBox())
+    quadTree.insert(katoshi.getBoundingBox())
     blocks.forEach(block => quadTree.insert(block))
     if (window.SHOWQUAD) quadTree.show(gameContext)
   }
@@ -119,18 +140,3 @@ window.addEventListener('keyup', e => {
     return key !== e.key
   })
 })
-
-
-function moveObject(object, vector, tree) {
-  object.x += vector.x
-  object.y += vector.y
-  tree.query(object)
-      .filter(point => point.isSolid && point.id !== object.id)
-      .some(point => {
-        if (intersects(object, point)) {
-            object.x -= vector.x
-            object.y -= vector.y
-            return true
-          }
-      })
-}

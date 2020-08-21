@@ -38,10 +38,11 @@ function moveBlock(block, vector) {
   return block;
 }
 
-export default function(id, context, { x, y, w, h, isStatic, isSolid }) {
+export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }) {
   this.id = id;
   this.sprite = null
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
+  this.quadTree = quadTree
   this.hasLoaded
   this.context = context
   this.w = w || 6
@@ -66,6 +67,7 @@ export default function(id, context, { x, y, w, h, isStatic, isSolid }) {
     this.context.fillStyle = '#FFF'
     this.context.fillRect(this.x, this.y, this.w, this.h)
   }
+  this.getBoundingBox = () => this
 
   this.load = () => {
     return new Promise(resolve => {

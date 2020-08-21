@@ -2,6 +2,7 @@ import hodlonaut from './sprites/hodlonaut'
 import hodlonautSprite from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi'
 import katoshiSprite from './sprites/katoshi.png'
+import { moveObject } from './geometryUtils'
 
 const sprites = {
   hodlonaut: {
@@ -14,19 +15,21 @@ const sprites = {
   }
 }
 
-export default function(name, context, pos) {
-  this.id = name;
+export default function(id, context, quadTree, { x, y }) {
+  this.id = id;
   this.sprite = null
-  this.spriteData = sprites[name].data
+  this.spriteData = sprites[id].data
+  this.quadTree = quadTree
   this.hasLoaded
   this.context = context
   this.w = 16
   this.h = 30
-  this.x = pos.x
-  this.y = pos.y - this.h
+  this.x = x
+  this.y = y - this.h
   this.status = 'idle'
   this.direction = 'right'
   this.frame = 0
+  this.walkingSpeed = 3
 
   this.idle = () => {
     if (this.status === 'jump') return
@@ -34,15 +37,21 @@ export default function(name, context, pos) {
   }
   this.moveLeft = () => {
     if (this.status === 'jump') return
-    this.status = 'move'
     this.direction = 'left'
-    this.x -= 3
+    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, this.quadTree)
+
+    if (hasMoved) {
+      this.status = 'move'
+    }
   }
   this.moveRight = () => {
     if (this.status === 'jump') return
-    this.status = 'move'
     this.direction = 'right'
-    this.x += 3
+
+    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, this.quadTree)
+    if (hasMoved) {
+      this.status = 'move'
+    }
   }
   this.jump = () => {
     if (this.status === 'jump') return
@@ -62,8 +71,9 @@ export default function(name, context, pos) {
       this.frame++
     }
     if (this.status === 'jump') {
-      this.x += this.direction === 'right' ? 2 : -2
+      const moveX = this.direction === 'right' ? 2 : -2
       this.y -= 4
+      moveObject(this, { x: moveX , y: 0}, this.quadTree)
     }
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {
@@ -81,6 +91,14 @@ export default function(name, context, pos) {
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
     )
+  }
+  this.getBoundingBox = () => {
+    return {
+      x: this.x + 5,
+      y: this.y,
+      w: this.w - 10,
+      h: this.h
+    }
   }
   this.load = () => {
     return new Promise(resolve => {
