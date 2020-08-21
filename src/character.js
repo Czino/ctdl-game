@@ -97,7 +97,7 @@ export default function(id, context, quadTree, { x, y }) {
       x: this.x + 5,
       y: this.y,
       w: this.w - 10,
-      h: this.h
+      h: this.h - 1
     }
   }
   this.load = () => {

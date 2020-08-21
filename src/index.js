@@ -13,7 +13,7 @@ charCanvas.height = 256
 
 const gameContext = gameCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
-const groundHeight = 5
+const groundHeight = 6
 let frame = 0
 let keys = []
 let quadTree = new QuadTree(new Boundary({
@@ -25,7 +25,7 @@ let quadTree = new QuadTree(new Boundary({
 window.tree = quadTree
 let ground = new Block('ground', gameContext, quadTree, {
   x: 0,
-  y: gameCanvas.height + 1,
+  y: gameCanvas.height,
   w: gameCanvas.width,
   h: groundHeight,
   isStatic: true,
