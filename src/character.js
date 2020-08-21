@@ -26,6 +26,8 @@ export default function(id, context, quadTree, { x, y }) {
   this.h = 30
   this.x = x
   this.y = y - this.h
+  this.vx = 0
+  this.vy = 0
   this.status = 'idle'
   this.direction = 'right'
   this.frame = 0
@@ -36,7 +38,7 @@ export default function(id, context, quadTree, { x, y }) {
     this.status = 'idle'
   }
   this.moveLeft = () => {
-    if (this.status === 'jump') return
+    if (this.status === 'jump' || this.vy !== 0) return
     this.direction = 'left'
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, this.quadTree)
 
@@ -45,7 +47,7 @@ export default function(id, context, quadTree, { x, y }) {
     }
   }
   this.moveRight = () => {
-    if (this.status === 'jump') return
+    if (this.status === 'jump' || this.vy !== 0) return
     this.direction = 'right'
 
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, this.quadTree)
@@ -54,12 +56,14 @@ export default function(id, context, quadTree, { x, y }) {
     }
   }
   this.jump = () => {
-    if (this.status === 'jump') return
-    this.frame = 0
+    if (this.status === 'jump' || this.vy !== 0) return
     this.status = 'jump'
+    this.frame = 0
+    this.vx = this.direction === 'right' ? 6 : -6
+    this.vy = -6
   }
   this.back = () => {
-    if (this.status === 'jump') return
+    if (this.status === 'jump' || this.vy !== 0) return
     this.status = 'back'
   }
   this.action = () => {
@@ -70,10 +74,22 @@ export default function(id, context, quadTree, { x, y }) {
     if (this.status !== 'idle' || Math.random() < .05) {
       this.frame++
     }
-    if (this.status === 'jump') {
-      const moveX = this.direction === 'right' ? 2 : -2
-      this.y -= 4
-      moveObject(this, { x: moveX , y: 0}, this.quadTree)
+
+    if (this.vx !== 0) {
+      if (this.vx > 6) this.vx = 6
+      if (this.vx < -6) this.vx = -6
+
+      moveObject(this, { x: this.vx , y: 0 }, this.quadTree)
+      if (this.vx < 0) this.vx += 1
+      if (this.vx > 0) this.vx -= 1
+    }
+
+    if (this.vy !== 0) {
+      if (this.vy > 6) this.vy = 6
+      if (this.vy < -6) this.vy = -6
+      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
+
+      if (hasCollided) this.vy = 0
     }
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {

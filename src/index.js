@@ -13,7 +13,9 @@ charCanvas.height = 256
 
 const gameContext = gameCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
-const groundHeight = 6
+
+window.GROUNDHEIGHT = 6
+
 let frame = 0
 let keys = []
 let quadTree = new QuadTree(new Boundary({
@@ -27,15 +29,15 @@ let ground = new Block('ground', gameContext, quadTree, {
   x: 0,
   y: gameCanvas.height,
   w: gameCanvas.width,
-  h: groundHeight,
+  h: GROUNDHEIGHT,
   isStatic: true,
   isSolid: true
 })
 let blocks = [
   ground
 ]
-const hodlonaut = new Character('hodlonaut', charContext, quadTree, {x: 0, y: gameCanvas.height - groundHeight})
-const katoshi = new Character('katoshi', charContext, quadTree, {x: gameCanvas.width / 2, y: gameCanvas.height - groundHeight})
+const hodlonaut = new Character('hodlonaut', charContext, quadTree, {x: 0, y: gameCanvas.height - GROUNDHEIGHT })
+const katoshi = new Character('katoshi', charContext, quadTree, {x: gameCanvas.width / 2, y: gameCanvas.height - GROUNDHEIGHT })
 init()
 
 async function init() {
@@ -46,7 +48,7 @@ async function init() {
       quadTree,
       {
         x: 21 + i * 6,
-        y: gameCanvas.height - groundHeight,
+        y: gameCanvas.height - GROUNDHEIGHT,
         w: 6,
         h: 6,
         isSolid: true,
@@ -61,7 +63,7 @@ async function init() {
       quadTree,
       {
         x: 24 + i * 6,
-        y: gameCanvas.height - groundHeight - 6,
+        y: gameCanvas.height - GROUNDHEIGHT - 6,
         w: 6,
         h: 6,
         isSolid: true,
@@ -74,7 +76,7 @@ async function init() {
   await ground.load()
   await hodlonaut.load()
   await katoshi.load()
-  katoshi.direction = 'left'
+  katoshi.direction = 'right'
   quadTree.insert(hodlonaut)
   quadTree.insert(katoshi)
   blocks.forEach(block => quadTree.insert(block))
@@ -100,19 +102,19 @@ function tick() {
     }
     if (keys.indexOf(' ') !== -1) {
       katoshi.jump()
-    } else if (keys.indexOf('ArrowLeft') !== -1) {
+    } else if (keys.indexOf('arrowleft') !== -1) {
       katoshi.moveLeft()
-    } else if (keys.indexOf('ArrowRight') !== -1) {
+    } else if (keys.indexOf('arrowright') !== -1) {
       katoshi.moveRight()
-    } else if (keys.indexOf('ArrowUp') !== -1) {
+    } else if (keys.indexOf('arrowup') !== -1) {
       katoshi.back()
     } else {
       katoshi.idle()
     }
 
     // apply gravity
-    moveObject(hodlonaut, {x: 0, y: 3}, quadTree)
-    moveObject(katoshi, {x: 0, y: 3}, quadTree)
+    hodlonaut.vy += 2
+    katoshi.vy += 2
 
     hodlonaut.draw()
     katoshi.draw()
@@ -132,11 +134,11 @@ function tick() {
 }
 
 window.addEventListener('keydown', e => {
-  keys.push(e.key);
+  keys.push(e.key.toLowerCase());
 })
 
 window.addEventListener('keyup', e => {
   keys = keys.filter(key => {
-    return key !== e.key
+    return key !== e.key.toLowerCase()
   })
 })
