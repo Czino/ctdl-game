@@ -2,6 +2,7 @@ import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
 import Block from './block'
 import { intersects, moveObject } from './geometryUtils'
+import initEvents from './events'
 
 const checkBlockTime = 1000 * 60 * 2 // minutues
 const gameCanvas = document.getElementById('ctdl-game')
@@ -15,9 +16,9 @@ const gameContext = gameCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
 
 window.GROUNDHEIGHT = 6
+window.KEYS = []
 
 let frame = 0
-let keys = []
 let quadTree = new QuadTree(new Boundary({
   x: 0,
   y: 0,
@@ -38,9 +39,12 @@ let blocks = [
 ]
 const hodlonaut = new Character('hodlonaut', charContext, quadTree, {x: 0, y: gameCanvas.height - GROUNDHEIGHT })
 const katoshi = new Character('katoshi', charContext, quadTree, {x: gameCanvas.width / 2, y: gameCanvas.height - GROUNDHEIGHT })
+
 init()
 
 async function init() {
+  initEvents()
+
   for (let i = 0; i < 5; i++) {
     blocks.push(new Block(
       i,
@@ -76,48 +80,25 @@ async function init() {
   await ground.load()
   await hodlonaut.load()
   await katoshi.load()
-  katoshi.direction = 'right'
+  katoshi.direction = 'left'
   quadTree.insert(hodlonaut)
   quadTree.insert(katoshi)
   blocks.forEach(block => quadTree.insert(block))
-  blocks.forEach(block => block.draw())
-  hodlonaut.draw()
-  katoshi.draw()
+  blocks.forEach(block => block.update())
+  hodlonaut.update()
+  katoshi.update()
   tick()
 }
 function tick() {
   if (frame % 8 === 0) {
     charContext.clearRect(0, 0, charCanvas.width, charCanvas.height)
 
-    if (keys.indexOf('e') !== -1) {
-      hodlonaut.jump()
-    } else if (keys.indexOf('a') !== -1) {
-      hodlonaut.moveLeft()
-    } else if (keys.indexOf('d') !== -1) {
-      hodlonaut.moveRight()
-    } else if (keys.indexOf('w') !== -1) {
-      hodlonaut.back()
-    } else {
-      hodlonaut.idle()
-    }
-    if (keys.indexOf(' ') !== -1) {
-      katoshi.jump()
-    } else if (keys.indexOf('arrowleft') !== -1) {
-      katoshi.moveLeft()
-    } else if (keys.indexOf('arrowright') !== -1) {
-      katoshi.moveRight()
-    } else if (keys.indexOf('arrowup') !== -1) {
-      katoshi.back()
-    } else {
-      katoshi.idle()
-    }
-
     // apply gravity
     hodlonaut.vy += 2
     katoshi.vy += 2
 
-    hodlonaut.draw()
-    katoshi.draw()
+    hodlonaut.update()
+    katoshi.update()
 
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
@@ -132,13 +113,3 @@ function tick() {
   frame++
   window.requestAnimationFrame(tick)
 }
-
-window.addEventListener('keydown', e => {
-  keys.push(e.key.toLowerCase());
-})
-
-window.addEventListener('keyup', e => {
-  keys = keys.filter(key => {
-    return key !== e.key.toLowerCase()
-  })
-})

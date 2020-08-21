@@ -56,7 +56,7 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }
   this.direction = 'right'
   this.frame = 0
 
-  this.draw = () => {
+  this.update = () => {
     if (this.id === 'ground') {
       this.context.fillStyle = this.context.createPattern(this.sprite, 'repeat')
       

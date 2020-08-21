@@ -70,11 +70,37 @@ export default function(id, context, quadTree, { x, y }) {
     if (this.status === 'jump') return
     this.status = 'action'
   }
-  this.draw = () => {
-    if (this.status !== 'idle' || Math.random() < .05) {
-      this.frame++
-    }
 
+  this.senseControls = () => {
+    if (this.id === 'hodlonaut') {
+      if (KEYS.indexOf('e') !== -1) {
+        this.jump()
+      } else if (KEYS.indexOf('a') !== -1) {
+        this.moveLeft()
+      } else if (KEYS.indexOf('d') !== -1) {
+        this.moveRight()
+      } else if (KEYS.indexOf('w') !== -1) {
+        this.back()
+      } else {
+        this.idle()
+      }
+    }
+    if (this.id === 'katoshi') {
+      if (KEYS.indexOf(' ') !== -1) {
+        this.jump()
+      } else if (KEYS.indexOf('arrowleft') !== -1) {
+        this.moveLeft()
+      } else if (KEYS.indexOf('arrowright') !== -1) {
+        this.moveRight()
+      } else if (KEYS.indexOf('arrowup') !== -1) {
+        this.back()
+      } else {
+        this.idle()
+      }
+    }
+  }
+
+  this.update = () => {
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
@@ -90,6 +116,12 @@ export default function(id, context, quadTree, { x, y }) {
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
 
       if (hasCollided) this.vy = 0
+    }
+
+    this.senseControls()
+
+    if (this.status !== 'idle' || Math.random() < .05) {
+      this.frame++
     }
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {
