@@ -1,7 +1,6 @@
 import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
 import Block from './block'
-import { intersects, moveObject } from './geometryUtils'
 import initEvents from './events'
 
 const checkBlockTime = 1000 * 60 * 2 // minutues
@@ -17,16 +16,16 @@ const charContext = charCanvas.getContext('2d')
 
 window.GROUNDHEIGHT = 6
 window.KEYS = []
+window.SELECTED = null
 
 let frame = 0
-let quadTree = new QuadTree(new Boundary({
+window.QUADTREE = new QuadTree(new Boundary({
   x: 0,
   y: 0,
   w: gameCanvas.width,
   h: gameCanvas.height
 }))
-window.tree = quadTree
-let ground = new Block('ground', gameContext, quadTree, {
+let ground = new Block('ground', gameContext, QUADTREE, {
   x: 0,
   y: gameCanvas.height,
   w: gameCanvas.width,
@@ -37,8 +36,25 @@ let ground = new Block('ground', gameContext, quadTree, {
 let blocks = [
   ground
 ]
-const hodlonaut = new Character('hodlonaut', charContext, quadTree, {x: 0, y: gameCanvas.height - GROUNDHEIGHT })
-const katoshi = new Character('katoshi', charContext, quadTree, {x: gameCanvas.width / 2, y: gameCanvas.height - GROUNDHEIGHT })
+const hodlonaut = new Character(
+  'hodlonaut',
+  charContext,
+  QUADTREE,
+  {
+    x: 0,
+    y: gameCanvas.height - GROUNDHEIGHT
+  }
+)
+const katoshi = new Character(
+  'katoshi',
+  charContext,
+  QUADTREE,
+  {
+    active: false,
+    x: gameCanvas.width / 2,
+    y: gameCanvas.height - GROUNDHEIGHT
+  }
+)
 
 init()
 
@@ -49,7 +65,7 @@ async function init() {
     blocks.push(new Block(
       i,
       gameContext,
-      quadTree,
+      QUADTREE,
       {
         x: 21 + i * 6,
         y: gameCanvas.height - GROUNDHEIGHT,
@@ -64,7 +80,7 @@ async function init() {
     blocks.push(new Block(
       '1-' + i,
       gameContext,
-      quadTree,
+      QUADTREE,
       {
         x: 24 + i * 6,
         y: gameCanvas.height - GROUNDHEIGHT - 6,
@@ -80,10 +96,12 @@ async function init() {
   await ground.load()
   await hodlonaut.load()
   await katoshi.load()
+
+  hodlonaut.select()
   katoshi.direction = 'left'
-  quadTree.insert(hodlonaut)
-  quadTree.insert(katoshi)
-  blocks.forEach(block => quadTree.insert(block))
+  QUADTREE.insert(hodlonaut)
+  QUADTREE.insert(katoshi)
+  blocks.forEach(block => QUADTREE.insert(block))
   blocks.forEach(block => block.update())
   hodlonaut.update()
   katoshi.update()
@@ -102,12 +120,12 @@ function tick() {
 
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
-    quadTree.clear()
+    QUADTREE.clear()
     if (window.SHOWQUAD) gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height)
-    quadTree.insert(hodlonaut.getBoundingBox())
-    quadTree.insert(katoshi.getBoundingBox())
-    blocks.forEach(block => quadTree.insert(block))
-    if (window.SHOWQUAD) quadTree.show(gameContext)
+    QUADTREE.insert(hodlonaut)
+    QUADTREE.insert(katoshi)
+    blocks.forEach(block => QUADTREE.insert(block))
+    if (window.SHOWQUAD) QUADTREE.show(gameContext)
   }
 
   frame++

@@ -15,11 +15,12 @@ const sprites = {
   }
 }
 
-export default function(id, context, quadTree, { x, y }) {
+export default function(id, context, quadTree, { selected, x, y }) {
   this.id = id;
   this.sprite = null
   this.spriteData = sprites[id].data
   this.quadTree = quadTree
+  this.selected = selected
   this.hasLoaded
   this.context = context
   this.w = 16
@@ -139,15 +140,34 @@ export default function(id, context, quadTree, { x, y }) {
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
     )
+
+    if (this.selected) {
+      this.context.fillStyle = '#0F0'
+      this.context.fillRect(
+        this.x + this.w / 2, this.y - 2, 1, 1
+      )
+    }
   }
+
+  this.select = () => {
+    this.selected = true
+    window.SELECTED = this
+  }
+  this.unselect = () => {
+    this.selected = false
+    window.SELECTED = null
+  }
+
   this.getBoundingBox = () => {
     return {
+      id: this.id,
       x: this.x + 5,
       y: this.y,
       w: this.w - 10,
       h: this.h - 1
     }
   }
+
   this.load = () => {
     return new Promise(resolve => {
       const newImg = new Image;

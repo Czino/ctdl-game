@@ -71,6 +71,15 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }
   }
   this.getBoundingBox = () => this
 
+  this.select = () => {
+    this.selected = true
+    window.SELECTED = this
+  }
+  this.unselect = () => {
+    this.selected = false
+    window.SELECTED = null
+  }
+
   this.load = () => {
     return new Promise(resolve => {
       const newImg = new Image;

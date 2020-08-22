@@ -11,32 +11,39 @@ export const QuadTree = function (boundary, capacity) {
   this.boundary = boundary,
   this.capacity =  capacity || 10,
   this.subs = [],
-  this.points = []
+  this.objects = []
 
-  this.insert = point => {
-    if (!intersects(this.boundary, point)) {
+  this.insert = object => {
+    if (object.getBoundingBox) {
+      const boundingBox = object.getBoundingBox()
+      object = {
+        ...object,
+        ...boundingBox
+      }
+    }
+    if (!intersects(this.boundary, object)) {
       return false
     }
 
-    if (this.points.length < this.capacity) {
-      this.points.push(point)
+    if (this.objects.length < this.capacity) {
+      this.objects.push(object)
       return true
     }
 
     if (this.subs.length === 0) {
       this.subdivide()
 
-      // redistribute points in newly created subs
-      this.points.forEach(p => {
+      // redistribute objects in newly created subs
+      this.objects.forEach(p => {
         this.subs.forEach(sub => {
           return sub.insert(p)
         })
       })
-      this.points = []
+      this.objects = []
     }
 
     return this.subs.some(sub => {
-      return sub.insert(point)
+      return sub.insert(object)
     })
   }
   this.subdivide = () => {
@@ -84,13 +91,14 @@ export const QuadTree = function (boundary, capacity) {
     ]
   }
   this.query = range => {
+    let id = range.id
     let result = []
     range = new Boundary(range)
     if (!contains(this.boundary, range)) {
       return result
     }
 
-    result = this.points
+    result = this.objects
 
     if (this.subs.length > 0) {
       result = result
@@ -106,12 +114,12 @@ export const QuadTree = function (boundary, capacity) {
     context.lineWidth = .5
     context.strokeRect(this.boundary.x, this.boundary.y, this.boundary.w, this.boundary.h)
     this.subs.forEach(sub => sub.show(context))
-    this.points.forEach(point => {
-      context.strokeRect(point.x, point.y, point.w, point.h)
+    this.objects.forEach(object => {
+      context.strokeRect(object.x, object.y, object.w, object.h)
     })
   }
   this.clear = () => {
-    this.points = []
+    this.objects = []
     this.subs = []
   }
 }
