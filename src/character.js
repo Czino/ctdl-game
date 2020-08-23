@@ -17,6 +17,7 @@ const sprites = {
 
 export default function(id, context, quadTree, { selected, x, y }) {
   this.id = id;
+  this.class = 'Character'
   this.sprite = null
   this.spriteData = sprites[id].data
   this.quadTree = quadTree
@@ -26,7 +27,7 @@ export default function(id, context, quadTree, { selected, x, y }) {
   this.w = 16
   this.h = 30
   this.x = x
-  this.y = y - this.h
+  this.y = y
   this.vx = 0
   this.vy = 0
   this.status = 'idle'

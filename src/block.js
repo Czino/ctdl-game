@@ -28,7 +28,7 @@ function moveBlock(block, vector) {
   }
   block.idle = 0
 
-  gameContext.clearRect(block.x, block.y, block.w, block.h)
+  constants.gameContext.clearRect(block.x, block.y, block.w, block.h)
   block = {
     ...block,
     x: block.x + vector.x,
@@ -39,8 +39,9 @@ function moveBlock(block, vector) {
   return block;
 }
 
-export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }) {
+export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, opacity }) {
   this.id = id;
+  this.class = 'Block'
   this.sprite = null
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
   this.quadTree = quadTree
@@ -49,9 +50,10 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }
   this.w = w || 6
   this.h = h || 6
   this.x = x
-  this.y = y - this.h
+  this.y = y
   this.isStatic = isStatic
   this.isSolid = isSolid
+  this.opacity = opacity || 1
   this.status = 'idle'
   this.direction = 'right'
   this.frame = 0
@@ -62,6 +64,7 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid }
       
       this.context.fillRect(this.x, this.y, this.w, this.h)
     } else {
+      this.context.globalAlpha = this.opacity
       this.context.drawImage(
         this.sprite,
         this.spriteData.x, this.spriteData.y, this.w, this.h,

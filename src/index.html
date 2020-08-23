@@ -15,11 +15,11 @@
       background-color: #212121;
       position: absolute;
     }
-    #ctdl-game-chars {
-      position: relative;
+    #ctdl-game-chars, #ctdl-game-overlay {
+      position: absolute;
       z-index: 1;
     }
-    #ctdl-game, #ctdl-game-chars {
+    #ctdl-game, #ctdl-game-chars, #ctdl-game-overlay {
       height: 100vh;
       max-height: 100vh;
       image-rendering: optimizeSpeed;
@@ -36,5 +36,6 @@
 <body>
   <canvas id="ctdl-game"></canvas>
   <canvas id="ctdl-game-chars"></canvas>
+  <canvas id="ctdl-game-overlay"></canvas>
 </body>
 </html>

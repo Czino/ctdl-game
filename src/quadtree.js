@@ -34,9 +34,9 @@ export const QuadTree = function (boundary, capacity) {
       this.subdivide()
 
       // redistribute objects in newly created subs
-      this.objects.forEach(p => {
+      this.objects.forEach(o => {
         this.subs.forEach(sub => {
-          return sub.insert(p)
+          return sub.insert(o)
         })
       })
       this.objects = []
@@ -91,7 +91,6 @@ export const QuadTree = function (boundary, capacity) {
     ]
   }
   this.query = range => {
-    let id = range.id
     let result = []
     range = new Boundary(range)
     if (!contains(this.boundary, range)) {
