@@ -25,7 +25,7 @@ export const QuadTree = function (boundary, capacity) {
       return false
     }
 
-    if (this.objects.length < this.capacity) {
+    if (this.subs.length === 0 && this.objects.length < this.capacity) {
       this.objects.push(object)
       return true
     }
@@ -42,7 +42,7 @@ export const QuadTree = function (boundary, capacity) {
       this.objects = []
     }
 
-    return this.subs.some(sub => {
+    return this.subs.forEach(sub => {
       return sub.insert(object)
     })
   }
@@ -92,8 +92,9 @@ export const QuadTree = function (boundary, capacity) {
   }
   this.query = range => {
     let result = []
+
     range = new Boundary(range)
-    if (!contains(this.boundary, range)) {
+    if (!intersects(this.boundary, range)) {
       return result
     }
 
@@ -110,11 +111,11 @@ export const QuadTree = function (boundary, capacity) {
   this.show = context => {
     context.fillStyle = 'transparent'
     context.strokeStyle = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`
-    context.lineWidth = .5
-    context.strokeRect(this.boundary.x, this.boundary.y, this.boundary.w, this.boundary.h)
+    context.lineWidth = 1
+    context.strokeRect(this.boundary.x - .5, this.boundary.y - .5, this.boundary.w, this.boundary.h)
     this.subs.forEach(sub => sub.show(context))
     this.objects.forEach(object => {
-      context.strokeRect(object.x, object.y, object.w, object.h)
+      context.strokeRect(object.x - .5, object.y - .5, object.w, object.h)
     })
   }
   this.clear = () => {

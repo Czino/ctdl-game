@@ -5,20 +5,20 @@ import constants from './constants'
 let ghostBlock
 
 export const updateOverlay = () => {
-  constants.overlayContext.clearRect(0, 0, constants.WIDTH, constants.HEIGHT)
+  constants.overlayContext.clearRect(window.CTDLGAME.viewport.x, window.CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
   if (!window.SELECTED || window.SELECTED.class !== 'Character') return
 
-  if (Math.abs(window.SELECTED.getCenter().x - window.CTDLGAME.cursor.x) > 30) return
-  if (Math.abs(window.SELECTED.getCenter().y - window.CTDLGAME.cursor.y) > 30) return
+  if (Math.abs(window.SELECTED.getCenter().x - (window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x)) > 30) return
+  if (Math.abs(window.SELECTED.getCenter().y - (window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y)) > 30) return
 
   ghostBlock = new Block(
     'ghost' + Math.random(),
     constants.overlayContext,
     CTDLGAME.quadTree,
     {
-      x: Math.round(window.CTDLGAME.cursor.x / 3) * 3 - 3,
-      y: Math.round(window.CTDLGAME.cursor.y / 3) * 3 - 3,
+      x: Math.round((window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x) / 3) * 3 - 3,
+      y: Math.round((window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y) / 3) * 3 - 3,
       w: 6, h: 6,
       opacity: .5
     }
@@ -36,8 +36,10 @@ export const updateOverlay = () => {
     constants.overlayContext.fillStyle = '#FFF'
     sharpLine(
       constants.overlayContext,
-      ghostBlock.getCenter().x, ghostBlock.getCenter().y,
-      window.SELECTED.getCenter().x, window.SELECTED.getCenter().y
+      Math.round(ghostBlock.getCenter().x),
+      Math.round(ghostBlock.getCenter().y),
+      Math.round(window.SELECTED.getCenter().x),
+      Math.round(window.SELECTED.getCenter().y)
     )
     ghostBlock.update()
   }
@@ -65,7 +67,8 @@ export default () => {
       return
     }
     let click = {
-      ...window.CTDLGAME.cursor,
+      x: window.CTDLGAME.cursor.x + window.CTDLGAME.viewport.x,
+      y: window.CTDLGAME.cursor.y + window.CTDLGAME.viewport.y,
       w: 1, h: 1
     }
 
@@ -85,7 +88,7 @@ export default () => {
     object.select()
   })
 
-  window.addEventListener('mousemove', async e => {
+  window.addEventListener('mousemove', e => {
     let canvas = e.target
     window.CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
@@ -96,6 +99,6 @@ export default () => {
       return
     }
 
-    await updateOverlay()
+    updateOverlay()
   })
 }

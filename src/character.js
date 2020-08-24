@@ -105,8 +105,8 @@ export default function(id, context, quadTree, { selected, x, y }) {
     }
 
     if (this.vy !== 0) {
-      if (this.vy > 6) this.vy = 6
-      if (this.vy < -6) this.vy = -6
+      if (this.vy > 12) this.vy = 12
+      if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
 
       if (hasCollided) this.vy = 0

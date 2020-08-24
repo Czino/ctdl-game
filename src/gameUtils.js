@@ -49,3 +49,15 @@ export const showProgressBar = progress => {
         progressBar.y + progressBar.h / 2 + 3
     );
 }
+
+export const updateViewport = viewport => {
+    const x = Math.round(viewport.x)
+    const y = Math.round(viewport.y)
+    constants.gameContext.setTransform(1, 0, 0, 1, 0, 0);
+    constants.charContext.setTransform(1, 0, 0, 1, 0, 0);
+    constants.overlayContext.setTransform(1, 0, 0, 1, 0, 0);
+
+    constants.gameContext.translate(-x, -y)
+    constants.charContext.translate(-x, -y)
+    constants.overlayContext.translate(-x, -y)
+}
