@@ -85,7 +85,7 @@ async function tick() {
     katoshi.vy += constants.GRAVITY
 
     CTDLGAME.objects.forEach(object => object.update())
-    // updateOverlay()
+    updateOverlay()
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     CTDLGAME.quadTree.clear()

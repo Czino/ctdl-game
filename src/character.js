@@ -26,7 +26,7 @@ export default function(id, context, quadTree, { selected, x, y }) {
   this.walkingSpeed = 3
 
   this.idle = () => {
-    if (this.status === 'jump') return
+    if (/jump|action/.test(this.status)) return
     this.status = 'idle'
   }
   this.moveLeft = () => {
@@ -59,7 +59,8 @@ export default function(id, context, quadTree, { selected, x, y }) {
     this.status = 'back'
   }
   this.action = () => {
-    if (this.status === 'jump') return
+    if (/jump|action/.test(this.status)) return
+    this.frame = 0
     this.status = 'action'
   }
 
@@ -119,9 +120,7 @@ export default function(id, context, quadTree, { selected, x, y }) {
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {
       this.frame = 0
-      if (this.status === 'jump') {
-        this.status = 'idle'
-      }
+      if (/jump|action/.test(this.status)) this.status = 'idle'
     }
     let data = this.spriteData[this.direction][this.status][this.frame]
     this.w = data.w

@@ -5,6 +5,8 @@ import constants from './constants'
 let ghostBlock
 
 export const updateOverlay = () => {
+  constants.overlayContext.clearRect(0, 0, constants.WIDTH, constants.HEIGHT)
+
   if (!window.SELECTED || window.SELECTED.class !== 'Character') return
 
   if (Math.abs(window.SELECTED.getCenter().x - window.CTDLGAME.cursor.x) > 30) return
@@ -28,10 +30,7 @@ export const updateOverlay = () => {
   )
   if (!touchingObject) ghostBlock.status = 'bad'
 
-  let intersectingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj =>
-      intersects(ghostBlock, obj.getBoundingBox())
-      && obj.class !== 'Character'
-  )
+  let intersectingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj => intersects(ghostBlock, obj.getBoundingBox()))
 
   if (!intersectingObject) {
     constants.overlayContext.fillStyle = '#FFF'
@@ -75,6 +74,7 @@ export default () => {
       ghostBlock.opacity = 1
       ghostBlock.isSolid = true
       window.CTDLGAME.objects.push(ghostBlock)
+      window.SELECTED.action()
       ghostBlock = null
     }
 
@@ -91,8 +91,6 @@ export default () => {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
-
-    constants.overlayContext.clearRect(0, 0, constants.WIDTH, constants.HEIGHT)
 
     if (!/ctdl-game/.test(canvas.id)) {
       return
