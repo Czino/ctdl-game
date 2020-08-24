@@ -1,7 +1,7 @@
 import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
 import Block from './block'
-import initEvents from './events'
+import initEvents, { updateOverlay } from './events'
 import constants from './constants'
 
 window.KEYS = []
@@ -24,6 +24,7 @@ let ground = new Block('ground', constants.gameContext, QUADTREE, {
   isSolid: true
 })
 window.CTDLGAME = {
+  cursor: {x: 0, y: 0},
   objects: [
     ground
   ]
@@ -33,7 +34,7 @@ const hodlonaut = new Character(
   constants.charContext,
   QUADTREE,
   {
-    x: 0,
+    x: 1,
     y: constants.HEIGHT - constants.GROUNDHEIGHT - 30
   }
 )
@@ -66,7 +67,7 @@ async function init() {
   CTDLGAME.objects.forEach(object => object.update())
   tick()
 }
-function tick() {
+async function tick() {
   if (frame % constants.FRAMERATE === 0) {
     constants.charContext.clearRect(0, 0, constants.WIDTH, constants.HEIGHT)
 
@@ -75,7 +76,7 @@ function tick() {
     katoshi.vy += constants.GRAVITY
 
     CTDLGAME.objects.forEach(object => object.update())
-
+    // await updateOverlay()
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     QUADTREE.clear()

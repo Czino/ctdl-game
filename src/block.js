@@ -71,8 +71,22 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
         this.x, this.y, this.w, this.h
       )
     }
+    if (this.status === 'bad') {
+      this.context.strokeStyle = '#F00'
+      this.context.beginPath()
+      this.context.moveTo(this.x - .5 , this.y - .5)
+      this.context.lineTo(this.x - .5  + this.w, this.y - .5 + this.h)
+      this.context.moveTo(this.x - .5  + this.w, this.y - .5)
+      this.context.lineTo(this.x - .5 , this.y - .5 + this.h)
+      this.context.stroke()
+    }
   }
   this.getBoundingBox = () => this
+
+  this.getCenter = () => ({
+    x: this.x + this.w / 2 - 1,
+    y: this.y + this.h / 2 - 1
+  })
 
   this.select = () => {
     this.selected = true

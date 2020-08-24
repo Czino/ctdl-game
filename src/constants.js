@@ -12,10 +12,13 @@ charCanvas.height = HEIGHT
 const overlayCanvas = document.getElementById('ctdl-game-overlay')
 overlayCanvas.width = WIDTH
 overlayCanvas.height = HEIGHT
-
 const gameContext = gameCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
 const overlayContext = overlayCanvas.getContext('2d')
+
+gameContext.imageSmoothingEnabled = false
+charContext.imageSmoothingEnabled = false
+overlayContext.imageSmoothingEnabled = false
 
 export default {
   WIDTH,

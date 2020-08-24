@@ -159,15 +159,18 @@ export default function(id, context, quadTree, { selected, x, y }) {
     window.SELECTED = null
   }
 
-  this.getBoundingBox = () => {
-    return {
-      id: this.id,
-      x: this.x + 5,
-      y: this.y,
-      w: this.w - 10,
-      h: this.h - 1
-    }
-  }
+  this.getBoundingBox = () => ({
+    id: this.id,
+    x: this.x + 5,
+    y: this.y + 3,
+    w: this.w - 10,
+    h: this.h - 4
+  })
+
+  this.getCenter = () => ({
+    x: this.x + this.w / 2,
+    y: this.y + this.h / 2
+  })
 
   this.load = () => {
     return new Promise(resolve => {
