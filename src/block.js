@@ -1,6 +1,3 @@
-import blockSprite from './sprites/block.png'
-import groundSprite from './sprites/ground.png'
-
 function moveBlock(block, vector) {
   if (block.isStatic) return block
 
@@ -42,7 +39,6 @@ function moveBlock(block, vector) {
 export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, opacity }) {
   this.id = id;
   this.class = 'Block'
-  this.sprite = null
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
   this.quadTree = quadTree
   this.hasLoaded
@@ -59,14 +55,15 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
   this.frame = 0
 
   this.update = () => {
+    const sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
     if (this.id === 'ground') {
-      this.context.fillStyle = this.context.createPattern(this.sprite, 'repeat')
-      
+      this.context.fillStyle = this.context.createPattern(sprite, 'repeat')
+
       this.context.fillRect(this.x, this.y, this.w, this.h)
     } else {
       this.context.globalAlpha = this.opacity
       this.context.drawImage(
-        this.sprite,
+        sprite,
         this.spriteData.x, this.spriteData.y, this.w, this.h,
         this.x, this.y, this.w, this.h
       )
@@ -95,17 +92,6 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
   this.unselect = () => {
     this.selected = false
     window.SELECTED = null
-  }
-
-  this.load = () => {
-    return new Promise(resolve => {
-      const newImg = new Image;
-      newImg.onload = () => {
-          this.sprite = newImg
-          resolve(this.sprite)
-      }
-      newImg.src = this.id === 'ground' ? groundSprite : blockSprite;
-    })
   }
 }
 

@@ -1,28 +1,18 @@
 import hodlonaut from './sprites/hodlonaut'
-import hodlonautSprite from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi'
-import katoshiSprite from './sprites/katoshi.png'
 import { moveObject } from './geometryUtils'
 
 const sprites = {
-  hodlonaut: {
-    img: hodlonautSprite,
-    data: hodlonaut
-  },
-  katoshi: {
-    img: katoshiSprite,
-    data: katoshi
-  }
+  hodlonaut,
+  katoshi
 }
 
 export default function(id, context, quadTree, { selected, x, y }) {
   this.id = id;
   this.class = 'Character'
-  this.sprite = null
-  this.spriteData = sprites[id].data
+  this.spriteData = sprites[id]
   this.quadTree = quadTree
   this.selected = selected
-  this.hasLoaded
   this.context = context
   this.w = 16
   this.h = 30
@@ -103,6 +93,7 @@ export default function(id, context, quadTree, { selected, x, y }) {
   }
 
   this.update = () => {
+    const sprite = window.CTDLGAME.assets[this.id]
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
@@ -137,7 +128,7 @@ export default function(id, context, quadTree, { selected, x, y }) {
     this.h = data.h
 
     this.context.drawImage(
-      this.sprite,
+      sprite,
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
     )
@@ -171,15 +162,4 @@ export default function(id, context, quadTree, { selected, x, y }) {
     x: this.x + this.w / 2,
     y: this.y + this.h / 2
   })
-
-  this.load = () => {
-    return new Promise(resolve => {
-      const newImg = new Image;
-      newImg.onload = () => {
-        this.sprite = newImg
-        resolve(this.sprite)
-      }
-      newImg.src = sprites[this.id].img;
-    })
-  }
 }

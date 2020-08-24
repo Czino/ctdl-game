@@ -4,7 +4,7 @@ import constants from './constants'
 
 let ghostBlock
 
-export const updateOverlay = async () => {
+export const updateOverlay = () => {
   if (!window.SELECTED || window.SELECTED.class !== 'Character') return
 
   if (Math.abs(window.SELECTED.getCenter().x - window.CTDLGAME.cursor.x) > 30) return
@@ -13,7 +13,7 @@ export const updateOverlay = async () => {
   ghostBlock = new Block(
     'ghost' + Math.random(),
     constants.overlayContext,
-    QUADTREE,
+    CTDLGAME.quadTree,
     {
       x: Math.round(window.CTDLGAME.cursor.x / 3) * 3 - 3,
       y: Math.round(window.CTDLGAME.cursor.y / 3) * 3 - 3,
@@ -22,15 +22,13 @@ export const updateOverlay = async () => {
     }
   )
 
-  await ghostBlock.load()
-
-  let touchingObject = QUADTREE.query(ghostBlock).find(obj =>
+  let touchingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj =>
       touches(ghostBlock, obj.getBoundingBox())
       && obj.class !== 'Character'
   )
   if (!touchingObject) ghostBlock.status = 'bad'
 
-  let intersectingObject = QUADTREE.query(ghostBlock).find(obj =>
+  let intersectingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj =>
       intersects(ghostBlock, obj.getBoundingBox())
       && obj.class !== 'Character'
   )
@@ -80,7 +78,7 @@ export default () => {
       ghostBlock = null
     }
 
-    let object = QUADTREE.query(click).find(obj => contains(obj.getBoundingBox(), click))
+    let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
 
     if (!object) return
     window.SELECTED.unselect()
