@@ -1,5 +1,3 @@
-import constants from "./constants"
-
 /**
  * @description Method to check whether an object contains another.
  * This method checks if the center of the object is inside the other.
@@ -29,7 +27,11 @@ export const inside = (obj1, obj2) => {
     (l1 >= l2 && l1 <= r2 && u1 >= u2 && u1 <= b2) || // upper left corner of obj1 inside obj2
     (l1 >= l2 && l1 <= r2 && b1 >= u2 && b1 <= b2) || // lower left corner of obj1 inside obj2
     (r1 >= l2 && r1 <= r2 && u1 >= u2 && u1 <= b2) || // upper right corner of obj1 inside obj2
-    (r1 >= l2 && r1 <= r2 && b1 >= u2 && b1 <= b2) // lower right corner of obj1 inside obj2
+    (r1 >= l2 && r1 <= r2 && b1 >= u2 && b1 <= b2) || // lower right corner of obj1 inside obj2
+    (u1 >= u2 && u1 <= b2 && l1 < l2 && r1 > r2) || // obj1 top pierces horizontally through obj2
+    (b1 >= u2 && b1 <= b2 && l1 < l2 && r1 > r2) || // obj1 bottom pierces horizontally through obj2
+    (r1 >= u2 && r1 <= b2 && u1 < u2 && b1 > b2) || // obj1 left pierces vertically through obj2
+    (l1 >= u2 && l1 <= b2 && u1 < u2 && b1 > b2) // obj1 right pierces vertically through obj2
   )
 }
 
@@ -117,4 +119,18 @@ export const sharpLine = (context, x0, y0, x1, y1) => {
       y0 += sy
     }
   }
+}
+
+export const drawPolygon = (context, coords) => {
+  let pointer = coords.shift()
+  context.beginPath()
+  context.moveTo(pointer.x, pointer.y)
+  coords.map(offset => {
+    pointer.x += offset.x
+    pointer.y += offset.y
+    context.lineTo(pointer.x, pointer.y)
+  })
+  context.closePath()
+  context.stroke()
+  context.fill();
 }

@@ -17,6 +17,7 @@ window.CTDLGAME = {
   world: constants.WORLD,
   viewport: constants.START,
   objects: [],
+  blockHeight: 0,
   inventory: {
     blocks: []
   },

@@ -2,6 +2,7 @@ import constants from './constants'
 import font from './sprites/font.png'
 import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
+import genesisBlock from './sprites/genesis-block.png'
 import block from './sprites/block.png'
 import ground from './sprites/ground.png'
 import inventoryBlock from './sprites/inventory-block.png'
@@ -11,6 +12,7 @@ export const assets = {
   font,
   hodlonaut,
   katoshi,
+  genesisBlock,
   block,
   ground,
   inventoryBlock
@@ -119,6 +121,9 @@ export const updateViewport = viewport => {
 }
 
 const addBlockToInventory = block => {
+  console.log(block)
+  if (window.CTDLGAME.blockHeight > block.height) return
+  window.CTDLGAME.blockHeight = block.height
   window.CTDLGAME.inventory.blocks.push({
     height: block.height,
     id: block.id,
@@ -130,12 +135,12 @@ const addBlockToInventory = block => {
 export const checkBlocks = startHeight => {
   let url = 'https://blockstream.info/api/blocks/'
 
-  if (startHeight) url += startHeight
+  if (startHeight !== null) url += startHeight
   fetch(url, {
     method: 'GET',
     redirect: 'follow'
   })
     .then(response => response.json())
-    .then(blocks => addBlockToInventory(blocks.pop()))
-    .catch(error => console.log('error', error));
+    .then(blocks => blocks.reverse().forEach(block => addBlockToInventory(block)))
+    .catch(error => console.log('error', error))
 }

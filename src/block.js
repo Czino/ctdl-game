@@ -1,3 +1,7 @@
+import { write } from "./font"
+import { drawPolygon } from "./geometryUtils"
+import constants from "./constants"
+
 function moveBlock(block, vector) {
   if (block.isStatic) return block
 
@@ -56,12 +60,13 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
   this.info = info
 
   this.update = () => {
-    const sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
+    let sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
     if (this.id === 'ground') {
       this.context.fillStyle = this.context.createPattern(sprite, 'repeat')
 
       this.context.fillRect(this.x, this.y, this.w, this.h)
     } else {
+      if (this.info.height === 0) sprite = window.CTDLGAME.assets['genesisBlock']
       this.context.globalAlpha = this.opacity
       this.context.drawImage(
         sprite,
@@ -80,9 +85,25 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
     }
 
     if (this.selected) {
-      this.context.fillStyle = '#0F0'
-      this.context.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
+      constants.menuContext.strokeStyle = '#FFF'
+      constants.menuContext.fillStyle = '#212121'
+
+      drawPolygon(constants.menuContext, [
+        { x: this.x + Math.round(this.w / 2), y: this.y + this.h + 1 },
+        { x: 3, y: 3 },
+        { x: 30 - Math.round(this.w / 2) / 2, y: 0 },
+        { x: 0, y: 13 },
+        { x: -64, y: 0 },
+        { x: 0, y: -13 },
+        { x: 30 - Math.round(this.w / 2) / 2, y: 0 },
+        { x: 3, y: -3 }
+      ])
+
+      let infoText = this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock'
+      write(
+        constants.menuContext,
+        infoText,
+        { x: this.x - 30 + Math.round(this.w / 2), y: this.y + this.h + 5, w: 64}
       )
     }
   }

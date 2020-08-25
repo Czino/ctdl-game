@@ -53,13 +53,13 @@ export const updateOverlay = () => {
     }
 
   }
-
 }
 
 export default () => {
-  checkBlocks()
+  if (window.CTDLGAME.blockHeight === 0) checkBlocks(window.CTDLGAME.blockHeight)
+  setTimeout(checkBlocks, 10000)
 
-  setInterval(checkBlocks, constants.CHECKBLOCKTIME)
+  setInterval(() => checkBlocks(), constants.CHECKBLOCKTIME)
 
   window.addEventListener('keydown', e => {
     KEYS.push(e.key.toLowerCase());
@@ -95,8 +95,9 @@ export default () => {
 
     let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
 
+    if (window.SELECTED && window.SELECTED.class === 'Block') window.SELECTED.unselect()
     if (!object) return
-    window.SELECTED.unselect()
+    if (window.SELECTED) window.SELECTED.unselect()
     object.select()
   })
 
