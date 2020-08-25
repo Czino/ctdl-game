@@ -3,7 +3,8 @@ import Character from './character'
 import Block from './block'
 import initEvents, { updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport } from './gameUtils'
+import { assets, loadAsset, showProgressBar, updateViewport, showInventory } from './gameUtils'
+import { write } from './font'
 
 window.KEYS = []
 window.SELECTED = null
@@ -16,6 +17,9 @@ window.CTDLGAME = {
   world: constants.WORLD,
   viewport: constants.START,
   objects: [],
+  inventory: {
+    blocks: []
+  },
   quadTree: new QuadTree(new Boundary({
     x: 0,
     y: 0,
@@ -24,7 +28,7 @@ window.CTDLGAME = {
 }
 const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
   x: 0,
-  y: CTDLGAME.world.h - constants.GROUNDHEIGHT,
+  y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
   w: CTDLGAME.world.w,
   h: constants.GROUNDHEIGHT * 2,
   isStatic: true,
@@ -36,7 +40,7 @@ const hodlonaut = new Character(
   CTDLGAME.quadTree,
   {
     x: CTDLGAME.viewport.x + 1,
-    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - 30
+    y: CTDLGAME.world.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
   }
 )
 const katoshi = new Character(
@@ -46,7 +50,7 @@ const katoshi = new Character(
   {
     active: false,
     x: CTDLGAME.viewport.x + constants.WIDTH / 2,
-    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - 30
+    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
   }
 )
 
@@ -66,7 +70,6 @@ async function init() {
     i++
   }
   initEvents()
-
   hodlonaut.select()
   katoshi.direction = 'left'
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
@@ -80,6 +83,7 @@ async function tick() {
   if (frame % constants.FRAMERATE === 0) {
     constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
     // apply gravity
     hodlonaut.vy += constants.GRAVITY
@@ -92,9 +96,10 @@ async function tick() {
         constants.WORLD.h - constants.HEIGHT,
         (hodlonaut.y + katoshi.y) / 2)
     }
-
     updateViewport(CTDLGAME.viewport)
     updateOverlay()
+
+    showInventory(CTDLGAME.inventory)
 
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))

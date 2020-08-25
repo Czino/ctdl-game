@@ -1,6 +1,7 @@
-import { contains, touches, intersects, sharpLine } from './geometryUtils';
+import { contains, touches, intersects, sharpLine } from './geometryUtils'
 import Block from './block'
 import constants from './constants'
+import { checkBlocks } from './gameUtils'
 
 let ghostBlock
 
@@ -12,44 +13,54 @@ export const updateOverlay = () => {
   if (Math.abs(window.SELECTED.getCenter().x - (window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x)) > 30) return
   if (Math.abs(window.SELECTED.getCenter().y - (window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y)) > 30) return
 
-  ghostBlock = new Block(
-    'ghost' + Math.random(),
-    constants.overlayContext,
-    CTDLGAME.quadTree,
-    {
-      x: Math.round((window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x) / 3) * 3 - 3,
-      y: Math.round((window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y) / 3) * 3 - 3,
-      w: 6, h: 6,
-      opacity: .5
-    }
-  )
 
-  let touchingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj =>
-      touches(ghostBlock, obj.getBoundingBox())
-      && obj.class !== 'Character'
-  )
-  if (!touchingObject) ghostBlock.status = 'bad'
-
-  let intersectingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj => intersects(ghostBlock, obj.getBoundingBox()))
-
-  if (!intersectingObject) {
-    constants.overlayContext.fillStyle = '#FFF'
-    sharpLine(
+  if (window.CTDLGAME.inventory.blocks.length > 0) {
+    let block = window.CTDLGAME.inventory.blocks[0]
+    ghostBlock = new Block(
+      block.id,
       constants.overlayContext,
-      Math.round(ghostBlock.getCenter().x),
-      Math.round(ghostBlock.getCenter().y),
-      Math.round(window.SELECTED.getCenter().x),
-      Math.round(window.SELECTED.getCenter().y)
+      CTDLGAME.quadTree,
+      {
+        x: Math.round((window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x) / 3) * 3 - 3,
+        y: Math.round((window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y) / 3) * 3 - 3,
+        w: 6, h: 6,
+        opacity: .5
+      },
+      block
     )
-    ghostBlock.update()
+    let touchingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj =>
+        touches(ghostBlock, obj.getBoundingBox())
+        && obj.class !== 'Character'
+    )
+    if (!touchingObject) ghostBlock.status = 'bad'
+
+    let intersectingObject = CTDLGAME.quadTree.query(ghostBlock).find(obj => intersects(ghostBlock, obj.getBoundingBox()))
+
+    if (!intersectingObject) {
+      constants.overlayContext.fillStyle = '#FFF'
+      sharpLine(
+        constants.overlayContext,
+        Math.round(ghostBlock.getCenter().x),
+        Math.round(ghostBlock.getCenter().y),
+        Math.round(window.SELECTED.getCenter().x),
+        Math.round(window.SELECTED.getCenter().y)
+      )
+      ghostBlock.update()
+    }
+
+    if (intersectingObject || !touchingObject) {
+      ghostBlock = null
+    }
+
   }
 
-  if (intersectingObject || !touchingObject) {
-    ghostBlock = null
-  }
 }
 
 export default () => {
+  checkBlocks()
+
+  setInterval(checkBlocks, constants.CHECKBLOCKTIME)
+
   window.addEventListener('keydown', e => {
     KEYS.push(e.key.toLowerCase());
   })
@@ -76,6 +87,7 @@ export default () => {
       ghostBlock.context = constants.gameContext
       ghostBlock.opacity = 1
       ghostBlock.isSolid = true
+      window.CTDLGAME.inventory.blocks.shift()
       window.CTDLGAME.objects.push(ghostBlock)
       window.SELECTED.action()
       ghostBlock = null

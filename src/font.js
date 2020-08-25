@@ -1,16 +1,38 @@
 import font from './sprites/font'
 
-export const write = (context, text, { x, y, w }) => {
-  const startX = x
-  const endX = startX + w
+export const write = (context, text, { x, y, w }, align = 'left', shadow) => {
+  const startX = align === 'left' ? x : x + w
+  const endX = align === 'left' ? startX + w : startX - w
 
-  text.split('').forEach(char => {
+
+  if (shadow) {
+    write(context, text, { x: x + 1, y: y, w }, align)
+    context.globalCompositeOperation = 'difference'
+    write(context, text, { x: x + 1, y: y, w }, align)
+    context.globalCompositeOperation = 'source-over'
+    write(context, text, { x: x, y: y + 1, w }, align)
+    context.globalCompositeOperation = 'difference'
+    write(context, text, { x: x, y: y + 1, w }, align)
+    context.globalCompositeOperation = 'source-over'
+  }
+  text = text.split('')
+
+  if (align === 'right') {
+    x = startX
+    text.reverse()
+  }
+  text.forEach(char => {
     let data = font[char] || font['?']
 
-
-    if (x + data.w > endX || char === '\n') {
+    if (char === '\n'
+      || (align === 'left' && x + data.w > endX)
+      || (align === 'right' && x - data.w < endX)) {
       x = startX
       y += data.h
+    }
+
+    if (align === 'right') {
+      x = x - data.w
     }
 
     if (char !== '\n') {
@@ -19,7 +41,12 @@ export const write = (context, text, { x, y, w }) => {
         data.x, data.y, data.w, data.h,
         x, y, data.w, data.h
       )
-      x += data.w + 1
+
+      if (align === 'left') {
+        x += data.w + 1
+      } else {
+        x -= 1
+      }
     }
   })
 }

@@ -36,7 +36,7 @@ function moveBlock(block, vector) {
   return block;
 }
 
-export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, opacity }) {
+export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, opacity }, info) {
   this.id = id;
   this.class = 'Block'
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
@@ -53,6 +53,7 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
   this.status = 'idle'
   this.direction = 'right'
   this.frame = 0
+  this.info = info
 
   this.update = () => {
     const sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
@@ -77,6 +78,13 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
       this.context.lineTo(this.x - .5 , this.y - .5 + this.h)
       this.context.stroke()
     }
+
+    if (this.selected) {
+      this.context.fillStyle = '#0F0'
+      this.context.fillRect(
+        this.x + this.w / 2, this.y - 2, 1, 1
+      )
+    }
   }
   this.getBoundingBox = () => this
 
@@ -86,6 +94,7 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
   })
 
   this.select = () => {
+    console.log(this.info)
     this.selected = true
     window.SELECTED = this
   }
@@ -93,23 +102,4 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
     this.selected = false
     window.SELECTED = null
   }
-}
-
-// checkBlocks()
-
-// setInterval(checkBlocks, checkBlockTime)
-
-function checkBlocks() {
-  fetch('https://blockstream.info/api/blocks/', {
-      method: 'GET',
-      redirect: 'follow'
-    })
-    .then(response => response.json())
-    .then(blocks => addBlock(blocks.pop()))
-    .catch(error => console.log('error', error));
-}
-
-
-function addBlock(block) {
-  console.log(block)
 }

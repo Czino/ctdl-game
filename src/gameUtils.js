@@ -1,63 +1,141 @@
 import constants from './constants'
+import font from './sprites/font.png'
 import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
 import block from './sprites/block.png'
 import ground from './sprites/ground.png'
-
-const progressBar = {
-    x: 19.5,
-    y: constants.HEIGHT / 2 - 20.5,
-    w: constants.WIDTH - 40,
-    h: 20
-}
+import inventoryBlock from './sprites/inventory-block.png'
+import { write } from './font'
 
 export const assets = {
-    hodlonaut,
-    katoshi,
-    block,
-    ground
+  font,
+  hodlonaut,
+  katoshi,
+  block,
+  ground,
+  inventoryBlock
 }
 
 export const loadAsset = asset => new Promise(resolve => {
-    const newImg = new Image;
-    newImg.onload = () => {
-        resolve(newImg)
-    }
-    newImg.src = asset
+  const newImg = new Image;
+  newImg.onload = () => {
+    resolve(newImg)
+  }
+  newImg.src = asset
 })
 
+const progressBar = {
+  x: 19.5,
+  y: constants.HEIGHT / 2 - 20.5,
+  w: constants.WIDTH - 40,
+  h: 20
+}
+
 export const showProgressBar = progress => {
-    constants.overlayContext.fillStyle = '#FFF'
-    constants.overlayContext.strokeStyle = '#FFF'
-    constants.overlayContext.lineWidth = 1
+  constants.overlayContext.fillStyle = '#FFF'
+  constants.overlayContext.strokeStyle = '#FFF'
+  constants.overlayContext.lineWidth = 1
 
-    constants.overlayContext.beginPath()
-    constants.overlayContext.rect(progressBar.x, progressBar.y, progressBar.w, progressBar.h)
-    constants.overlayContext.stroke()
+  constants.overlayContext.beginPath()
+  constants.overlayContext.rect(
+    Math.round(progressBar.x + window.CTDLGAME.viewport.x) - .5,
+    Math.round(progressBar.y + window.CTDLGAME.viewport.y) - .5,
+    progressBar.w,
+    progressBar.h
+  )
+  constants.overlayContext.stroke()
 
-    constants.overlayContext.fillRect(
-        progressBar.x + .5, progressBar.y + .5, progressBar.w * progress - 1, progressBar.h - 1
-    )
+  constants.overlayContext.fillRect(
+    Math.round(progressBar.x + window.CTDLGAME.viewport.x),
+    Math.round(progressBar.y + window.CTDLGAME.viewport.y),
+    progressBar.w * progress - 1,
+    progressBar.h - 1
+  )
 
-    constants.overlayContext.fillStyle = '#212121'
-    constants.overlayContext.font = '12px courier'
-    let text = Math.round(progress * 100) + '%'
-    let metrics = constants.overlayContext.measureText(text)
-    constants.overlayContext.fillText(
-        text,
-        progressBar.x + progressBar.w / 2 - metrics.width / 2,
-        progressBar.y + progressBar.h / 2 + 3
-    );
+  write(
+    constants.overlayContext,
+    Math.round(progress * 100) + '%',
+    {
+      x: Math.round(progressBar.x + window.CTDLGAME.viewport.x),
+      y: Math.round(progressBar.y + window.CTDLGAME.viewport.y + progressBar.h) + 1,
+      w: progressBar.w
+    }
+  )
+}
+
+
+const backpack = {
+  x: constants.WIDTH / 2 - 10,
+  y: 3.5,
+  w: 22,
+  h: 22
+}
+
+export const showInventory = inventory => {
+  const pos = {
+    x: Math.round(backpack.x + window.CTDLGAME.viewport.x),
+    y: Math.round(backpack.y + window.CTDLGAME.viewport.y)
+  }
+  constants.menuContext.fillStyle = '#FFF'
+  constants.menuContext.strokeStyle = '#FFF'
+  constants.menuContext.lineWidth = 1
+
+  constants.menuContext.beginPath()
+  constants.menuContext.rect(
+    pos.x - .5,
+    pos.y - .5,
+    backpack.w,
+    backpack.h
+  )
+  constants.menuContext.stroke()
+
+  constants.menuContext.drawImage(
+    window.CTDLGAME.assets.inventoryBlock,
+    0, 0, 16, 16,
+    pos.x + (backpack.w - 16) / 2, pos.y + (backpack.h - 16) / 2, 16, 16
+  )
+
+  write(
+    constants.menuContext,
+    'ˣ' + inventory.blocks.length,
+    { x: pos.x , y: pos.y + backpack.h - 11 , w: backpack.w - 3 },
+    'right',
+    true
+  )
 }
 
 export const updateViewport = viewport => {
-    const x = Math.round(viewport.x)
-    const y = Math.round(viewport.y)
-    constants.gameContext.setTransform(1, 0, 0, 1, 0, 0);
-    constants.charContext.setTransform(1, 0, 0, 1, 0, 0);
-    constants.overlayContext.setTransform(1, 0, 0, 1, 0, 0);
+  const x = Math.round(viewport.x)
+  const y = Math.round(viewport.y)
+  constants.gameContext.setTransform(1, 0, 0, 1, 0, 0);
+  constants.charContext.setTransform(1, 0, 0, 1, 0, 0);
+  constants.overlayContext.setTransform(1, 0, 0, 1, 0, 0);
+  constants.menuContext.setTransform(1, 0, 0, 1, 0, 0);
 
-    constants.gameContext.translate(-x, -y)
-    constants.charContext.translate(-x, -y)
-    constants.overlayContext.translate(-x, -y)
+  constants.gameContext.translate(-x, -y)
+  constants.charContext.translate(-x, -y)
+  constants.overlayContext.translate(-x, -y)
+  constants.menuContext.translate(-x, -y)
+}
+
+const addBlockToInventory = block => {
+  window.CTDLGAME.inventory.blocks.push({
+    height: block.height,
+    id: block.id,
+    size: block.size,
+    tx_count: block.tx_count
+  })
+}
+
+export const checkBlocks = startHeight => {
+  let url = 'https://blockstream.info/api/blocks/'
+
+  if (startHeight) url += startHeight
+  fetch(url, {
+    method: 'GET',
+    redirect: 'follow'
+  })
+    .then(response => response.json())
+    .then(blocks => addBlockToInventory(blocks.pop()))
+    .catch(error => console.log('error', error));
 }
