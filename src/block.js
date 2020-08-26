@@ -89,21 +89,21 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
       constants.menuContext.fillStyle = '#212121'
 
       drawPolygon(constants.menuContext, [
-        { x: this.x + Math.round(this.w / 2), y: this.y + this.h + 1 },
-        { x: 3, y: 3 },
+        { x: this.x + Math.round(this.w / 2), y: this.y - 1 },
+        { x: 3, y: -3 },
         { x: 30 - Math.round(this.w / 2) / 2, y: 0 },
-        { x: 0, y: 13 },
-        { x: -64, y: 0 },
         { x: 0, y: -13 },
+        { x: -64, y: 0 },
+        { x: 0, y: 13 },
         { x: 30 - Math.round(this.w / 2) / 2, y: 0 },
-        { x: 3, y: -3 }
+        { x: 3, y: 3 }
       ])
 
       let infoText = this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock'
       write(
         constants.menuContext,
         infoText,
-        { x: this.x - 30 + Math.round(this.w / 2), y: this.y + this.h + 5, w: 64}
+        { x: this.x - 30 + Math.round(this.w / 2), y: this.y - 15, w: 64}
       )
     }
   }
