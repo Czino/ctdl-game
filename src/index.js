@@ -3,21 +3,20 @@ import Character from './character'
 import Block from './block'
 import initEvents, { updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport, showInventory } from './gameUtils'
-import { write } from './font'
+import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue } from './gameUtils'
 
 window.KEYS = []
 window.SELECTED = null
 
-let frame = 0
 window.
 window.CTDLGAME = {
   cursor: {x: 0, y: 0},
+  frame: 0,
   assets,
   world: constants.WORLD,
   viewport: constants.START,
   objects: [],
-  blockHeight: 0,
+  blockHeight: null,
   inventory: {
     blocks: []
   },
@@ -31,7 +30,7 @@ const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
   x: 0,
   y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
   w: CTDLGAME.world.w,
-  h: constants.GROUNDHEIGHT * 2,
+  h: constants.GROUNDHEIGHT,
   isStatic: true,
   isSolid: true
 })
@@ -59,6 +58,30 @@ CTDLGAME.objects.push(ground)
 CTDLGAME.objects.push(hodlonaut)
 CTDLGAME.objects.push(katoshi)
 
+
+for (let i = 0; i < 5; i++) {
+  CTDLGAME.objects.push(new Block(Math.random(), constants.gameContext, CTDLGAME.quadTree, {
+    x: CTDLGAME.viewport.x + 30 +i * 6,
+    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 6,
+    w: 6,
+    h: 6,
+    isStatic: true,
+    isSolid: true
+  },
+  { height: 0}))
+}
+for (let i = 0; i < 4; i++) {
+  CTDLGAME.objects.push(new Block(Math.random(), constants.gameContext, CTDLGAME.quadTree, {
+    x: CTDLGAME.viewport.x + 33 +i * 6,
+    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 12,
+    w: 6,
+    h: 6,
+    isStatic: true,
+    isSolid: true
+  },
+  { height: 0}))
+}
+
 init()
 
 async function init() {
@@ -78,10 +101,11 @@ async function init() {
 
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
+  // addTextToQueue('I am hodlonaut!')
   tick()
 }
 async function tick() {
-  if (frame % constants.FRAMERATE === 0) {
+  if (CTDLGAME.frame % constants.FRAMERATE === 0) {
     constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -97,11 +121,13 @@ async function tick() {
         constants.WORLD.h - constants.HEIGHT,
         (hodlonaut.y + katoshi.y) / 2)
     }
+
     updateViewport(CTDLGAME.viewport)
     updateOverlay()
 
     showInventory(CTDLGAME.inventory)
 
+    writeMenu()
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     CTDLGAME.quadTree.clear()
@@ -110,6 +136,6 @@ async function tick() {
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
   }
 
-  frame++
+  CTDLGAME.frame++
   window.requestAnimationFrame(tick)
 }

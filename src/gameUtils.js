@@ -68,7 +68,7 @@ export const showProgressBar = progress => {
 
 const backpack = {
   x: constants.WIDTH / 2 - 10,
-  y: 3.5,
+  y: constants.HEIGHT - constants.MENU.h + 2,
   w: 22,
   h: 22
 }
@@ -106,6 +106,35 @@ export const showInventory = inventory => {
   )
 }
 
+const textQueue = []
+const timeToShowFinishedText = 256
+
+export const addTextToQueue = text => {
+  const lastText = textQueue[textQueue.length - 1]
+  const lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : 0
+  textQueue.push({ text, frame: window.CTDLGAME.frame + lastFrame })
+}
+
+export const writeMenu = () => {
+  if (textQueue.length === 0) return
+  if (textQueue[0].text.length + textQueue[0].frame + timeToShowFinishedText - window.CTDLGAME.frame < 0) textQueue.shift()
+  if (textQueue.length === 0) return
+
+  write(
+    constants.menuContext,
+    textQueue[0].text,
+    {
+      x: window.CTDLGAME.viewport.x + constants.TEXTBOX.x,
+      y: window.CTDLGAME.viewport.y + constants.TEXTBOX.y,
+      w: constants.TEXTBOX.w
+    },
+    'left',
+    false,
+    window.CTDLGAME.frame - textQueue[0].frame
+  )
+}
+
+
 export const updateViewport = viewport => {
   const x = Math.round(viewport.x)
   const y = Math.round(viewport.y)
@@ -121,8 +150,8 @@ export const updateViewport = viewport => {
 }
 
 const addBlockToInventory = block => {
+  if (window.CTDLGAME.blockHeight >= block.height && block.height !== 0) return
   console.log(block)
-  if (window.CTDLGAME.blockHeight > block.height) return
   window.CTDLGAME.blockHeight = block.height
   window.CTDLGAME.inventory.blocks.push({
     height: block.height,
@@ -135,7 +164,7 @@ const addBlockToInventory = block => {
 export const checkBlocks = startHeight => {
   let url = 'https://blockstream.info/api/blocks/'
 
-  if (startHeight !== null) url += startHeight
+  if (typeof startHeight !== 'undefined') url += startHeight
   fetch(url, {
     method: 'GET',
     redirect: 'follow'

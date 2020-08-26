@@ -1,9 +1,9 @@
 const WORLD = { w: 1024, h: 1024 }
-const WIDTH = 128 * 2 // viewport
-const HEIGHT = 256 * 2 // viewport
+const WIDTH = 128 // viewport
+const HEIGHT = 256 // viewport
 const START = { x: 512, y: 1024 - HEIGHT }
 const MENU = { w: WIDTH, h: 64 }
-
+const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 26, w: WIDTH }
 const gameCanvas = document.getElementById('ctdl-game')
 gameCanvas.width = WIDTH
 gameCanvas.height = HEIGHT
@@ -41,6 +41,7 @@ export default {
   WORLD,
   START,
   MENU,
+  TEXTBOX,
   CHECKBLOCKTIME: 1000 * 60 * 2, // 2 minutues
   GROUNDHEIGHT: 6,
   FRAMERATE: 8, // render every X frame
