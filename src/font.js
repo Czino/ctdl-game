@@ -1,18 +1,20 @@
 import font from './sprites/font'
 
-export const write = (context, text, { x, y, w }, align = 'left', shadow) => {
+export const write = (context, text, { x, y, w }, align = 'left', shadow, limit = 999) => {
+  x = Math.round(x)
+  y = Math.round(y)
   const startX = align === 'left' ? x : x + w
   const endX = align === 'left' ? startX + w : startX - w
 
 
   if (shadow) {
-    write(context, text, { x: x + 1, y: y, w }, align)
+    write(context, text, { x: x + 1, y: y, w }, align, false, limit)
     context.globalCompositeOperation = 'difference'
-    write(context, text, { x: x + 1, y: y, w }, align)
+    write(context, text, { x: x + 1, y: y, w }, align, false, limit)
     context.globalCompositeOperation = 'source-over'
-    write(context, text, { x: x, y: y + 1, w }, align)
+    write(context, text, { x: x, y: y + 1, w }, align, false, limit)
     context.globalCompositeOperation = 'difference'
-    write(context, text, { x: x, y: y + 1, w }, align)
+    write(context, text, { x: x, y: y + 1, w }, align, false, limit)
     context.globalCompositeOperation = 'source-over'
   }
   text = text.split('')
@@ -21,7 +23,7 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow) => {
     x = startX
     text.reverse()
   }
-  text.forEach(char => {
+  text.some(char => {
     let data = font[char] || font['?']
 
     if (char === '\n'
@@ -35,7 +37,7 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow) => {
       x = x - data.w
     }
 
-    if (char !== '\n') {
+    if (char !== '\n' && !(char === ' ' && x === startX)) {
       context.drawImage(
         window.CTDLGAME.assets.font,
         data.x, data.y, data.w, data.h,
@@ -48,5 +50,8 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow) => {
         x -= 1
       }
     }
+
+    limit--
+    if (limit < 0) return true
   })
 }
