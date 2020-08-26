@@ -45,6 +45,7 @@ export default {
   CHECKBLOCKTIME: 1000 * 60 * 2, // 2 minutues
   GROUNDHEIGHT: 6,
   FRAMERATE: 8, // render every X frame
+  SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
   gameContext,
   charContext,

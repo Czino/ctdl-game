@@ -56,10 +56,10 @@ export const updateOverlay = () => {
 }
 
 export default () => {
-  if (window.CTDLGAME.blockHeight === 0) checkBlocks(window.CTDLGAME.blockHeight)
-  setTimeout(checkBlocks, 10000)
+  // if (window.CTDLGAME.blockHeight === 0) checkBlocks(window.CTDLGAME.blockHeight)
+  // setTimeout(checkBlocks, 10000)
 
-  setInterval(() => checkBlocks(), constants.CHECKBLOCKTIME)
+  // setInterval(() => checkBlocks(), constants.CHECKBLOCKTIME)
 
   window.addEventListener('keydown', e => {
     KEYS.push(e.key.toLowerCase());

@@ -7,23 +7,23 @@ const sprites = {
   katoshi
 }
 
-export default function(id, context, quadTree, { selected, x, y }) {
+export default function(id, context, quadTree, options) {
   this.id = id;
   this.class = 'Character'
   this.spriteData = sprites[id]
   this.quadTree = quadTree
-  this.selected = selected
   this.context = context
+  this.selected = options.selected
   this.w = 16
   this.h = 30
-  this.x = x
-  this.y = y
-  this.vx = 0
-  this.vy = 0
-  this.status = 'idle'
-  this.direction = 'right'
-  this.frame = 0
-  this.walkingSpeed = 3
+  this.x = options.x
+  this.y = options.y
+  this.vx = options.vx || 0
+  this.vy = options.vy || 0
+  this.status = options.status || 'idle'
+  this.direction = options.direction || 'right'
+  this.frame = options.frame || 0
+  this.walkingSpeed = options.walkingSpeed || 3
 
   this.idle = () => {
     if (/jump|action/.test(this.status)) return
@@ -160,5 +160,21 @@ export default function(id, context, quadTree, { selected, x, y }) {
   this.getCenter = () => ({
     x: this.x + this.w / 2,
     y: this.y + this.h / 2
+  })
+
+  this.toJSON = () => ({
+    id: this.id,
+    class: this.class,
+    selected: this.selected,
+    w: this.w,
+    h: this.h,
+    x: this.x,
+    y: this.y,
+    vx: this.vx,
+    vy: this.vy,
+    status: this.status,
+    direction: this.direction,
+    frame: this.frame,
+    walkingSpeed: this.walkingSpeed
   })
 }

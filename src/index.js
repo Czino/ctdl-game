@@ -1,19 +1,19 @@
+import * as db from './db'
 import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
 import Block from './block'
 import initEvents, { updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue } from './gameUtils'
+import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue, saveGame } from './gameUtils'
+import { drawIcon } from './icons'
 
 window.KEYS = []
 window.SELECTED = null
 
-window.
 window.CTDLGAME = {
   cursor: {x: 0, y: 0},
   frame: 0,
   assets,
-  world: constants.WORLD,
   viewport: constants.START,
   objects: [],
   blockHeight: null,
@@ -26,65 +26,89 @@ window.CTDLGAME = {
     ...constants.WORLD
   }))
 }
-const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
-  x: 0,
-  y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
-  w: CTDLGAME.world.w,
-  h: constants.GROUNDHEIGHT,
-  isStatic: true,
-  isSolid: true
-})
-const hodlonaut = new Character(
-  'hodlonaut',
-  constants.charContext,
-  CTDLGAME.quadTree,
-  {
-    x: CTDLGAME.viewport.x + 1,
-    y: CTDLGAME.world.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
-  }
-)
-const katoshi = new Character(
-  'katoshi',
-  constants.charContext,
-  CTDLGAME.quadTree,
-  {
-    active: false,
-    x: CTDLGAME.viewport.x + constants.WIDTH / 2,
-    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
-  }
-)
-
-CTDLGAME.objects.push(ground)
-CTDLGAME.objects.push(hodlonaut)
-CTDLGAME.objects.push(katoshi)
-
-
-for (let i = 0; i < 5; i++) {
-  CTDLGAME.objects.push(new Block(Math.random(), constants.gameContext, CTDLGAME.quadTree, {
-    x: CTDLGAME.viewport.x + 30 +i * 6,
-    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 6,
-    w: 6,
-    h: 6,
-    isStatic: true,
-    isSolid: true
-  },
-  { height: 0}))
-}
-for (let i = 0; i < 4; i++) {
-  CTDLGAME.objects.push(new Block(Math.random(), constants.gameContext, CTDLGAME.quadTree, {
-    x: CTDLGAME.viewport.x + 33 +i * 6,
-    y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 12,
-    w: 6,
-    h: 6,
-    isStatic: true,
-    isSolid: true
-  },
-  { height: 0}))
-}
 
 init()
 
 async function init() {
+  const newGame = await db.init(constants.debug)
+
+  if (!newGame) {
+    let viewport = await db.get('viewport')
+    let hodlonaut = await db.get('hodlonaut')
+    let katoshi = await db.get('katoshi')
+    let objects = await db.get('objects')
+    let blockHeight = await db.get('blockHeight')
+    let inventory = await db.get('inventory')
+
+    if (viewport) {
+      CTDLGAME.viewport = viewport
+      updateViewport(CTDLGAME.viewport)
+    }
+    if (objects) {
+      CTDLGAME.objects = objects.map(object => {
+        if (object.class === 'Block') {
+          return new Block(
+            object.id,
+            constants.gameContext,
+            CTDLGAME.quadTree,
+            object
+          )
+        }
+      })
+    }
+    if (blockHeight) CTDLGAME.blockHeight = blockHeight
+    if (inventory) CTDLGAME.inventory = inventory
+
+    CTDLGAME.hodlonaut = new Character(
+      'hodlonaut',
+      constants.charContext,
+      CTDLGAME.quadTree,
+      hodlonaut
+    )
+    CTDLGAME.katoshi = new Character(
+      'katoshi',
+      constants.charContext,
+      CTDLGAME.quadTree,
+      katoshi
+    )
+  } else {
+    let ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
+      x: 0,
+      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
+      w: constants.WORLD.w,
+      h: constants.GROUNDHEIGHT,
+      isStatic: true,
+      isSolid: true
+    })
+    CTDLGAME.hodlonaut = new Character(
+      'hodlonaut',
+      constants.charContext,
+      CTDLGAME.quadTree,
+      {
+        x: CTDLGAME.viewport.x + 1,
+        y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
+      }
+    )
+    CTDLGAME.katoshi = new Character(
+      'katoshi',
+      constants.charContext,
+      CTDLGAME.quadTree,
+      {
+        active: false,
+        x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+        y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
+        direction: 'left'
+      }
+    )
+
+    CTDLGAME.objects.push(ground)
+  }
+  
+  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
+  CTDLGAME.objects.push(CTDLGAME.katoshi)
+
+  CTDLGAME.hodlonaut.select()
+
   let i = 0
   for (let key in CTDLGAME.assets) {
     CTDLGAME.assets[key] = await loadAsset(CTDLGAME.assets[key])
@@ -94,12 +118,12 @@ async function init() {
     i++
   }
   initEvents()
-  hodlonaut.select()
-  katoshi.direction = 'left'
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+
+  saveGame(db)
 
   // addTextToQueue('I am hodlonaut!')
   tick()
@@ -111,15 +135,15 @@ async function tick() {
     constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
     // apply gravity
-    hodlonaut.vy += constants.GRAVITY
-    katoshi.vy += constants.GRAVITY
+    CTDLGAME.hodlonaut.vy += constants.GRAVITY
+    CTDLGAME.katoshi.vy += constants.GRAVITY
 
     CTDLGAME.objects.forEach(object => object.update())
     CTDLGAME.viewport = {
-      x: (hodlonaut.x + katoshi.x) / 2 - constants.WIDTH / 2,
+      x: (CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2,
       y: Math.min(
         constants.WORLD.h - constants.HEIGHT,
-        (hodlonaut.y + katoshi.y) / 2)
+        (CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2)
     }
 
     updateViewport(CTDLGAME.viewport)
@@ -128,12 +152,29 @@ async function tick() {
     showInventory(CTDLGAME.inventory)
 
     writeMenu()
+
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     CTDLGAME.quadTree.clear()
     if (window.SHOWQUAD) constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
+
+    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
+      saveGame(db)
+    }
+    // fade out save icon
+    if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
+      drawIcon(
+        constants.menuContext,
+        'save',
+        {
+          x: CTDLGAME.viewport.x + constants.WIDTH - 10,
+          y: CTDLGAME.viewport.y + 3,
+          opacity: (256 - CTDLGAME.frame % constants.SAVERATE) / 256
+        }
+      )
+    }
   }
 
   CTDLGAME.frame++

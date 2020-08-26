@@ -1,5 +1,6 @@
 import constants from './constants'
 import font from './sprites/font.png'
+import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
 import genesisBlock from './sprites/genesis-block.png'
@@ -7,9 +8,11 @@ import block from './sprites/block.png'
 import ground from './sprites/ground.png'
 import inventoryBlock from './sprites/inventory-block.png'
 import { write } from './font'
+import { drawIcon } from './icons'
 
 export const assets = {
   font,
+  icons,
   hodlonaut,
   katoshi,
   genesisBlock,
@@ -25,6 +28,19 @@ export const loadAsset = asset => new Promise(resolve => {
   }
   newImg.src = asset
 })
+
+export const saveGame = async db => {
+  await db.set('viewport', window.CTDLGAME.viewport)
+  await db.set('hodlonaut', window.CTDLGAME.hodlonaut.toJSON())
+  await db.set('katoshi', window.CTDLGAME.katoshi.toJSON())
+  await db.set('objects', window.CTDLGAME.objects
+    .filter(object => object.class !== 'Character')
+    .map(object => {
+      return object.toJSON()
+    }))
+  await db.set('blockHeight', window.CTDLGAME.blockHeight)
+  await db.set('inventory', window.CTDLGAME.inventory)
+}
 
 const progressBar = {
   x: 19.5,

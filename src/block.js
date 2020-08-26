@@ -40,24 +40,21 @@ function moveBlock(block, vector) {
   return block;
 }
 
-export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, opacity }, info) {
+export default function(id, context, quadTree, options) {
   this.id = id;
   this.class = 'Block'
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
   this.quadTree = quadTree
-  this.hasLoaded
   this.context = context
-  this.w = w || 6
-  this.h = h || 6
-  this.x = x
-  this.y = y
-  this.isStatic = isStatic
-  this.isSolid = isSolid
-  this.opacity = opacity || 1
-  this.status = 'idle'
-  this.direction = 'right'
-  this.frame = 0
-  this.info = info
+  this.w = options.w || 6
+  this.h = options.h || 6
+  this.x = options.x
+  this.y = options.y
+  this.isStatic = options.isStatic
+  this.isSolid = options.isSolid
+  this.opacity = options.opacity || 1
+  this.status = options.status
+  this.info = options.info
 
   this.update = () => {
     let sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
@@ -65,6 +62,7 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
       this.context.fillStyle = this.context.createPattern(sprite, 'repeat')
 
       this.context.fillRect(this.x, this.y, this.w, this.h)
+      return
     } else {
       if (this.info.height === 0) sprite = window.CTDLGAME.assets['genesisBlock']
       this.context.globalAlpha = this.opacity
@@ -123,4 +121,17 @@ export default function(id, context, quadTree, { x, y, w, h, isStatic, isSolid, 
     this.selected = false
     window.SELECTED = null
   }
+
+  this.toJSON = () => ({
+    id: this.id,
+    class: this.class,
+    w: this.w,
+    h: this.h,
+    x: this.x,
+    y: this.y,
+    isStatic: this.isStatic,
+    isSolid: this.isSolid,
+    opacity: this.opacity,
+    info: this.info
+  })
 }
