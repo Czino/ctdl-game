@@ -144,44 +144,49 @@ async function init() {
   if (CTDLGAME.blockHeight < 0) checkBlocks(0)
 
   time = getTimeOfDay()
-  if (time > 18) {
+  if (time > 18.5) {
     removeClass(constants.gameCanvas, 'ctdl-day')
-  } else if (time > 6) {
+  } else if (time > 5.5) {
     addClass(constants.gameCanvas, 'ctdl-day')
   }
-  setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
+  setTimeout(() => {
+    addClass(constants.gameCanvas, 'transition-background-color')
+    tick()
+  })
 
-  tick()
 }
 async function tick() {
+  if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
+    if (time >= 5 && time < 5.1) {
+      addClass(constants.gameCanvas, 'ctdl-day')
+    } else if (time >= 18 && time < 18.1) {
+      removeClass(constants.gameCanvas, 'ctdl-day')
+    }
+  }
   if (CTDLGAME.frame % constants.FRAMERATE === 0) {
     time = getTimeOfDay()
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) {
-      checkBlocks(CTDLGAME.blockHeight ? CTDLGAME.blockHeight : null)
-    }
-
-    if (time === 6) {
-      addClass(constants.gameCanvas, 'ctdl-day')
-    } else if (time === 18) {
-      removeClass(constants.gameCanvas, 'ctdl-day')
+      checkBlocks()
     }
     constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
-    // apply gravity
-    CTDLGAME.hodlonaut.vy += constants.GRAVITY
-    CTDLGAME.katoshi.vy += constants.GRAVITY
-
-    CTDLGAME.objects.forEach(object => object.update())
     CTDLGAME.viewport = {
       x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
       y: Math.min(
         constants.WORLD.h - constants.HEIGHT,
         Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
     }
+
     sun.update()
     moon.update()
+
+    // apply gravity
+    CTDLGAME.hodlonaut.vy += constants.GRAVITY
+    CTDLGAME.katoshi.vy += constants.GRAVITY
+
+    CTDLGAME.objects.forEach(object => object.update())
 
     updateViewport(CTDLGAME.viewport)
     updateOverlay()
