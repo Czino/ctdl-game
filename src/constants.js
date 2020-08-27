@@ -42,11 +42,14 @@ export default {
   START,
   MENU,
   TEXTBOX,
-  CHECKBLOCKTIME: 1000 * 60 * 2, // 2 minutues
+  FRAMESINADAY: Math.pow(2, 14),
+  FRAMERESET: Math.pow(2, 16),
+  CHECKBLOCKTIME: Math.pow(2, 12), // check every X frame
   GROUNDHEIGHT: 6,
   FRAMERATE: 8, // render every X frame
   SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
+  gameCanvas,
   gameContext,
   charContext,
   overlayContext,

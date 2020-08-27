@@ -24,7 +24,8 @@ export const updateOverlay = () => {
         x: Math.round((window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x) / 3) * 3 - 3,
         y: Math.round((window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y) / 3) * 3 - 3,
         w: 6, h: 6,
-        opacity: .5
+        opacity: .5,
+        info: { height: block.height }
       },
       block
     )
@@ -56,11 +57,6 @@ export const updateOverlay = () => {
 }
 
 export default () => {
-  // if (window.CTDLGAME.blockHeight === 0) checkBlocks(window.CTDLGAME.blockHeight)
-  // setTimeout(checkBlocks, 10000)
-
-  // setInterval(() => checkBlocks(), constants.CHECKBLOCKTIME)
-
   window.addEventListener('keydown', e => {
     KEYS.push(e.key.toLowerCase());
   })

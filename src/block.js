@@ -54,7 +54,7 @@ export default function(id, context, quadTree, options) {
   this.isSolid = options.isSolid
   this.opacity = options.opacity || 1
   this.status = options.status
-  this.info = options.info
+  this.info = options.info || {}
 
   this.update = () => {
     let sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
@@ -113,7 +113,6 @@ export default function(id, context, quadTree, options) {
   })
 
   this.select = () => {
-    console.log(this.info)
     this.selected = true
     window.SELECTED = this
   }

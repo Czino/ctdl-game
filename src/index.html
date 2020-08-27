@@ -11,9 +11,15 @@
       justify-content: center;
       background-color: #212121;
     }
+    .transition-background-color {
+      transition: background-color 10s ease-in-out;
+    }
     #ctdl-game {
       background-color: #212121;
       position: absolute;
+    }
+    #ctdl-game.ctdl-day {
+      background-color: #c2c1cd;
     }
     #ctdl-game-chars, #ctdl-game-overlay, #ctdl-game-menu {
       position: absolute;
@@ -34,7 +40,7 @@
   </style>
 </head>
 <body>
-  <canvas id="ctdl-game"></canvas>
+  <canvas id="ctdl-game" class="ctdl-day"></canvas>
   <canvas id="ctdl-game-chars"></canvas>
   <canvas id="ctdl-game-overlay"></canvas>
   <canvas id="ctdl-game-menu"></canvas>

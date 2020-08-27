@@ -1,11 +1,8 @@
 import font from './sprites/font'
 
 export const write = (context, text, { x, y, w }, align = 'left', shadow, limit = 999) => {
-  x = Math.round(x)
-  y = Math.round(y)
   const startX = align === 'left' ? x : x + w
   const endX = align === 'left' ? startX + w : startX - w
-
 
   if (shadow) {
     write(context, text, { x: x + 1, y: y, w }, align, false, limit)

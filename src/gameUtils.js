@@ -3,18 +3,19 @@ import font from './sprites/font.png'
 import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
+import moon from './sprites/moon.png'
 import genesisBlock from './sprites/genesis-block.png'
 import block from './sprites/block.png'
 import ground from './sprites/ground.png'
 import inventoryBlock from './sprites/inventory-block.png'
 import { write } from './font'
-import { drawIcon } from './icons'
 
 export const assets = {
   font,
   icons,
   hodlonaut,
   katoshi,
+  moon,
   genesisBlock,
   block,
   ground,
@@ -30,6 +31,7 @@ export const loadAsset = asset => new Promise(resolve => {
 })
 
 export const saveGame = async db => {
+  await db.set('time', window.CTDLGAME.frame)
   await db.set('viewport', window.CTDLGAME.viewport)
   await db.set('hodlonaut', window.CTDLGAME.hodlonaut.toJSON())
   await db.set('katoshi', window.CTDLGAME.katoshi.toJSON())
@@ -43,29 +45,37 @@ export const saveGame = async db => {
 }
 
 const progressBar = {
-  x: 19.5,
-  y: constants.HEIGHT / 2 - 20.5,
+  x: 20,
+  y: constants.HEIGHT / 2 - 20,
   w: constants.WIDTH - 40,
   h: 20
 }
 
 export const showProgressBar = progress => {
+  constants.overlayContext.fillStyle = '#212121'
+
+  constants.overlayContext.fillRect(
+    window.CTDLGAME.viewport.x,
+    window.CTDLGAME.viewport.y,
+    constants.WIDTH,
+    constants.HEIGHT
+  )
   constants.overlayContext.fillStyle = '#FFF'
   constants.overlayContext.strokeStyle = '#FFF'
   constants.overlayContext.lineWidth = 1
 
   constants.overlayContext.beginPath()
   constants.overlayContext.rect(
-    Math.round(progressBar.x + window.CTDLGAME.viewport.x) - .5,
-    Math.round(progressBar.y + window.CTDLGAME.viewport.y) - .5,
+    progressBar.x + window.CTDLGAME.viewport.x - .5,
+    progressBar.y + window.CTDLGAME.viewport.y - .5,
     progressBar.w,
     progressBar.h
   )
   constants.overlayContext.stroke()
 
   constants.overlayContext.fillRect(
-    Math.round(progressBar.x + window.CTDLGAME.viewport.x),
-    Math.round(progressBar.y + window.CTDLGAME.viewport.y),
+    progressBar.x + window.CTDLGAME.viewport.x,
+    progressBar.y + window.CTDLGAME.viewport.y,
     progressBar.w * progress - 1,
     progressBar.h - 1
   )
@@ -74,8 +84,8 @@ export const showProgressBar = progress => {
     constants.overlayContext,
     Math.round(progress * 100) + '%',
     {
-      x: Math.round(progressBar.x + window.CTDLGAME.viewport.x),
-      y: Math.round(progressBar.y + window.CTDLGAME.viewport.y + progressBar.h) + 1,
+      x: progressBar.x + window.CTDLGAME.viewport.x,
+      y: progressBar.y + window.CTDLGAME.viewport.y + progressBar.h + 1,
       w: progressBar.w
     }
   )
@@ -91,9 +101,17 @@ const backpack = {
 
 export const showInventory = inventory => {
   const pos = {
-    x: Math.round(backpack.x + window.CTDLGAME.viewport.x),
-    y: Math.round(backpack.y + window.CTDLGAME.viewport.y)
+    x: backpack.x + window.CTDLGAME.viewport.x,
+    y: backpack.y + window.CTDLGAME.viewport.y
   }
+
+  constants.menuContext.fillStyle = '#212121'
+  constants.menuContext.fillRect(
+    window.CTDLGAME.viewport.x,
+    window.CTDLGAME.viewport.y + constants.HEIGHT - constants.MENU.h,
+    constants.MENU.w,
+    constants.MENU.h
+  )
   constants.menuContext.fillStyle = '#FFF'
   constants.menuContext.strokeStyle = '#FFF'
   constants.menuContext.lineWidth = 1
@@ -165,6 +183,12 @@ export const updateViewport = viewport => {
   constants.menuContext.translate(-x, -y)
 }
 
+export const getTimeOfDay = () => {
+  let time = (window.CTDLGAME.frame % constants.FRAMESINADAY) / constants.FRAMESINADAY * 24 + 6
+  if (time > 24) time -= 24
+  return time
+}
+
 const addBlockToInventory = block => {
   if (window.CTDLGAME.blockHeight >= block.height && block.height !== 0) return
   console.log(block)
@@ -180,7 +204,7 @@ const addBlockToInventory = block => {
 export const checkBlocks = startHeight => {
   let url = 'https://blockstream.info/api/blocks/'
 
-  if (typeof startHeight !== 'undefined') url += startHeight
+  if (typeof startHeight !== 'undefined' && startHeight !== null) url += startHeight
   fetch(url, {
     method: 'GET',
     redirect: 'follow'

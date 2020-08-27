@@ -2,10 +2,13 @@ import * as db from './db'
 import { QuadTree, Boundary } from './quadTree'
 import Character from './character'
 import Block from './block'
+import Sun from './sun'
+import Moon from './moon'
 import initEvents, { updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue, saveGame } from './gameUtils'
+import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue, saveGame, checkBlocks, getTimeOfDay } from './gameUtils'
 import { drawIcon } from './icons'
+import { addClass, removeClass, hasClass } from './htmlUtils'
 
 window.KEYS = []
 window.SELECTED = null
@@ -16,7 +19,7 @@ window.CTDLGAME = {
   assets,
   viewport: constants.START,
   objects: [],
-  blockHeight: null,
+  blockHeight: -1,
   inventory: {
     blocks: []
   },
@@ -27,12 +30,23 @@ window.CTDLGAME = {
   }))
 }
 
+let time
+const sun = new Sun(constants.gameContext, {
+  x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+  y: CTDLGAME.viewport.y + 10
+})
+const moon = new Moon(constants.gameContext, {
+  x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+  y: CTDLGAME.viewport.y + 10
+})
+
 init()
 
 async function init() {
-  const newGame = await db.init(constants.debug)
-
-  if (!newGame) {
+  await db.init(constants.debug)
+  let time = await db.get('time')
+  
+  if (time) {
     let viewport = await db.get('viewport')
     let hodlonaut = await db.get('hodlonaut')
     let katoshi = await db.get('katoshi')
@@ -40,6 +54,7 @@ async function init() {
     let blockHeight = await db.get('blockHeight')
     let inventory = await db.get('inventory')
 
+    if (time) CTDLGAME.frame = time
     if (viewport) {
       CTDLGAME.viewport = viewport
       updateViewport(CTDLGAME.viewport)
@@ -80,6 +95,7 @@ async function init() {
       isStatic: true,
       isSolid: true
     })
+
     CTDLGAME.hodlonaut = new Character(
       'hodlonaut',
       constants.charContext,
@@ -102,8 +118,10 @@ async function init() {
     )
 
     CTDLGAME.objects.push(ground)
+
+    addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
   }
-  
+
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
@@ -118,18 +136,35 @@ async function init() {
     i++
   }
   initEvents()
+
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  if (CTDLGAME.blockHeight < 0) checkBlocks(0)
 
-  saveGame(db)
+  time = getTimeOfDay()
+  if (time > 18) {
+    removeClass(constants.gameCanvas, 'ctdl-day')
+  } else if (time > 6) {
+    addClass(constants.gameCanvas, 'ctdl-day')
+  }
+  setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 
-  // addTextToQueue('I am hodlonaut!')
   tick()
 }
 async function tick() {
   if (CTDLGAME.frame % constants.FRAMERATE === 0) {
+    time = getTimeOfDay()
+    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) {
+      checkBlocks(CTDLGAME.blockHeight ? CTDLGAME.blockHeight : null)
+    }
+
+    if (time === 6) {
+      addClass(constants.gameCanvas, 'ctdl-day')
+    } else if (time === 18) {
+      removeClass(constants.gameCanvas, 'ctdl-day')
+    }
     constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -140,11 +175,13 @@ async function tick() {
 
     CTDLGAME.objects.forEach(object => object.update())
     CTDLGAME.viewport = {
-      x: (CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2,
+      x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
       y: Math.min(
         constants.WORLD.h - constants.HEIGHT,
-        (CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2)
+        Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
     }
+    sun.update()
+    moon.update()
 
     updateViewport(CTDLGAME.viewport)
     updateOverlay()
@@ -174,6 +211,10 @@ async function tick() {
           opacity: (256 - CTDLGAME.frame % constants.SAVERATE) / 256
         }
       )
+    }
+
+    if (CTDLGAME.frame > constants.FRAMERESET) {
+      CTDLGAME.frame = 0
     }
   }
 
