@@ -3,6 +3,7 @@ import font from './sprites/font.png'
 import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
+import shitcoiner from './sprites/shitcoiner.png'
 import moon from './sprites/moon.png'
 import genesisBlock from './sprites/genesis-block.png'
 import block from './sprites/block.png'
@@ -15,6 +16,7 @@ export const assets = {
   icons,
   hodlonaut,
   katoshi,
+  shitcoiner,
   moon,
   genesisBlock,
   block,

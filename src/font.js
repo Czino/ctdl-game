@@ -1,19 +1,20 @@
 import font from './sprites/font'
 
-export const write = (context, text, { x, y, w }, align = 'left', shadow, limit = 999) => {
+export const write = (context, text, { x, y, w }, align = 'left', shadow, limit = 999, sub, color) => {
   const startX = align === 'left' ? x : x + w
   const endX = align === 'left' ? startX + w : startX - w
 
   if (shadow) {
-    write(context, text, { x: x + 1, y: y, w }, align, false, limit)
+    write(context, text, { x: x + 1, y: y, w }, align, false, limit, sub)
     context.globalCompositeOperation = 'difference'
-    write(context, text, { x: x + 1, y: y, w }, align, false, limit)
+    write(context, text, { x: x + 1, y: y, w }, align, false, limit, sub)
     context.globalCompositeOperation = 'source-over'
-    write(context, text, { x: x, y: y + 1, w }, align, false, limit)
+    write(context, text, { x: x, y: y + 1, w }, align, false, limit, sub)
     context.globalCompositeOperation = 'difference'
-    write(context, text, { x: x, y: y + 1, w }, align, false, limit)
+    write(context, text, { x: x, y: y + 1, w }, align, false, limit, sub)
     context.globalCompositeOperation = 'source-over'
   }
+
   text = text.split('')
 
   if (align === 'right') {
@@ -21,8 +22,7 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow, limit 
     text.reverse()
   }
   text.some(char => {
-    let data = font[char] || font['?']
-
+    let data = !sub ? font[char] || font['?'] : font['sub-' + char] || font['?']
     if (char === '\n'
       || (align === 'left' && x + data.w > endX)
       || (align === 'right' && x - data.w < endX)) {
@@ -35,11 +35,19 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow, limit 
     }
 
     if (char !== '\n' && !(char === ' ' && x === startX)) {
+
       context.drawImage(
         window.CTDLGAME.assets.font,
         data.x, data.y, data.w, data.h,
         x, y, data.w, data.h
       )
+
+      if (color) {
+        context.globalCompositeOperation = 'source-atop'
+        context.fillStyle = color
+        context.fillRect(x, y, data.w, data.h)
+        context.globalCompositeOperation = 'source-over'
+      }
 
       if (align === 'left') {
         x += data.w + 1

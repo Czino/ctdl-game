@@ -8,7 +8,8 @@ import initEvents, { updateOverlay } from './events'
 import constants from './constants'
 import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue, saveGame, checkBlocks, getTimeOfDay } from './gameUtils'
 import { drawIcon } from './icons'
-import { addClass, removeClass, hasClass } from './htmlUtils'
+import { addClass, removeClass } from './htmlUtils'
+import Shitcoiner from './shitcoiner'
 
 window.KEYS = []
 window.SELECTED = null
@@ -68,6 +69,13 @@ async function init() {
             CTDLGAME.quadTree,
             object
           )
+        } else if (object.class === 'Shitcoiner') {
+          return new Shitcoiner(
+            object.id,
+            constants.gameContext,
+            CTDLGAME.quadTree,
+            object
+          )
         }
       })
     }
@@ -86,6 +94,9 @@ async function init() {
       CTDLGAME.quadTree,
       katoshi
     )
+
+    if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
+    if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
   } else {
     let ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
       x: 0,
@@ -118,6 +129,25 @@ async function init() {
     )
 
     CTDLGAME.objects.push(ground)
+    CTDLGAME.objects.push(new Shitcoiner(
+      'first',
+      constants.gameContext,
+      CTDLGAME.quadTree,
+      {
+        x: CTDLGAME.viewport.x + 120,
+        y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
+      }
+    ))
+    CTDLGAME.objects.push(new Shitcoiner(
+      'second',
+      constants.gameContext,
+      CTDLGAME.quadTree,
+      {
+        x: CTDLGAME.viewport.x - 40,
+        y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
+      }
+    ))
+    CTDLGAME.hodlonaut.select()
 
     addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
   }
@@ -125,7 +155,6 @@ async function init() {
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
-  CTDLGAME.hodlonaut.select()
 
   let i = 0
   for (let key in CTDLGAME.assets) {
@@ -149,6 +178,7 @@ async function init() {
   } else if (time > 5.5) {
     addClass(constants.gameCanvas, 'ctdl-day')
   }
+
   setTimeout(() => {
     addClass(constants.gameCanvas, 'transition-background-color')
     tick()
@@ -185,6 +215,9 @@ async function tick() {
     // apply gravity
     CTDLGAME.hodlonaut.vy += constants.GRAVITY
     CTDLGAME.katoshi.vy += constants.GRAVITY
+    CTDLGAME.objects
+      .filter(obj => obj.enemy)
+      .map(enemy => enemy.vy += constants.GRAVITY)
 
     CTDLGAME.objects.forEach(object => object.update())
 
@@ -198,7 +231,7 @@ async function tick() {
     // window.SHOWQUAD = true
     // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     CTDLGAME.quadTree.clear()
-    if (window.SHOWQUAD) constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    // if (window.SHOWQUAD) constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
 
