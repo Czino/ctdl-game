@@ -7,6 +7,8 @@ import constants from './constants'
 import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, saveGame, checkBlocks, getTimeOfDay, showSaveIcon, clearCanvas, loadGame, newGame } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
 
+import Shitcoiner from './shitcoiner'
+
 window.KEYS = []
 window.SELECTED = null
 
@@ -67,8 +69,10 @@ async function init() {
 
   time = getTimeOfDay()
   if (time > 18.5) {
+    CTDLGAME.isNight = true
     removeClass(constants.gameCanvas, 'ctdl-day')
   } else if (time > 5.5) {
+    CTDLGAME.isNight = false
     addClass(constants.gameCanvas, 'ctdl-day')
   }
 
@@ -81,8 +85,10 @@ async function init() {
 async function tick() {
   if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
     if (time >= 5 && time < 5.1) {
+      CTDLGAME.isNight = false
       addClass(constants.gameCanvas, 'ctdl-day')
     } else if (time >= 18 && time < 18.1) {
+      CTDLGAME.isNight = true
       removeClass(constants.gameCanvas, 'ctdl-day')
     }
   }
@@ -99,6 +105,21 @@ async function tick() {
       y: Math.min(
         constants.WORLD.h - constants.HEIGHT,
         Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
+    }
+
+    if (CTDLGAME.isNight) {
+      if (Math.random() < constants.SPAWNRATES.shitcoiner) {
+        CTDLGAME.objects.push(new Shitcoiner(
+          'shitcoiner-' + Math.random(),
+          constants.gameContext,
+          CTDLGAME.quadTree,
+          {
+            x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
+            y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30,
+            status: 'spawn'
+          }
+        ))
+      }
     }
 
     sun.update()

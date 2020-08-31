@@ -72,5 +72,8 @@ export default {
   charContext,
   overlayContext,
   menuContext,
-  CONTROLS
+  CONTROLS,
+  SPAWNRATES: {
+    shitcoiner: .01
+  }
 }
