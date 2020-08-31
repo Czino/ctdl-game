@@ -15,7 +15,7 @@ export default function(id, context, quadTree, options) {
   this.spriteData = sprites[id]
   this.quadTree = quadTree
   this.context = context
-  this.health = options.hasOwnProperty('health') ? options.health : 21
+  this.health = options.health ?? 21
   this.dmgs = []
   this.heals = []
   this.selected = options.selected
@@ -171,7 +171,7 @@ export default function(id, context, quadTree, options) {
     let data = this.spriteData[this.direction][this.status][this.frame]
     this.w = data.w
     this.h = data.h
-    this.context.globalAlpha = data.hasOwnProperty('opacity') ? data.opacity : 1
+    this.context.globalAlpha = data.opacity ?? 1
 
     this.context.drawImage(
       sprite,

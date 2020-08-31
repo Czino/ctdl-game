@@ -266,6 +266,14 @@ export const showInventory = inventory => {
     'right',
     true
   )
+
+  write(
+    constants.menuContext,
+    'ś' + inventory.sats + '\n' + '$' + inventory.usd,
+    { x: window.CTDLGAME.viewport.x + 2, y: pos.y + 3 , w: 40 },
+    'left',
+    false
+  )
 }
 
 const textQueue = []

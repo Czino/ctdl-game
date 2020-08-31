@@ -15,6 +15,7 @@ export default function(id, context, quadTree, options) {
   this.context = context
   this.selected = options.selected
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
+  this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -66,6 +67,7 @@ export default function(id, context, quadTree, options) {
     }
   }
   this.die = () => {
+    CTDLGAME.inventory.usd += this.usd
     this.status = 'rekt'
   }
 

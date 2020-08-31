@@ -20,6 +20,8 @@ window.CTDLGAME = {
   objects: [],
   blockHeight: -1,
   inventory: {
+    usd: 0,
+    sats: 0,
     blocks: []
   },
   quadTree: new QuadTree(new Boundary({
