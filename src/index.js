@@ -1,15 +1,11 @@
 import * as db from './db'
 import { QuadTree, Boundary } from './quadTree'
-import Character from './character'
-import Block from './block'
 import Sun from './sun'
 import Moon from './moon'
 import initEvents, { updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, addTextToQueue, saveGame, checkBlocks, getTimeOfDay } from './gameUtils'
-import { drawIcon } from './icons'
+import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, saveGame, checkBlocks, getTimeOfDay, showSaveIcon, clearCanvas, loadGame, newGame } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
-import Shitcoiner from './shitcoiner'
 
 window.KEYS = []
 window.SELECTED = null
@@ -45,116 +41,13 @@ init()
 
 async function init() {
   await db.init(constants.debug)
-  let time = await db.get('time')
-  
-  if (time) {
-    let viewport = await db.get('viewport')
-    let hodlonaut = await db.get('hodlonaut')
-    let katoshi = await db.get('katoshi')
-    let objects = await db.get('objects')
-    let blockHeight = await db.get('blockHeight')
-    let inventory = await db.get('inventory')
 
-    if (time) CTDLGAME.frame = time
-    if (viewport) {
-      CTDLGAME.viewport = viewport
-      updateViewport(CTDLGAME.viewport)
-    }
-    if (objects) {
-      CTDLGAME.objects = objects.map(object => {
-        if (object.class === 'Block') {
-          return new Block(
-            object.id,
-            constants.gameContext,
-            CTDLGAME.quadTree,
-            object
-          )
-        } else if (object.class === 'Shitcoiner') {
-          return new Shitcoiner(
-            object.id,
-            constants.gameContext,
-            CTDLGAME.quadTree,
-            object
-          )
-        }
-      })
-    }
-    if (blockHeight) CTDLGAME.blockHeight = blockHeight
-    if (inventory) CTDLGAME.inventory = inventory
-
-    CTDLGAME.hodlonaut = new Character(
-      'hodlonaut',
-      constants.charContext,
-      CTDLGAME.quadTree,
-      hodlonaut
-    )
-    CTDLGAME.katoshi = new Character(
-      'katoshi',
-      constants.charContext,
-      CTDLGAME.quadTree,
-      katoshi
-    )
-
-    if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
-    if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
-  } else {
-    let ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
-      x: 0,
-      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
-      w: constants.WORLD.w,
-      h: constants.GROUNDHEIGHT,
-      isStatic: true,
-      isSolid: true
-    })
-
-    CTDLGAME.hodlonaut = new Character(
-      'hodlonaut',
-      constants.charContext,
-      CTDLGAME.quadTree,
-      {
-        x: CTDLGAME.viewport.x + 1,
-        y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
-      }
-    )
-    CTDLGAME.katoshi = new Character(
-      'katoshi',
-      constants.charContext,
-      CTDLGAME.quadTree,
-      {
-        active: false,
-        x: CTDLGAME.viewport.x + constants.WIDTH / 2,
-        y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
-        direction: 'left'
-      }
-    )
-
-    CTDLGAME.objects.push(ground)
-    CTDLGAME.objects.push(new Shitcoiner(
-      'first',
-      constants.gameContext,
-      CTDLGAME.quadTree,
-      {
-        x: CTDLGAME.viewport.x + 120,
-        y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
-      }
-    ))
-    CTDLGAME.objects.push(new Shitcoiner(
-      'second',
-      constants.gameContext,
-      CTDLGAME.quadTree,
-      {
-        x: CTDLGAME.viewport.x - 40,
-        y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
-      }
-    ))
-    CTDLGAME.hodlonaut.select()
-
-    addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
+  if (!(await loadGame())) {
+    newGame()
   }
 
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
-
 
   let i = 0
   for (let key in CTDLGAME.assets) {
@@ -198,9 +91,8 @@ async function tick() {
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) {
       checkBlocks()
     }
-    constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-    constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-    constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+
+    clearCanvas()
 
     CTDLGAME.viewport = {
       x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
@@ -228,27 +120,17 @@ async function tick() {
 
     writeMenu()
 
-    // window.SHOWQUAD = true
-    // blocks = blocks.map(block => moveBlock(block, {x: 0, y: 1}))
     CTDLGAME.quadTree.clear()
-    // if (window.SHOWQUAD) constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
+
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
 
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
-      saveGame(db)
+      saveGame()
     }
     // fade out save icon
     if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
-      drawIcon(
-        constants.menuContext,
-        'save',
-        {
-          x: CTDLGAME.viewport.x + constants.WIDTH - 10,
-          y: CTDLGAME.viewport.y + 3,
-          opacity: (256 - CTDLGAME.frame % constants.SAVERATE) / 256
-        }
-      )
+      showSaveIcon()
     }
 
     if (CTDLGAME.frame > constants.FRAMERESET) {

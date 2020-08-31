@@ -1,4 +1,9 @@
+import * as db from './db'
 import constants from './constants'
+import Character from './character'
+import Block from './block'
+import Shitcoiner from './shitcoiner'
+
 import font from './sprites/font.png'
 import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
@@ -9,7 +14,9 @@ import genesisBlock from './sprites/genesis-block.png'
 import block from './sprites/block.png'
 import ground from './sprites/ground.png'
 import inventoryBlock from './sprites/inventory-block.png'
+
 import { write } from './font'
+import { drawIcon } from './icons'
 
 export const assets = {
   font,
@@ -24,6 +31,10 @@ export const assets = {
   inventoryBlock
 }
 
+/**
+ * @description Method to preload asset
+ * @param {String} asset path to asset
+ */
 export const loadAsset = asset => new Promise(resolve => {
   const newImg = new Image;
   newImg.onload = () => {
@@ -32,7 +43,122 @@ export const loadAsset = asset => new Promise(resolve => {
   newImg.src = asset
 })
 
-export const saveGame = async db => {
+/**
+ * @description Method to prepare new game
+ */
+export const newGame = () => {
+  const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
+    x: 0,
+    y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
+    w: constants.WORLD.w,
+    h: constants.GROUNDHEIGHT,
+    isStatic: true,
+    isSolid: true
+  })
+
+  CTDLGAME.hodlonaut = new Character(
+    'hodlonaut',
+    constants.charContext,
+    CTDLGAME.quadTree,
+    {
+      x: CTDLGAME.viewport.x + 1,
+      y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
+    }
+  )
+  CTDLGAME.katoshi = new Character(
+    'katoshi',
+    constants.charContext,
+    CTDLGAME.quadTree,
+    {
+      active: false,
+      x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
+      direction: 'left'
+    }
+  )
+
+  CTDLGAME.objects.push(ground)
+  // CTDLGAME.objects.push(new Shitcoiner(
+  //   'first',
+  //   constants.gameContext,
+  //   CTDLGAME.quadTree,
+  //   {
+  //     x: CTDLGAME.viewport.x + 100,
+  //     y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
+  //   }
+  // ))
+
+  CTDLGAME.hodlonaut.select()
+
+  // addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
+}
+
+/**
+ * @description Method to load game
+ * @returns {Boolean} true if game could be loaded
+ */
+export const loadGame = async () => {
+  let time = await db.get('time')
+
+  if (!time) return false // check if time could be loaded before proceeding
+
+  let viewport = await db.get('viewport')
+  let hodlonaut = await db.get('hodlonaut')
+  let katoshi = await db.get('katoshi')
+  let objects = await db.get('objects')
+  let blockHeight = await db.get('blockHeight')
+  let inventory = await db.get('inventory')
+
+  if (time) CTDLGAME.frame = time
+  if (viewport) {
+    CTDLGAME.viewport = viewport
+    updateViewport(CTDLGAME.viewport)
+  }
+  if (objects) {
+    CTDLGAME.objects = objects.map(object => {
+      if (object.class === 'Block') {
+        return new Block(
+          object.id,
+          constants.gameContext,
+          CTDLGAME.quadTree,
+          object
+        )
+      } else if (object.class === 'Shitcoiner') {
+        return new Shitcoiner(
+          object.id,
+          constants.gameContext,
+          CTDLGAME.quadTree,
+          object
+        )
+      }
+    })
+  }
+  if (blockHeight) CTDLGAME.blockHeight = blockHeight
+  if (inventory) CTDLGAME.inventory = inventory
+
+  CTDLGAME.hodlonaut = new Character(
+    'hodlonaut',
+    constants.charContext,
+    CTDLGAME.quadTree,
+    hodlonaut
+  )
+  CTDLGAME.katoshi = new Character(
+    'katoshi',
+    constants.charContext,
+    CTDLGAME.quadTree,
+    katoshi
+  )
+
+  if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
+  if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
+
+  return true
+}
+
+/**
+ * @description Method to save game to database
+ */
+export const saveGame = async () => {
   await db.set('time', window.CTDLGAME.frame)
   await db.set('viewport', window.CTDLGAME.viewport)
   await db.set('hodlonaut', window.CTDLGAME.hodlonaut.toJSON())
@@ -53,6 +179,10 @@ const progressBar = {
   h: 20
 }
 
+/**
+ * @description Method to display progress bar
+ * @param {Number} progress current progress between 0 - 1
+ */
 export const showProgressBar = progress => {
   constants.overlayContext.fillStyle = '#212121'
 
@@ -101,6 +231,11 @@ const backpack = {
   h: 22
 }
 
+/**
+ * @description Method to show current inventory
+ * @param {Object} inventory inventory object
+ * @param {Object[]} inventory.blocks found blocks
+ */
 export const showInventory = inventory => {
   const pos = {
     x: backpack.x + window.CTDLGAME.viewport.x,
@@ -145,12 +280,19 @@ export const showInventory = inventory => {
 const textQueue = []
 const timeToShowFinishedText = 256
 
+/**
+ * @description Method to add text to queue for showing in the text box
+ * @param {String} text text to be queued
+ */
 export const addTextToQueue = text => {
   const lastText = textQueue[textQueue.length - 1]
   const lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : 0
   textQueue.push({ text, frame: window.CTDLGAME.frame + lastFrame })
 }
 
+/**
+ * @description Method to write text from queue to the textbox
+ */
 export const writeMenu = () => {
   if (textQueue.length === 0) return
   if (textQueue[0].text.length + textQueue[0].frame + timeToShowFinishedText - window.CTDLGAME.frame < 0) textQueue.shift()
@@ -170,7 +312,34 @@ export const writeMenu = () => {
   )
 }
 
+/**
+ * @description Method to show save icon
+ */
+export const showSaveIcon = () => {
+  drawIcon(
+    constants.menuContext,
+    'save',
+    {
+      x: CTDLGAME.viewport.x + constants.WIDTH - 10,
+      y: CTDLGAME.viewport.y + 3,
+      opacity: (256 - CTDLGAME.frame % constants.SAVERATE) / 256
+    }
+  )
+}
 
+/**
+ * @description Method to clear canvas for next draw
+ */
+export const clearCanvas = () => {
+  constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+}
+
+/**
+ * @description Method to translate canvas to show current viewport
+ * @param {Object} viewport the current viewport
+ */
 export const updateViewport = viewport => {
   const x = Math.round(viewport.x)
   const y = Math.round(viewport.y)
@@ -185,12 +354,20 @@ export const updateViewport = viewport => {
   constants.menuContext.translate(-x, -y)
 }
 
+/**
+ * @description Method to get current time of the day based on the frame in the game
+ * @returns {Number} time between 0 - 24 hours
+ */
 export const getTimeOfDay = () => {
   let time = (window.CTDLGAME.frame % constants.FRAMESINADAY) / constants.FRAMESINADAY * 24 + 6
   if (time > 24) time -= 24
   return time
 }
 
+/**
+ * @description Method to add a block to the inventory
+ * @param {Object} block the block to add
+ */
 const addBlockToInventory = block => {
   if (window.CTDLGAME.blockHeight >= block.height && block.height !== 0) return
   console.log(block)
@@ -203,6 +380,10 @@ const addBlockToInventory = block => {
   })
 }
 
+/**
+ * @description Method to fetch new blocks from the blockchain
+ * @param {Number} startHeight height to start from
+ */
 export const checkBlocks = startHeight => {
   let url = 'https://blockstream.info/api/blocks/'
 

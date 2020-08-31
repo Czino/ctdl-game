@@ -1,9 +1,9 @@
 import { contains, touches, intersects, sharpLine } from './geometryUtils'
 import Block from './block'
 import constants from './constants'
-import { checkBlocks } from './gameUtils'
 
 let ghostBlock
+
 
 export const updateOverlay = () => {
   constants.overlayContext.clearRect(window.CTDLGAME.viewport.x, window.CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -12,7 +12,6 @@ export const updateOverlay = () => {
 
   if (Math.abs(window.SELECTED.getCenter().x - (window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x)) > 30) return
   if (Math.abs(window.SELECTED.getCenter().y - (window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y)) > 30) return
-
 
   if (window.CTDLGAME.inventory.blocks.length > 0) {
     let block = window.CTDLGAME.inventory.blocks[0]

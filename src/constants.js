@@ -35,6 +35,24 @@ charContext.translate(-START.x, -START.y)
 overlayContext.translate(-START.x, -START.y)
 menuContext.translate(-START.x, -START.y)
 
+const CONTROLS = {
+  hodlonaut: {
+    e: 'attack',
+    w: 'back',
+    a: 'moveLeft',
+    s: null,
+    d: 'moveRight',
+    q: 'jump'
+  },
+  katoshi: {
+    u: 'attack',
+    i: 'back',
+    j: 'moveLeft',
+    k: null,
+    l: 'moveRight',
+    o: 'jump',
+  }
+}
 export default {
   WIDTH,
   HEIGHT,
@@ -53,5 +71,6 @@ export default {
   gameContext,
   charContext,
   overlayContext,
-  menuContext
+  menuContext,
+  CONTROLS
 }

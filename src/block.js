@@ -2,44 +2,6 @@ import { write } from "./font"
 import { drawPolygon } from "./geometryUtils"
 import constants from "./constants"
 
-function moveBlock(block, vector) {
-  if (block.isStatic) return block
-
-  let result = quadTree.query(block)
-  let wouldCollide = result
-    .filter(otherBlock => otherBlock.id !== block.id)
-    .some(otherBlock => {
-      let ghostBlock = {
-        ...block,
-        x: block.x + vector.x,
-        y: block.y + vector.y,
-      }
-
-      return !(ghostBlock.x > otherBlock.x + otherBlock.w ||
-        ghostBlock.x + ghostBlock.w < otherBlock.x ||
-        ghostBlock.y > otherBlock.y + otherBlock.h ||
-        ghostBlock.y + ghostBlock.h < otherBlock.y)
-    })
-
-  if (wouldCollide) {
-    block.idle++
-
-    if (block.idle > 10) block.isStatic = true
-    return block
-  }
-  block.idle = 0
-
-  constants.gameContext.clearRect(block.x, block.y, block.w, block.h)
-  block = {
-    ...block,
-    x: block.x + vector.x,
-    y: block.y + vector.y,
-  }
-  renderBlock(block)
-
-  return block;
-}
-
 export default function(id, context, quadTree, options) {
   this.id = id;
   this.class = 'Block'

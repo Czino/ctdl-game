@@ -2,6 +2,7 @@ import hodlonaut from './sprites/hodlonaut'
 import katoshi from './sprites/katoshi'
 import { moveObject, intersects } from './geometryUtils'
 import { write } from './font';
+import constants from './constants'
 
 const sprites = {
   hodlonaut,
@@ -24,8 +25,8 @@ export default function(id, context, quadTree, options) {
   this.y = options.y
   this.vx = options.vx || 0
   this.vy = options.vy || 0
-  this.strength = id === 'hodlonaut' ? 1 : 2
-  this.attackRange = id === 'hodlonaut' ? 2 : 5
+  this.strength = id === 'hodlonaut' ? 1 : 3
+  this.attackRange = id === 'hodlonaut' ? 1 : 5
   this.status = options.status || 'idle'
   this.direction = options.direction || 'right'
   this.frame = options.frame || 0
@@ -76,7 +77,8 @@ export default function(id, context, quadTree, options) {
 
     if (this.id === 'katoshi' && this.frame !== 3) return
     const enemies = this.senseEnemy()
-    enemies.forEach(enemy => {
+    enemies.forEach((enemy, index) => {
+      if (index > 2) return // can only hurt 3 enemies at once
       if (this.getCenter().x > enemy.getCenter().x) {
         this.direction = 'left'
       } else {
@@ -122,36 +124,14 @@ export default function(id, context, quadTree, options) {
   }
 
   this.senseControls = () => {
-    if (this.id === 'hodlonaut') {
-      if (KEYS.indexOf('e') !== -1) {
-        this.jump()
-      } else if (KEYS.indexOf('a') !== -1) {
-        this.moveLeft()
-      } else if (KEYS.indexOf('d') !== -1) {
-        this.moveRight()
-      } else if (KEYS.indexOf('w') !== -1) {
-        this.back()
-      } else if (KEYS.indexOf('q') !== -1) {
-        this.attack()
-      } else {
-        this.idle()
-      }
-    }
-    if (this.id === 'katoshi') {
-      if (KEYS.indexOf(' ') !== -1) {
-        this.jump()
-      } else if (KEYS.indexOf('arrowleft') !== -1) {
-        this.moveLeft()
-      } else if (KEYS.indexOf('arrowright') !== -1) {
-        this.moveRight()
-      } else if (KEYS.indexOf('arrowup') !== -1) {
-        this.back()
-      } else if (KEYS.indexOf('.') !== -1) {
-        this.attack()
-      } else {
-        this.idle()
-      }
-    }
+    let didAction = KEYS.find(key => {
+      if (!this[constants.CONTROLS[this.id][key]]) return false
+
+      this[constants.CONTROLS[this.id][key]]()
+      return true
+    })
+
+    if (!didAction) this.idle()
   }
 
   this.update = () => {

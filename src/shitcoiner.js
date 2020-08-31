@@ -1,5 +1,5 @@
 import shitcoiner from './sprites/shitcoiner'
-import { moveObject, intersects } from './geometryUtils'
+import { moveObject, intersects, getClosest } from './geometryUtils'
 import { write } from './font';
 
 const sprites = {
@@ -14,7 +14,7 @@ export default function(id, context, quadTree, options) {
   this.quadTree = quadTree
   this.context = context
   this.selected = options.selected
-  this.health = options.hasOwnProperty('health') ? options.health : Math.round(Math.random() * 4 + 1)
+  this.health = options.hasOwnProperty('health') ? options.health : Math.round(Math.random() * 7 + 1)
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -92,13 +92,7 @@ export default function(id, context, quadTree, options) {
       .filter(prey => prey.class === 'Character')
       .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
-    return getClosest(this, preys)
-  }
-
-  function getClosest(obj1, objects) {
-    let centerX = obj1.getCenter().x
-    objects = objects.sort((a, b) => Math.abs(a.getCenter().x - centerX) > Math.abs(b.getCenter().x - centerX) ? 1 : -1)
-    return objects.shift()
+    return getClosest(this.getCenter(), preys)
   }
 
   this.update = () => {
@@ -148,12 +142,10 @@ export default function(id, context, quadTree, options) {
     }
     
     this.frame++
-    console.log(this.frame)
     if (this.status === 'hurt' && this.frame === 3) {
       this.status = 'idle'
     }
     if (this.frame >= spriteData.length) {
-
       this.frame = 0
     }
 
