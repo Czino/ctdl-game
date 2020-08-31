@@ -78,15 +78,6 @@ export const newGame = () => {
   )
 
   CTDLGAME.objects.push(ground)
-  // CTDLGAME.objects.push(new Shitcoiner(
-  //   'first',
-  //   constants.gameContext,
-  //   CTDLGAME.quadTree,
-  //   {
-  //     x: CTDLGAME.viewport.x + 100,
-  //     y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
-  //   }
-  // ))
 
   CTDLGAME.hodlonaut.select()
 

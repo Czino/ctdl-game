@@ -33,7 +33,7 @@ export default function(id, context, quadTree, options) {
     this.status = 'idle'
   }
   this.moveLeft = () => {
-    if (/spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
     this.kneels = false
     this.direction = 'left'
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, this.quadTree)
@@ -43,7 +43,7 @@ export default function(id, context, quadTree, options) {
     }
   }
   this.moveRight = () => {
-    if (/spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
     this.kneels = false
     this.direction = 'right'
 
@@ -54,7 +54,7 @@ export default function(id, context, quadTree, options) {
   }
 
   this.hurt = (dmg, direction) => {
-    if (/spawn|hurt|rekt/.test(this.status)) return
+    if (/spawn|hurt|rekt|burning/.test(this.status)) return
     console.log(this.id, 'got hurt', dmg, direction)
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
@@ -70,7 +70,7 @@ export default function(id, context, quadTree, options) {
   }
 
   this.bite = (prey) => {
-    if (/spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
 
     this.kneels = prey.status === 'rekt'
 
@@ -115,7 +115,7 @@ export default function(id, context, quadTree, options) {
     }
 
     // AI logic
-    if (!/rekt|spawn/.test(this.status)) {
+    if (!/rekt|burning|spawn/.test(this.status)) {
       const prey = this.sensePrey()
       if (prey) {
         if (intersects(this.getBoundingBox(), prey.getBoundingBox())) { // biting distance
