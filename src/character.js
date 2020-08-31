@@ -33,11 +33,11 @@ export default function(id, context, quadTree, options) {
   this.walkingSpeed = options.walkingSpeed || 3
 
   this.idle = () => {
-    if (/jump|action|hurt|rekt/.test(this.status)) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status)) return
     this.status = 'idle'
   }
   this.moveLeft = () => {
-    if (/jump|action|hurt|rekt/.test(this.status)|| this.vy !== 0) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status)|| this.vy !== 0) return
     this.direction = 'left'
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, this.quadTree)
 
@@ -46,7 +46,7 @@ export default function(id, context, quadTree, options) {
     }
   }
   this.moveRight = () => {
-    if (/jump|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.direction = 'right'
 
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, this.quadTree)
@@ -55,23 +55,23 @@ export default function(id, context, quadTree, options) {
     }
   }
   this.jump = () => {
-    if (/jump|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'jump'
     this.frame = 0
     this.vx = this.direction === 'right' ? 6 : -6
     this.vy = -6
   }
   this.back = () => {
-    if (/jump|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'back'
   }
   this.action = () => {
-    if (/jump|action|hurt|rekt/.test(this.status)) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status)) return
     this.frame = 0
     this.status = 'action'
   }
   this.attack = () => {
-    if (/jump|action|hurt|rekt/.test(this.status)) return
+    if (/jump|fall|action|hurt|rekt/.test(this.status)) return
     if (this.status !== 'attack') this.frame = 0
     this.status = 'attack'
 
@@ -139,7 +139,6 @@ export default function(id, context, quadTree, options) {
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
-
       moveObject(this, { x: this.vx , y: 0 }, this.quadTree)
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
@@ -150,8 +149,14 @@ export default function(id, context, quadTree, options) {
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
 
-      if (hasCollided) this.vy = 0
+      if (hasCollided) {
+        this.vy = 0
+      } else {
+        if (this.status !== 'jump') this.status = 'fall'
+      }
     }
+
+    if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
       this.status = 'idle'
