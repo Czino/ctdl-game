@@ -8,6 +8,7 @@ import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writ
 import { addClass, removeClass } from './htmlUtils'
 
 import Shitcoiner from './shitcoiner'
+import { intersects } from './geometryUtils'
 
 window.KEYS = []
 window.SELECTED = null
@@ -111,7 +112,7 @@ async function tick() {
 
     if (CTDLGAME.isNight) {
       if (Math.random() < constants.SPAWNRATES.shitcoiner) {
-        CTDLGAME.objects.push(new Shitcoiner(
+        let shitcoiner = new Shitcoiner(
           'shitcoiner-' + Math.random(),
           constants.gameContext,
           CTDLGAME.quadTree,
@@ -120,7 +121,12 @@ async function tick() {
             y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30,
             status: 'spawn'
           }
-        ))
+        )
+
+        let hasCollided = CTDLGAME.quadTree.query(shitcoiner.getBoundingBox())
+          .filter(point => point.isSolid && point.id !== shitcoiner.id )
+          .some(point => intersects(shitcoiner.getBoundingBox(), point.getBoundingBox()))
+        if (!hasCollided) CTDLGAME.objects.push(shitcoiner)
       }
     } else {
       CTDLGAME.objects = CTDLGAME.objects.filter(obj => {

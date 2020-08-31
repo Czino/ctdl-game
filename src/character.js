@@ -152,7 +152,7 @@ export default function(id, context, quadTree, options) {
       if (hasCollided) {
         this.vy = 0
       } else {
-        if (this.status !== 'jump') this.status = 'fall'
+        if (this.status !== 'jump' && Math.abs(this.vy) > 4) this.status = 'fall'
       }
     }
 

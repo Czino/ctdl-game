@@ -28,7 +28,7 @@ export default function(id, context, quadTree, options) {
   this.kneels = false
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 2
-  this.senseRadius = 30
+  this.senseRadius = 50
 
   this.idle = () => {
     this.status = 'idle'
