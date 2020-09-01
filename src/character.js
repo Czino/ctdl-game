@@ -15,6 +15,7 @@ export default function(id, context, quadTree, options) {
   this.spriteData = sprites[id]
   this.quadTree = quadTree
   this.context = context
+  this.maxHealth = options.maxHealth ?? 21
   this.health = options.health ?? 21
   this.dmgs = []
   this.heals = []

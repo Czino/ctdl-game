@@ -4,7 +4,7 @@ import Sun from './sun'
 import Moon from './moon'
 import initEvents, { updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport, showInventory, writeMenu, saveGame, checkBlocks, getTimeOfDay, showSaveIcon, clearCanvas, loadGame, newGame } from './gameUtils'
+import { assets, loadAsset, showProgressBar, updateViewport, showMenu, writeMenu, saveGame, checkBlocks, getTimeOfDay, showSaveIcon, clearCanvas, loadGame, newGame } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
 
 import Shitcoiner from './shitcoiner'
@@ -156,7 +156,7 @@ async function tick() {
     updateViewport(CTDLGAME.viewport)
     updateOverlay()
 
-    showInventory(CTDLGAME.inventory)
+    showMenu(CTDLGAME.inventory)
 
     writeMenu()
 
