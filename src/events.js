@@ -4,6 +4,8 @@ import constants from './constants'
 
 let ghostBlock
 
+window.KEYS = []
+window.BUTTONS = []
 
 export const updateOverlay = () => {
   constants.overlayContext.clearRect(window.CTDLGAME.viewport.x, window.CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -66,12 +68,44 @@ export default () => {
     })
   })
 
-  window.addEventListener('mousedown', e => {
+  window.addEventListener('mousedown', click)
+  window.addEventListener('touchstart', click)
+  window.addEventListener('mouseup', clickEnd)
+  window.addEventListener('touchend', clickEnd)
+
+  function click (e) {
     let canvas = e.target
 
+    if (e.layerX) {
+      window.CTDLGAME.cursor = {
+        x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
+        y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+      }
+    } else if (e.touches?.length > 0) {
+      e.stopPropagation()
+      window.BUTTONS = []
+      Array.from(e.touches).forEach(touch => {
+        window.CTDLGAME.cursor = {
+          x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
+          y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
+        }
+
+        let buttonPressed = constants.BUTTONS.find(button =>
+          window.CTDLGAME.cursor.x > button.x &&
+          window.CTDLGAME.cursor.x < button.x + button.w &&
+          window.CTDLGAME.cursor.y > button.y &&
+          window.CTDLGAME.cursor.y < button.y + button.h
+        )
+
+        if (buttonPressed) {
+          window.BUTTONS.unshift(buttonPressed)
+        }
+      })
+    }
     if (!/ctdl-game/.test(canvas.id)) {
       return
     }
+
     let click = {
       x: window.CTDLGAME.cursor.x + window.CTDLGAME.viewport.x,
       y: window.CTDLGAME.cursor.y + window.CTDLGAME.viewport.y,
@@ -94,13 +128,62 @@ export default () => {
     if (!object) return
     if (window.SELECTED) window.SELECTED.unselect()
     object.select()
-  })
+  }
 
-  window.addEventListener('mousemove', e => {
+  function clickEnd (e) {
     let canvas = e.target
+    window.BUTTONS = []
+    if (e.layerX) {
+      window.CTDLGAME.cursor = {
+        x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
+        y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+      }
+    } else if (e.touches?.length > 0) {
+      e.stopPropagation()
+      Array.from(e.touches).forEach(touch => {
+        window.CTDLGAME.cursor = {
+          x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
+          y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
+        }
+        let buttonPressed = constants.BUTTONS.find(button =>
+          window.CTDLGAME.cursor.x > button.x &&
+          window.CTDLGAME.cursor.x < button.x + button.w &&
+          window.CTDLGAME.cursor.y > button.y &&
+          window.CTDLGAME.cursor.y < button.y + button.h
+        )
+
+        if (buttonPressed) {
+          window.BUTTONS.unshift(buttonPressed)
+        }
+      })
+    }
+    if (!/ctdl-game/.test(canvas.id)) {
+      return
+    }
+
+  }
+
+  window.addEventListener('mousemove', mouseMove)
+  window.addEventListener('touchmove', mouseMove)
+
+  function mouseMove (e) {
+    let canvas = e.target
+
     window.CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+    }
+
+    if (e.layerX) {
+      window.CTDLGAME.cursor = {
+        x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
+        y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+      }
+    } else if (e.touches?.length > 0) {
+      window.CTDLGAME.cursor = {
+        x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
+        y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
+      }
     }
 
     if (!/ctdl-game/.test(canvas.id)) {
@@ -108,5 +191,5 @@ export default () => {
     }
 
     updateOverlay()
-  })
+  }
 }

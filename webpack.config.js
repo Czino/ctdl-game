@@ -2,6 +2,10 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  devServer: {
+    https: true,
+    host: '0.0.0.0'
+  },
   module: {
     rules: [
       {

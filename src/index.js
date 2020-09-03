@@ -10,7 +10,6 @@ import { addClass, removeClass } from './htmlUtils'
 import Shitcoiner from './shitcoiner'
 import { intersects } from './geometryUtils'
 
-window.KEYS = []
 window.SELECTED = null
 
 window.CTDLGAME = {

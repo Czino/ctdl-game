@@ -56,7 +56,7 @@ export default function(id, context, quadTree, options) {
 
   this.hurt = (dmg, direction) => {
     if (/spawn|hurt|rekt|burning/.test(this.status)) return
-    console.log(this.id, 'got hurt', dmg, direction)
+
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'

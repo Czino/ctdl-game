@@ -125,12 +125,22 @@ export default function(id, context, quadTree, options) {
   }
 
   this.senseControls = () => {
-    let didAction = KEYS.find(key => {
+    let didAction = window.KEYS.find(key => {
       if (!this[constants.CONTROLS[this.id][key]]) return false
 
       this[constants.CONTROLS[this.id][key]]()
       return true
     })
+
+    if (this.selected || (window.SELECTED?.class !== 'Character' && this.id === 'hodlonaut')) {
+      didAction = didAction || window.BUTTONS.find(button => {
+        if (!this[constants.CONTROLS.buttons[button.action]]) return false
+  
+        this[constants.CONTROLS.buttons[button.action]]()
+        return true
+      })
+    }
+
 
     if (!didAction) this.idle()
   }

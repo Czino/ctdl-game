@@ -51,8 +51,22 @@ const CONTROLS = {
     k: null,
     l: 'moveRight',
     o: 'jump',
+  },
+  buttons: {
+    attack: 'attack',
+    back: 'back',
+    moveLeft: 'moveLeft',
+    moveRight: 'moveRight',
+    jump: 'jump'
   }
 }
+const BUTTONS = [
+  { action: 'jump', x: 21 * 4, y: HEIGHT - 20, w: 18, h: 18},
+  { action: 'attack', x: 21 * 5, y: HEIGHT - 20, w: 18, h: 18},
+  { action: 'moveLeft', x: 0, y: HEIGHT - 20, w: 18, h: 18},
+  { action: 'moveRight', x: 21, y: HEIGHT - 20, w: 18, h: 18},
+  { action: 'back', x: 21 * 2, y: HEIGHT - 20, w: 18, h: 18},
+]
 export default {
   WIDTH,
   HEIGHT,
@@ -73,6 +87,7 @@ export default {
   overlayContext,
   menuContext,
   CONTROLS,
+  BUTTONS,
   SPAWNRATES: {
     shitcoiner: .01
   }
