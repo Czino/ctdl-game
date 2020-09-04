@@ -2,9 +2,23 @@ import * as db from './db'
 import { QuadTree, Boundary } from './quadTree'
 import Sun from './sun'
 import Moon from './moon'
-import initEvents, { updateOverlay } from './events'
+import { initEvents, updateOverlay } from './events'
 import constants from './constants'
-import { assets, loadAsset, showProgressBar, updateViewport, showMenu, writeMenu, saveGame, checkBlocks, getTimeOfDay, showSaveIcon, clearCanvas, loadGame, newGame } from './gameUtils'
+import {
+  assets,
+  loadAsset,
+  showStartScreen,
+  showProgressBar,
+  updateViewport,
+  showMenu,
+  writeMenu,
+  saveGame,
+  checkBlocks,
+  getTimeOfDay,
+  showSaveIcon,
+  clearCanvas,
+  saveStateExists
+} from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
 
 import Shitcoiner from './shitcoiner'
@@ -16,6 +30,7 @@ window.CTDLGAME = {
   cursor: {x: 0, y: 0},
   frame: 0,
   assets,
+  startScreen: true,
   viewport: constants.START,
   objects: [],
   blockHeight: -1,
@@ -44,15 +59,6 @@ const moon = new Moon(constants.gameContext, {
 init()
 
 async function init() {
-  await db.init(constants.debug)
-
-  if (!(await loadGame())) {
-    newGame()
-  }
-
-  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
-  CTDLGAME.objects.push(CTDLGAME.katoshi)
-
   let i = 0
   for (let key in CTDLGAME.assets) {
     CTDLGAME.assets[key] = await loadAsset(CTDLGAME.assets[key])
@@ -61,10 +67,18 @@ async function init() {
     showProgressBar(i / (Object.keys(CTDLGAME.assets).length - 1))
     i++
   }
-  initEvents()
 
-  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
-  CTDLGAME.objects.forEach(object => object.update())
+  await db.init(constants.debug)
+
+  if (!(await saveStateExists())) {
+    CTDLGAME.newGame = true
+  } else {
+    constants.BUTTONS
+      .filter(button => /loadGame/.test(button.action))
+      .forEach(button => button.active = true)
+  }
+
+  initEvents(CTDLGAME.startScreen)
 
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
   if (CTDLGAME.blockHeight < 0) checkBlocks(0)
@@ -85,6 +99,14 @@ async function init() {
 
 }
 async function tick() {
+  if (CTDLGAME.startScreen && CTDLGAME.frame % constants.FRAMERATE === 0) {
+    if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+    showStartScreen()
+    CTDLGAME.frame++
+    window.requestAnimationFrame(tick)
+    return
+  }
+
   if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
     if (time >= 5 && time < 5.1) {
       CTDLGAME.isNight = false

@@ -1,6 +1,8 @@
 import { contains, touches, intersects, sharpLine } from './geometryUtils'
 import Block from './block'
 import constants from './constants'
+import { newGame, loadGame } from './gameUtils'
+import { addClass, removeClass } from './htmlUtils'
 
 let ghostBlock
 
@@ -57,7 +59,21 @@ export const updateOverlay = () => {
   }
 }
 
-export default () => {
+export const initEvents = startScreen => {
+  if (startScreen) {
+    window.addEventListener('mousemove', mouseMoveHandler)
+    window.addEventListener('mousedown', startScreenHandler)
+    window.addEventListener('touchstart', startScreenHandler)
+    return
+  }
+
+  window.addEventListener('mousedown', click)
+  window.addEventListener('touchstart', click)
+  window.addEventListener('mouseup', clickEnd)
+  window.addEventListener('touchend', clickEnd)
+  window.addEventListener('mousemove', mouseMove)
+  window.addEventListener('touchmove', mouseMove)
+
   window.addEventListener('keydown', e => {
     KEYS.push(e.key.toLowerCase());
   })
@@ -68,10 +84,90 @@ export default () => {
     })
   })
 
-  window.addEventListener('mousedown', click)
-  window.addEventListener('touchstart', click)
-  window.addEventListener('mouseup', clickEnd)
-  window.addEventListener('touchend', clickEnd)
+  function mouseMoveHandler (e) {
+    let canvas = e.target
+
+    if (!/ctdl-game/.test(canvas.id)) {
+      return
+    }
+
+    if (e.layerX) {
+      window.CTDLGAME.cursor = {
+        x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
+        y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+      }
+    }
+    let buttonHover = constants.BUTTONS.find(button =>
+      button.active &&
+      window.CTDLGAME.cursor.x > button.x &&
+      window.CTDLGAME.cursor.x < button.x + button.w &&
+      window.CTDLGAME.cursor.y > button.y &&
+      window.CTDLGAME.cursor.y < button.y + button.h
+    )
+
+    if (buttonHover) {
+      addClass(document.body, 'cursor-pointer')
+    } else {
+      removeClass(document.body, 'cursor-pointer')
+    }
+  }
+
+  function startScreenHandler (e) {
+    let canvas = e.target
+    if (!/ctdl-game/.test(canvas.id)) {
+      return
+    }
+
+    if (e.layerX) {
+      window.CTDLGAME.cursor = {
+        x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
+        y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+      }
+
+    } else if (e.touches?.length > 0) {
+      e.stopPropagation()
+      window.CTDLGAME.cursor = {
+        x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
+        y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
+      }
+      CTDLGAME.touchScreen = true
+      constants.BUTTONS
+        .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
+        .forEach(button => button.active = true)
+    }
+    let buttonPressed = constants.BUTTONS.find(button =>
+      button.active &&
+      window.CTDLGAME.cursor.x > button.x &&
+      window.CTDLGAME.cursor.x < button.x + button.w &&
+      window.CTDLGAME.cursor.y > button.y &&
+      window.CTDLGAME.cursor.y < button.y + button.h
+    )
+
+    if (buttonPressed?.action === 'newGame') {
+      newGame()
+      window.CTDLGAME.startScreen = false
+
+      constants.BUTTONS
+        .filter(button => /newGame|loadGame/.test(button.action))
+        .forEach(button => button.active = false)
+
+      window.removeEventListener('mouseup', startScreenHandler)
+      window.removeEventListener('touchend', startScreenHandler)
+      initEvents(false)
+    } else if (buttonPressed?.action === 'loadGame') {
+      loadGame()
+      window.CTDLGAME.startScreen = false
+
+
+      constants.BUTTONS
+        .filter(button => /newGame|loadGame/.test(button.action))
+        .forEach(button => button.active = false)
+
+      window.removeEventListener('mouseup', startScreenHandler)
+      window.removeEventListener('touchend', startScreenHandler)
+      initEvents(false)
+    }
+  }
 
   function click (e) {
     let canvas = e.target
@@ -146,6 +242,7 @@ export default () => {
           y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
         }
         let buttonPressed = constants.BUTTONS.find(button =>
+          button.active &&
           window.CTDLGAME.cursor.x > button.x &&
           window.CTDLGAME.cursor.x < button.x + button.w &&
           window.CTDLGAME.cursor.y > button.y &&
@@ -157,14 +254,7 @@ export default () => {
         }
       })
     }
-    if (!/ctdl-game/.test(canvas.id)) {
-      return
-    }
-
   }
-
-  window.addEventListener('mousemove', mouseMove)
-  window.addEventListener('touchmove', mouseMove)
 
   function mouseMove (e) {
     let canvas = e.target

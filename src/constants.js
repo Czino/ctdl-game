@@ -61,11 +61,27 @@ const CONTROLS = {
   }
 }
 const BUTTONS = [
-  { action: 'jump', x: 21 * 4, y: HEIGHT - 20, w: 18, h: 18},
-  { action: 'attack', x: 21 * 5, y: HEIGHT - 20, w: 18, h: 18},
-  { action: 'moveLeft', x: 0, y: HEIGHT - 20, w: 18, h: 18},
-  { action: 'moveRight', x: 21, y: HEIGHT - 20, w: 18, h: 18},
-  { action: 'back', x: 21 * 2, y: HEIGHT - 20, w: 18, h: 18},
+  {
+    action: 'loadGame',
+    x: WIDTH / 2 - 41,
+    y: HEIGHT / 2 + 20,
+    w: 80,
+    h: 10,
+    active: false
+  },
+  {
+    action: 'newGame',
+    x: WIDTH / 2 - 35,
+    y: HEIGHT / 2,
+    w: 60,
+    h: 10,
+    active: true
+  },
+  { action: 'jump', x: 21 * 4, y: HEIGHT - 20, w: 18, h: 18, active: false},
+  { action: 'attack', x: 21 * 5, y: HEIGHT - 20, w: 18, h: 18, active: false},
+  { action: 'moveLeft', x: 0, y: HEIGHT - 20, w: 18, h: 18, active: false},
+  { action: 'moveRight', x: 21, y: HEIGHT - 20, w: 18, h: 18, active: false},
+  { action: 'back', x: 21 * 2, y: HEIGHT - 20, w: 18, h: 18, active: false}
 ]
 export default {
   WIDTH,

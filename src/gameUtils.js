@@ -4,6 +4,7 @@ import Character from './character'
 import Block from './block'
 import Shitcoiner from './shitcoiner'
 
+import logo from './sprites/logo.png'
 import font from './sprites/font.png'
 import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
@@ -20,6 +21,7 @@ import { drawIcon } from './icons'
 
 export const assets = {
   font,
+  logo,
   icons,
   hodlonaut,
   katoshi,
@@ -81,17 +83,33 @@ export const newGame = () => {
 
   CTDLGAME.hodlonaut.select()
 
+
+  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
+  CTDLGAME.objects.push(CTDLGAME.katoshi)
+
+  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
+  CTDLGAME.objects.forEach(object => object.update())
   // addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
+}
+
+
+/**
+ * @description Method to check if a saved game exists
+ * @returns {Boolean} true if saved game exists
+ */
+export const saveStateExists = async () => {
+  let time = await db.get('time')
+
+  if (!time) return false // check if time could be loaded before proceeding
+
+  return true
 }
 
 /**
  * @description Method to load game
- * @returns {Boolean} true if game could be loaded
  */
 export const loadGame = async () => {
   let time = await db.get('time')
-
-  if (!time) return false // check if time could be loaded before proceeding
 
   let viewport = await db.get('viewport')
   let hodlonaut = await db.get('hodlonaut')
@@ -143,7 +161,61 @@ export const loadGame = async () => {
   if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
-  return true
+  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
+  CTDLGAME.objects.push(CTDLGAME.katoshi)
+
+  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
+  CTDLGAME.objects.forEach(object => object.update())
+}
+
+
+/**
+ * @description Method to display progress bar
+ * @param {Number} progress current progress between 0 - 1
+ */
+export const showStartScreen = () => {
+  constants.overlayContext.fillStyle = '#212121'
+
+  constants.overlayContext.fillRect(
+    window.CTDLGAME.viewport.x,
+    window.CTDLGAME.viewport.y,
+    constants.WIDTH,
+    constants.HEIGHT
+  )
+
+  constants.overlayContext.drawImage(
+    window.CTDLGAME.assets.logo,
+    0, 0, 41, 21,
+    window.CTDLGAME.viewport.x + constants.WIDTH / 2 - 20,
+    window.CTDLGAME.viewport.y + constants.HEIGHT / 3,
+    41, 21
+  )
+
+  let text = window.CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ new game' : 'new game'
+  write(
+    constants.overlayContext,
+    text,
+    {
+      x: window.CTDLGAME.viewport.x + constants.WIDTH / 2 - 35,
+      y: window.CTDLGAME.viewport.y + constants.HEIGHT / 2,
+      w: 60
+    },
+    'right'
+  )
+
+  if (!window.CTDLGAME.newGame) {
+    text = window.CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ resume game' : 'resume game'
+    write(
+      constants.overlayContext,
+      text,
+      {
+        x: window.CTDLGAME.viewport.x + constants.WIDTH / 2 - 41,
+        y: window.CTDLGAME.viewport.y + constants.HEIGHT / 2 + 20,
+        w: 80
+      },
+      'right'
+    )
+  }
 }
 
 /**
@@ -324,47 +396,51 @@ export const showControls = () => {
 
   constants.menuContext.beginPath()
 
-  constants.BUTTONS.map(button => {
-    constants.menuContext.rect(
-      pos.x - .5 + button.x,
-      button.y - .5 + window.CTDLGAME.viewport.y,
-      button.w,
-      button.h
-    )
-    if (window.BUTTONS.find(b => b.action === button.action)) {
-      constants.menuContext.globalAlpha = .2
-      constants.menuContext.fillRect(
-        pos.x - .5 + button.x,
-        button.y - .5 + window.CTDLGAME.viewport.y,
-        button.w,
-        button.h
-      )
-      constants.menuContext.globalAlpha = 1
-    }
-  })
-  constants.menuContext.stroke()
-
-  let selectedCharacter = window.SELECTED?.class === 'Character' ? window.SELECTED.id : 'hodlonaut'
-  drawIcon(constants.menuContext, `left-${selectedCharacter}`, {
-    x: pos.x + 5,
-    y: pos.y + 1
-  })
-  drawIcon(constants.menuContext, `right-${selectedCharacter}`, {
-    x: pos.x + 5 + 21,
-    y: pos.y + 1
-  })
-  drawIcon(constants.menuContext, `back-${selectedCharacter}`, {
-    x: pos.x + 5 + 21 * 2,
-    y: pos.y + 1
-  })
-  drawIcon(constants.menuContext, `jump-${selectedCharacter}`, {
-    x: pos.x + 5 + 21 * 4,
-    y: pos.y + 1
-  })
-  drawIcon(constants.menuContext, `attack-${selectedCharacter}`, {
-    x: pos.x + 5 + 21 * 5,
-    y: pos.y
-  })
+  if (CTDLGAME.touchScreen) {
+    constants.BUTTONS
+      .filter(button => button.active)
+      .map(button => {
+        constants.menuContext.rect(
+          pos.x - .5 + button.x,
+          button.y - .5 + window.CTDLGAME.viewport.y,
+          button.w,
+          button.h
+        )
+        if (window.BUTTONS.find(b => b.action === button.action)) {
+          constants.menuContext.globalAlpha = .2
+          constants.menuContext.fillRect(
+            pos.x - .5 + button.x,
+            button.y - .5 + window.CTDLGAME.viewport.y,
+            button.w,
+            button.h
+          )
+          constants.menuContext.globalAlpha = 1
+        }
+      })
+    constants.menuContext.stroke()
+  
+    let selectedCharacter = window.SELECTED?.class === 'Character' ? window.SELECTED.id : 'hodlonaut'
+    drawIcon(constants.menuContext, `left-${selectedCharacter}`, {
+      x: pos.x + 5,
+      y: pos.y + 1
+    })
+    drawIcon(constants.menuContext, `right-${selectedCharacter}`, {
+      x: pos.x + 5 + 21,
+      y: pos.y + 1
+    })
+    drawIcon(constants.menuContext, `back-${selectedCharacter}`, {
+      x: pos.x + 5 + 21 * 2,
+      y: pos.y + 1
+    })
+    drawIcon(constants.menuContext, `jump-${selectedCharacter}`, {
+      x: pos.x + 5 + 21 * 4,
+      y: pos.y + 1
+    })
+    drawIcon(constants.menuContext, `attack-${selectedCharacter}`, {
+      x: pos.x + 5 + 21 * 5,
+      y: pos.y
+    })
+  }
 }
 export const showMenu = inventory => {
   constants.menuContext.fillStyle = '#212121'
