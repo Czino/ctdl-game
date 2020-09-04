@@ -31,6 +31,7 @@ window.CTDLGAME = {
   frame: 0,
   assets,
   startScreen: true,
+  touchScreen: true,
   viewport: constants.START,
   objects: [],
   blockHeight: -1,
@@ -83,26 +84,18 @@ async function init() {
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
   if (CTDLGAME.blockHeight < 0) checkBlocks(0)
 
-  time = getTimeOfDay()
-  if (time > 18.5) {
-    CTDLGAME.isNight = true
-    removeClass(constants.gameCanvas, 'ctdl-day')
-  } else if (time > 5.5) {
-    CTDLGAME.isNight = false
-    addClass(constants.gameCanvas, 'ctdl-day')
-  }
-
-  setTimeout(() => {
-    addClass(constants.gameCanvas, 'transition-background-color')
-    tick()
-  })
-
+  tick()
 }
-async function tick() {
-  if (CTDLGAME.startScreen && CTDLGAME.frame % constants.FRAMERATE === 0) {
+
+function tick() {
+  if (CTDLGAME.startScreen) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     showStartScreen()
     CTDLGAME.frame++
+    window.requestAnimationFrame(tick)
+    return
+  }
+  if (!CTDLGAME.hodlonaut) {
     window.requestAnimationFrame(tick)
     return
   }
@@ -124,11 +117,27 @@ async function tick() {
 
     clearCanvas()
 
-    CTDLGAME.viewport = {
-      x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
-      y: Math.min(
-        constants.WORLD.h - constants.HEIGHT,
-        Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
+    if (CTDLGAME.multiplayer) {
+      CTDLGAME.viewport = {
+        x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
+        y: Math.min(
+          constants.WORLD.h - constants.HEIGHT,
+          Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
+      }
+    } else if (window.SELECTED?.class === 'Character') {
+      CTDLGAME.viewport = {
+        x: Math.round(window.SELECTED.x + window.SELECTED.w / 2 - constants.WIDTH / 2),
+        y: Math.min(
+          constants.WORLD.h - constants.HEIGHT,
+          Math.round(window.SELECTED.y + window.SELECTED.h / 2))
+      }
+    } else {
+      CTDLGAME.viewport = {
+        x: Math.round(CTDLGAME.hodlonaut.x + CTDLGAME.hodlonaut.w / 2 - constants.WIDTH / 2),
+        y: Math.min(
+          constants.WORLD.h - constants.HEIGHT,
+          Math.round(CTDLGAME.hodlonaut.y + CTDLGAME.hodlonaut.h / 2))
+      }
     }
 
     if (CTDLGAME.isNight) {

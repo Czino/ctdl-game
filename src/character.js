@@ -1,8 +1,10 @@
 import hodlonaut from './sprites/hodlonaut'
 import katoshi from './sprites/katoshi'
-import { moveObject, intersects } from './geometryUtils'
+import { moveObject, intersects, getClosest } from './geometryUtils'
+import { capitalize } from './stringUtils'
 import { write } from './font';
 import constants from './constants'
+import { addTextToQueue } from './gameUtils';
 
 const sprites = {
   hodlonaut,
@@ -28,6 +30,7 @@ export default function(id, context, quadTree, options) {
   this.vy = options.vy || 0
   this.strength = id === 'hodlonaut' ? 1 : 3
   this.attackRange = id === 'hodlonaut' ? 1 : 5
+  this.senseRadius = 50
   this.status = options.status || 'idle'
   this.direction = options.direction || 'right'
   this.frame = options.frame || 0
@@ -126,10 +129,11 @@ export default function(id, context, quadTree, options) {
   }
 
   this.senseControls = () => {
+    let id = window.CTDLGAME.multiplayer ? this.id : 'hodlonaut'
     let didAction = window.KEYS.find(key => {
-      if (!this[constants.CONTROLS[this.id][key]]) return false
+      if (!this[constants.CONTROLS[id][key]]) return false
 
-      this[constants.CONTROLS[this.id][key]]()
+      this[constants.CONTROLS[id][key]]()
       return true
     })
 
@@ -144,6 +148,48 @@ export default function(id, context, quadTree, options) {
 
 
     if (!didAction) this.idle()
+  }
+
+  this.autoPilot = () => {
+    let action = 'idle'
+
+    let enemies = this.quadTree.query({
+      x: this.x - this.senseRadius,
+      y: this.y - this.senseRadius,
+      w: this.w + this.senseRadius,
+      h: this.h + this.senseRadius
+    })
+      .filter(prey => prey.class === 'Shitcoiner' && prey.status !== 'rekt')
+      .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
+
+    let enemy = getClosest(this.getCenter(), enemies)
+    if (enemy) {
+      let attackRadius = this.getBoundingBox()
+      attackRadius = {
+        x: attackRadius.x - this.attackRange,
+        y: attackRadius.y - this.attackRange,
+        w: attackRadius.w + this.attackRange * 2,
+        h: attackRadius.y + this.attackRange * 2,
+      }
+      if (intersects(attackRadius, enemy.getBoundingBox())) {
+        if (this.getCenter().x > enemy.getCenter().x) {
+          this.direction = 'left'
+        } else {
+          this.direction = 'right'
+        }
+        action = 'attack'
+      } else if (this.getBoundingBox().x > enemy.getBoundingBox().x + enemy.getBoundingBox().w - 1) {
+        action = 'moveLeft'
+      } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
+        action = 'moveRight'
+      }
+    }
+
+    if (action === 'idle' && Math.random() < .01) {
+      action = Math.random() < .5 ? 'moveLeft' : 'moveRight'
+    }
+
+    this[action]()
   }
 
   this.update = () => {
@@ -174,7 +220,11 @@ export default function(id, context, quadTree, options) {
       this.status = 'idle'
     }
 
-    this.senseControls()
+    if (window.CTDLGAME.multiplayer || this.selected) {
+      this.senseControls()
+    } else {
+      this.autoPilot()
+    }
 
     if (this.status !== 'idle' || Math.random() < .05) {
       this.frame++

@@ -18,6 +18,7 @@ import inventoryBlock from './sprites/inventory-block.png'
 
 import { write } from './font'
 import { drawIcon } from './icons'
+import { removeClass, addClass } from './htmlUtils'
 
 export const assets = {
   font,
@@ -49,7 +50,7 @@ export const loadAsset = asset => new Promise(resolve => {
  * @description Method to prepare new game
  */
 export const newGame = () => {
-  const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
+  const ground = new Block('ground', constants.gameContext, window.CTDLGAME.quadTree, {
     x: 0,
     y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
     w: constants.WORLD.w,
@@ -58,38 +59,41 @@ export const newGame = () => {
     isSolid: true
   })
 
-  CTDLGAME.hodlonaut = new Character(
+  window.CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     constants.charContext,
-    CTDLGAME.quadTree,
+    window.CTDLGAME.quadTree,
     {
-      x: CTDLGAME.viewport.x + 1,
+      x: window.CTDLGAME.viewport.x + 1,
       y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
     }
   )
-  CTDLGAME.katoshi = new Character(
+  window.CTDLGAME.katoshi = new Character(
     'katoshi',
     constants.charContext,
-    CTDLGAME.quadTree,
+    window.CTDLGAME.quadTree,
     {
       active: false,
-      x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+      x: window.CTDLGAME.viewport.x + constants.WIDTH / 2,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
       direction: 'left'
     }
   )
 
-  CTDLGAME.objects.push(ground)
+  window.CTDLGAME.objects.push(ground)
 
-  CTDLGAME.hodlonaut.select()
+  window.CTDLGAME.hodlonaut.select()
 
+  window.CTDLGAME.objects.push(window.CTDLGAME.hodlonaut)
+  window.CTDLGAME.objects.push(window.CTDLGAME.katoshi)
 
-  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
-  CTDLGAME.objects.push(CTDLGAME.katoshi)
+  window.CTDLGAME.objects.forEach(object => window.CTDLGAME.quadTree.insert(object))
+  window.CTDLGAME.objects.forEach(object => object.update())
 
-  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
-  CTDLGAME.objects.forEach(object => object.update())
   // addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
+
+  setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
+
 }
 
 
@@ -118,54 +122,64 @@ export const loadGame = async () => {
   let blockHeight = await db.get('blockHeight')
   let inventory = await db.get('inventory')
 
-  if (time) CTDLGAME.frame = time
+  if (time) window.CTDLGAME.frame = time
   if (viewport) {
-    CTDLGAME.viewport = viewport
-    updateViewport(CTDLGAME.viewport)
+    window.CTDLGAME.viewport = viewport
+    updateViewport(window.CTDLGAME.viewport)
   }
   if (objects) {
-    CTDLGAME.objects = objects.map(object => {
+    window.CTDLGAME.objects = objects.map(object => {
       if (object.class === 'Block') {
         return new Block(
           object.id,
           constants.gameContext,
-          CTDLGAME.quadTree,
+          window.CTDLGAME.quadTree,
           object
         )
       } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
           object.id,
           constants.gameContext,
-          CTDLGAME.quadTree,
+          window.CTDLGAME.quadTree,
           object
         )
       }
     })
   }
-  if (blockHeight) CTDLGAME.blockHeight = blockHeight
-  if (inventory) CTDLGAME.inventory = inventory
+  if (blockHeight) window.CTDLGAME.blockHeight = blockHeight
+  if (inventory) window.CTDLGAME.inventory = inventory
 
-  CTDLGAME.hodlonaut = new Character(
+  window.CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     constants.charContext,
-    CTDLGAME.quadTree,
+    window.CTDLGAME.quadTree,
     hodlonaut
   )
-  CTDLGAME.katoshi = new Character(
+  window.CTDLGAME.katoshi = new Character(
     'katoshi',
     constants.charContext,
-    CTDLGAME.quadTree,
+    window.CTDLGAME.quadTree,
     katoshi
   )
 
-  if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
-  if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
+  if (window.CTDLGAME.hodlonaut.selected) window.CTDLGAME.hodlonaut.select()
+  if (window.CTDLGAME.katoshi.selected) window.CTDLGAME.katoshi.select()
 
-  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
-  CTDLGAME.objects.push(CTDLGAME.katoshi)
+  window.CTDLGAME.objects.push(window.CTDLGAME.hodlonaut)
+  window.CTDLGAME.objects.push(window.CTDLGAME.katoshi)
 
-  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
-  CTDLGAME.objects.forEach(object => object.update())
+  window.CTDLGAME.objects.forEach(object => window.CTDLGAME.quadTree.insert(object))
+  window.CTDLGAME.objects.forEach(object => object.update())
+
+  let timeOfDay = getTimeOfDay()
+  if (timeOfDay > 18.5) {
+    window.CTDLGAME.isNight = true
+    removeClass(constants.gameCanvas, 'ctdl-day')
+  } else if (timeOfDay > 5.5) {
+    window.CTDLGAME.isNight = false
+    addClass(constants.gameCanvas, 'ctdl-day')
+  }
+  setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 }
 
 
@@ -214,6 +228,54 @@ export const showStartScreen = () => {
         w: 80
       },
       'right'
+    )
+  }
+
+  if (!CTDLGAME.touchScreen) {
+    write(
+      constants.overlayContext,
+      [
+        '',
+        'move:',
+        'jump:',
+        'attack:'
+      ].join('\n'),
+      {
+        x: window.CTDLGAME.viewport.x + constants.WIDTH / 2 - 41,
+        y: window.CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
+        w: 60
+      },
+      'left'
+    )
+    write(
+      constants.overlayContext,
+      [
+        'P1:',
+        'WASD',
+        'Q',
+        'E'
+      ].join('\n'),
+      {
+        x: window.CTDLGAME.viewport.x + constants.WIDTH / 2,
+        y: window.CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
+        w: 60
+      },
+      'left'
+    )
+    write(
+      constants.overlayContext,
+      [
+        'P2:',
+        'IJKL',
+        'O',
+        'U'
+      ].join('\n'),
+      {
+        x: window.CTDLGAME.viewport.x + constants.WIDTH / 2 + 30,
+        y: window.CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
+        w: 60
+      },
+      'left'
     )
   }
 }
@@ -456,7 +518,6 @@ export const showMenu = inventory => {
   showControls()
 }
 
-// TODO render mobile controls
 const textQueue = []
 const timeToShowFinishedText = 256
 

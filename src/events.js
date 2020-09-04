@@ -1,7 +1,7 @@
 import { contains, touches, intersects, sharpLine } from './geometryUtils'
 import Block from './block'
 import constants from './constants'
-import { newGame, loadGame } from './gameUtils'
+import { newGame, loadGame, addTextToQueue } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
 
 let ghostBlock
@@ -75,6 +75,12 @@ export const initEvents = startScreen => {
   window.addEventListener('touchmove', mouseMove)
 
   window.addEventListener('keydown', e => {
+    if (!window.CTDLGAME.multiplayer) {
+      if (Object.keys(constants.CONTROLS.katoshi).indexOf(e.key.toLowerCase()) !== -1) {
+        window.CTDLGAME.multiplayer = true
+        addTextToQueue('Multiplayer activated')
+      }
+    }
     KEYS.push(e.key.toLowerCase());
   })
 
@@ -86,6 +92,8 @@ export const initEvents = startScreen => {
 
   function mouseMoveHandler (e) {
     let canvas = e.target
+
+    window.CTDLGAME.touchScreen = false
 
     if (!/ctdl-game/.test(canvas.id)) {
       return
@@ -112,7 +120,7 @@ export const initEvents = startScreen => {
     }
   }
 
-  function startScreenHandler (e) {
+  async function startScreenHandler (e) {
     let canvas = e.target
     if (!/ctdl-game/.test(canvas.id)) {
       return
@@ -130,7 +138,6 @@ export const initEvents = startScreen => {
         x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
         y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
       }
-      CTDLGAME.touchScreen = true
       constants.BUTTONS
         .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
         .forEach(button => button.active = true)
@@ -155,9 +162,8 @@ export const initEvents = startScreen => {
       window.removeEventListener('touchend', startScreenHandler)
       initEvents(false)
     } else if (buttonPressed?.action === 'loadGame') {
-      loadGame()
       window.CTDLGAME.startScreen = false
-
+      await loadGame()
 
       constants.BUTTONS
         .filter(button => /newGame|loadGame/.test(button.action))
