@@ -122,6 +122,7 @@ export default function(id, context, quadTree, options) {
   this.die = () => {
     this.status = 'rekt'
     this.unselect()
+    addTextToQueue(`${capitalize(this.id)} got rekt`)
   }
 
   this.senseControls = () => {

@@ -1,6 +1,7 @@
 import shitcoiner from './sprites/shitcoiner'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { write } from './font';
+import { addTextToQueue } from './gameUtils';
 
 const sprites = {
   shitcoiner
@@ -28,7 +29,7 @@ export default function(id, context, quadTree, options) {
   this.kneels = false
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 2
-  this.senseRadius = 50
+  this.senseRadius = Math.random() * 50 + 30
 
   this.idle = () => {
     this.status = 'idle'
@@ -68,6 +69,8 @@ export default function(id, context, quadTree, options) {
   }
   this.die = () => {
     CTDLGAME.inventory.usd += this.usd
+    addTextToQueue(`Shitcoiner got rekt,\nyou found $${this.usd}`)
+
     this.status = 'rekt'
   }
 
