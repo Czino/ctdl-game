@@ -527,7 +527,8 @@ const timeToShowFinishedText = 256
  */
 export const addTextToQueue = text => {
   const lastText = textQueue[textQueue.length - 1]
-  const lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : 0
+  let lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : 0
+  if (window.CTDLGAME.frame + lastFrame > constants.FRAMERESET) lastFrame = window.CTDLGAME.frame - constants.FRAMERESET + lastFrame
   textQueue.push({ text, frame: window.CTDLGAME.frame + lastFrame })
 }
 
