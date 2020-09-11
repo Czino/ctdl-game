@@ -9,6 +9,8 @@ import font from './sprites/font.png'
 import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
+import wizard from './sprites/wizard.png'
+import explosion from './sprites/explosion.png'
 import shitcoiner from './sprites/shitcoiner.png'
 import moon from './sprites/moon.png'
 import genesisBlock from './sprites/genesis-block.png'
@@ -26,6 +28,8 @@ export const assets = {
   icons,
   hodlonaut,
   katoshi,
+  wizard,
+  explosion,
   shitcoiner,
   moon,
   genesisBlock,
@@ -59,12 +63,14 @@ export const newGame = () => {
     isSolid: true
   })
 
+  window.CTDLGAME.wizardCountdown = 16
+
   window.CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     constants.charContext,
     window.CTDLGAME.quadTree,
     {
-      x: window.CTDLGAME.viewport.x + 1,
+      x: window.CTDLGAME.viewport.x + 50,
       y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30
     }
   )
@@ -89,8 +95,6 @@ export const newGame = () => {
 
   window.CTDLGAME.objects.forEach(object => window.CTDLGAME.quadTree.insert(object))
   window.CTDLGAME.objects.forEach(object => object.update())
-
-  // addTextToQueue('Hodlonaut and Katoshi find \nthemselves in an unfamiliar region')
 
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 
@@ -518,18 +522,41 @@ export const showMenu = inventory => {
   showControls()
 }
 
-const textQueue = []
+let textQueue = []
 const timeToShowFinishedText = 256
 
 /**
  * @description Method to add text to queue for showing in the text box
  * @param {String} text text to be queued
+ * @param {Function} callback callback to execute when text is written
  */
-export const addTextToQueue = text => {
+export const addTextToQueue = (text, callback) => {
+  text += ' ▾'
   const lastText = textQueue[textQueue.length - 1]
-  let lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : 0
+  let lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : window.CTDLGAME.frame
   if (window.CTDLGAME.frame + lastFrame > constants.FRAMERESET) lastFrame = window.CTDLGAME.frame - constants.FRAMERESET + lastFrame
-  textQueue.push({ text, frame: window.CTDLGAME.frame + lastFrame })
+  textQueue.push({ text, frame: lastFrame, callback })
+}
+
+export const skipText = () => {
+  let currentText = textQueue[0]
+  if (currentText) {
+    if (window.CTDLGAME.frame - currentText.text.length > currentText.frame) {
+      let deletedText = textQueue.shift()
+      if (deletedText.callback) deletedText.callback()
+      if (textQueue[0]) textQueue[0].frame = window.CTDLGAME.frame
+    } else {
+      currentText.frame = window.CTDLGAME.frame - currentText.text.length
+    }
+    textQueue = textQueue.map((text, i) => {
+      if (i === 0) return text
+      const lastText = textQueue[i - 1]
+      let lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : window.CTDLGAME.frame
+      if (window.CTDLGAME.frame + lastFrame > constants.FRAMERESET) lastFrame = window.CTDLGAME.frame - constants.FRAMERESET + lastFrame
+      text.frame = lastFrame
+      return text
+    })
+  }
 }
 
 /**
@@ -537,12 +564,20 @@ export const addTextToQueue = text => {
  */
 export const writeMenu = () => {
   if (textQueue.length === 0) return
-  if (textQueue[0].text.length + textQueue[0].frame + timeToShowFinishedText - window.CTDLGAME.frame < 0) textQueue.shift()
+  let next = textQueue[0]
+
+  // if text is used up, remove it from queue
+  if (next.text.length + next.frame + timeToShowFinishedText - window.CTDLGAME.frame < 0) textQueue.shift()
   if (textQueue.length === 0) return
+
+  let text = textQueue[0]
+  if (text.callback && text.text.length + text.frame + timeToShowFinishedText - window.CTDLGAME.frame < 8) {
+    text.callback()
+  }
 
   write(
     constants.menuContext,
-    textQueue[0].text,
+    text.text,
     {
       x: window.CTDLGAME.viewport.x + constants.TEXTBOX.x,
       y: window.CTDLGAME.viewport.y + constants.TEXTBOX.y,
@@ -550,7 +585,7 @@ export const writeMenu = () => {
     },
     'left',
     false,
-    window.CTDLGAME.frame - textQueue[0].frame
+    window.CTDLGAME.frame - text.frame
   )
 }
 

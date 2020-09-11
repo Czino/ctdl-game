@@ -22,6 +22,7 @@ import {
 import { addClass, removeClass } from './htmlUtils'
 
 import Shitcoiner from './shitcoiner'
+import Wizard from './wizard'
 import { intersects } from './geometryUtils'
 
 window.SELECTED = null
@@ -82,7 +83,6 @@ async function init() {
   initEvents(CTDLGAME.startScreen)
 
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-  if (CTDLGAME.blockHeight < 0) checkBlocks(0)
 
   tick()
 }
@@ -140,6 +140,8 @@ function tick() {
       }
     }
 
+    CTDLGAME.objects = CTDLGAME.objects.filter(obj => !obj.remove)
+
     if (CTDLGAME.isNight) {
       if (Math.random() < constants.SPAWNRATES.shitcoiner) {
         let shitcoiner = new Shitcoiner(
@@ -169,6 +171,21 @@ function tick() {
         obj.status = 'burning'
         return true
       })
+    }
+
+    if (window.CTDLGAME.wizardCountdown === 0) {
+      const wizard = new Wizard(
+        'wizard',
+        constants.charContext,
+        window.CTDLGAME.quadTree,
+        {
+          x: window.CTDLGAME.hodlonaut.x - 40,
+          y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
+        }
+      )
+      window.CTDLGAME.objects.push(wizard)
+    } else if (window.CTDLGAME.wizardCountdown) {
+      window.CTDLGAME.wizardCountdown--
     }
 
     sun.update()

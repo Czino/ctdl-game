@@ -1,7 +1,7 @@
 import { contains, touches, intersects, sharpLine } from './geometryUtils'
 import Block from './block'
 import constants from './constants'
-import { newGame, loadGame, addTextToQueue } from './gameUtils'
+import { newGame, loadGame, addTextToQueue, skipText } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
 
 let ghostBlock
@@ -68,7 +68,9 @@ export const initEvents = startScreen => {
   }
 
   window.addEventListener('mousedown', click)
+  window.addEventListener('mousedown', skipText)
   window.addEventListener('touchstart', click)
+  window.addEventListener('touchstart', skipText)
   window.addEventListener('mouseup', clickEnd)
   window.addEventListener('touchend', clickEnd)
   window.addEventListener('mousemove', mouseMove)
@@ -85,6 +87,9 @@ export const initEvents = startScreen => {
   })
 
   window.addEventListener('keyup', e => {
+    if (e.key.toLowerCase() === 'enter') {
+      skipText()
+    }
     KEYS = KEYS.filter(key => {
       return key !== e.key.toLowerCase()
     })

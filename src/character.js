@@ -194,6 +194,19 @@ export default function(id, context, quadTree, options) {
 
   this.update = () => {
     const sprite = window.CTDLGAME.assets[this.id]
+
+    if (window.CTDLGAME.lockCharacters) {
+      let data = this.spriteData[this.direction][this.status][0]
+      this.context.globalAlpha = data.opacity ?? 1
+
+      this.context.drawImage(
+        sprite,
+        data.x, data.y, this.w, this.h,
+        this.x, this.y, this.w, this.h
+      )
+      return
+    }
+
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
