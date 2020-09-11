@@ -3,6 +3,7 @@ import constants from './constants'
 import Character from './character'
 import Block from './block'
 import Shitcoiner from './shitcoiner'
+import Item from './item'
 
 import logo from './sprites/logo.png'
 import font from './sprites/font.png'
@@ -11,6 +12,7 @@ import hodlonaut from './sprites/hodlonaut.png'
 import katoshi from './sprites/katoshi.png'
 import wizard from './sprites/wizard.png'
 import explosion from './sprites/explosion.png'
+import items from './sprites/items.png'
 import shitcoiner from './sprites/shitcoiner.png'
 import moon from './sprites/moon.png'
 import genesisBlock from './sprites/genesis-block.png'
@@ -30,6 +32,7 @@ export const assets = {
   katoshi,
   wizard,
   explosion,
+  items,
   shitcoiner,
   moon,
   genesisBlock,
@@ -142,6 +145,13 @@ export const loadGame = async () => {
         )
       } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
+          object.id,
+          constants.gameContext,
+          window.CTDLGAME.quadTree,
+          object
+        )
+      } else if (object.class === 'Item') {
+        return new Item(
           object.id,
           constants.gameContext,
           window.CTDLGAME.quadTree,
@@ -647,7 +657,7 @@ export const getTimeOfDay = () => {
  */
 const addBlockToInventory = block => {
   if (window.CTDLGAME.blockHeight >= block.height && block.height !== 0) return
-  console.log(block)
+  addTextToQueue(`Found a new block: ${block.height}`)
   window.CTDLGAME.blockHeight = block.height
   window.CTDLGAME.inventory.blocks.push({
     height: block.height,

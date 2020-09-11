@@ -122,6 +122,13 @@ export default function(id, context, quadTree, options) {
       this.die() // :(
     }
   }
+
+  this.heal = heal => {
+    if (/hurt|rekt/.test(this.status)) return
+    this.heals.push({y: -8, heal})
+    this.health = Math.min(this.health + heal, this.maxHealth)
+  }
+
   this.die = () => {
     this.status = 'rekt'
     this.unselect()
@@ -146,7 +153,6 @@ export default function(id, context, quadTree, options) {
       })
     }
 
-
     if (!didAction) this.idle()
   }
 
@@ -159,7 +165,7 @@ export default function(id, context, quadTree, options) {
       w: this.w + this.senseRadius,
       h: this.h + this.senseRadius
     })
-      .filter(prey => prey.class === 'Shitcoiner' && prey.status !== 'rekt')
+      .filter(prey => prey.class === 'Shitcoiner' && prey.status !== 'rekt' && prey.status !== 'burning')
       .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     let enemy = getClosest(this.getCenter(), enemies)
@@ -227,6 +233,35 @@ export default function(id, context, quadTree, options) {
       }
     }
 
+    // collect touched items
+    this.quadTree.query(this.getBoundingBox())
+      .filter(obj => obj.class === 'Item' && !obj.collected && obj.vy === 0)
+      .filter(item => intersects(this.getBoundingBox(), item.getBoundingBox()))
+      .forEach(item => {
+        if (item.id === 'pizza') this.heal(2)
+        if (item.id === 'taco') this.heal(5)
+        if (item.id === 'opendime') {
+          let sats = Math.round(Math.random() * 10000)
+          addTextToQueue(`You found an opendime with\nś${sats}`, () => {
+            window.CTDLGAME.inventory.sats += sats
+          })
+        }
+        if (item.id === 'coldcard') {
+          let sats = Math.round(Math.random() * 100000)
+          addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
+            window.CTDLGAME.inventory.sats += sats
+          })
+        }
+        if (item.id === 'honeybadger') {
+          addTextToQueue(`You gained the strength of the honey badger`, () => {
+            this.stength += Math.round(Math.random() + 1)
+            this.maxHealth += Math.round(Math.random() * 3 + 1)
+            this.health = this.maxHealth
+          })
+        }
+        item.collect()
+      })
+    
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
@@ -284,7 +319,7 @@ export default function(id, context, quadTree, options) {
     this.heals = this.heals
       .filter(heal => heal.y > -24)
       .map(heal => {
-        write(this.context, `-${heal.heal}`, {
+        write(this.context, `+${heal.heal}`, {
           x: this.getCenter().x - 2,
           y: this.y + heal.y,
           w: this.getBoundingBox().w

@@ -1,11 +1,18 @@
 import shitcoiner from './sprites/shitcoiner'
+import Item from './item'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { write } from './font';
 import { addTextToQueue } from './gameUtils';
+import constants from './constants';
 
 const sprites = {
   shitcoiner
 }
+const items = [
+  { id: 'pizza', chance: 0.05 },
+  { id: 'taco', chance: 0.02 },
+  { id: 'opendime', chance: 0.01 }
+]
 
 export default function(id, context, quadTree, options) {
   this.id = id;
@@ -17,6 +24,7 @@ export default function(id, context, quadTree, options) {
   this.selected = options.selected
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
   this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
+  this.item = items.find(item => item.chance > Math.random())
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -72,6 +80,21 @@ export default function(id, context, quadTree, options) {
     addTextToQueue(`Shitcoiner got rekt,\nyou found $${this.usd}`)
 
     this.status = 'rekt'
+
+    if (this.item) {
+      let item = new Item(
+        this.item.id,
+        constants.gameContext,
+        window.CTDLGAME.quadTree,
+        {
+          x: this.x,
+          y: this.y,
+          vy: -8,
+          vx: Math.round((Math.random() - .5) * 10)
+        }
+      )
+      window.CTDLGAME.objects.push(item)
+    }
   }
 
   this.bite = (prey) => {

@@ -32,25 +32,25 @@ export default function(id, context, quadTree, options) {
       window.CTDLGAME.wizardCountdown = null
       window.CTDLGAME.lockCharacters = true
 
-      addTextToQueue('W: At last, I found you!')
-      addTextToQueue('W: I am the wizard of \nmagic internet money.')
-      addTextToQueue('W: I have been looking \nfor you. The world as you\nknow it is ending.')
-      addTextToQueue('W: You must prepare \nyourself. Here, take this')
+      addTextToQueue('Wizard:\n At last, I found you!')
+      addTextToQueue('Wizard:\n I am the wizard of \nmagic internet money.')
+      addTextToQueue('Wizard:\n I have been looking \nfor you. The world as you\nknow it is ending.')
+      addTextToQueue('Wizard:\n You must prepare \nyourself. Here, take this')
       addTextToQueue('You received...\n the Genesis Block', () => {
         checkBlocks(0)
       })
       addTextToQueue([
-        'W: Use this to set the first',
+        'Wizard:\n Use this to set the first',
         'block of your citadel.',
         'Protect yourself.'
       ].join('\n'))
       addTextToQueue([
-        'W: Beware of those full of',
+        'Wizard:\n Beware of those full of',
         'doubt and envy who come',
         'at night.'
       ].join('\n'))
-      addTextToQueue('W: We call them shitcoiners,\nlol')
-      addTextToQueue('W: I must go now, \nI will see you again,\non the moon!', () => {
+      addTextToQueue('Wizard:\n We call them shitcoiners,\nlol')
+      addTextToQueue('Wizard:\n I must go now, \nI will see you again,\non the moon!', () => {
         window.CTDLGAME.frame = 0
         this.disappear()
       })

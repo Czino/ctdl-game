@@ -25,6 +25,12 @@ import Shitcoiner from './shitcoiner'
 import Wizard from './wizard'
 import { intersects } from './geometryUtils'
 
+
+// TODO fix viewport when selecting block
+// TODO fix receiving blocks doubled
+// TODO add exchange
+// TODO add shop
+
 window.SELECTED = null
 
 window.CTDLGAME = {
@@ -140,7 +146,7 @@ function tick() {
       }
     }
 
-    CTDLGAME.objects = CTDLGAME.objects.filter(obj => !obj.remove)
+    CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
 
     if (CTDLGAME.isNight) {
       if (Math.random() < constants.SPAWNRATES.shitcoiner) {
@@ -195,8 +201,8 @@ function tick() {
     CTDLGAME.hodlonaut.vy += constants.GRAVITY
     CTDLGAME.katoshi.vy += constants.GRAVITY
     CTDLGAME.objects
-      .filter(obj => obj.enemy)
-      .map(enemy => enemy.vy += constants.GRAVITY)
+      .filter(obj => obj.enemy || obj.class === 'Item')
+      .map(obj => obj.vy += constants.GRAVITY)
 
     CTDLGAME.objects.forEach(object => object.update())
 

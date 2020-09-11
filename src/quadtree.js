@@ -7,11 +7,12 @@ export const Boundary = function ({ x, y, w, h }) {
   this.h = h
 }
 
-export const QuadTree = function (boundary, capacity) {
+export const QuadTree = function (boundary, capacity, level) {
   this.boundary = boundary,
   this.capacity =  capacity || 10,
   this.subs = [],
   this.objects = []
+  this.level = level || 0
 
   this.insert = object => {
     if (object.getBoundingBox) {
@@ -30,7 +31,7 @@ export const QuadTree = function (boundary, capacity) {
       return true
     }
 
-    if (this.subs.length === 0) {
+    if (this.subs.length === 0 && this.level < 10) {
       this.subdivide()
 
       // redistribute objects in newly created subs
@@ -59,7 +60,8 @@ export const QuadTree = function (boundary, capacity) {
           w: subBoundary.w,
           h: subBoundary.h
         }),
-        this.capacity
+        this.capacity,
+        this.level + 1
       ),
       new QuadTree(
         new Boundary({
@@ -68,7 +70,8 @@ export const QuadTree = function (boundary, capacity) {
           w: subBoundary.w,
           h: subBoundary.h
         }),
-        this.capacity
+        this.capacity,
+        this.level + 1
       ),
       new QuadTree(
         new Boundary({
@@ -77,7 +80,8 @@ export const QuadTree = function (boundary, capacity) {
           w: subBoundary.w,
           h: subBoundary.h
         }),
-        this.capacity
+        this.capacity,
+        this.level + 1
       ),
       new QuadTree(
         new Boundary({
@@ -86,7 +90,8 @@ export const QuadTree = function (boundary, capacity) {
           w: subBoundary.w,
           h: subBoundary.h
         }),
-        this.capacity
+        this.capacity,
+        this.level + 1
       ),
     ]
   }
