@@ -1,0 +1,286 @@
+export default [{
+  "duration": 0.7377,
+  "name": "A#4",
+  "time": 0,
+  "velocity": 0.79
+}, {
+  "duration": 0.7377,
+  "name": "C#5",
+  "time": 0.7377,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F#3",
+  "time": 1.4754,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F5",
+  "time": 1.4754,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 1.9672,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 2.459,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F5",
+  "time": 2.459,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 2.9508,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "G#3",
+  "time": 3.4426,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "F5",
+  "time": 3.4426,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C4",
+  "time": 3.9344,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "G#5",
+  "time": 3.9344,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "D#4",
+  "time": 4.4262,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "D#5",
+  "time": 4.6721,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C4",
+  "time": 4.918,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 5.4098,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "C#5",
+  "time": 5.4098,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 5.9016,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F4",
+  "time": 6.3934,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "D#5",
+  "time": 6.3934,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 6.8852,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "C#5",
+  "time": 6.8852,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F3",
+  "time": 7.377,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "C5",
+  "time": 7.377,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 7.8688,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 8.3607,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "F#4",
+  "time": 8.3607,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 8.8525,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "G#4",
+  "time": 8.8525,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F#3",
+  "time": 9.3443,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#4",
+  "time": 9.3443,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 9.8361,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "G#4",
+  "time": 9.8361,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 10.3279,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#4",
+  "time": 10.3279,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 10.8197,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "G#4",
+  "time": 10.8197,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "G#3",
+  "time": 11.3115,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "A#4",
+  "time": 11.3115,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C4",
+  "time": 11.8033,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "C#5",
+  "time": 11.8033,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "D#4",
+  "time": 12.2951,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "A#4",
+  "time": 12.541,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C4",
+  "time": 12.7869,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 13.2787,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "D#5",
+  "time": 13.2787,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 13.7705,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F4",
+  "time": 14.2623,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "D#5",
+  "time": 14.2623,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 14.7541,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "C#5",
+  "time": 14.7541,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "F3",
+  "time": 15.2459,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "C5",
+  "time": 15.2459,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "A#3",
+  "time": 15.7377,
+  "velocity": 0.79
+}, {
+  "duration": 0.4918,
+  "name": "C#4",
+  "time": 16.2295,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "G#4",
+  "time": 16.2295,
+  "velocity": 0.79
+}, {
+  "duration": 0.2459,
+  "name": "A#4",
+  "time": 16.7213,
+  "velocity": 0.79
+}]
