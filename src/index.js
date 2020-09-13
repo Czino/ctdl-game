@@ -25,7 +25,6 @@ import Shitcoiner from './shitcoiner'
 import Wizard from './wizard'
 import { intersects } from './geometryUtils'
 
-
 // TODO fix viewport when selecting block
 // TODO fix receiving blocks doubled
 // TODO add exchange

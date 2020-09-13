@@ -23,6 +23,7 @@ import inventoryBlock from './sprites/inventory-block.png'
 import { write } from './font'
 import { drawIcon } from './icons'
 import { removeClass, addClass } from './htmlUtils'
+import { initSoundtrack, start } from './soundtrack'
 
 export const assets = {
   font,
@@ -99,6 +100,8 @@ export const newGame = () => {
   window.CTDLGAME.objects.forEach(object => window.CTDLGAME.quadTree.insert(object))
   window.CTDLGAME.objects.forEach(object => object.update())
 
+  initSoundtrack('stella-splendence')
+  start()
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 
 }
@@ -193,6 +196,10 @@ export const loadGame = async () => {
     window.CTDLGAME.isNight = false
     addClass(constants.gameCanvas, 'ctdl-day')
   }
+
+  initSoundtrack('stella-splendence')
+  start()
+
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 }
 
