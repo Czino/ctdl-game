@@ -29,6 +29,7 @@ import { intersects } from './geometryUtils'
 // TODO fix receiving blocks doubled
 // TODO add exchange
 // TODO add shop
+// TODO add game over screen
 
 window.SELECTED = null
 

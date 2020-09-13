@@ -100,7 +100,7 @@ export const newGame = () => {
   window.CTDLGAME.objects.forEach(object => window.CTDLGAME.quadTree.insert(object))
   window.CTDLGAME.objects.forEach(object => object.update())
 
-  initSoundtrack('stella-splendence')
+  initSoundtrack('stellaSplendence')
   start()
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 
@@ -197,7 +197,7 @@ export const loadGame = async () => {
     addClass(constants.gameCanvas, 'ctdl-day')
   }
 
-  initSoundtrack('stella-splendence')
+  initSoundtrack('stellaSplendence')
   start()
 
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
