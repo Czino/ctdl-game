@@ -131,7 +131,15 @@ export default function(id, context, quadTree, options) {
 
   this.die = () => {
     this.status = 'rekt'
-    this.unselect()
+    this.health = 0
+
+    this.selected = false
+    if (this.id === 'hodlonaut') {
+      window.CTDLGAME.katoshi.select()
+    } else {
+      window.CTDLGAME.hodlonaut.select()
+    }
+
     addTextToQueue(`${capitalize(this.id)} got rekt`)
   }
 
@@ -229,7 +237,7 @@ export default function(id, context, quadTree, options) {
       if (hasCollided) {
         this.vy = 0
       } else {
-        if (this.status !== 'jump' && Math.abs(this.vy) > 4) this.status = 'fall'
+        if (!/jump|rekt|hurt/.test(this.status) && Math.abs(this.vy) > 4) this.status = 'fall'
       }
     }
 
@@ -334,7 +342,6 @@ export default function(id, context, quadTree, options) {
   this.select = () => {
     if (this.status === 'rekt') return
     this.selected = true
-    console.log('select')
     window.SELECTEDCHARACTER = this
   }
   this.unselect = () => {

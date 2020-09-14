@@ -8,6 +8,7 @@ import {
   assets,
   loadAsset,
   showStartScreen,
+  showGameOverScreen,
   showProgressBar,
   updateViewport,
   showMenu,
@@ -24,11 +25,12 @@ import { addClass, removeClass } from './htmlUtils'
 import Shitcoiner from './shitcoiner'
 import Wizard from './wizard'
 import { intersects } from './geometryUtils'
+import { initSoundtrack, changeVolume, stop, start } from './soundtrack'
 
 // TODO fix receiving blocks doubled
 // TODO add exchange
 // TODO add shop
-// TODO add game over screen
+// TODO find out why music sometimes does not play
 // TODO refactor code
 
 window.SELECTED = null
@@ -55,6 +57,7 @@ window.CTDLGAME = {
   }))
 }
 
+let deathCounter = 64
 let time
 const sun = new Sun(constants.gameContext, {
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
@@ -103,6 +106,14 @@ function tick() {
     return
   }
   if (!CTDLGAME.hodlonaut) {
+    window.requestAnimationFrame(tick)
+    return
+  }
+
+  if (CTDLGAME.gameOver) {
+    if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+    showGameOverScreen()
+    CTDLGAME.frame++
     window.requestAnimationFrame(tick)
     return
   }
@@ -222,6 +233,32 @@ function tick() {
 
     if (CTDLGAME.frame > constants.FRAMERESET) {
       CTDLGAME.frame = 0
+    }
+
+    if (!CTDLGAME.hodlonaut.health && !CTDLGAME.katoshi.health) {
+      deathCounter--
+
+      changeVolume(deathCounter / 64)
+
+      constants.overlayContext.fillStyle = '#212121'
+      constants.overlayContext.globalAlpha = (64 - deathCounter) / 64
+      constants.overlayContext.fillRect(
+        window.CTDLGAME.viewport.x,
+        window.CTDLGAME.viewport.y,
+        constants.WIDTH,
+        constants.HEIGHT
+      )
+      if (deathCounter === 0) {
+        CTDLGAME.gameOver = true
+        db.destroy()
+
+        stop()
+        changeVolume(1)
+        initSoundtrack('gameOver')
+        start()
+        constants.BUTTONS.find(button => button.action === 'newGame').active = true
+        initEvents(true)
+      }
     }
   }
 

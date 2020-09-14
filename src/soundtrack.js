@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Transport, Part } from 'tone'
+import { Synth, NoiseSynth, Transport, Part, Gain } from 'tone'
 import bass1 from './tracks/stella-splendence/bass1'
 import bass2 from './tracks/stella-splendence/bass2'
 import flute1 from './tracks/stella-splendence/flute1'
@@ -6,6 +6,8 @@ import flute2 from './tracks/stella-splendence/flute2'
 import lead from './tracks/game-over/lead'
 
 Transport.bpm.value = 136;
+
+const gain = new Gain(0).toDestination()
 
 const pulseOptions = {
   oscillator: {
@@ -43,11 +45,11 @@ const sineOptions = {
   }
 };
 
-const pulseSynth = new Synth(pulseOptions).toMaster()
-const squareSynth = new Synth(squareOptions).toMaster()
-const triangleSynth = new Synth(triangleOptions).toMaster()
-const sineSynth = new Synth(sineOptions).toMaster()
-const noiseSynth = new NoiseSynth().toMaster()
+const pulseSynth = new Synth(pulseOptions).connect(gain).toMaster()
+const squareSynth = new Synth(squareOptions).connect(gain).toMaster()
+const triangleSynth = new Synth(triangleOptions).connect(gain).toMaster()
+const sineSynth = new Synth(sineOptions).connect(gain).toMaster()
+const noiseSynth = new NoiseSynth().connect(gain).toMaster()
 
 const songs = {
     stellaSplendence: {
@@ -137,11 +139,10 @@ export const stop = () => {
   if (song.noise != null) noisePart.stop(0)
 }
 
-window.soundtrack = {
-  start,
-  stop,
-  initSoundtrack
+export const changeVolume = value => {
+  gain.gain.rampTo(value - 1, 0);
 }
+
 Transport.on('stop', () => {
   if (song.loop) start()
 })

@@ -35,7 +35,7 @@ export const init = dbg => {
 
 export const destroy = () => {
   return new Promise(resolve => {
-    let dbRequest = indexedDB.deleteDatabase('app')
+    let dbRequest = indexedDB.deleteDatabase('ctdl-game')
     dbRequest.onsuccess = () => {
       if (debug) console.log('Database destroyed')
       resolve()

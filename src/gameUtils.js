@@ -6,6 +6,7 @@ import Shitcoiner from './shitcoiner'
 import Item from './item'
 
 import logo from './sprites/logo.png'
+import gameOver from './sprites/gameOver.png'
 import font from './sprites/font.png'
 import icons from './sprites/icons.png'
 import hodlonaut from './sprites/hodlonaut.png'
@@ -28,6 +29,7 @@ import { initSoundtrack, start } from './soundtrack'
 export const assets = {
   font,
   logo,
+  gameOver,
   icons,
   hodlonaut,
   katoshi,
@@ -58,6 +60,14 @@ export const loadAsset = asset => new Promise(resolve => {
  * @description Method to prepare new game
  */
 export const newGame = () => {
+  window.CTDLGAME.objects = []
+  window.CTDLGAME.inventory = { // TODO refactor into factory
+    usd: 0,
+    sats: 0,
+    blocks: []
+  }
+  window.CTDLGAME.blockHeight = -1
+
   const ground = new Block('ground', constants.gameContext, window.CTDLGAME.quadTree, {
     x: 0,
     y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
@@ -67,6 +77,7 @@ export const newGame = () => {
     isSolid: true
   })
 
+  window.CTDLGAME.gameOver = false
   window.CTDLGAME.wizardCountdown = 16
 
   window.CTDLGAME.hodlonaut = new Character(
@@ -300,6 +311,41 @@ export const showStartScreen = () => {
       'left'
     )
   }
+}
+
+/**
+ * @description Method to display progress bar
+ * @param {Number} progress current progress between 0 - 1
+ */
+export const showGameOverScreen = () => {
+  constants.overlayContext.fillStyle = '#212121'
+
+  constants.overlayContext.fillRect(
+    window.CTDLGAME.viewport.x,
+    window.CTDLGAME.viewport.y,
+    constants.WIDTH,
+    constants.HEIGHT
+  )
+
+  constants.overlayContext.drawImage(
+    window.CTDLGAME.assets.gameOver,
+    0, 0, 41, 21,
+    window.CTDLGAME.viewport.x + constants.WIDTH / 2 - 20,
+    window.CTDLGAME.viewport.y + constants.HEIGHT / 3,
+    41, 21
+  )
+
+  let text = window.CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ new game' : 'new game'
+  write(
+    constants.overlayContext,
+    text,
+    {
+      x: window.CTDLGAME.viewport.x + constants.WIDTH / 2 - 35,
+      y: window.CTDLGAME.viewport.y + constants.HEIGHT / 2,
+      w: 60
+    },
+    'right'
+  )
 }
 
 /**

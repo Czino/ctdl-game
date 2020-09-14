@@ -66,6 +66,14 @@ export const initEvents = startScreen => {
   }
 
   if (startScreen) {
+    window.removeEventListener('mousedown', click)
+    window.removeEventListener('mousedown', skipText)
+    window.removeEventListener('touchstart', click)
+    window.removeEventListener('touchstart', skipText)
+    window.removeEventListener('mouseup', clickEnd)
+    window.removeEventListener('touchend', clickEnd)
+    window.removeEventListener('mousemove', mouseMove)
+    window.removeEventListener('touchmove', mouseMove)
     window.addEventListener('mousemove', mouseMoveHandler)
     window.addEventListener('mousedown', startScreenHandler)
     window.addEventListener('touchstart', startScreenHandler)
@@ -273,6 +281,8 @@ export const initEvents = startScreen => {
 
   function mouseMove (e) {
     let canvas = e.target
+
+    if (window.CTDLGAME.gameOver) return
 
     window.CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
