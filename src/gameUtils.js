@@ -419,7 +419,7 @@ export const showInventory = inventory => {
   write(
     constants.menuContext,
     'ś' + inventory.sats + '\n' + '$' + inventory.usd,
-    { x: window.CTDLGAME.viewport.x + 2, y: pos.y + 3 , w: 40 },
+    { x: window.CTDLGAME.viewport.x + 2, y: pos.y + 1 , w: 40 },
     'left',
     false
   )
@@ -480,7 +480,7 @@ export const showControls = () => {
 
   constants.menuContext.beginPath()
 
-  if (CTDLGAME.touchScreen) {
+  if (window.CTDLGAME.touchScreen) {
     constants.BUTTONS
       .filter(button => button.active)
       .map(button => {
@@ -593,6 +593,15 @@ export const writeMenu = () => {
     text.callback()
   }
 
+  if (window.CTDLGAME.lockCharacters) {
+    constants.menuContext.fillStyle = '#212121'
+    constants.menuContext.fillRect(
+      window.CTDLGAME.viewport.x + constants.TEXTBOX.x,
+      window.CTDLGAME.viewport.y + constants.TEXTBOX.y,
+      constants.TEXTBOX.w,
+      constants.MENU.h
+    )
+  }
   write(
     constants.menuContext,
     text.text,

@@ -58,6 +58,13 @@ export const updateOverlay = () => {
 }
 
 export const initEvents = startScreen => {
+  try {
+    document.createEvent('TouchEvent')
+    window.CTDLGAME.touchScreen = true
+  } catch (e) {
+    window.CTDLGAME.touchScreen = false
+  }
+
   if (startScreen) {
     window.addEventListener('mousemove', mouseMoveHandler)
     window.addEventListener('mousedown', startScreenHandler)
@@ -96,8 +103,6 @@ export const initEvents = startScreen => {
   function mouseMoveHandler (e) {
     let canvas = e.target
 
-    window.CTDLGAME.touchScreen = false
-
     if (!/ctdl-game/.test(canvas.id)) {
       return
     }
@@ -134,13 +139,14 @@ export const initEvents = startScreen => {
         x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
         y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
       }
-
     } else if (e.touches?.length > 0) {
       e.stopPropagation()
       window.CTDLGAME.cursor = {
         x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
         y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
       }
+      window.CTDLGAME.touchScreen = true
+
       constants.BUTTONS
         .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
         .forEach(button => button.active = true)
