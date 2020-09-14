@@ -12,10 +12,8 @@ window.BUTTONS = []
 export const updateOverlay = () => {
   constants.overlayContext.clearRect(window.CTDLGAME.viewport.x, window.CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
-  if (!window.SELECTED || window.SELECTED.class !== 'Character') return
-
-  if (Math.abs(window.SELECTED.getCenter().x - (window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x)) > 30) return
-  if (Math.abs(window.SELECTED.getCenter().y - (window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y)) > 30) return
+  if (Math.abs(window.SELECTEDCHARACTER.getCenter().x - (window.CTDLGAME.viewport.x + window.CTDLGAME.cursor.x)) > 30) return
+  if (Math.abs(window.SELECTEDCHARACTER.getCenter().y - (window.CTDLGAME.viewport.y + window.CTDLGAME.cursor.y)) > 30) return
 
   if (window.CTDLGAME.inventory.blocks.length > 0) {
     let block = window.CTDLGAME.inventory.blocks[0]
@@ -46,8 +44,8 @@ export const updateOverlay = () => {
         constants.overlayContext,
         Math.round(ghostBlock.getCenter().x),
         Math.round(ghostBlock.getCenter().y),
-        Math.round(window.SELECTED.getCenter().x),
-        Math.round(window.SELECTED.getCenter().y)
+        Math.round(window.SELECTEDCHARACTER.getCenter().x),
+        Math.round(window.SELECTEDCHARACTER.getCenter().y)
       )
       ghostBlock.update()
     }
@@ -225,15 +223,15 @@ export const initEvents = startScreen => {
       ghostBlock.isSolid = true
       window.CTDLGAME.inventory.blocks.shift()
       window.CTDLGAME.objects.push(ghostBlock)
-      window.SELECTED.action()
+      window.SELECTEDCHARACTER.action()
       ghostBlock = null
     }
 
     let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
 
-    if (window.SELECTED && window.SELECTED.class === 'Block') window.SELECTED.unselect()
-    if (!object) return
+    if (object?.class === 'Character') window.SELECTEDCHARACTER.unselect()
     if (window.SELECTED) window.SELECTED.unselect()
+    if (!object) return
     object.select()
   }
 

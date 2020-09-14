@@ -144,7 +144,7 @@ export default function(id, context, quadTree, options) {
       return true
     })
 
-    if (this.selected || (window.SELECTED?.class !== 'Character' && this.id === 'hodlonaut')) {
+    if (this.selected) {
       didAction = didAction || window.BUTTONS.find(button => {
         if (!this[constants.CONTROLS.buttons[button.action]]) return false
   
@@ -334,11 +334,12 @@ export default function(id, context, quadTree, options) {
   this.select = () => {
     if (this.status === 'rekt') return
     this.selected = true
-    window.SELECTED = this
+    console.log('select')
+    window.SELECTEDCHARACTER = this
   }
   this.unselect = () => {
     this.selected = false
-    window.SELECTED = null
+    window.SELECTEDCHARACTER = null
   }
 
   this.getBoundingBox = () => this.status !== 'rekt'

@@ -179,6 +179,7 @@ export const loadGame = async () => {
     katoshi
   )
 
+  window.CTDLGAME.hodlonaut.select()
   if (window.CTDLGAME.hodlonaut.selected) window.CTDLGAME.hodlonaut.select()
   if (window.CTDLGAME.katoshi.selected) window.CTDLGAME.katoshi.select()
 
@@ -502,7 +503,7 @@ export const showControls = () => {
       })
     constants.menuContext.stroke()
   
-    let selectedCharacter = window.SELECTED?.class === 'Character' ? window.SELECTED.id : 'hodlonaut'
+    let selectedCharacter = window.SELECTEDCHARACTER.id
     drawIcon(constants.menuContext, `left-${selectedCharacter}`, {
       x: pos.x + 5,
       y: pos.y + 1

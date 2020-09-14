@@ -25,13 +25,14 @@ import Shitcoiner from './shitcoiner'
 import Wizard from './wizard'
 import { intersects } from './geometryUtils'
 
-// TODO fix viewport when selecting block
 // TODO fix receiving blocks doubled
 // TODO add exchange
 // TODO add shop
 // TODO add game over screen
+// TODO refactor code
 
 window.SELECTED = null
+window.SELECTEDCHARACTER = null
 
 window.CTDLGAME = {
   cursor: {x: 0, y: 0},
@@ -130,19 +131,12 @@ function tick() {
           constants.WORLD.h - constants.HEIGHT,
           Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
       }
-    } else if (window.SELECTED?.class === 'Character') {
-      CTDLGAME.viewport = {
-        x: Math.round(window.SELECTED.x + window.SELECTED.w / 2 - constants.WIDTH / 2),
-        y: Math.min(
-          constants.WORLD.h - constants.HEIGHT,
-          Math.round(window.SELECTED.y + window.SELECTED.h / 2))
-      }
     } else {
       CTDLGAME.viewport = {
-        x: Math.round(CTDLGAME.hodlonaut.x + CTDLGAME.hodlonaut.w / 2 - constants.WIDTH / 2),
+        x: Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2),
         y: Math.min(
           constants.WORLD.h - constants.HEIGHT,
-          Math.round(CTDLGAME.hodlonaut.y + CTDLGAME.hodlonaut.h / 2))
+          Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h / 2))
       }
     }
 
