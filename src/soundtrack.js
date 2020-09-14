@@ -3,6 +3,7 @@ import bass1 from './tracks/stella-splendence/bass1'
 import bass2 from './tracks/stella-splendence/bass2'
 import flute1 from './tracks/stella-splendence/flute1'
 import flute2 from './tracks/stella-splendence/flute2'
+import sine from './tracks/stella-splendence/sine'
 import lead from './tracks/game-over/lead'
 
 Transport.bpm.value = 136;
@@ -41,11 +42,13 @@ const sineOptions = {
     type: 'sine'
   },
   envelope: {
+    sustain: .8,
     release: 0.8
   }
 };
 
 const pulseSynth = new Synth(pulseOptions).connect(gain).toMaster()
+const pulse2Synth = new Synth(pulseOptions).connect(gain).toMaster()
 const squareSynth = new Synth(squareOptions).connect(gain).toMaster()
 const triangleSynth = new Synth(triangleOptions).connect(gain).toMaster()
 const sineSynth = new Synth(sineOptions).connect(gain).toMaster()
@@ -53,13 +56,14 @@ const noiseSynth = new NoiseSynth().connect(gain).toMaster()
 
 const songs = {
     stellaSplendence: {
-      length: 136.875,
+      length: 136.575,
       bpm: 136,
-      triangle: bass1,
-      pulse: bass2,
-      square: flute1,
-      sine: flute2,
       noise: bass1,
+      pulse: bass1,
+      pulse2: bass2,
+      triangle: flute1,
+      sine: flute2,
+      square: sine,
       loop: true
     },
     gameOver: {
@@ -72,6 +76,7 @@ const songs = {
 let song
 
 let pulsePart = new Part()
+let pulse2Part = new Part()
 let squarePart = new Part()
 let trianglePart = new Part()
 let sinePart = new Part()
@@ -90,8 +95,14 @@ export const initSoundtrack = id => {
 
   if (song.pulse != null) {
     pulsePart = new Part((time, note) => {
+
       pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(song.pulse))
+  }
+  if (song.pulse2 != null) {
+    pulse2Part = new Part((time, note) => {
+      pulse2Synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+    }, parseNotes(song.pulse2))
   }
 
   if (song.square != null) {
@@ -120,8 +131,9 @@ export const initSoundtrack = id => {
 }
 
 export const start = () => {
-  Transport.start('+0', 0)
+  Transport.start('+0.1', 0)
   if (song.pulse != null) pulsePart.start(0)
+  if (song.pulse2 != null) pulse2Part.start(0)
   if (song.square != null) squarePart.start(0)
   if (song.triangle != null) trianglePart.start(0)
   if (song.sine != null) sinePart.start(0)
@@ -133,6 +145,7 @@ export const start = () => {
 export const stop = () => {
   Transport.stop()
   if (song.pulse != null) pulsePart.stop(0)
+  if (song.pulse2 != null) pulse2Part.stop(0)
   if (song.square != null) squarePart.stop(0)
   if (song.triangle != null) trianglePart.stop(0)
   if (song.sine != null) sinePart.stop(0)
@@ -149,9 +162,9 @@ Transport.on('stop', () => {
 
 function parseNotes(notes) {
   return notes.map(note => ({
-    'duration': note[0],
-    'name': note[1],
-    'time': note[2],
+    'time': note[0],
+    'duration': note[1],
+    'name': note[2],
     'velocity': note[3]
   }))
 }
