@@ -21,6 +21,7 @@ export default function(id, context, quadTree, options) {
     const sprite = window.CTDLGAME.assets.wizard
 
     if (!this.hasAppeared) {
+      playSound('magic')
       this.hasAppeared = true
       explosion = new Explosion(this.context, { x: this.getCenter().x, y: this.getCenter().y })
 
@@ -75,6 +76,7 @@ export default function(id, context, quadTree, options) {
   }
 
   this.disappear = () => {
+    playSound('magic')
     explosion = new Explosion(this.context, { x: this.getCenter().x, y: this.getCenter().y })
     this.status = 'disappear'
     window.CTDLGAME.lockCharacters = false

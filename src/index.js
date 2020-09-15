@@ -27,6 +27,11 @@ import Wizard from './wizard'
 import { intersects } from './geometryUtils'
 import { initSoundtrack, changeVolume, stop, start } from './soundtrack'
 
+// import { playSound } from './sounds'
+
+// playSound('block')
+// setInterval(() => playSound('block'), 3000)
+
 // TODO fix receiving blocks doubled
 // TODO add exchange
 // TODO add shop

@@ -5,6 +5,7 @@ import { capitalize } from './stringUtils'
 import { write } from './font';
 import constants from './constants'
 import { addTextToQueue } from './gameUtils';
+import { playSound } from './sounds';
 
 const sprites = {
   hodlonaut,
@@ -117,6 +118,7 @@ export default function(id, context, quadTree, options) {
     this.status = 'hurt'
     this.vx = direction === 'left' ? 6 : -6
     this.vy = -3
+    playSound('playerHurt')
     if (this.health <= 0) {
       this.health = 0
       this.die() // :(

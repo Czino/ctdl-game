@@ -4,6 +4,7 @@ import { moveObject, intersects, getClosest } from './geometryUtils'
 import { write } from './font';
 import { addTextToQueue } from './gameUtils';
 import constants from './constants';
+import { playSound } from './sounds';
 
 const sprites = {
   shitcoiner
@@ -66,6 +67,7 @@ export default function(id, context, quadTree, options) {
   this.hurt = (dmg, direction) => {
     if (/spawn|hurt|rekt|burning/.test(this.status)) return
 
+    playSound('shitcoinerHurt')
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'

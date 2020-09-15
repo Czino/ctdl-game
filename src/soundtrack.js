@@ -54,6 +54,13 @@ const triangleSynth = new Synth(triangleOptions).connect(gain).toMaster()
 const sineSynth = new Synth(sineOptions).connect(gain).toMaster()
 const noiseSynth = new NoiseSynth().connect(gain).toMaster()
 
+pulseSynth.volume.value = -19
+pulse2Synth.volume.value = -19
+squareSynth.volume.value = -19
+triangleSynth.volume.value = -19
+sineSynth.volume.value = -19
+noiseSynth.volume.value = -19
+
 const songs = {
     stellaSplendence: {
       length: 136.575,

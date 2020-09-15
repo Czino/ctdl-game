@@ -1,5 +1,6 @@
 import { moveObject } from './geometryUtils';
 import spriteData from './sprites/items'
+import { playSound } from './sounds';
 
 
 export default function(id, context, quadTree, options) {
@@ -19,6 +20,7 @@ export default function(id, context, quadTree, options) {
   const sprite = window.CTDLGAME.assets.items
 
   this.collect = () => {
+    playSound('item')
     this.remove = true
     this.collected = true
   }

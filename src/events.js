@@ -4,6 +4,7 @@ import constants from './constants'
 import { newGame, loadGame, addTextToQueue, skipText } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stop, start } from './soundtrack'
+import { playSound, toggleSounds } from './sounds'
 
 let ghostBlock
 
@@ -169,6 +170,8 @@ export const initEvents = startScreen => {
     )
 
     if (buttonPressed?.action === 'newGame') {
+      playSound('select')
+
       newGame()
       window.CTDLGAME.startScreen = false
 
@@ -180,6 +183,8 @@ export const initEvents = startScreen => {
       window.removeEventListener('touchend', startScreenHandler)
       initEvents(false)
     } else if (buttonPressed?.action === 'loadGame') {
+      playSound('select')
+
       window.CTDLGAME.startScreen = false
       await loadGame()
 
@@ -199,7 +204,7 @@ export const initEvents = startScreen => {
       }
     } else if (buttonPressed?.action === 'sound') {
       window.CTDLGAME.options.sound = !window.CTDLGAME.options.sound
-      // TODO connect to sound
+        toggleSounds(window.CTDLGAME.options.sound)
     }
   }
 
@@ -243,6 +248,8 @@ export const initEvents = startScreen => {
     }
 
     if (ghostBlock) {
+      // TODO refactor into placeBlock method
+      playSound('block')
       ghostBlock.context = constants.gameContext
       ghostBlock.opacity = 1
       ghostBlock.isSolid = true
