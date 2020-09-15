@@ -33,12 +33,18 @@ import { applyGravity } from './physicsUtils'
 // playSound('block')
 // setInterval(() => playSound('block'), 3000)
 
+// TODO refactor code
+// TODO don't make CTDL global
+// TODO check requestAnimationFrameHandler performace
+// TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
+// TODO add attack sounds for lightning torch and sword
 // TODO add exchange
 // TODO add shop
-// TODO find out why music sometimes does not play
-// TODO refactor code
-// don't make CTDL global
+// TODO add first end boss (must be related to shitcoining)
+// TODO add more enemies and bosses
+// TODO add moon ending scene
+// TODO add "mempool"
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
