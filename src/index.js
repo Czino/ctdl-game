@@ -26,7 +26,7 @@ import {
 } from './gameUtils'
 import { writeMenu } from './textUtils'
 import Wizard from './wizard'
-import { applyGravity } from './physicUtils'
+import { applyGravity } from './physicsUtils'
 
 // import { playSound } from './sounds'
 

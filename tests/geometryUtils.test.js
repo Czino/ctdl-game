@@ -29,6 +29,7 @@ describe('intersects', () => {
     ok(intersects(obj1, obj1), 'Two objects completely overlapping')
     ok(intersects(obj1, obj6), 'Two objects intersecting by 1 px')
     ok(intersects(boundary, ground), 'Case boundary should intersect with ground')
+    // TODO fix test
     ok(intersects(shitcoiner, character), 'Shitcoiner should interset with character')
     ok(!intersects(obj1, obj2), 'Object outside object')
     ok(!intersects(obj1, obj5), 'Object outside object')
