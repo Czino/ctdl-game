@@ -1,5 +1,7 @@
 export default {
     "save": { x: 0, y: 0, w: 7, h: 7},
+    "music": { x: 24, y: 7, w: 9, h: 9},
+    "sound": { x: 34, y: 7, w: 9, h: 9},
     "hodlonaut": { x: 8, y: 0, w: 6, h: 7},
     "katoshi": { x: 15, y: 0, w: 7, h: 7},
     "heart-full": { x: 0, y: 8, w: 7, h: 7},

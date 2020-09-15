@@ -73,6 +73,7 @@ const songs = {
       loop: false
     }
 }
+let enabled = true
 let song
 
 let pulsePart = new Part()
@@ -130,7 +131,8 @@ export const initSoundtrack = id => {
   }
 }
 
-export const start = () => {
+export const start = enable => {
+  if (typeof enable !== 'undefined') enabled = enable
   Transport.start('+0.1', 0)
   if (song.pulse != null) pulsePart.start(0)
   if (song.pulse2 != null) pulse2Part.start(0)
@@ -142,7 +144,8 @@ export const start = () => {
   Transport.stop('+' + song.length);
 }
 
-export const stop = () => {
+export const stop = disable => {
+  if (typeof disable !== 'undefined') enabled = !disable
   Transport.stop()
   if (song.pulse != null) pulsePart.stop(0)
   if (song.pulse2 != null) pulse2Part.stop(0)
@@ -157,7 +160,7 @@ export const changeVolume = value => {
 }
 
 Transport.on('stop', () => {
-  if (song.loop) start()
+  if (song.loop && enabled) start()
 })
 
 function parseNotes(notes) {

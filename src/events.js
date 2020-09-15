@@ -3,6 +3,7 @@ import Block from './block'
 import constants from './constants'
 import { newGame, loadGame, addTextToQueue, skipText } from './gameUtils'
 import { addClass, removeClass } from './htmlUtils'
+import { stop, start } from './soundtrack'
 
 let ghostBlock
 
@@ -189,6 +190,16 @@ export const initEvents = startScreen => {
       window.removeEventListener('mouseup', startScreenHandler)
       window.removeEventListener('touchend', startScreenHandler)
       initEvents(false)
+    } else if (buttonPressed?.action === 'music') {
+      window.CTDLGAME.options.music = !window.CTDLGAME.options.music
+      if (!window.CTDLGAME.options.music) {
+        stop(true)
+      } else {
+        start(true)
+      }
+    } else if (buttonPressed?.action === 'sound') {
+      window.CTDLGAME.options.sound = !window.CTDLGAME.options.sound
+      // TODO connect to sound
     }
   }
 

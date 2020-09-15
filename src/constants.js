@@ -77,6 +77,22 @@ const BUTTONS = [
     h: 10,
     active: true
   },
+  {
+    action: 'music',
+    x: WIDTH - 3 - 9 - 11,
+    y: 3,
+    w: 9,
+    h: 9,
+    active: true
+  },
+  {
+    action: 'sound',
+    x: WIDTH - 3 - 9 ,
+    y: 3,
+    w: 9,
+    h: 9,
+    active: true
+  },
   { action: 'jump', x: 21 * 4, y: HEIGHT - 20, w: 18, h: 18, active: false},
   { action: 'attack', x: 21 * 5, y: HEIGHT - 20, w: 18, h: 18, active: false},
   { action: 'moveLeft', x: 0, y: HEIGHT - 20, w: 18, h: 18, active: false},

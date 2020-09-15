@@ -142,6 +142,7 @@ export const loadGame = async () => {
   let objects = await db.get('objects')
   let blockHeight = await db.get('blockHeight')
   let inventory = await db.get('inventory')
+  let options = await db.get('options')
 
   if (time) window.CTDLGAME.frame = time
   if (viewport) {
@@ -176,6 +177,7 @@ export const loadGame = async () => {
   }
   if (blockHeight) window.CTDLGAME.blockHeight = blockHeight
   if (inventory) window.CTDLGAME.inventory = inventory
+  if (options) window.CTDLGAME.options = options
 
   window.CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
@@ -363,6 +365,7 @@ export const saveGame = async () => {
     }))
   await db.set('blockHeight', window.CTDLGAME.blockHeight)
   await db.set('inventory', window.CTDLGAME.inventory)
+  await db.set('options', window.CTDLGAME.options)
 }
 
 const progressBar = {
@@ -526,52 +529,82 @@ export const showControls = () => {
 
   constants.menuContext.beginPath()
 
-  if (window.CTDLGAME.touchScreen) {
-    constants.BUTTONS
-      .filter(button => button.active)
-      .map(button => {
-        constants.menuContext.rect(
+  constants.BUTTONS
+    .filter(button => button.active)
+    .map(button => {
+      constants.menuContext.rect(
+        pos.x - .5 + button.x,
+        button.y - .5 + window.CTDLGAME.viewport.y,
+        button.w,
+        button.h
+      )
+      if (window.BUTTONS.find(b => b.action === button.action)) {
+        constants.menuContext.globalAlpha = .2
+        constants.menuContext.fillRect(
           pos.x - .5 + button.x,
           button.y - .5 + window.CTDLGAME.viewport.y,
           button.w,
           button.h
         )
-        if (window.BUTTONS.find(b => b.action === button.action)) {
-          constants.menuContext.globalAlpha = .2
-          constants.menuContext.fillRect(
-            pos.x - .5 + button.x,
-            button.y - .5 + window.CTDLGAME.viewport.y,
-            button.w,
-            button.h
-          )
-          constants.menuContext.globalAlpha = 1
-        }
-      })
-    constants.menuContext.stroke()
-  
-    let selectedCharacter = window.SELECTEDCHARACTER.id
-    drawIcon(constants.menuContext, `left-${selectedCharacter}`, {
-      x: pos.x + 5,
-      y: pos.y + 1
+        constants.menuContext.globalAlpha = 1
+      }
     })
-    drawIcon(constants.menuContext, `right-${selectedCharacter}`, {
-      x: pos.x + 5 + 21,
-      y: pos.y + 1
-    })
-    drawIcon(constants.menuContext, `back-${selectedCharacter}`, {
-      x: pos.x + 5 + 21 * 2,
-      y: pos.y + 1
-    })
-    drawIcon(constants.menuContext, `jump-${selectedCharacter}`, {
-      x: pos.x + 5 + 21 * 4,
-      y: pos.y + 1
-    })
-    drawIcon(constants.menuContext, `attack-${selectedCharacter}`, {
-      x: pos.x + 5 + 21 * 5,
-      y: pos.y
-    })
-  }
+  constants.menuContext.stroke()
+
+  let selectedCharacter = window.SELECTEDCHARACTER.id
+  drawIcon(constants.menuContext, `left-${selectedCharacter}`, {
+    x: pos.x + 5,
+    y: pos.y + 1
+  })
+  drawIcon(constants.menuContext, `right-${selectedCharacter}`, {
+    x: pos.x + 5 + 21,
+    y: pos.y + 1
+  })
+  drawIcon(constants.menuContext, `back-${selectedCharacter}`, {
+    x: pos.x + 5 + 21 * 2,
+    y: pos.y + 1
+  })
+  drawIcon(constants.menuContext, `jump-${selectedCharacter}`, {
+    x: pos.x + 5 + 21 * 4,
+    y: pos.y + 1
+  })
+  drawIcon(constants.menuContext, `attack-${selectedCharacter}`, {
+    x: pos.x + 5 + 21 * 5,
+    y: pos.y
+  })
 }
+
+
+export const showSettings = () => {
+  const musicButton = constants.BUTTONS.find(button => button.action === 'music')
+  const soundButton = constants.BUTTONS.find(button => button.action === 'sound')
+  const posMusic = {
+    x: musicButton.x + window.CTDLGAME.viewport.x,
+    y: musicButton.y + window.CTDLGAME.viewport.y
+  }
+  const posSound = {
+    x: soundButton.x + window.CTDLGAME.viewport.x,
+    y: soundButton.y + window.CTDLGAME.viewport.y
+  }
+
+  constants.menuContext.strokeStyle = '#FFF'
+  constants.menuContext.fillStyle = '#FFF'
+  constants.menuContext.lineWidth = 1
+
+  constants.menuContext.beginPath()
+
+  drawIcon(constants.menuContext, 'music', {
+    x: posMusic.x,
+    y: posMusic.y,
+    opacity: window.CTDLGAME.options.music ? 1 : .5
+  })
+  drawIcon(constants.menuContext, 'sound', {
+    x: posSound.x,
+    y: posSound.y,
+    opacity: window.CTDLGAME.options.sound ? 1 : .5
+  })
+}
+
 export const showMenu = inventory => {
   constants.menuContext.fillStyle = '#212121'
   constants.menuContext.fillRect(
@@ -583,7 +616,8 @@ export const showMenu = inventory => {
 
   showInventory(inventory)
   showHealth()
-  showControls()
+  showSettings()
+  if (window.CTDLGAME.touchScreen) showControls()
 }
 
 let textQueue = []
@@ -670,7 +704,7 @@ export const showSaveIcon = () => {
     constants.menuContext,
     'save',
     {
-      x: CTDLGAME.viewport.x + constants.WIDTH - 10,
+      x: CTDLGAME.viewport.x + 3,
       y: CTDLGAME.viewport.y + 3,
       opacity: (256 - CTDLGAME.frame % constants.SAVERATE) / 256
     }

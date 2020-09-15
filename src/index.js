@@ -42,6 +42,10 @@ window.CTDLGAME = {
   assets,
   startScreen: true,
   touchScreen: true,
+  options: {
+    music: true,
+    sound: true
+  },
   viewport: constants.START,
   objects: [],
   blockHeight: -1,
