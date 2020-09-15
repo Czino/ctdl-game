@@ -138,7 +138,7 @@ export const initSoundtrack = id => {
   }
 }
 
-export const start = enable => {
+export const startMusic = enable => {
   if (typeof enable !== 'undefined') enabled = enable
   Transport.start('+0.1', 0)
   if (song.pulse != null) pulsePart.start(0)
@@ -151,7 +151,7 @@ export const start = enable => {
   Transport.stop('+' + song.length);
 }
 
-export const stop = disable => {
+export const stopMusic = disable => {
   if (typeof disable !== 'undefined') enabled = !disable
   Transport.stop()
   if (song.pulse != null) pulsePart.stop(0)

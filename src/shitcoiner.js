@@ -2,7 +2,7 @@ import shitcoiner from './sprites/shitcoiner'
 import Item from './item'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { write } from './font';
-import { addTextToQueue } from './gameUtils';
+import { addTextToQueue } from './textUtils';
 import constants from './constants';
 import { playSound } from './sounds';
 

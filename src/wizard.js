@@ -1,6 +1,5 @@
-import { write } from './font';
-import constants from './constants'
-import { addTextToQueue, checkBlocks } from './gameUtils'
+import { checkBlocks } from './gameUtils'
+import { addTextToQueue } from './textUtils'
 import Explosion from './explosion'
 
 export default function(id, context, quadTree, options) {

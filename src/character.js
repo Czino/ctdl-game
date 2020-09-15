@@ -4,7 +4,7 @@ import { moveObject, intersects, getClosest } from './geometryUtils'
 import { capitalize } from './stringUtils'
 import { write } from './font';
 import constants from './constants'
-import { addTextToQueue } from './gameUtils';
+import { addTextToQueue } from './textUtils';
 import { playSound } from './sounds';
 
 const sprites = {
@@ -344,6 +344,7 @@ export default function(id, context, quadTree, options) {
   this.select = () => {
     if (this.status === 'rekt') return
     this.selected = true
+    if (window.SELECTEDCHARACTER) window.SELECTEDCHARACTER.unselect()
     window.SELECTEDCHARACTER = this
   }
   this.unselect = () => {

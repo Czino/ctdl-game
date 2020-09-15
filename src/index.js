@@ -2,7 +2,7 @@ import * as db from './db'
 import { QuadTree, Boundary } from './quadTree'
 import Sun from './sun'
 import Moon from './moon'
-import { initEvents, updateOverlay } from './events'
+import { initEvents } from './events'
 import constants from './constants'
 import {
   assets,
@@ -10,22 +10,23 @@ import {
   showStartScreen,
   showGameOverScreen,
   showProgressBar,
+  showOverlay,
   updateViewport,
   showMenu,
-  writeMenu,
   saveGame,
   checkBlocks,
   getTimeOfDay,
   showSaveIcon,
   clearCanvas,
-  saveStateExists
+  saveStateExists,
+  fadeIntoGameOver,
+  circadianRhythm,
+  spawnEnemies,
+  cleanUpStage
 } from './gameUtils'
-import { addClass, removeClass } from './htmlUtils'
-
-import Shitcoiner from './shitcoiner'
+import { writeMenu } from './textUtils'
 import Wizard from './wizard'
-import { intersects } from './geometryUtils'
-import { initSoundtrack, changeVolume, stop, start } from './soundtrack'
+import { applyGravity } from './physicUtils'
 
 // import { playSound } from './sounds'
 
@@ -37,6 +38,7 @@ import { initSoundtrack, changeVolume, stop, start } from './soundtrack'
 // TODO add shop
 // TODO find out why music sometimes does not play
 // TODO refactor code
+// don't make CTDL global
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
@@ -66,7 +68,6 @@ window.CTDLGAME = {
   }))
 }
 
-let deathCounter = 64
 let time
 const sun = new Sun(constants.gameContext, {
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
@@ -127,14 +128,9 @@ function tick() {
     return
   }
 
+
   if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
-    if (time >= 5 && time < 5.1) {
-      CTDLGAME.isNight = false
-      addClass(constants.gameCanvas, 'ctdl-day')
-    } else if (time >= 18 && time < 18.1) {
-      CTDLGAME.isNight = true
-      removeClass(constants.gameCanvas, 'ctdl-day')
-    }
+    circadianRhythm(time)
   }
   if (CTDLGAME.frame % constants.FRAMERATE === 0) {
     time = getTimeOfDay()
@@ -144,53 +140,12 @@ function tick() {
 
     clearCanvas()
 
-    if (CTDLGAME.multiplayer) {
-      CTDLGAME.viewport = {
-        x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
-        y: Math.min(
-          constants.WORLD.h - constants.HEIGHT,
-          Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
-      }
-    } else {
-      CTDLGAME.viewport = {
-        x: Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2),
-        y: Math.min(
-          constants.WORLD.h - constants.HEIGHT,
-          Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h / 2))
-      }
-    }
-
     CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
 
     if (CTDLGAME.isNight) {
-      if (Math.random() < constants.SPAWNRATES.shitcoiner) {
-        let shitcoiner = new Shitcoiner(
-          'shitcoiner-' + Math.random(),
-          constants.gameContext,
-          CTDLGAME.quadTree,
-          {
-            x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
-            y: constants.WORLD.h - constants.GROUNDHEIGHT  - constants.MENU.h - 30,
-            status: 'spawn'
-          }
-        )
-
-        let hasCollided = CTDLGAME.quadTree.query(shitcoiner.getBoundingBox())
-          .filter(point => point.isSolid && point.id !== shitcoiner.id )
-          .some(point => intersects(shitcoiner.getBoundingBox(), point.getBoundingBox()))
-        if (!hasCollided) CTDLGAME.objects.push(shitcoiner)
-      }
+      spawnEnemies()
     } else {
-      CTDLGAME.objects = CTDLGAME.objects.filter(obj => {
-        if (obj.class !== 'Shitcoiner') return true
-        if (obj.status !== 'rekt' && obj.status !== 'burning') return true
-        if (obj.status === 'burning' && Math.random() < .25) {
-          return false
-        }
-
-        obj.status = 'burning'
-        return true
-      })
+      cleanUpStage()
     }
 
     if (window.CTDLGAME.wizardCountdown === 0) {
@@ -211,20 +166,12 @@ function tick() {
     sun.update()
     moon.update()
 
-    // apply gravity
-    CTDLGAME.hodlonaut.vy += constants.GRAVITY
-    CTDLGAME.katoshi.vy += constants.GRAVITY
-    CTDLGAME.objects
-      .filter(obj => obj.enemy || obj.class === 'Item')
-      .map(obj => obj.vy += constants.GRAVITY)
+    applyGravity()
 
-    CTDLGAME.objects.forEach(object => object.update())
-
-    updateViewport(CTDLGAME.viewport)
-    updateOverlay()
+    updateViewport()
+    showOverlay()
 
     showMenu(CTDLGAME.inventory)
-
     writeMenu()
 
     CTDLGAME.quadTree.clear()
@@ -237,7 +184,7 @@ function tick() {
     }
     // fade out save icon
     if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
-      showSaveIcon()
+      showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
     }
 
     if (CTDLGAME.frame > constants.FRAMERESET) {
@@ -245,29 +192,7 @@ function tick() {
     }
 
     if (!CTDLGAME.hodlonaut.health && !CTDLGAME.katoshi.health) {
-      deathCounter--
-
-      changeVolume(deathCounter / 64)
-
-      constants.overlayContext.fillStyle = '#212121'
-      constants.overlayContext.globalAlpha = (64 - deathCounter) / 64
-      constants.overlayContext.fillRect(
-        window.CTDLGAME.viewport.x,
-        window.CTDLGAME.viewport.y,
-        constants.WIDTH,
-        constants.HEIGHT
-      )
-      if (deathCounter === 0) {
-        CTDLGAME.gameOver = true
-        db.destroy()
-
-        stop()
-        changeVolume(1)
-        initSoundtrack('gameOver')
-        start()
-        constants.BUTTONS.find(button => button.action === 'newGame').active = true
-        initEvents(true)
-      }
+      fadeIntoGameOver()
     }
   }
 
