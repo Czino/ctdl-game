@@ -91,7 +91,7 @@ export default function(id, options) {
     this.status = 'climb'
 
     if (this.frame !== 10) return
-    moveObject(this, { x: this.direction === 'left' ? -5 : 5 , y: -7}, CTDLGAME.quadTree)
+    moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
     this.status = 'idle'
   }
 

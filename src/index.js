@@ -166,13 +166,13 @@ function tick() {
 
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
 
-    // if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
-    //   saveGame()
-    // }
-    // // fade out save icon
-    // if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
-    //   showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
-    // }
+    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
+      saveGame()
+    }
+    // fade out save icon
+    if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
+      showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
+    }
 
     if (CTDLGAME.frame > constants.FRAMERESET) {
       CTDLGAME.frame = 0
