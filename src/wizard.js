@@ -1,5 +1,7 @@
+import constants from './constants'
 import { CTDLGAME, checkBlocks } from './gameUtils'
 import { addTextToQueue } from './textUtils'
+import { playSound } from './sounds'
 import Explosion from './explosion'
 
 export default function(id, options) {

@@ -6,19 +6,11 @@ import { CTDLGAME } from './CTDLGAME'
  */
 export const updateViewport = () => {
   if (CTDLGAME.multiplayer) {
-    CTDLGAME.viewport = {
-      x: Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2),
-      y: Math.min(
-        constants.WORLD.h - constants.HEIGHT,
-        Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
-    }
+    CTDLGAME.viewport.x = Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2)
+    CTDLGAME.viewport.y = Math.min(constants.WORLD.h - constants.HEIGHT, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
   } else {
-    CTDLGAME.viewport = {
-      x: Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2),
-      y: Math.min(
-        constants.WORLD.h - constants.HEIGHT,
-        Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h / 2))
-    }
+    CTDLGAME.viewport.x = Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2)
+    CTDLGAME.viewport.y = Math.min(constants.WORLD.h - constants.HEIGHT, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h / 2))
   }
 
   [

@@ -1,7 +1,6 @@
 export { contains } from './contains'
 export { drawPolygon } from './drawPolygon'
 export { getClosest } from './getClosest'
-export { inside } from './inside'
 export { intersects } from './intersects'
 export { moveObject } from './moveObject'
 export { sharpLine } from './sharpLine'

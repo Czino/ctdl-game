@@ -1,4 +1,4 @@
-import { contains, intersects } from './geometryUtils'
+import { intersects } from './geometryUtils'
 
 export const Boundary = function ({ x, y, w, h }) {
   this.x = x
@@ -9,7 +9,7 @@ export const Boundary = function ({ x, y, w, h }) {
 
 export const QuadTree = function (boundary, capacity, level) {
   this.boundary = boundary,
-  this.capacity =  capacity || 10,
+  this.capacity =  capacity || 20,
   this.subs = [],
   this.objects = []
   this.level = level || 0
@@ -19,7 +19,10 @@ export const QuadTree = function (boundary, capacity, level) {
       const boundingBox = object.getBoundingBox()
       object = {
         ...object,
-        ...boundingBox
+        x: boundingBox.x,
+        y: boundingBox.y,
+        w: boundingBox.w,
+        h: boundingBox.h,
       }
     }
     if (!intersects(this.boundary, object)) {
@@ -125,7 +128,7 @@ export const QuadTree = function (boundary, capacity, level) {
   }
   this.clear = () => {
     this.objects = []
-    this.subs = []
+    this.subs = []
   }
 }
 

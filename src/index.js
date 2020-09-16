@@ -26,6 +26,7 @@ import {
 import { writeMenu } from './textUtils'
 import Wizard from './wizard'
 import { applyGravity } from './physicsUtils'
+import { intersects } from './geometryUtils'
 
 // import { playSound } from './sounds'
 
@@ -33,7 +34,6 @@ import { applyGravity } from './physicsUtils'
 // setInterval(() => playSound('block'), 3000)
 
 // TODO refactor code
-// TODO check requestAnimationFrameHandler performace
 // TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
 // TODO add attack sounds for lightning torch and sword
@@ -122,10 +122,11 @@ function tick() {
 
     CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
 
+
+    cleanUpStage()
+
     if (CTDLGAME.isNight) {
       spawnEnemies()
-    } else {
-      cleanUpStage()
     }
 
     if (CTDLGAME.wizardCountdown === 0) {
@@ -152,8 +153,11 @@ function tick() {
     showMenu(CTDLGAME.inventory)
     writeMenu()
 
+    // Don't add blocks to Quadtree that are not in viewport
     CTDLGAME.quadTree.clear()
-    CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
+    CTDLGAME.objects
+      .filter(object => !/block/.test(object.class) || intersects(object, CTDLGAME.viewport))
+      .forEach(object => CTDLGAME.quadTree.insert(object))
 
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
 
