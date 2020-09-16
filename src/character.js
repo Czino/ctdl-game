@@ -80,6 +80,10 @@ export default function(id, options) {
     this.status = 'attack'
 
     if (this.id === 'katoshi' && this.frame !== 3) return
+
+    if (this.id === 'hodlonaut') playSound('lightningTorch')
+    if (this.id === 'katoshi') playSound('sword')
+
     const enemies = this.senseEnemy()
     enemies.forEach((enemy, index) => {
       if (index > 2) return // can only hurt 3 enemies at once

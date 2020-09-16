@@ -30,13 +30,13 @@ import { intersects } from './geometryUtils'
 
 // import { playSound } from './sounds'
 
-// playSound('block')
-// setInterval(() => playSound('block'), 3000)
+// playSound('lightningTorch')
+// setInterval(() => playSound('lightningTorch'), 3000)
 
 // TODO refactor code
 // TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
-// TODO add attack sounds for lightning torch and sword
+// TODO fix placing blocks twice on the same spot
 // TODO add exchange
 // TODO add shop
 // TODO add first end boss (must be related to shitcoining)

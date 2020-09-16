@@ -125,6 +125,34 @@ const sounds = {
     squareSynth.triggerAttack('B3', present + dur / 2, .02)
     squareSynth.triggerRelease(present + dur / 2 + dur)
   },
+  'lightningTorch': () => {
+    const present = now()
+    const dur = .4
+
+    noiseSynth.noise.type = 'white'
+
+    noiseSynth.envelope.attack = .0005
+    noiseSynth.envelope.decay = .0005
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = .0005
+
+    noiseSynth.triggerAttack(present, .02)
+    noiseSynth.triggerRelease(present + dur)
+  },
+  'sword': () => {
+    const present = now()
+    const dur = .05
+
+    noiseSynth.noise.type = 'pink'
+
+    noiseSynth.envelope.attack = .05
+    noiseSynth.envelope.decay = .1
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = .17
+
+    noiseSynth.triggerAttack(present, .1)
+    noiseSynth.triggerRelease(present + dur)
+  },
   'shitcoinerHurt': () => {
     const present = now()
     const dur = .05
