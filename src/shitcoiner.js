@@ -43,24 +43,56 @@ export default function(id, options) {
     this.status = 'idle'
   }
   this.moveLeft = () => {
-    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
+    if (/climb|spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
     this.kneels = false
     this.direction = 'left'
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
       this.status = 'move'
+    } else {
+      let climbTo = this.getBoundingBox()
+      climbTo.x -= 3
+      climbTo.w += 3
+      climbTo.h = 20
+
+      let obstacles = CTDLGAME.quadTree.query(climbTo)
+        .filter(obj => obj.isSolid && !obj.enemy)
+        .filter(obj => intersects(obj, climbTo))
+
+      let canClimb = obstacles.length === 0
+      if (canClimb) this.climb()
     }
   }
   this.moveRight = () => {
-    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
+    if (/climb|spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
     this.kneels = false
     this.direction = 'right'
 
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
+    } else {
+      let climbTo = this.getBoundingBox()
+      climbTo.w += 3
+      climbTo.h = 20
+
+      let obstacles = CTDLGAME.quadTree.query(climbTo)
+        .filter(obj => obj.isSolid && !obj.enemy)
+        .filter(obj => intersects(obj, climbTo))
+
+      let canClimb = obstacles.length === 0
+      if (canClimb) this.climb()
     }
+  }
+  this.climb = () => {
+    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
+
+    this.status = 'climb'
+
+    if (this.frame !== 10) return
+    moveObject(this, { x: this.direction === 'left' ? -5 : 5 , y: -7}, CTDLGAME.quadTree)
+    this.status = 'idle'
   }
 
   this.hurt = (dmg, direction) => {
@@ -132,6 +164,10 @@ export default function(id, options) {
       moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
+    }
+    if (this.status === 'climb') {
+      this.vy = 0
+      this.climb()
     }
     if (this.vy !== 0) {
       if (this.vy > 12) this.vy = 12

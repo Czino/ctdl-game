@@ -58,7 +58,6 @@ export const loadGame = async () => {
     katoshi
   )
 
-
   if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
