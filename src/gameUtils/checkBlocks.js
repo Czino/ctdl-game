@@ -1,3 +1,4 @@
+import { CTDLGAME } from './CTDLGAME'
 import { addTextToQueue } from '../textUtils'
 
 /**
@@ -5,10 +6,10 @@ import { addTextToQueue } from '../textUtils'
  * @param {Object} block the block to add
  */
 const addBlockToInventory = block => {
-  if (window.CTDLGAME.blockHeight >= block.height && block.height !== 0) return
+  if (CTDLGAME.blockHeight >= block.height && block.height !== 0) return
   addTextToQueue(`Found a new block: ${block.height}`)
-  window.CTDLGAME.blockHeight = block.height
-  window.CTDLGAME.inventory.blocks.push({
+  CTDLGAME.blockHeight = block.height
+  CTDLGAME.inventory.blocks.push({
     height: block.height,
     id: block.id,
     size: block.size,

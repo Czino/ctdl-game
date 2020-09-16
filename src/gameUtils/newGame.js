@@ -1,4 +1,5 @@
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, startMusic } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import Character from '../character'
@@ -8,15 +9,15 @@ import Block from '../block'
  * @description Method to prepare new game
  */
 export const newGame = () => {
-  window.CTDLGAME.objects = []
-  window.CTDLGAME.inventory = { // TODO refactor into factory
+  CTDLGAME.objects = []
+  CTDLGAME.inventory = { // TODO refactor into factory
     usd: 0,
     sats: 0,
     blocks: []
   }
-  window.CTDLGAME.blockHeight = -1
+  CTDLGAME.blockHeight = -1
 
-  const ground = new Block('ground', constants.gameContext, window.CTDLGAME.quadTree, {
+  const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
     x: 0,
     y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
     w: constants.WORLD.w,
@@ -25,37 +26,37 @@ export const newGame = () => {
     isSolid: true
   })
 
-  window.CTDLGAME.gameOver = false
-  window.CTDLGAME.wizardCountdown = 16
+  CTDLGAME.gameOver = false
+  CTDLGAME.wizardCountdown = 16
 
-  window.CTDLGAME.hodlonaut = new Character(
+  CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     constants.charContext,
-    window.CTDLGAME.quadTree, {
-      x: window.CTDLGAME.viewport.x + 50,
+    CTDLGAME.quadTree, {
+      x: CTDLGAME.viewport.x + 50,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
     }
   )
-  window.CTDLGAME.katoshi = new Character(
+  CTDLGAME.katoshi = new Character(
     'katoshi',
     constants.charContext,
-    window.CTDLGAME.quadTree, {
+    CTDLGAME.quadTree, {
       active: false,
-      x: window.CTDLGAME.viewport.x + constants.WIDTH / 2,
+      x: CTDLGAME.viewport.x + constants.WIDTH / 2,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
       direction: 'left'
     }
   )
 
-  window.CTDLGAME.objects.push(ground)
+  CTDLGAME.objects.push(ground)
 
-  window.CTDLGAME.hodlonaut.select()
+  CTDLGAME.hodlonaut.select()
 
-  window.CTDLGAME.objects.push(window.CTDLGAME.hodlonaut)
-  window.CTDLGAME.objects.push(window.CTDLGAME.katoshi)
+  CTDLGAME.objects.push(CTDLGAME.hodlonaut)
+  CTDLGAME.objects.push(CTDLGAME.katoshi)
 
-  window.CTDLGAME.objects.forEach(object => window.CTDLGAME.quadTree.insert(object))
-  window.CTDLGAME.objects.forEach(object => object.update())
+  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
+  CTDLGAME.objects.forEach(object => object.update())
 
   initSoundtrack('stellaSplendence')
   startMusic()

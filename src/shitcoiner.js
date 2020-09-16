@@ -1,5 +1,6 @@
 import shitcoiner from './sprites/shitcoiner'
 import Item from './item'
+import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { write } from './font';
 import { addTextToQueue } from './textUtils';
@@ -87,7 +88,7 @@ export default function(id, context, quadTree, options) {
       let item = new Item(
         this.item.id,
         constants.gameContext,
-        window.CTDLGAME.quadTree,
+        CTDLGAME.quadTree,
         {
           x: this.x,
           y: this.y,
@@ -95,7 +96,7 @@ export default function(id, context, quadTree, options) {
           vx: Math.round((Math.random() - .5) * 10)
         }
       )
-      window.CTDLGAME.objects.push(item)
+      CTDLGAME.objects.push(item)
     }
   }
 
@@ -126,7 +127,7 @@ export default function(id, context, quadTree, options) {
   }
 
   this.update = () => {
-    const sprite = window.CTDLGAME.assets.shitcoiner
+    const sprite = CTDLGAME.assets.shitcoiner
 
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6

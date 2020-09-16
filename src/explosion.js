@@ -1,5 +1,5 @@
 import explosion from './sprites/explosion'
-
+import { CTDLGAME } from './gameUtils'
 
 export default function(context, { x, y }) {
   this.context = context
@@ -12,7 +12,7 @@ export default function(context, { x, y }) {
   this.update = () => {
     if (this.remove) return
 
-    const sprite = window.CTDLGAME.assets.explosion
+    const sprite = CTDLGAME.assets.explosion
     let data = explosion[this.frame]
 
     this.context.drawImage(

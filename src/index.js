@@ -1,11 +1,10 @@
 import * as db from './db'
-import { QuadTree, Boundary } from './quadTree'
 import Sun from './sun'
 import Moon from './moon'
 import { initEvents } from './events'
 import constants from './constants'
 import {
-  assets,
+  CTDLGAME,
   loadAsset,
   showStartScreen,
   showGameOverScreen,
@@ -34,7 +33,6 @@ import { applyGravity } from './physicsUtils'
 // setInterval(() => playSound('block'), 3000)
 
 // TODO refactor code
-// TODO don't make CTDL global
 // TODO check requestAnimationFrameHandler performace
 // TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
@@ -45,34 +43,10 @@ import { applyGravity } from './physicsUtils'
 // TODO add more enemies and bosses
 // TODO add moon ending scene
 // TODO add "mempool"
+// TODO make KEYS, BUTTONS, SELECTED and SELECTEDCHARACTER private
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
-
-window.CTDLGAME = {
-  cursor: {x: 0, y: 0},
-  frame: 0,
-  assets,
-  startScreen: true,
-  touchScreen: true,
-  options: {
-    music: true,
-    sound: true
-  },
-  viewport: constants.START,
-  objects: [],
-  blockHeight: -1,
-  inventory: {
-    usd: 0,
-    sats: 0,
-    blocks: []
-  },
-  quadTree: new QuadTree(new Boundary({
-    x: 0,
-    y: 0,
-    ...constants.WORLD
-  }))
-}
 
 let time
 const sun = new Sun(constants.gameContext, {
@@ -154,19 +128,19 @@ function tick() {
       cleanUpStage()
     }
 
-    if (window.CTDLGAME.wizardCountdown === 0) {
+    if (CTDLGAME.wizardCountdown === 0) {
       const wizard = new Wizard(
         'wizard',
         constants.charContext,
-        window.CTDLGAME.quadTree,
+        CTDLGAME.quadTree,
         {
-          x: window.CTDLGAME.hodlonaut.x - 40,
+          x: CTDLGAME.hodlonaut.x - 40,
           y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
         }
       )
-      window.CTDLGAME.objects.push(wizard)
-    } else if (window.CTDLGAME.wizardCountdown) {
-      window.CTDLGAME.wizardCountdown--
+      CTDLGAME.objects.push(wizard)
+    } else if (CTDLGAME.wizardCountdown) {
+      CTDLGAME.wizardCountdown--
     }
 
     sun.update()

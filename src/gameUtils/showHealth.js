@@ -1,18 +1,20 @@
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
+
 import { drawIcon } from '../icons'
 
 export const showHealth = () => {
   const pos = {
-    x: constants.WIDTH + window.CTDLGAME.viewport.x - 30,
-    y: constants.HEIGHT + window.CTDLGAME.viewport.y - constants.MENU.h + 2
+    x: constants.WIDTH + CTDLGAME.viewport.x - 30,
+    y: constants.HEIGHT + CTDLGAME.viewport.y - constants.MENU.h + 2
   }
-  const chars = [window.CTDLGAME.hodlonaut, window.CTDLGAME.katoshi]
+  const chars = [CTDLGAME.hodlonaut, CTDLGAME.katoshi]
 
   chars.map((character, i) => {
     drawIcon(
       constants.menuContext,
       character.id, {
-        x: window.CTDLGAME.viewport.x + constants.WIDTH - 40,
+        x: CTDLGAME.viewport.x + constants.WIDTH - 40,
         y: pos.y + 3 + i * 10
       }
     )
@@ -28,7 +30,7 @@ export const showHealth = () => {
       drawIcon(
         constants.menuContext,
         'heart-' + fill, {
-          x: window.CTDLGAME.viewport.x + constants.WIDTH - 30 + h * 9,
+          x: CTDLGAME.viewport.x + constants.WIDTH - 30 + h * 9,
           y: pos.y + 3 + i * 10
         }
       )

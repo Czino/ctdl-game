@@ -1,16 +1,17 @@
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
 
 export const showSettings = () => {
   const musicButton = constants.BUTTONS.find(button => button.action === 'music')
   const soundButton = constants.BUTTONS.find(button => button.action === 'sound')
   const posMusic = {
-    x: musicButton.x + window.CTDLGAME.viewport.x,
-    y: musicButton.y + window.CTDLGAME.viewport.y
+    x: musicButton.x + CTDLGAME.viewport.x,
+    y: musicButton.y + CTDLGAME.viewport.y
   }
   const posSound = {
-    x: soundButton.x + window.CTDLGAME.viewport.x,
-    y: soundButton.y + window.CTDLGAME.viewport.y
+    x: soundButton.x + CTDLGAME.viewport.x,
+    y: soundButton.y + CTDLGAME.viewport.y
   }
 
   constants.menuContext.strokeStyle = '#FFF'
@@ -22,11 +23,11 @@ export const showSettings = () => {
   drawIcon(constants.menuContext, 'music', {
     x: posMusic.x,
     y: posMusic.y,
-    opacity: window.CTDLGAME.options.music ? 1 : .5
+    opacity: CTDLGAME.options.music ? 1 : .5
   })
   drawIcon(constants.menuContext, 'sound', {
     x: posSound.x,
     y: posSound.y,
-    opacity: window.CTDLGAME.options.sound ? 1 : .5
+    opacity: CTDLGAME.options.sound ? 1 : .5
   })
 }

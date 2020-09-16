@@ -1,3 +1,4 @@
+import { CTDLGAME } from './gameUtils'
 import { moveObject } from './geometryUtils';
 import spriteData from './sprites/items'
 import { playSound } from './sounds';
@@ -17,7 +18,7 @@ export default function(id, context, quadTree, options) {
   this.vx = options.vx || 0
   this.vy = options.vy || 0
 
-  const sprite = window.CTDLGAME.assets.items
+  const sprite = CTDLGAME.assets.items
 
   this.collect = () => {
     playSound('item')
@@ -45,7 +46,7 @@ export default function(id, context, quadTree, options) {
     this.context.drawImage(
       sprite,
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,
-      this.x, this.y + Math.round(Math.sin(window.CTDLGAME.frame / 16)), this.w, this.h
+      this.x, this.y + Math.round(Math.sin(CTDLGAME.frame / 16)), this.w, this.h
     )
   }
 

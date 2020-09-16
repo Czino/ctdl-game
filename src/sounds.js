@@ -182,5 +182,3 @@ export const toggleSounds = enable => {
 export const playSound = id => {
   if (enabled) sounds[id]()
 }
-
-window.playSound = playSound

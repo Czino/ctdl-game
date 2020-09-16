@@ -1,5 +1,7 @@
 import * as db from '../db'
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
+
 import { initSoundtrack, startMusic, stopMusic, changeVolume } from '../soundtrack'
 import { initEvents } from '../events'
 
@@ -18,13 +20,13 @@ export const fadeIntoGameOver = () => {
   constants.overlayContext.fillStyle = '#212121'
   constants.overlayContext.globalAlpha = (64 - deathCounter) / 64
   constants.overlayContext.fillRect(
-    window.CTDLGAME.viewport.x,
-    window.CTDLGAME.viewport.y,
+    CTDLGAME.viewport.x,
+    CTDLGAME.viewport.y,
     constants.WIDTH,
     constants.HEIGHT
   )
   if (deathCounter === 0) {
-    window.CTDLGAME.gameOver = true
+    CTDLGAME.gameOver = true
     // db.destroy()
 
     stopMusic()

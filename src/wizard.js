@@ -1,4 +1,4 @@
-import { checkBlocks } from './gameUtils'
+import { CTDLGAME, checkBlocks } from './gameUtils'
 import { addTextToQueue } from './textUtils'
 import Explosion from './explosion'
 
@@ -17,20 +17,20 @@ export default function(id, context, quadTree, options) {
 
   let explosion
   this.update = () => {
-    const sprite = window.CTDLGAME.assets.wizard
+    const sprite = CTDLGAME.assets.wizard
 
     if (!this.hasAppeared) {
       playSound('magic')
       this.hasAppeared = true
       explosion = new Explosion(this.context, { x: this.getCenter().x, y: this.getCenter().y })
 
-      window.CTDLGAME.hodlonaut.idle()
-      window.CTDLGAME.hodlonaut.direction = 'left'
-      window.CTDLGAME.katoshi.idle()
-      window.CTDLGAME.katoshi.direction = 'left'
+      CTDLGAME.hodlonaut.idle()
+      CTDLGAME.hodlonaut.direction = 'left'
+      CTDLGAME.katoshi.idle()
+      CTDLGAME.katoshi.direction = 'left'
 
-      window.CTDLGAME.wizardCountdown = null
-      window.CTDLGAME.lockCharacters = true
+      CTDLGAME.wizardCountdown = null
+      CTDLGAME.lockCharacters = true
 
       addTextToQueue('Wizard:\n At last, I found you!')
       addTextToQueue('Wizard:\n I am the wizard of \nmagic internet money.')
@@ -51,7 +51,7 @@ export default function(id, context, quadTree, options) {
       ].join('\n'))
       addTextToQueue('Wizard:\n We call them shitcoiners,\nlol')
       addTextToQueue('Wizard:\n I must go now, \nI will see you again,\non the moon!', () => {
-        window.CTDLGAME.frame = 0
+        CTDLGAME.frame = 0
         this.disappear()
       })
     } else {
@@ -78,7 +78,7 @@ export default function(id, context, quadTree, options) {
     playSound('magic')
     explosion = new Explosion(this.context, { x: this.getCenter().x, y: this.getCenter().y })
     this.status = 'disappear'
-    window.CTDLGAME.lockCharacters = false
+    CTDLGAME.lockCharacters = false
   }
 
   this.getBoundingBox = () => ({

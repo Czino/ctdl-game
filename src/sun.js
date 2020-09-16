@@ -1,5 +1,5 @@
 import constants from "./constants";
-import { getTimeOfDay } from "./gameUtils";
+import { CTDLGAME, getTimeOfDay } from "./gameUtils";
 
 export default function(context, options) {
   this.id = 'sun';
@@ -26,8 +26,8 @@ export default function(context, options) {
     }
 
     let center = this.getCenter()
-    let middle = window.CTDLGAME.viewport.x + constants.WIDTH / 2
-    this.x = Math.round(middle - (window.CTDLGAME.viewport.x * 8 / constants.WORLD.w))
+    let middle = CTDLGAME.viewport.x + constants.WIDTH / 2
+    this.x = Math.round(middle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
 
     this.context.fillStyle = '#FFF'
     this.context.beginPath();

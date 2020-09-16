@@ -1,6 +1,6 @@
 import { contains } from './geometryUtils'
 import constants from './constants'
-import { newGame, loadGame, showOverlay } from './gameUtils'
+import { CTDLGAME, newGame, loadGame, showOverlay } from './gameUtils'
 import { addTextToQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, startMusic } from './soundtrack'
@@ -13,9 +13,9 @@ window.BUTTONS = []
 export const initEvents = startScreen => {
   try {
     document.createEvent('TouchEvent')
-    window.CTDLGAME.touchScreen = true
+    CTDLGAME.touchScreen = true
   } catch (e) {
-    window.CTDLGAME.touchScreen = false
+    CTDLGAME.touchScreen = false
   }
 
   if (startScreen) {
@@ -43,9 +43,9 @@ export const initEvents = startScreen => {
   window.addEventListener('touchmove', mouseMove)
 
   window.addEventListener('keydown', e => {
-    if (!window.CTDLGAME.multiplayer) {
+    if (!CTDLGAME.multiplayer) {
       if (Object.keys(constants.CONTROLS.katoshi).indexOf(e.key.toLowerCase()) !== -1) {
-        window.CTDLGAME.multiplayer = true
+        CTDLGAME.multiplayer = true
         addTextToQueue('Multiplayer activated')
       }
     }
@@ -71,17 +71,17 @@ function mouseMoveHandler (e) {
   }
 
   if (e.layerX) {
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
   }
   let buttonHover = constants.BUTTONS.find(button =>
     button.active &&
-    window.CTDLGAME.cursor.x > button.x &&
-    window.CTDLGAME.cursor.x < button.x + button.w &&
-    window.CTDLGAME.cursor.y > button.y &&
-    window.CTDLGAME.cursor.y < button.y + button.h
+    CTDLGAME.cursor.x > button.x &&
+    CTDLGAME.cursor.x < button.x + button.w &&
+    CTDLGAME.cursor.y > button.y &&
+    CTDLGAME.cursor.y < button.y + button.h
   )
 
   if (buttonHover) {
@@ -98,17 +98,17 @@ async function startScreenHandler (e) {
   }
 
   if (e.layerX) {
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
   } else if (e.touches?.length > 0) {
     e.stopPropagation()
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
       y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
     }
-    window.CTDLGAME.touchScreen = true
+    CTDLGAME.touchScreen = true
 
     constants.BUTTONS
       .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
@@ -116,17 +116,17 @@ async function startScreenHandler (e) {
   }
   let buttonPressed = constants.BUTTONS.find(button =>
     button.active &&
-    window.CTDLGAME.cursor.x > button.x &&
-    window.CTDLGAME.cursor.x < button.x + button.w &&
-    window.CTDLGAME.cursor.y > button.y &&
-    window.CTDLGAME.cursor.y < button.y + button.h
+    CTDLGAME.cursor.x > button.x &&
+    CTDLGAME.cursor.x < button.x + button.w &&
+    CTDLGAME.cursor.y > button.y &&
+    CTDLGAME.cursor.y < button.y + button.h
   )
 
   if (buttonPressed?.action === 'newGame') {
     playSound('select')
 
     newGame()
-    window.CTDLGAME.startScreen = false
+    CTDLGAME.startScreen = false
 
     constants.BUTTONS
       .filter(button => /newGame|loadGame/.test(button.action))
@@ -138,7 +138,7 @@ async function startScreenHandler (e) {
   } else if (buttonPressed?.action === 'loadGame') {
     playSound('select')
 
-    window.CTDLGAME.startScreen = false
+    CTDLGAME.startScreen = false
     await loadGame()
 
     constants.BUTTONS
@@ -149,15 +149,15 @@ async function startScreenHandler (e) {
     window.removeEventListener('touchend', startScreenHandler)
     initEvents(false)
   } else if (buttonPressed?.action === 'music') {
-    window.CTDLGAME.options.music = !window.CTDLGAME.options.music
-    if (!window.CTDLGAME.options.music) {
+    CTDLGAME.options.music = !CTDLGAME.options.music
+    if (!CTDLGAME.options.music) {
       stopMusic(true)
     } else {
       startMusic(true)
     }
   } else if (buttonPressed?.action === 'sound') {
-    window.CTDLGAME.options.sound = !window.CTDLGAME.options.sound
-      toggleSounds(window.CTDLGAME.options.sound)
+    CTDLGAME.options.sound = !CTDLGAME.options.sound
+      toggleSounds(CTDLGAME.options.sound)
   }
 }
 
@@ -165,7 +165,7 @@ function click (e) {
   let canvas = e.target
 
   if (e.layerX) {
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
@@ -173,16 +173,16 @@ function click (e) {
     e.stopPropagation()
     window.BUTTONS = []
     Array.from(e.touches).forEach(touch => {
-      window.CTDLGAME.cursor = {
+      CTDLGAME.cursor = {
         x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
         y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
       }
 
       let buttonPressed = constants.BUTTONS.find(button =>
-        window.CTDLGAME.cursor.x > button.x &&
-        window.CTDLGAME.cursor.x < button.x + button.w &&
-        window.CTDLGAME.cursor.y > button.y &&
-        window.CTDLGAME.cursor.y < button.y + button.h
+        CTDLGAME.cursor.x > button.x &&
+        CTDLGAME.cursor.x < button.x + button.w &&
+        CTDLGAME.cursor.y > button.y &&
+        CTDLGAME.cursor.y < button.y + button.h
       )
 
       if (buttonPressed) {
@@ -195,21 +195,21 @@ function click (e) {
   }
 
   let click = {
-    x: window.CTDLGAME.cursor.x + window.CTDLGAME.viewport.x,
-    y: window.CTDLGAME.cursor.y + window.CTDLGAME.viewport.y,
+    x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
+    y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
     w: 1, h: 1
   }
 
-  if (window.CTDLGAME.ghostBlock) {
+  if (CTDLGAME.ghostBlock) {
     // TODO refactor into placeBlock method
     playSound('block')
-    window.CTDLGAME.ghostBlock.context = constants.gameContext
-    window.CTDLGAME.ghostBlock.opacity = 1
-    window.CTDLGAME.ghostBlock.isSolid = true
-    window.CTDLGAME.inventory.blocks.shift()
-    window.CTDLGAME.objects.push(window.CTDLGAME.ghostBlock)
+    CTDLGAME.ghostBlock.context = constants.gameContext
+    CTDLGAME.ghostBlock.opacity = 1
+    CTDLGAME.ghostBlock.isSolid = true
+    CTDLGAME.inventory.blocks.shift()
+    CTDLGAME.objects.push(CTDLGAME.ghostBlock)
     window.SELECTEDCHARACTER.action()
-    window.CTDLGAME.ghostBlock = null
+    CTDLGAME.ghostBlock = null
   }
 
   let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
@@ -224,23 +224,23 @@ function clickEnd (e) {
   let canvas = e.target
   window.BUTTONS = []
   if (e.layerX) {
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
   } else if (e.touches?.length > 0) {
     e.stopPropagation()
     Array.from(e.touches).forEach(touch => {
-      window.CTDLGAME.cursor = {
+      CTDLGAME.cursor = {
         x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
         y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
       }
       let buttonPressed = constants.BUTTONS.find(button =>
         button.active &&
-        window.CTDLGAME.cursor.x > button.x &&
-        window.CTDLGAME.cursor.x < button.x + button.w &&
-        window.CTDLGAME.cursor.y > button.y &&
-        window.CTDLGAME.cursor.y < button.y + button.h
+        CTDLGAME.cursor.x > button.x &&
+        CTDLGAME.cursor.x < button.x + button.w &&
+        CTDLGAME.cursor.y > button.y &&
+        CTDLGAME.cursor.y < button.y + button.h
       )
 
       if (buttonPressed) {
@@ -252,18 +252,18 @@ function clickEnd (e) {
 
 function mouseMove (e) {
   let canvas = e.target
-  window.CTDLGAME.cursor = {
+  CTDLGAME.cursor = {
     x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
     y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
   }
 
   if (e.layerX) {
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
   } else if (e.touches?.length > 0) {
-    window.CTDLGAME.cursor = {
+    CTDLGAME.cursor = {
       x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
       y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
     }

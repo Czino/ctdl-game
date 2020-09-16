@@ -1,5 +1,5 @@
 import constants from "./constants";
-import { getTimeOfDay } from "./gameUtils";
+import { CTDLGAME, getTimeOfDay } from "./gameUtils";
 
 export default function(context, options) {
   this.id = 'moon';
@@ -17,7 +17,7 @@ export default function(context, options) {
     let timeOfDay = getTimeOfDay()
     let x = this.x
     this.y = Math.round(CTDLGAME.viewport.y + 10)
-    this.w = this.h = Math.max(14, (1 - (window.CTDLGAME.viewport.y + constants.HEIGHT) / constants.WORLD.h) * 110)
+    this.w = this.h = Math.max(14, (1 - (CTDLGAME.viewport.y + constants.HEIGHT) / constants.WORLD.h) * 110)
 
     if (timeOfDay >= 6 && timeOfDay < 18) return
     if (timeOfDay > 18 && timeOfDay < 19) {
@@ -28,9 +28,9 @@ export default function(context, options) {
     }
 
 
-    let newMiddle = window.CTDLGAME.viewport.x + constants.WIDTH / 2
-    this.x = Math.round(newMiddle - (window.CTDLGAME.viewport.x * 8 / constants.WORLD.w))
-    let sprite = window.CTDLGAME.assets.moon
+    let newMiddle = CTDLGAME.viewport.x + constants.WIDTH / 2
+    this.x = Math.round(newMiddle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
+    let sprite = CTDLGAME.assets.moon
     this.context.drawImage(
       sprite,
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,

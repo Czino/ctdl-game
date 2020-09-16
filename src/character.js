@@ -1,5 +1,6 @@
 import hodlonaut from './sprites/hodlonaut'
 import katoshi from './sprites/katoshi'
+import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { capitalize } from './stringUtils'
 import { write } from './font';
@@ -137,16 +138,16 @@ export default function(id, context, quadTree, options) {
 
     this.selected = false
     if (this.id === 'hodlonaut') {
-      window.CTDLGAME.katoshi.select()
+      CTDLGAME.katoshi.select()
     } else {
-      window.CTDLGAME.hodlonaut.select()
+      CTDLGAME.hodlonaut.select()
     }
 
     addTextToQueue(`${capitalize(this.id)} got rekt`)
   }
 
   this.senseControls = () => {
-    let id = window.CTDLGAME.multiplayer ? this.id : 'hodlonaut'
+    let id = CTDLGAME.multiplayer ? this.id : 'hodlonaut'
     let didAction = window.KEYS.find(key => {
       if (!this[constants.CONTROLS[id][key]]) return false
 
@@ -209,9 +210,9 @@ export default function(id, context, quadTree, options) {
   }
 
   this.update = () => {
-    const sprite = window.CTDLGAME.assets[this.id]
+    const sprite = CTDLGAME.assets[this.id]
 
-    if (window.CTDLGAME.lockCharacters) {
+    if (CTDLGAME.lockCharacters) {
       let data = this.spriteData[this.direction][this.status][0]
       this.context.globalAlpha = data.opacity ?? 1
 
@@ -253,13 +254,13 @@ export default function(id, context, quadTree, options) {
         if (item.id === 'opendime') {
           let sats = Math.round(Math.random() * 10000)
           addTextToQueue(`You found an opendime with\nś${sats}`, () => {
-            window.CTDLGAME.inventory.sats += sats
+            CTDLGAME.inventory.sats += sats
           })
         }
         if (item.id === 'coldcard') {
           let sats = Math.round(Math.random() * 100000)
           addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
-            window.CTDLGAME.inventory.sats += sats
+            CTDLGAME.inventory.sats += sats
           })
         }
         if (item.id === 'honeybadger') {
@@ -278,7 +279,7 @@ export default function(id, context, quadTree, options) {
       this.status = 'idle'
     }
 
-    if (window.CTDLGAME.multiplayer || this.selected) {
+    if (CTDLGAME.multiplayer || this.selected) {
       this.senseControls()
     } else {
       this.autoPilot()

@@ -1,5 +1,7 @@
+import { CTDLGAME } from './CTDLGAME'
+
 export const cleanUpStage = () => {
-  window.CTDLGAME.objects = window.CTDLGAME.objects.filter(obj => {
+  CTDLGAME.objects = CTDLGAME.objects.filter(obj => {
     if (obj.class !== 'Shitcoiner') return true
     if (obj.status !== 'rekt' && obj.status !== 'burning') return true
     if (obj.status === 'burning' && Math.random() < .25) {

@@ -1,6 +1,6 @@
 import constants from '../constants'
 import { write } from '../font'
-
+import { CTDLGAME } from './CTDLGAME'
 
 const progressBar = {
   x: 20,
@@ -17,8 +17,8 @@ export const showProgressBar = progress => {
   constants.overlayContext.fillStyle = '#212121'
 
   constants.overlayContext.fillRect(
-    window.CTDLGAME.viewport.x,
-    window.CTDLGAME.viewport.y,
+    CTDLGAME.viewport.x,
+    CTDLGAME.viewport.y,
     constants.WIDTH,
     constants.HEIGHT
   )
@@ -28,16 +28,16 @@ export const showProgressBar = progress => {
 
   constants.overlayContext.beginPath()
   constants.overlayContext.rect(
-    progressBar.x + window.CTDLGAME.viewport.x - .5,
-    progressBar.y + window.CTDLGAME.viewport.y - .5,
+    progressBar.x + CTDLGAME.viewport.x - .5,
+    progressBar.y + CTDLGAME.viewport.y - .5,
     progressBar.w,
     progressBar.h
   )
   constants.overlayContext.stroke()
 
   constants.overlayContext.fillRect(
-    progressBar.x + window.CTDLGAME.viewport.x,
-    progressBar.y + window.CTDLGAME.viewport.y,
+    progressBar.x + CTDLGAME.viewport.x,
+    progressBar.y + CTDLGAME.viewport.y,
     progressBar.w * progress - 1,
     progressBar.h - 1
   )
@@ -45,8 +45,8 @@ export const showProgressBar = progress => {
   write(
     constants.overlayContext,
     Math.round(progress * 100) + '%', {
-      x: progressBar.x + window.CTDLGAME.viewport.x,
-      y: progressBar.y + window.CTDLGAME.viewport.y + progressBar.h + 1,
+      x: progressBar.x + CTDLGAME.viewport.x,
+      y: progressBar.y + CTDLGAME.viewport.y + progressBar.h + 1,
       w: progressBar.w
     }
   )

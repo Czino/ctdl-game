@@ -1,4 +1,5 @@
 import font from './sprites/font'
+import { CTDLGAME } from './gameUtils'
 
 export const write = (context, text, { x, y, w }, align = 'left', shadow, limit = 999, sub, color) => {
   const startX = align === 'left' ? x : x + w
@@ -37,7 +38,7 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow, limit 
     if (char !== '\n' && !(char === ' ' && x === startX)) {
 
       context.drawImage(
-        window.CTDLGAME.assets.font,
+        CTDLGAME.assets.font,
         data.x, data.y, data.w, data.h,
         x, y, data.w, data.h
       )

@@ -1,4 +1,6 @@
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
+
 import { addClass, removeClass } from '../htmlUtils'
 
 /**
@@ -6,10 +8,10 @@ import { addClass, removeClass } from '../htmlUtils'
  */
 export const circadianRhythm = time => {
   if (time >= 5 && time < 5.1) {
-    window.CTDLGAME.isNight = false
+    CTDLGAME.isNight = false
     addClass(constants.gameCanvas, 'ctdl-day')
   } else if (time >= 18 && time < 18.1) {
-    window.CTDLGAME.isNight = true
+    CTDLGAME.isNight = true
     removeClass(constants.gameCanvas, 'ctdl-day')
   }
 }

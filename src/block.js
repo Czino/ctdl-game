@@ -1,4 +1,5 @@
 import { write } from "./font"
+import { CTDLGAME } from "./gameUtils"
 import { drawPolygon } from "./geometryUtils"
 import constants from "./constants"
 
@@ -19,14 +20,14 @@ export default function(id, context, quadTree, options) {
   this.info = options.info || {}
 
   this.update = () => {
-    let sprite = window.CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
+    let sprite = CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
     if (this.id === 'ground') {
       this.context.fillStyle = this.context.createPattern(sprite, 'repeat')
 
       this.context.fillRect(this.x, this.y, this.w, this.h)
       return
     } else {
-      if (this.info.height === 0) sprite = window.CTDLGAME.assets['genesisBlock']
+      if (this.info.height === 0) sprite = CTDLGAME.assets['genesisBlock']
       this.context.globalAlpha = this.opacity
       this.context.drawImage(
         sprite,

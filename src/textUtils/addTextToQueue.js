@@ -1,5 +1,6 @@
 import constants from '../constants'
 import { textQueue } from './textQueue'
+import { CTDLGAME } from '../gameUtils'
 
 const timeToShowFinishedText = 256
 
@@ -11,8 +12,8 @@ const timeToShowFinishedText = 256
 export const addTextToQueue = (text, callback) => {
   text += ' ▾'
   const lastText = textQueue[textQueue.length - 1]
-  let lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : window.CTDLGAME.frame
-  if (window.CTDLGAME.frame + lastFrame > constants.FRAMERESET) lastFrame = window.CTDLGAME.frame - constants.FRAMERESET + lastFrame
+  let lastFrame = lastText ? lastText.text.length + lastText.frame + timeToShowFinishedText : CTDLGAME.frame
+  if (CTDLGAME.frame + lastFrame > constants.FRAMERESET) lastFrame = CTDLGAME.frame - constants.FRAMERESET + lastFrame
   textQueue.push({
     text,
     frame: lastFrame,

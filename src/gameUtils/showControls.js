@@ -1,4 +1,5 @@
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
 
 const controls = {
@@ -9,8 +10,8 @@ const controls = {
 
 export const showControls = () => {
   const pos = {
-    x: controls.x + window.CTDLGAME.viewport.x,
-    y: controls.y + window.CTDLGAME.viewport.y
+    x: controls.x + CTDLGAME.viewport.x,
+    y: controls.y + CTDLGAME.viewport.y
   }
 
   constants.menuContext.strokeStyle = '#FFF'
@@ -24,7 +25,7 @@ export const showControls = () => {
     .map(button => {
       constants.menuContext.rect(
         pos.x - .5 + button.x,
-        button.y - .5 + window.CTDLGAME.viewport.y,
+        button.y - .5 + CTDLGAME.viewport.y,
         button.w,
         button.h
       )
@@ -32,7 +33,7 @@ export const showControls = () => {
         constants.menuContext.globalAlpha = .2
         constants.menuContext.fillRect(
           pos.x - .5 + button.x,
-          button.y - .5 + window.CTDLGAME.viewport.y,
+          button.y - .5 + CTDLGAME.viewport.y,
           button.w,
           button.h
         )

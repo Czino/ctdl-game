@@ -1,4 +1,6 @@
 import constants from '../constants'
+import { CTDLGAME } from './CTDLGAME'
+
 import { write } from '../font'
 
 const backpack = {
@@ -15,8 +17,8 @@ const backpack = {
  */
 export const showInventory = inventory => {
   const pos = {
-    x: backpack.x + window.CTDLGAME.viewport.x,
-    y: backpack.y + window.CTDLGAME.viewport.y
+    x: backpack.x + CTDLGAME.viewport.x,
+    y: backpack.y + CTDLGAME.viewport.y
   }
 
   constants.menuContext.fillStyle = '#FFF'
@@ -33,7 +35,7 @@ export const showInventory = inventory => {
   constants.menuContext.stroke()
 
   constants.menuContext.drawImage(
-    window.CTDLGAME.assets.inventoryBlock,
+    CTDLGAME.assets.inventoryBlock,
     0, 0, 16, 16,
     pos.x + (backpack.w - 16) / 2, pos.y + (backpack.h - 16) / 2, 16, 16
   )
@@ -52,7 +54,7 @@ export const showInventory = inventory => {
   write(
     constants.menuContext,
     'ś' + inventory.sats + '\n' + '$' + inventory.usd, {
-      x: window.CTDLGAME.viewport.x + 2,
+      x: CTDLGAME.viewport.x + 2,
       y: pos.y + 1,
       w: 40
     },
