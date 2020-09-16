@@ -22,7 +22,6 @@ export const newGame = () => {
     y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
     w: constants.WORLD.w,
     h: constants.GROUNDHEIGHT,
-    isStatic: true,
     isSolid: true
   })
 

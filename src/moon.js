@@ -9,7 +9,6 @@ export default function(options) {
   this.h = 109
   this.x = options.x
   this.y = options.y
-  this.isStatic = true
   this.isSolid = false
 
   this.update = () => {
@@ -48,7 +47,6 @@ export default function(options) {
     h: this.h,
     x: this.x,
     y: this.y,
-    isStatic: this.isStatic,
     isSolid: this.isSolid
   })
 }

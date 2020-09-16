@@ -33,6 +33,7 @@ import { intersects } from './geometryUtils'
 // playSound('lightningTorch')
 // setInterval(() => playSound('lightningTorch'), 3000)
 
+// TODO make blocks movable to background
 // TODO refactor code
 // TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
@@ -156,7 +157,12 @@ function tick() {
     // Don't add blocks to Quadtree that are not in viewport
     CTDLGAME.quadTree.clear()
     CTDLGAME.objects
-      .filter(object => !/block/.test(object.class) || intersects(object, CTDLGAME.viewport))
+      .filter(object => {
+        if (object.class === 'Block') {
+          return intersects(object, CTDLGAME.viewport)
+        }
+        return true
+      })
       .forEach(object => CTDLGAME.quadTree.insert(object))
 
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)

@@ -200,7 +200,9 @@ function click (e) {
     w: 1, h: 1
   }
 
-  if (CTDLGAME.ghostBlock) {
+  let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
+
+  if (!object && CTDLGAME.ghostBlock) {
     // TODO refactor into placeBlock method
     playSound('block')
     CTDLGAME.ghostBlock.context = constants.gameContext
@@ -212,12 +214,13 @@ function click (e) {
     CTDLGAME.ghostBlock = null
   }
 
-  let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
-
   if (object?.class === 'Character') window.SELECTEDCHARACTER.unselect()
   if (window.SELECTED) window.SELECTED.unselect()
   if (!object) return
   object.select()
+  if (object.class === 'Block') {
+    object.toggleSolid()
+  }
 }
 
 function clickEnd (e) {

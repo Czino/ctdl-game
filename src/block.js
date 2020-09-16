@@ -1,7 +1,6 @@
-import { write } from "./font"
+import blockSprite from './sprites/block'
 import { CTDLGAME } from "./gameUtils"
-import { drawPolygon } from "./geometryUtils"
-import constants from "./constants"
+import { addTextToQueue } from './textUtils'
 
 export default function(id, context, options) {
   this.id = id;
@@ -12,11 +11,15 @@ export default function(id, context, options) {
   this.h = options.h || 6
   this.x = options.x
   this.y = options.y
-  this.isStatic = options.isStatic
   this.isSolid = options.isSolid
   this.opacity = options.opacity || 1
   this.status = options.status
   this.info = options.info || {}
+
+  this.toggleSolid = () => {
+    if (this.id === 'ground') return
+    this.isSolid = !this.isSolid
+  }
 
   this.update = () => {
     let sprite = CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
@@ -26,11 +29,14 @@ export default function(id, context, options) {
       this.context.fillRect(this.x, this.y, this.w, this.h)
       return
     } else {
-      if (this.info.height === 0) sprite = CTDLGAME.assets['genesisBlock']
+      let data = blockSprite['block']
+      if (!this.isSolid) data = blockSprite['backgroundBlock']
+      if (this.info.height === 0 && this.isSolid) data = blockSprite['genesisBlock']
+      if (this.info.height === 0 && !this.isSolid) data = blockSprite['genesisBackgroundBlock']
       this.context.globalAlpha = this.opacity
       this.context.drawImage(
         sprite,
-        this.spriteData.x, this.spriteData.y, this.w, this.h,
+        data.x, data.y, data.w, data.h,
         this.x, this.y, this.w, this.h
       )
     }
@@ -43,29 +49,6 @@ export default function(id, context, options) {
       this.context.lineTo(this.x - .5 , this.y - .5 + this.h)
       this.context.stroke()
     }
-
-    if (this.selected) {
-      constants.menuContext.strokeStyle = '#FFF'
-      constants.menuContext.fillStyle = '#212121'
-
-      drawPolygon(constants.menuContext, [
-        { x: this.x + Math.round(this.w / 2), y: this.y - 1 },
-        { x: 3, y: -3 },
-        { x: 30 - Math.round(this.w / 2) / 2, y: 0 },
-        { x: 0, y: -13 },
-        { x: -64, y: 0 },
-        { x: 0, y: 13 },
-        { x: 30 - Math.round(this.w / 2) / 2, y: 0 },
-        { x: 3, y: 3 }
-      ])
-
-      let infoText = this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock'
-      write(
-        constants.menuContext,
-        infoText,
-        { x: this.x - 30 + Math.round(this.w / 2), y: this.y - 15, w: 64}
-      )
-    }
   }
   this.getBoundingBox = () => this
 
@@ -75,13 +58,10 @@ export default function(id, context, options) {
   })
 
   this.select = () => {
-    this.selected = true
-    window.SELECTED = this
+    if (this.id === 'ground') return
+    addTextToQueue(this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock')
   }
-  this.unselect = () => {
-    this.selected = false
-    window.SELECTED = null
-  }
+  this.unselect = () => {}
 
   this.toJSON = () => ({
     id: this.id,
@@ -90,7 +70,6 @@ export default function(id, context, options) {
     h: this.h,
     x: this.x,
     y: this.y,
-    isStatic: this.isStatic,
     isSolid: this.isSolid,
     opacity: this.opacity,
     info: this.info
