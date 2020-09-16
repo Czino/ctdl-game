@@ -1,10 +1,9 @@
 import constants from "./constants";
 import { CTDLGAME, getTimeOfDay } from "./gameUtils";
 
-export default function(context, options) {
+export default function(options) {
   this.id = 'sun';
   this.class = 'Sun'
-  this.context = context
   this.w = 7
   this.h = 7
   this.x = options.x
@@ -25,14 +24,14 @@ export default function(context, options) {
       this.y += (timeOfDay - 18) * constants.HEIGHT
     }
 
-    let center = this.getCenter()
     let middle = CTDLGAME.viewport.x + constants.WIDTH / 2
     this.x = Math.round(middle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
+    let center = this.getCenter()
 
-    this.context.fillStyle = '#FFF'
-    this.context.beginPath();
-    this.context.arc(center.x, center.y, this.w, 0, 2 * Math.PI);
-    this.context.fill();
+    constants.gameContext.fillStyle = '#FFF'
+    constants.gameContext.beginPath();
+    constants.gameContext.arc(center.x, center.y, this.w, 0, 2 * Math.PI);
+    constants.gameContext.fill();
   }
   this.getBoundingBox = () => this
 

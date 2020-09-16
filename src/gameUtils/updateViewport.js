@@ -21,16 +21,13 @@ export const updateViewport = () => {
     }
   }
 
-  const x = Math.round(CTDLGAME.viewport.x)
-  const y = Math.round(CTDLGAME.viewport.y)
-
-  constants.gameContext.setTransform(1, 0, 0, 1, 0, 0);
-  constants.charContext.setTransform(1, 0, 0, 1, 0, 0);
-  constants.overlayContext.setTransform(1, 0, 0, 1, 0, 0);
-  constants.menuContext.setTransform(1, 0, 0, 1, 0, 0);
-
-  constants.gameContext.translate(-x, -y)
-  constants.charContext.translate(-x, -y)
-  constants.overlayContext.translate(-x, -y)
-  constants.menuContext.translate(-x, -y)
+  [
+    constants.gameContext,
+    constants.charContext,
+    constants.overlayContext,
+    constants.menuContext
+  ].map(context => {
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.translate(-CTDLGAME.viewport.x, -CTDLGAME.viewport.y)
+  })
 }

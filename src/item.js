@@ -1,16 +1,14 @@
+import constants from './constants'
 import { CTDLGAME } from './gameUtils'
 import { moveObject } from './geometryUtils';
 import spriteData from './sprites/items'
 import { playSound } from './sounds';
 
-
-export default function(id, context, quadTree, options) {
+export default function(id, options) {
   this.id = id;
   this.class = 'Item'
   this.spriteData = spriteData[this.id]
 
-  this.quadTree = quadTree
-  this.context = context
   this.w = this.spriteData.w
   this.h = this.spriteData.h
   this.x = options.x
@@ -29,7 +27,7 @@ export default function(id, context, quadTree, options) {
     if (this.vx !== 0) {
       if (this.vx > 18) this.vx = 18
       if (this.vx < -18) this.vx = -18
-      moveObject(this, { x: this.vx , y: 0 }, this.quadTree)
+      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
     }
@@ -37,13 +35,13 @@ export default function(id, context, quadTree, options) {
     if (this.vy !== 0) {
       if (this.vy > 6) this.vy = 6
       if (this.vy < -6) this.vy = -6
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
+      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
       if (hasCollided) {
         this.vy = 0
       }
     }
-    this.context.drawImage(
+    constants.gameContext.drawImage(
       sprite,
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,
       this.x, this.y + Math.round(Math.sin(CTDLGAME.frame / 16)), this.w, this.h

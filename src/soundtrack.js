@@ -167,7 +167,7 @@ export const changeVolume = value => {
 }
 
 Transport.on('stop', () => {
-  if (song.loop && enabled) start()
+  if (song.loop && enabled) startMusic()
 })
 
 function parseNotes(notes) {

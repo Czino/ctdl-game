@@ -8,6 +8,7 @@ import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
 import { initSoundtrack, startMusic } from '../soundtrack'
+import { updateViewport } from './updateViewport'
 
 /**
  * @description Method to load game
@@ -15,7 +16,6 @@ import { initSoundtrack, startMusic } from '../soundtrack'
 export const loadGame = async () => {
   let time = await db.get('time')
 
-  let viewport = await db.get('viewport')
   let hodlonaut = await db.get('hodlonaut')
   let katoshi = await db.get('katoshi')
   let objects = await db.get('objects')
@@ -24,30 +24,22 @@ export const loadGame = async () => {
   let options = await db.get('options')
 
   if (time) CTDLGAME.frame = time
-  if (viewport) {
-    CTDLGAME.viewport = viewport
-  }
   if (objects) {
     CTDLGAME.objects = objects.map(object => {
       if (object.class === 'Block') {
         return new Block(
           object.id,
           constants.gameContext,
-          CTDLGAME.quadTree,
           object
         )
       } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
           object.id,
-          constants.gameContext,
-          CTDLGAME.quadTree,
           object
         )
       } else if (object.class === 'Item') {
         return new Item(
           object.id,
-          constants.gameContext,
-          CTDLGAME.quadTree,
           object
         )
       }
@@ -59,19 +51,18 @@ export const loadGame = async () => {
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
-    constants.charContext,
-    CTDLGAME.quadTree,
     hodlonaut
   )
   CTDLGAME.katoshi = new Character(
     'katoshi',
-    constants.charContext,
-    CTDLGAME.quadTree,
     katoshi
   )
 
+
   if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
+
+  updateViewport()
 
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
@@ -89,7 +80,7 @@ export const loadGame = async () => {
   }
 
   initSoundtrack('stellaSplendence')
-  startMusic()
+  if (CTDLGAME.options.music) startMusic()
 
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 }

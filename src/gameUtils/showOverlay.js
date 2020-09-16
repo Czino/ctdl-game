@@ -14,7 +14,7 @@ export const showOverlay = () => {
     CTDLGAME.ghostBlock = new Block(
       block.id,
       constants.overlayContext,
-      CTDLGAME.quadTree, {
+      {
         x: Math.round((CTDLGAME.viewport.x + CTDLGAME.cursor.x) / 3) * 3 - 3,
         y: Math.round((CTDLGAME.viewport.y + CTDLGAME.cursor.y) / 3) * 3 - 3,
         w: 6,

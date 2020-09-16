@@ -2,12 +2,10 @@ import { CTDLGAME, checkBlocks } from './gameUtils'
 import { addTextToQueue } from './textUtils'
 import Explosion from './explosion'
 
-export default function(id, context, quadTree, options) {
+export default function(id, options) {
   this.id = id;
   this.class = 'Wizard'
   this.status = 'cool'
-  this.quadTree = quadTree
-  this.context = context
   this.w = 43
   this.h = 34
   this.x = options.x
@@ -22,7 +20,7 @@ export default function(id, context, quadTree, options) {
     if (!this.hasAppeared) {
       playSound('magic')
       this.hasAppeared = true
-      explosion = new Explosion(this.context, { x: this.getCenter().x, y: this.getCenter().y })
+      explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
 
       CTDLGAME.hodlonaut.idle()
       CTDLGAME.hodlonaut.direction = 'left'
@@ -59,13 +57,13 @@ export default function(id, context, quadTree, options) {
         this.opacity = Math.min(this.opacity, Math.abs(this.opacity - .5))
         if (explosion.remove) this.remove = true
       }
-      this.context.globalAlpha = this.opacity
-      this.context.drawImage(
+      constants.charContext.globalAlpha = this.opacity
+      constants.charContext.drawImage(
         sprite,
         0, 0, this.w, this.h,
         this.x, this.y, this.w, this.h
       )
-      this.context.globalAlpha = 1
+      constants.charContext.globalAlpha = 1
       if (this.status !== 'disappear') this.opacity = 1
     }
 
@@ -76,7 +74,7 @@ export default function(id, context, quadTree, options) {
 
   this.disappear = () => {
     playSound('magic')
-    explosion = new Explosion(this.context, { x: this.getCenter().x, y: this.getCenter().y })
+    explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
     this.status = 'disappear'
     CTDLGAME.lockCharacters = false
   }

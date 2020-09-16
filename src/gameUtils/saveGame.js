@@ -6,7 +6,6 @@ import { CTDLGAME } from './CTDLGAME'
  */
 export const saveGame = async () => {
   await db.set('time', CTDLGAME.frame)
-  await db.set('viewport', CTDLGAME.viewport)
   await db.set('hodlonaut', CTDLGAME.hodlonaut.toJSON())
   await db.set('katoshi', CTDLGAME.katoshi.toJSON())
   await db.set('objects', CTDLGAME.objects

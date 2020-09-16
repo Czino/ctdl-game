@@ -1,10 +1,9 @@
 import constants from "./constants";
 import { CTDLGAME, getTimeOfDay } from "./gameUtils";
 
-export default function(context, options) {
+export default function(options) {
   this.id = 'moon';
   this.class = 'Moon'
-  this.context = context
   this.spriteData = { x: 0, y: 0, w: 109, h: 109 }
   this.w = 109
   this.h = 109
@@ -15,7 +14,6 @@ export default function(context, options) {
 
   this.update = () => {
     let timeOfDay = getTimeOfDay()
-    let x = this.x
     this.y = Math.round(CTDLGAME.viewport.y + 10)
     this.w = this.h = Math.max(14, (1 - (CTDLGAME.viewport.y + constants.HEIGHT) / constants.WORLD.h) * 110)
 
@@ -27,14 +25,13 @@ export default function(context, options) {
       this.y += (timeOfDay - 5) * constants.HEIGHT
     }
 
-
     let newMiddle = CTDLGAME.viewport.x + constants.WIDTH / 2
     this.x = Math.round(newMiddle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
     let sprite = CTDLGAME.assets.moon
-    this.context.drawImage(
+    constants.gameContext.drawImage(
       sprite,
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,
-      Math.round(x - this.w / 2), Math.round(this.y - this.h / 2), this.w, this.h
+      Math.round(this.x - this.w / 2), Math.round(this.y - this.h / 2), this.w, this.h
     )
   }
   this.getBoundingBox = () => this

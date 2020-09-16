@@ -3,11 +3,10 @@ import { CTDLGAME } from "./gameUtils"
 import { drawPolygon } from "./geometryUtils"
 import constants from "./constants"
 
-export default function(id, context, quadTree, options) {
+export default function(id, context, options) {
   this.id = id;
   this.class = 'Block'
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
-  this.quadTree = quadTree
   this.context = context
   this.w = options.w || 6
   this.h = options.h || 6

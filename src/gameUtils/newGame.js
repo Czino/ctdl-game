@@ -17,7 +17,7 @@ export const newGame = () => {
   }
   CTDLGAME.blockHeight = -1
 
-  const ground = new Block('ground', constants.gameContext, CTDLGAME.quadTree, {
+  const ground = new Block('ground', constants.gameContext, {
     x: 0,
     y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
     w: constants.WORLD.w,
@@ -31,16 +31,14 @@ export const newGame = () => {
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
-    constants.charContext,
-    CTDLGAME.quadTree, {
+    {
       x: CTDLGAME.viewport.x + 50,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
     }
   )
   CTDLGAME.katoshi = new Character(
     'katoshi',
-    constants.charContext,
-    CTDLGAME.quadTree, {
+    {
       active: false,
       x: CTDLGAME.viewport.x + constants.WIDTH / 2,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
@@ -59,6 +57,7 @@ export const newGame = () => {
   CTDLGAME.objects.forEach(object => object.update())
 
   initSoundtrack('stellaSplendence')
-  startMusic()
+  if (CTDLGAME.options.music) startMusic()
+
   setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
 }

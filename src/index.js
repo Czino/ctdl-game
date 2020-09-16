@@ -49,11 +49,11 @@ window.SELECTED = null
 window.SELECTEDCHARACTER = null
 
 let time
-const sun = new Sun(constants.gameContext, {
+const sun = new Sun({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
 })
-const moon = new Moon(constants.gameContext, {
+const moon = new Moon({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
 })
@@ -131,8 +131,6 @@ function tick() {
     if (CTDLGAME.wizardCountdown === 0) {
       const wizard = new Wizard(
         'wizard',
-        constants.charContext,
-        CTDLGAME.quadTree,
         {
           x: CTDLGAME.hodlonaut.x - 40,
           y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 33

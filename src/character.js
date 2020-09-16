@@ -13,12 +13,10 @@ const sprites = {
   katoshi
 }
 
-export default function(id, context, quadTree, options) {
+export default function(id, options) {
   this.id = id;
   this.class = 'Character'
   this.spriteData = sprites[id]
-  this.quadTree = quadTree
-  this.context = context
   this.maxHealth = options.maxHealth ?? 21
   this.health = options.health ?? 21
   this.dmgs = []
@@ -45,7 +43,7 @@ export default function(id, context, quadTree, options) {
   this.moveLeft = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)|| this.vy !== 0) return
     this.direction = 'left'
-    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, this.quadTree)
+    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
       this.status = 'move'
@@ -55,7 +53,7 @@ export default function(id, context, quadTree, options) {
     if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.direction = 'right'
 
-    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, this.quadTree)
+    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
     }
@@ -96,7 +94,7 @@ export default function(id, context, quadTree, options) {
 
   this.senseEnemy = () => {
     const boundingBox = this.getBoundingBox()
-    return this.quadTree.query({
+    return CTDLGAME.quadTree.query({
       x: this.x,
       y: this.y,
       w: this.w,
@@ -170,7 +168,7 @@ export default function(id, context, quadTree, options) {
   this.autoPilot = () => {
     let action = 'idle'
 
-    let enemies = this.quadTree.query({
+    let enemies = CTDLGAME.quadTree.query({
       x: this.x - this.senseRadius,
       y: this.y - this.senseRadius,
       w: this.w + this.senseRadius,
@@ -214,9 +212,9 @@ export default function(id, context, quadTree, options) {
 
     if (CTDLGAME.lockCharacters) {
       let data = this.spriteData[this.direction][this.status][0]
-      this.context.globalAlpha = data.opacity ?? 1
+      constants.charContext.globalAlpha = data.opacity ?? 1
 
-      this.context.drawImage(
+      constants.charContext.drawImage(
         sprite,
         data.x, data.y, this.w, this.h,
         this.x, this.y, this.w, this.h
@@ -227,7 +225,7 @@ export default function(id, context, quadTree, options) {
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
-      moveObject(this, { x: this.vx , y: 0 }, this.quadTree)
+      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
     }
@@ -235,7 +233,7 @@ export default function(id, context, quadTree, options) {
     if (this.vy !== 0) {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
+      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
       if (hasCollided) {
         this.vy = 0
@@ -245,7 +243,7 @@ export default function(id, context, quadTree, options) {
     }
 
     // collect touched items
-    this.quadTree.query(this.getBoundingBox())
+    CTDLGAME.quadTree.query(this.getBoundingBox())
       .filter(obj => obj.class === 'Item' && !obj.collected && obj.vy === 0)
       .filter(item => intersects(this.getBoundingBox(), item.getBoundingBox()))
       .forEach(item => {
@@ -297,19 +295,19 @@ export default function(id, context, quadTree, options) {
     let data = this.spriteData[this.direction][this.status][this.frame]
     this.w = data.w
     this.h = data.h
-    this.context.globalAlpha = data.opacity ?? 1
+    constants.charContext.globalAlpha = data.opacity ?? 1
 
-    this.context.drawImage(
+    constants.charContext.drawImage(
       sprite,
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
     )
 
-    this.context.globalAlpha = 1
+    constants.charContext.globalAlpha = 1
 
     if (this.selected) {
-      this.context.fillStyle = '#0F0'
-      this.context.fillRect(
+      constants.charContext.fillStyle = '#0F0'
+      constants.charContext.fillRect(
         this.x + this.w / 2, this.y - 2, 1, 1
       )
     }
@@ -317,7 +315,7 @@ export default function(id, context, quadTree, options) {
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
-        write(this.context, `-${dmg.dmg}`, {
+        write(constants.charContext, `-${dmg.dmg}`, {
           x: this.getCenter().x - 2,
           y: this.y + dmg.y,
           w: this.getBoundingBox().w
@@ -330,7 +328,7 @@ export default function(id, context, quadTree, options) {
     this.heals = this.heals
       .filter(heal => heal.y > -24)
       .map(heal => {
-        write(this.context, `+${heal.heal}`, {
+        write(constants.charContext, `+${heal.heal}`, {
           x: this.getCenter().x - 2,
           y: this.y + heal.y,
           w: this.getBoundingBox().w

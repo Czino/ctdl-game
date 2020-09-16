@@ -16,13 +16,11 @@ const items = [
   { id: 'opendime', chance: 0.01 }
 ]
 
-export default function(id, context, quadTree, options) {
+export default function(id, options) {
   this.id = id;
   this.class = 'Shitcoiner'
   this.enemy = true
   this.spriteData = sprites.shitcoiner
-  this.quadTree = quadTree
-  this.context = context
   this.selected = options.selected
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
   this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
@@ -48,7 +46,7 @@ export default function(id, context, quadTree, options) {
     if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
     this.kneels = false
     this.direction = 'left'
-    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, this.quadTree)
+    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
       this.status = 'move'
@@ -59,7 +57,7 @@ export default function(id, context, quadTree, options) {
     this.kneels = false
     this.direction = 'right'
 
-    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, this.quadTree)
+    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
     }
@@ -87,8 +85,6 @@ export default function(id, context, quadTree, options) {
     if (this.item) {
       let item = new Item(
         this.item.id,
-        constants.gameContext,
-        CTDLGAME.quadTree,
         {
           x: this.x,
           y: this.y,
@@ -114,7 +110,7 @@ export default function(id, context, quadTree, options) {
     this.status = 'bite'
   }
   this.sensePrey = () => {
-    let preys = this.quadTree.query({
+    let preys = CTDLGAME.quadTree.query({
       x: this.x - this.senseRadius,
       y: this.y - this.senseRadius,
       w: this.w + this.senseRadius,
@@ -133,14 +129,14 @@ export default function(id, context, quadTree, options) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
 
-      moveObject(this, { x: this.vx , y: 0 }, this.quadTree)
+      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
     }
     if (this.vy !== 0) {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, this.quadTree)
+      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
       if (hasCollided) this.vy = 0
     }
@@ -187,7 +183,7 @@ export default function(id, context, quadTree, options) {
     this.w = data.w
     this.h = data.h
 
-    this.context.drawImage(
+    constants.gameContext.drawImage(
       sprite,
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
@@ -196,7 +192,7 @@ export default function(id, context, quadTree, options) {
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
-        write(this.context, `-${dmg.dmg}`, {
+        write(constants.gameContext, `-${dmg.dmg}`, {
           x: this.getCenter().x - 2,
           y: this.y + dmg.y,
           w: this.getBoundingBox().w

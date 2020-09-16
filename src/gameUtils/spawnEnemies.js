@@ -7,8 +7,7 @@ export const spawnEnemies = () => {
   if (Math.random() < constants.SPAWNRATES.shitcoiner) {
     let shitcoiner = new Shitcoiner(
       'shitcoiner-' + Math.random(),
-      constants.gameContext,
-      CTDLGAME.quadTree, {
+      {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
         y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
         status: 'spawn'
