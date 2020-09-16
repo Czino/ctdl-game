@@ -45,6 +45,7 @@ const squareSynth = new Synth(squareOptions).connect(gain).toMaster()
 const triangleSynth = new Synth(triangleOptions).connect(gain).toMaster()
 const sineSynth = new Synth(sineOptions).connect(gain).toMaster()
 const noiseSynth = new NoiseSynth().connect(gain).toMaster()
+const noise2Synth = new NoiseSynth().connect(gain).toMaster()
 
 let enabled = true
 
@@ -157,15 +158,15 @@ const sounds = {
     const present = now()
     const dur = .05
 
-    noiseSynth.noise.type = 'brown'
+    noise2Synth.noise.type = 'brown'
 
-    noiseSynth.envelope.attack = .005
-    noiseSynth.envelope.decay = .1
-    noiseSynth.envelope.sustain = .3
-    noiseSynth.envelope.release = .07
+    noise2Synth.envelope.attack = .005
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
 
-    noiseSynth.triggerAttack(present, .3)
-    noiseSynth.triggerRelease(present + dur)
+    noise2Synth.triggerAttack(present, .3)
+    noise2Synth.triggerRelease(present + dur)
 
     pulseSynth.portamento = 0
     pulseSynth.envelope.attack = .005
