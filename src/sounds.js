@@ -208,5 +208,9 @@ export const toggleSounds = enable => {
 }
 
 export const playSound = id => {
-  if (enabled) sounds[id]()
+  try {
+    if (enabled) sounds[id]()
+  } catch {
+    // do nothing
+  }
 }
