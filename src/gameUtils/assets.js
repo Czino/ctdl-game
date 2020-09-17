@@ -9,6 +9,7 @@ import wizard from '../sprites/wizard.png'
 import explosion from '../sprites/explosion.png'
 import items from '../sprites/items.png'
 import shitcoiner from '../sprites/shitcoiner.png'
+import brian from '../sprites/brian.png'
 import moon from '../sprites/moon.png'
 import genesisBlock from '../sprites/genesis-block.png'
 import block from '../sprites/block.png'
@@ -26,6 +27,7 @@ export const assets = {
   explosion,
   items,
   shitcoiner,
+  brian,
   moon,
   genesisBlock,
   block,

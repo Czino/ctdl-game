@@ -154,6 +154,20 @@ const sounds = {
     noiseSynth.triggerAttack(present, .1)
     noiseSynth.triggerRelease(present + dur)
   },
+  'woosh': () => {
+    const present = now()
+    const dur = .05
+
+    noiseSynth.noise.type = 'brown'
+
+    noiseSynth.envelope.attack = .05
+    noiseSynth.envelope.decay = .1
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = .17
+
+    noiseSynth.triggerAttack(present, .1)
+    noiseSynth.triggerRelease(present + dur)
+  },
   'shitcoinerHurt': () => {
     const present = now()
     const dur = .05
@@ -177,6 +191,29 @@ const sounds = {
     pulseSynth.triggerAttack('A#2', present + dur / 2, .05)
     pulseSynth.setNote('G1', present + dur / 2, .05)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
+  },
+  'drop': () => {
+    const present = now()
+    const dur = .05
+
+    noise2Synth.noise.type = 'brown'
+
+    noise2Synth.envelope.attack = .005
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
+
+    noise2Synth.triggerAttack(present, .05)
+    noise2Synth.triggerRelease(present + dur)
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .005
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .07
+
+    triangleSynth.triggerAttack('A#0', present + dur / 2, .6)
+    triangleSynth.triggerRelease(present + dur / 2 + dur)
   },
   'magic': () => {
     const noises = ['brown', 'brown', 'pink', 'white', 'brown', 'brown']
