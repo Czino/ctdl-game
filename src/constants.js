@@ -1,9 +1,18 @@
-const WORLD = { w: 1024, h: 1024 }
-const WIDTH = 128 // viewport
-const HEIGHT = 256 // viewport
+const WORLD = { w: 1000, h: 1024 }
+const WIDTH = 128 * 4 // viewport
+const HEIGHT = 256*2 // viewport
 const START = { x: 512, y: 1024 - HEIGHT, w: WIDTH, h: HEIGHT }
 const MENU = { w: WIDTH, h: 64 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
+
+const parallexCanvas = document.getElementById('ctdl-game-parallex')
+parallexCanvas.width = WIDTH
+parallexCanvas.height = HEIGHT
+
+const bgCanvas = document.getElementById('ctdl-game-bg')
+bgCanvas.width = WIDTH
+bgCanvas.height = HEIGHT
+
 const gameCanvas = document.getElementById('ctdl-game')
 gameCanvas.width = WIDTH
 gameCanvas.height = HEIGHT
@@ -11,6 +20,10 @@ gameCanvas.height = HEIGHT
 const charCanvas = document.getElementById('ctdl-game-chars')
 charCanvas.width = WIDTH
 charCanvas.height = HEIGHT
+
+const fgCanvas = document.getElementById('ctdl-game-fg')
+fgCanvas.width = WIDTH
+fgCanvas.height = HEIGHT
 
 const overlayCanvas = document.getElementById('ctdl-game-overlay')
 overlayCanvas.width = WIDTH
@@ -20,17 +33,26 @@ const menuCanvas = document.getElementById('ctdl-game-menu')
 menuCanvas.width = WIDTH
 menuCanvas.height = HEIGHT
 
+const parallexContext = parallexCanvas.getContext('2d')
+const bgContext = bgCanvas.getContext('2d')
 const gameContext = gameCanvas.getContext('2d')
+const fgContext = fgCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
 const overlayContext = overlayCanvas.getContext('2d')
 const menuContext = menuCanvas.getContext('2d')
 
+parallexContext.imageSmoothingEnabled = false
+bgContext.imageSmoothingEnabled = false
 gameContext.imageSmoothingEnabled = false
+fgContext.imageSmoothingEnabled = false
 charContext.imageSmoothingEnabled = false
 overlayContext.imageSmoothingEnabled = false
 menuContext.imageSmoothingEnabled = false
 
+parallexContext.translate(-START.x, -START.y)
+bgContext.translate(-START.x, -START.y)
 gameContext.translate(-START.x, -START.y)
+fgContext.translate(-START.x, -START.y)
 charContext.translate(-START.x, -START.y)
 overlayContext.translate(-START.x, -START.y)
 menuContext.translate(-START.x, -START.y)
@@ -113,8 +135,11 @@ export default {
   FRAMERATE: 8, // render every X frame
   SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
-  gameCanvas,
+  parallexCanvas,
+  parallexContext,
+  bgContext,
   gameContext,
+  fgContext,
   charContext,
   overlayContext,
   menuContext,

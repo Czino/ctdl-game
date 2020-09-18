@@ -21,18 +21,18 @@
     .cursor-pointer {
       cursor: pointer;
     }
-    #ctdl-game {
+    #ctdl-game-parallex {
       background-color: #212121;
       position: absolute;
     }
-    #ctdl-game.ctdl-day {
+    #ctdl-game-parallex.ctdl-day {
       background-color: #c2c1cd;
     }
-    #ctdl-game-chars, #ctdl-game-overlay, #ctdl-game-menu {
+    #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
       position: absolute;
       z-index: 1;
     }
-    #ctdl-game, #ctdl-game-chars, #ctdl-game-overlay, #ctdl-game-menu {
+    #ctdl-game-parallex, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
       height: 100%;
       max-height: 100vh;
       image-rendering: optimizeSpeed;
@@ -45,7 +45,10 @@
   </style>
 </head>
 <body class="cursor-crosshair">
-  <canvas id="ctdl-game" class="ctdl-day"></canvas>
+  <canvas id="ctdl-game-parallex" class="ctdl-day"></canvas>
+  <canvas id="ctdl-game-bg"></canvas>
+  <canvas id="ctdl-game"></canvas>
+  <canvas id="ctdl-game-fg"></canvas>
   <canvas id="ctdl-game-chars"></canvas>
   <canvas id="ctdl-game-overlay"></canvas>
   <canvas id="ctdl-game-menu"></canvas>

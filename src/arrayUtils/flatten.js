@@ -13,3 +13,5 @@ export const flatten = (arr, item) => {
     }
     return arr
 }
+
+export default flatten

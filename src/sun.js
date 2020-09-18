@@ -27,10 +27,10 @@ export default function(options) {
     this.x = Math.round(middle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
     let center = this.getCenter()
 
-    constants.gameContext.fillStyle = '#FFF'
-    constants.gameContext.beginPath();
-    constants.gameContext.arc(center.x, center.y, this.w, 0, 2 * Math.PI);
-    constants.gameContext.fill();
+    constants.bgContext.fillStyle = '#FFF'
+    constants.bgContext.beginPath();
+    constants.bgContext.arc(center.x, center.y, this.w, 0, 2 * Math.PI);
+    constants.bgContext.fill();
   }
   this.getBoundingBox = () => this
 

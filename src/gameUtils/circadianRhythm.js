@@ -9,9 +9,9 @@ import { addClass, removeClass } from '../htmlUtils'
 export const circadianRhythm = time => {
   if (time >= 5 && time < 5.1) {
     CTDLGAME.isNight = false
-    addClass(constants.gameCanvas, 'ctdl-day')
+    addClass(constants.parallexCanvas, 'ctdl-day')
   } else if (time >= 18 && time < 18.1) {
     CTDLGAME.isNight = true
-    removeClass(constants.gameCanvas, 'ctdl-day')
+    removeClass(constants.parallexCanvas, 'ctdl-day')
   }
 }

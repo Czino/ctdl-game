@@ -13,8 +13,13 @@ export const updateViewport = () => {
     CTDLGAME.viewport.y = Math.min(constants.WORLD.h - constants.HEIGHT, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h / 2))
   }
 
+  constants.parallexContext.setTransform(1, 0, 0, 1, 0, 0);
+  constants.parallexContext.translate(-(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2), -CTDLGAME.viewport.y);
+
   [
+    constants.bgContext,
     constants.gameContext,
+    constants.fgContext,
     constants.charContext,
     constants.overlayContext,
     constants.menuContext

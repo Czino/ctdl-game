@@ -6,7 +6,17 @@ import { CTDLGAME } from './CTDLGAME'
  * @description Method to clear canvas for next draw
  */
 export const clearCanvas = () => {
-  constants.gameContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-  constants.charContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-  constants.menuContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  constants.parallexContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT);
+
+  [
+    constants.parallexContext,
+    constants.bgContext,
+    constants.gameContext,
+    constants.fgContext,
+    constants.charContext,
+    constants.overlayContext,
+    constants.menuContext
+  ].map(context => {
+    context.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  })
 }
