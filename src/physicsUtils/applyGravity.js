@@ -1,5 +1,6 @@
 import constants from '../constants'
 import { CTDLGAME } from '../gameUtils'
+import { intersects } from '../geometryUtils'
 
 /**
  * @description Method to apply gravity to game objects
@@ -10,6 +11,7 @@ export const applyGravity = () => {
     CTDLGAME.katoshi.vy += constants.GRAVITY
     CTDLGAME.objects
       .filter(obj => obj.enemy || obj.class === 'Item')
+      .filter(obj => intersects(CTDLGAME.viewport, obj)) // only apply gravity to objects in viewport
       .map(obj => obj.vy += constants.GRAVITY)
 
     CTDLGAME.objects.forEach(object => object.update())

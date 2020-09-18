@@ -21,7 +21,6 @@ export default function(id, options) {
   this.class = 'Shitcoiner'
   this.enemy = true
   this.spriteData = sprites.shitcoiner
-  this.selected = options.selected
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
   this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
   this.item = items.find(item => item.chance > Math.random())
@@ -52,9 +51,10 @@ export default function(id, options) {
       this.status = 'move'
     } else {
       let climbTo = this.getBoundingBox()
+      climbTo.y -=4
       climbTo.x -= 3
       climbTo.w += 3
-      climbTo.h = 20
+      climbTo.h = 24
 
       let obstacles = CTDLGAME.quadTree.query(climbTo)
         .filter(obj => obj.isSolid && !obj.enemy)
@@ -74,8 +74,9 @@ export default function(id, options) {
       this.status = 'move'
     } else {
       let climbTo = this.getBoundingBox()
+      climbTo.y -=4
       climbTo.w += 3
-      climbTo.h = 20
+      climbTo.h = 24
 
       let obstacles = CTDLGAME.quadTree.query(climbTo)
         .filter(obj => obj.isSolid && !obj.enemy)
@@ -128,7 +129,7 @@ export default function(id, options) {
     }
   }
 
-  this.bite = (prey) => {
+  this.bite = prey => {
     if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
 
     this.kneels = prey.status === 'rekt'
@@ -258,7 +259,6 @@ export default function(id, options) {
   this.toJSON = () => ({
     id: this.id,
     class: this.class,
-    selected: this.selected,
     w: this.w,
     h: this.h,
     x: this.x,
