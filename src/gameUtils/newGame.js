@@ -3,6 +3,7 @@ import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, startMusic } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import Character from '../character'
+import Brian from '../Brian'
 import Block from '../block'
 
 /**
@@ -45,7 +46,16 @@ export const newGame = () => {
     }
   )
 
+  const brian = new Brian(
+    'brian',
+    {
+      x: 980,
+      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
+    }
+  )
+
   CTDLGAME.objects.push(ground)
+  CTDLGAME.objects.push(brian)
 
   CTDLGAME.hodlonaut.select()
 
@@ -58,5 +68,5 @@ export const newGame = () => {
   initSoundtrack('stellaSplendence')
   if (CTDLGAME.options.music) startMusic()
 
-  setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
+  setTimeout(() => addClass(constants.parallexCanvas, 'transition-background-color'))
 }

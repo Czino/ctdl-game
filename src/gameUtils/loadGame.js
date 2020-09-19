@@ -4,6 +4,7 @@ import { CTDLGAME } from './CTDLGAME'
 import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
+import Brian from '../brian'
 import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
@@ -34,6 +35,11 @@ export const loadGame = async () => {
         )
       } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
+          object.id,
+          object
+        )
+      } else if (object.class === 'Brian') {
+        return new Brian(
           object.id,
           object
         )
@@ -72,14 +78,14 @@ export const loadGame = async () => {
   let timeOfDay = getTimeOfDay()
   if (timeOfDay > 18.5) {
     CTDLGAME.isNight = true
-    removeClass(constants.gameCanvas, 'ctdl-day')
+    removeClass(constants.parallexCanvas, 'ctdl-day')
   } else if (timeOfDay > 5.5) {
     CTDLGAME.isNight = false
-    addClass(constants.gameCanvas, 'ctdl-day')
+    addClass(constants.parallexCanvas, 'ctdl-day')
   }
 
   initSoundtrack('stellaSplendence')
   if (CTDLGAME.options.music) startMusic()
 
-  setTimeout(() => addClass(constants.gameCanvas, 'transition-background-color'))
+  setTimeout(() => addClass(constants.parallexCanvas, 'transition-background-color'))
 }

@@ -1,6 +1,8 @@
 import * as db from './db'
 import Sun from './sun'
 import Moon from './moon'
+import Tiles from './tiles'
+import plainsMap from './maps/plains'
 import { initEvents } from './events'
 import constants from './constants'
 import {
@@ -13,6 +15,7 @@ import {
   updateViewport,
   showMenu,
   saveGame,
+  loadGame,
   checkBlocks,
   getTimeOfDay,
   showSaveIcon,
@@ -30,16 +33,19 @@ import { intersects } from './geometryUtils'
 
 // import { playSound } from './sounds'
 
-// playSound('lightningTorch')
-// setInterval(() => playSound('lightningTorch'), 3000)
+// playSound('woosh')
+// setInterval(() => playSound('woosh'), 3000)
 
+// TODO make canvas draw clean pixels
+// TODO add ambiental objects
 // TODO refactor code
+// TODO don't apply gravity to objects outside viewport
 // TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
-// TODO fix placing blocks twice on the same spot
 // TODO add exchange
 // TODO add shop
 // TODO add first end boss (must be related to shitcoining)
+// TODO consider Chef Nomi #SushiSwap
 // TODO add more enemies and bosses
 // TODO add moon ending scene
 // TODO add "mempool"
@@ -57,6 +63,7 @@ const moon = new Moon({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
 })
+const tiles = new Tiles('plains', plainsMap)
 
 init()
 
@@ -144,6 +151,7 @@ function tick() {
 
     sun.update()
     moon.update()
+    tiles.update()
 
     applyGravity()
 

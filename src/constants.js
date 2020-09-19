@@ -1,11 +1,11 @@
 const WORLD = { w: 1000, h: 1024 }
-const WIDTH = 128 * 4 // viewport
-const HEIGHT = 256*2 // viewport
+const WIDTH = 128 // viewport
+const HEIGHT = 256 // viewport
 const START = { x: 512, y: 1024 - HEIGHT, w: WIDTH, h: HEIGHT }
 const MENU = { w: WIDTH, h: 64 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
 
-const parallexCanvas = document.getElementById('ctdl-game-parallex')
+const parallexCanvas = document.getElementById('ctdl-game-parallax')
 parallexCanvas.width = WIDTH
 parallexCanvas.height = HEIGHT
 
@@ -122,6 +122,7 @@ const BUTTONS = [
   { action: 'back', x: 21 * 2, y: HEIGHT - 20, w: 18, h: 18, active: false}
 ]
 export default {
+  SLOT: '-new',
   WIDTH,
   HEIGHT,
   WORLD,

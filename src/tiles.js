@@ -7,7 +7,7 @@ export default function(id, map) {
 
     this.update = () => {
         let sprite = CTDLGAME.assets[this.id]
-        this.map.parallex.map(tile => {
+        this.map.parallax.map(tile => {
             constants.parallexContext.drawImage(
                 sprite,
                 tile.tile[0], tile.tile[1], tile.w, tile.h,
