@@ -2,7 +2,7 @@ import * as db from './db'
 import Sun from './sun'
 import Moon from './moon'
 import Tiles from './tiles'
-import plainsMap from './maps/plains'
+import cityMap from './maps/city'
 import { initEvents } from './events'
 import constants from './constants'
 import {
@@ -66,7 +66,7 @@ const moon = new Moon({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
 })
-const tiles = new Tiles('plains', plainsMap)
+const tiles = new Tiles('city', cityMap)
 
 init()
 
