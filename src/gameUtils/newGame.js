@@ -68,5 +68,5 @@ export const newGame = () => {
   initSoundtrack('stellaSplendence')
   if (CTDLGAME.options.music) startMusic()
 
-  setTimeout(() => addClass(constants.parallexCanvas, 'transition-background-color'))
+  setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }

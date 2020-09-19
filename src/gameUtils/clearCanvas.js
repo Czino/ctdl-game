@@ -6,10 +6,10 @@ import { CTDLGAME } from './CTDLGAME'
  * @description Method to clear canvas for next draw
  */
 export const clearCanvas = () => {
-  constants.parallexContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT);
+  constants.parallaxContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT);
 
   [
-    constants.parallexContext,
+    constants.skyContext,
     constants.bgContext,
     constants.gameContext,
     constants.fgContext,

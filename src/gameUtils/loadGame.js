@@ -78,14 +78,14 @@ export const loadGame = async () => {
   let timeOfDay = getTimeOfDay()
   if (timeOfDay > 18.5) {
     CTDLGAME.isNight = true
-    removeClass(constants.parallexCanvas, 'ctdl-day')
+    removeClass(constants.skyCanvas, 'ctdl-day')
   } else if (timeOfDay > 5.5) {
     CTDLGAME.isNight = false
-    addClass(constants.parallexCanvas, 'ctdl-day')
+    addClass(constants.skyCanvas, 'ctdl-day')
   }
 
   initSoundtrack('stellaSplendence')
   if (CTDLGAME.options.music) startMusic()
 
-  setTimeout(() => addClass(constants.parallexCanvas, 'transition-background-color'))
+  setTimeout(() => addClass(constants.skyCanvas, 'transition-background-color'))
 }

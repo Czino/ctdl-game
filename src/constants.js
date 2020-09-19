@@ -5,9 +5,13 @@ const START = { x: 512, y: 1024 - HEIGHT, w: WIDTH, h: HEIGHT }
 const MENU = { w: WIDTH, h: 64 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
 
-const parallexCanvas = document.getElementById('ctdl-game-parallax')
-parallexCanvas.width = WIDTH
-parallexCanvas.height = HEIGHT
+const skyCanvas = document.getElementById('ctdl-game-sky')
+skyCanvas.width = WIDTH
+skyCanvas.height = HEIGHT
+
+const parallaxCanvas = document.getElementById('ctdl-game-parallax')
+parallaxCanvas.width = WIDTH
+parallaxCanvas.height = HEIGHT
 
 const bgCanvas = document.getElementById('ctdl-game-bg')
 bgCanvas.width = WIDTH
@@ -33,7 +37,8 @@ const menuCanvas = document.getElementById('ctdl-game-menu')
 menuCanvas.width = WIDTH
 menuCanvas.height = HEIGHT
 
-const parallexContext = parallexCanvas.getContext('2d')
+const skyContext = skyCanvas.getContext('2d')
+const parallaxContext = parallaxCanvas.getContext('2d')
 const bgContext = bgCanvas.getContext('2d')
 const gameContext = gameCanvas.getContext('2d')
 const fgContext = fgCanvas.getContext('2d')
@@ -41,7 +46,8 @@ const charContext = charCanvas.getContext('2d')
 const overlayContext = overlayCanvas.getContext('2d')
 const menuContext = menuCanvas.getContext('2d')
 
-parallexContext.imageSmoothingEnabled = false
+skyContext.imageSmoothingEnabled = false
+parallaxContext.imageSmoothingEnabled = false
 bgContext.imageSmoothingEnabled = false
 gameContext.imageSmoothingEnabled = false
 fgContext.imageSmoothingEnabled = false
@@ -49,7 +55,8 @@ charContext.imageSmoothingEnabled = false
 overlayContext.imageSmoothingEnabled = false
 menuContext.imageSmoothingEnabled = false
 
-parallexContext.translate(-START.x, -START.y)
+skyContext.translate(-START.x, -START.y)
+parallaxContext.translate(-START.x, -START.y)
 bgContext.translate(-START.x, -START.y)
 gameContext.translate(-START.x, -START.y)
 fgContext.translate(-START.x, -START.y)
@@ -136,8 +143,9 @@ export default {
   FRAMERATE: 8, // render every X frame
   SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
-  parallexCanvas,
-  parallexContext,
+  skyCanvas,
+  skyContext,
+  parallaxContext,
   bgContext,
   gameContext,
   fgContext,

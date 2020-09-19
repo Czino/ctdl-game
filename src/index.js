@@ -38,7 +38,6 @@ import { intersects } from './geometryUtils'
 // TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
 // TODO fix infinite noise sound
-// TODO make moon/sun appear behind parallax
 // TODO prevent characters from falling off at the end
 // TODO add gates to other worlds
 // TODO make canvas draw clean pixels
