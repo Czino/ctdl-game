@@ -23,7 +23,7 @@ export default function(id, options) {
   this.spriteData = sprites.shitcoiner
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
   this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
-  this.item = items.find(item => item.chance > Math.random())
+  this.item = options.item || items.find(item => item.chance > Math.random())
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -158,6 +158,8 @@ export default function(id, options) {
   this.update = () => {
     const sprite = CTDLGAME.assets.shitcoiner
 
+    if (CTDLGAME.lockCharacters) return
+
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
@@ -268,6 +270,8 @@ export default function(id, options) {
     status: this.status,
     direction: this.direction,
     frame: this.frame,
+    usd: this.usd,
+    item: this.item,
     walkingSpeed: this.walkingSpeed
   })
 }
