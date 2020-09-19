@@ -36,10 +36,10 @@ import { intersects } from './geometryUtils'
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
+// TODO improve setting of blocks for mobile
+// TODO add a way to revive rekt characters
 // TODO make canvas draw clean pixels
-// TODO add ambiental objects
 // TODO refactor code
-// TODO don't apply gravity to objects outside viewport
 // TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
 // TODO add exchange

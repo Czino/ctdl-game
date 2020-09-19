@@ -22,9 +22,9 @@ export default function(id, options) {
   this.class = 'Brian'
   this.enemy = true
   this.spriteData = sprites.brian
-  this.health = 5
+  this.health = 25
   this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
-  this.item = items.find(item => item.chance > Math.random())
+  this.item = options.item || items.find(item => item.chance > Math.random())
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -33,11 +33,13 @@ export default function(id, options) {
   this.vx = options.vx || 0
   this.vy = options.vy || 0
   this.status = options.status || 'idle'
-  this.direction = options.direction || 'right'
+  this.direction = options.direction || 'left'
   this.frame = options.frame || 0
-  this.walkingSpeed = options.walkingSpeed || 3
+  this.walkingSpeed = 3
   this.senseRadius = 60
   this.attackRange = 1
+  this.hadIntro = options.hadIntro || false
+  this.canMove = options.canMove || false
 
   this.idle = () => {
     this.status = 'idle'
@@ -75,7 +77,6 @@ export default function(id, options) {
   }
   this.die = () => {
     CTDLGAME.inventory.usd += this.usd
-    // TODO add defeated text
     this.status = 'rekt'
     this.frame = 0
     setTextQueue([])
@@ -86,6 +87,7 @@ export default function(id, options) {
     })
     addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
     addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
+      // TODO change back to main theme
       if (this.item) {
         let item = new Item(
           this.item.id,
@@ -166,8 +168,23 @@ export default function(id, options) {
       if (hasCollided) this.vy = 0
     }
 
+    if (!this.hadIntro && this.senseEnemies().length > 0) {
+      CTDLGAME.lockCharacters = true
+
+      addTextToQueue('Brian:\nWelcome to crypto!')
+      addTextToQueue('Brian:\nGrab a conbase account\nwhen you\'re ready to use\nthat Bitcoin')
+      addTextToQueue('Brian:\nand get into any of the\nmany other cryptos\nout there.')
+      addTextToQueue('Brian:\nWhat?\nYou don\'t like our service?\nYou think we are bad?')
+      addTextToQueue('Brian:\nI show you how bad\nI can be!', () => {
+        this.canMove = true
+        CTDLGAME.lockCharacters = false
+        // TODO change to brian's theme
+      })
+      this.hadIntro = true
+    }
+
     // AI logic
-    if (!/rekt|hurt/.test(this.status)) {
+    if (this.canMove && !/rekt|hurt/.test(this.status)) {
       const enemies = this.senseEnemies()
       if (enemies.length > 0) {
         const enemy = getClosest(this.getCenter(), enemies)
@@ -259,6 +276,9 @@ export default function(id, options) {
     status: this.status,
     direction: this.direction,
     frame: this.frame,
-    walkingSpeed: this.walkingSpeed
+    usd: this.usd,
+    item: this.item,
+    hadIntro: this.hadIntro,
+    canMove: this.canMove
   })
 }
