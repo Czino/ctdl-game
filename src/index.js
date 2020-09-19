@@ -37,8 +37,10 @@ import { intersects } from './geometryUtils'
 
 // TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
+// TODO add new stage
+// TODO load assets only when needed
+// TODO dynamically load songs when needed
 // TODO fix infinite noise sound
-// TODO prevent characters from falling off at the end
 // TODO add gates to other worlds
 // TODO make canvas draw clean pixels
 // TODO refactor code
@@ -46,7 +48,6 @@ import { intersects } from './geometryUtils'
 // TODO fix receiving blocks doubled
 // TODO add exchange
 // TODO add shop
-// TODO add first end boss (must be related to shitcoining)
 // TODO consider Chef Nomi #SushiSwap
 // TODO add more enemies and bosses
 // TODO add moon ending scene

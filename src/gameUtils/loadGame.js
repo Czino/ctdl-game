@@ -25,15 +25,11 @@ export const loadGame = async () => {
   let options = await db.get('options')
 
   if (time) CTDLGAME.frame = time
+
+  CTDLGAME.world = constants.WORLD
   if (objects) {
     CTDLGAME.objects = objects.map(object => {
-      if (object.class === 'Block') {
-        return new Block(
-          object.id,
-          constants.gameContext,
-          object
-        )
-      } else if (object.class === 'Shitcoiner') {
+      if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
           object.id,
           object
@@ -64,7 +60,7 @@ export const loadGame = async () => {
     katoshi
   )
 
-  if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
+  if (CTDLGAME.katoshi.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
   updateViewport()

@@ -4,7 +4,6 @@ import { initSoundtrack, startMusic } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import Character from '../character'
 import Brian from '../Brian'
-import Block from '../block'
 
 /**
  * @description Method to prepare new game
@@ -17,14 +16,7 @@ export const newGame = () => {
     blocks: []
   }
   CTDLGAME.blockHeight = -1
-
-  const ground = new Block('ground', constants.gameContext, {
-    x: 0,
-    y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h,
-    w: constants.WORLD.w,
-    h: constants.GROUNDHEIGHT,
-    isSolid: true
-  })
+  CTDLGAME.world = constants.WORLD
 
   CTDLGAME.gameOver = false
   CTDLGAME.wizardCountdown = 16
@@ -54,7 +46,6 @@ export const newGame = () => {
     }
   )
 
-  CTDLGAME.objects.push(ground)
   CTDLGAME.objects.push(brian)
 
   CTDLGAME.hodlonaut.select()

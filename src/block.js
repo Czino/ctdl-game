@@ -17,13 +17,11 @@ export default function(id, context, options) {
   this.info = options.info || {}
 
   this.toggleSolid = () => {
-    if (this.id === 'ground') return
     this.isSolid = !this.isSolid
   }
 
   this.update = () => {
     let sprite = CTDLGAME.assets.block
-    if (this.id === 'ground') return
 
     let data = blockSprite['block']
     if (!this.isSolid) data = blockSprite['backgroundBlock']
@@ -54,7 +52,6 @@ export default function(id, context, options) {
   })
 
   this.select = () => {
-    if (this.id === 'ground') return
     addTextToQueue(this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock')
   }
   this.unselect = () => {}
