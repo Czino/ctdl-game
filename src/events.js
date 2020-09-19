@@ -30,6 +30,7 @@ export const initEvents = startScreen => {
     window.addEventListener('mousemove', mouseMoveHandler)
     window.addEventListener('mousedown', startScreenHandler)
     window.addEventListener('touchstart', startScreenHandler)
+    window.addEventListener('resize', resize)
     return
   }
 
@@ -62,6 +63,11 @@ export const initEvents = startScreen => {
   })
 }
 
+function resize () {
+  constants.canvases.forEach(canvas => {
+    canvas.style.height = (Math.round(window.innerHeight / 2) * 2) + 'px'
+  })
+}
 
 function mouseMoveHandler (e) {
   let canvas = e.target
