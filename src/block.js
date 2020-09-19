@@ -12,7 +12,7 @@ export default function(id, context, options) {
   this.x = options.x
   this.y = options.y
   this.isSolid = options.isSolid
-  this.opacity = options.opacity || 1
+  this.opacity = options.opacity || 1
   this.status = options.status
   this.info = options.info || {}
 
@@ -22,24 +22,20 @@ export default function(id, context, options) {
   }
 
   this.update = () => {
-    let sprite = CTDLGAME.assets[this.id === 'ground' ? 'ground' : 'block']
-    if (this.id === 'ground') {
-      this.context.fillStyle = this.context.createPattern(sprite, 'repeat')
+    let sprite = CTDLGAME.assets.block
+    if (this.id === 'ground') return
 
-      this.context.fillRect(this.x, this.y, this.w, this.h)
-      return
-    } else {
-      let data = blockSprite['block']
-      if (!this.isSolid) data = blockSprite['backgroundBlock']
-      if (this.info.height === 0 && this.isSolid) data = blockSprite['genesisBlock']
-      if (this.info.height === 0 && !this.isSolid) data = blockSprite['genesisBackgroundBlock']
-      this.context.globalAlpha = this.opacity
-      this.context.drawImage(
-        sprite,
-        data.x, data.y, data.w, data.h,
-        this.x, this.y, this.w, this.h
-      )
-    }
+    let data = blockSprite['block']
+    if (!this.isSolid) data = blockSprite['backgroundBlock']
+    if (this.info.height === 0 && this.isSolid) data = blockSprite['genesisBlock']
+    if (this.info.height === 0 && !this.isSolid) data = blockSprite['genesisBackgroundBlock']
+    this.context.globalAlpha = this.opacity
+    this.context.drawImage(
+      sprite,
+      data.x, data.y, data.w, data.h,
+      this.x, this.y, this.w, this.h
+    )
+
     if (this.status === 'bad') {
       this.context.strokeStyle = '#F00'
       this.context.beginPath()
