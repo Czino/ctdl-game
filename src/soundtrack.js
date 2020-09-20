@@ -70,6 +70,7 @@ sineSynth.volume.value = -19
 noiseSynth.volume.value = -19
 
 const songs = {
+    // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {
       length: 136.575,
       bpm: 136,
@@ -81,6 +82,7 @@ const songs = {
       square: sine,
       loop: true
     },
+    //Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
     santaMaria: {
       length: 79.7342,
       bpm: 90,
@@ -90,6 +92,7 @@ const songs = {
       sineReverb: true,
       loop: true
     },
+    // Czino - I'm sad
     gameOver: {
       length: 16.97,
       bpm: 136,
