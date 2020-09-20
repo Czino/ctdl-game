@@ -35,6 +35,9 @@ import { intersects } from './geometryUtils'
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
+// TODO can't set blocks
+// TODO brian click on him creates multiple items
+// TODO change character on tab (mobile?)
 // TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
 // TODO add new stage
