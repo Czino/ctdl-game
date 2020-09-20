@@ -145,6 +145,7 @@ export default {
   GRAVITY: 2,
   skyCanvas,
   skyContext,
+  parallaxCanvas,
   parallaxContext,
   bgContext,
   gameContext,
