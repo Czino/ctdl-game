@@ -1,6 +1,6 @@
 import { contains } from './geometryUtils'
 import constants from './constants'
-import { CTDLGAME, newGame, loadGame, showOverlay } from './gameUtils'
+import { CTDLGAME, loadGame, newGame, showOverlay } from './gameUtils'
 import { addTextToQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, startMusic } from './soundtrack'
@@ -9,6 +9,119 @@ import { playSound, toggleSounds } from './sounds'
 
 window.KEYS = []
 window.BUTTONS = []
+
+// TODO refactor into eventUtils
+constants.BUTTONS = constants.BUTTONS.concat([
+  {
+    action: 'loadGame',
+    x: constants.WIDTH / 2 - 41,
+    y: constants.HEIGHT / 2 + 20,
+    w: 80,
+    h: 10,
+    active: false,
+    onclick: async () => {
+        playSound('select')
+
+      CTDLGAME.startScreen = false
+      await loadGame()
+
+      constants.BUTTONS
+        .filter(button => /newGame|loadGame/.test(button.action))
+        .forEach(button => button.active = false)
+
+      window.removeEventListener('mouseup', startScreenHandler)
+      window.removeEventListener('touchend', startScreenHandler)
+      initEvents(false)
+    }
+  },
+  {
+    action: 'newGame',
+    x: constants.WIDTH / 2 - 35,
+    y: constants.HEIGHT / 2,
+    w: 60,
+    h: 10,
+    active: true,
+    onclick: () => {
+      playSound('select')
+
+      newGame()
+      CTDLGAME.startScreen = false
+
+      constants.BUTTONS
+        .filter(button => /newGame|loadGame/.test(button.action))
+        .forEach(button => button.active = false)
+
+      window.removeEventListener('mouseup', startScreenHandler)
+      window.removeEventListener('touchend', startScreenHandler)
+      initEvents(false)
+    }
+  },
+  {
+    action: 'music',
+    x: constants.WIDTH - 3 - 9 - 11,
+    y: 3,
+    w: 9,
+    h: 9,
+    active: true,
+    onclick: () => {
+      CTDLGAME.options.music = !CTDLGAME.options.music
+      if (!CTDLGAME.options.music) return stopMusic(true)
+
+      startMusic(true)
+    }
+  },
+  {
+    action: 'sound',
+    x: constants.WIDTH - 3 - 9 ,
+    y: 3,
+    w: 9,
+    h: 9,
+    active: true,
+    onclick: () => {
+      CTDLGAME.options.sound = !CTDLGAME.options.sound
+      toggleSounds(CTDLGAME.options.sound)
+    }
+  },
+  { action: 'jump', x: 21 * 4, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
+  { action: 'attack', x: 21 * 5, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
+  { action: 'moveLeft', x: 0, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
+  { action: 'moveRight', x: 21, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
+  { action: 'back', x: 21 * 2, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true}
+])
+
+export const startScreenHandler = async (e) => {
+  let canvas = e.target
+  if (!/ctdl-game/.test(canvas.id)) {
+    return
+  }
+
+  if (e.layerX) {
+    CTDLGAME.cursor = {
+      x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
+      y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+    }
+  } else if (e.touches?.length > 0) {
+    e.stopPropagation()
+    CTDLGAME.cursor = {
+      x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
+      y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
+    }
+    CTDLGAME.touchScreen = true
+
+    constants.BUTTONS
+      .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
+      .forEach(button => button.active = true)
+  }
+  let buttonPressed = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
+    button.active &&
+    CTDLGAME.cursor.x > button.x &&
+    CTDLGAME.cursor.x < button.x + button.w &&
+    CTDLGAME.cursor.y > button.y &&
+    CTDLGAME.cursor.y < button.y + button.h
+  )
+
+  if (buttonPressed?.onclick) buttonPressed.onclick()
+}
 
 export const initEvents = startScreen => {
   try {
@@ -82,7 +195,7 @@ function mouseMoveHandler (e) {
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
   }
-  let buttonHover = constants.BUTTONS.find(button =>
+  let buttonHover = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
     button.active &&
     CTDLGAME.cursor.x > button.x &&
     CTDLGAME.cursor.x < button.x + button.w &&
@@ -94,76 +207,6 @@ function mouseMoveHandler (e) {
     addClass(document.body, 'cursor-pointer')
   } else {
     removeClass(document.body, 'cursor-pointer')
-  }
-}
-
-async function startScreenHandler (e) {
-  let canvas = e.target
-  if (!/ctdl-game/.test(canvas.id)) {
-    return
-  }
-
-  if (e.layerX) {
-    CTDLGAME.cursor = {
-      x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
-      y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
-    }
-  } else if (e.touches?.length > 0) {
-    e.stopPropagation()
-    CTDLGAME.cursor = {
-      x: (e.touches[0].clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
-      y: (e.touches[0].clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
-    }
-    CTDLGAME.touchScreen = true
-
-    constants.BUTTONS
-      .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
-      .forEach(button => button.active = true)
-  }
-  let buttonPressed = constants.BUTTONS.find(button =>
-    button.active &&
-    CTDLGAME.cursor.x > button.x &&
-    CTDLGAME.cursor.x < button.x + button.w &&
-    CTDLGAME.cursor.y > button.y &&
-    CTDLGAME.cursor.y < button.y + button.h
-  )
-
-  if (buttonPressed?.action === 'newGame') {
-    playSound('select')
-
-    newGame()
-    CTDLGAME.startScreen = false
-
-    constants.BUTTONS
-      .filter(button => /newGame|loadGame/.test(button.action))
-      .forEach(button => button.active = false)
-
-    window.removeEventListener('mouseup', startScreenHandler)
-    window.removeEventListener('touchend', startScreenHandler)
-    initEvents(false)
-  } else if (buttonPressed?.action === 'loadGame') {
-    playSound('select')
-
-    CTDLGAME.startScreen = false
-    await loadGame()
-
-    constants.BUTTONS
-      .filter(button => /newGame|loadGame/.test(button.action))
-      .forEach(button => button.active = false)
-
-    window.removeEventListener('mouseup', startScreenHandler)
-    window.removeEventListener('touchend', startScreenHandler)
-    initEvents(false)
-  } else if (buttonPressed?.action === 'music') {
-    CTDLGAME.options.music = !CTDLGAME.options.music
-    if (!CTDLGAME.options.music) {
-      stopMusic(true)
-    } else {
-      startMusic(true)
-    }
-  } else if (buttonPressed?.action === 'sound') {
-    CTDLGAME.options.sound = !CTDLGAME.options.sound
-      toggleSounds(CTDLGAME.options.sound)
   }
 }
 
@@ -223,7 +266,7 @@ function click (e) {
   if (object?.class === 'Character') window.SELECTEDCHARACTER.unselect()
   if (window.SELECTED) window.SELECTED.unselect()
   if (!object) return
-  object.select()
+  if (object.select) object.select()
   if (object.class === 'Block') {
     object.toggleSolid()
   }
@@ -281,6 +324,8 @@ function mouseMove (e) {
   if (!/ctdl-game/.test(canvas.id)) {
     return
   }
+
+  if (CTDLGAME.showShop) return
 
   showOverlay()
 }

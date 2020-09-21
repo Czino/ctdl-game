@@ -78,45 +78,9 @@ const CONTROLS = {
     jump: 'jump'
   }
 }
-const BUTTONS = [
-  {
-    action: 'loadGame',
-    x: WIDTH / 2 - 41,
-    y: HEIGHT / 2 + 20,
-    w: 80,
-    h: 10,
-    active: false,
-  },
-  {
-    action: 'newGame',
-    x: WIDTH / 2 - 35,
-    y: HEIGHT / 2,
-    w: 60,
-    h: 10,
-    active: true,
-  },
-  {
-    action: 'music',
-    x: WIDTH - 3 - 9 - 11,
-    y: 3,
-    w: 9,
-    h: 9,
-    active: true
-  },
-  {
-    action: 'sound',
-    x: WIDTH - 3 - 9 ,
-    y: 3,
-    w: 9,
-    h: 9,
-    active: true
-  },
-  { action: 'jump', x: 21 * 4, y: HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
-  { action: 'attack', x: 21 * 5, y: HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
-  { action: 'moveLeft', x: 0, y: HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
-  { action: 'moveRight', x: 21, y: HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
-  { action: 'back', x: 21 * 2, y: HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true}
-]
+
+let BUTTONS = []
+
 export default {
   SLOT: '-new',
   WIDTH,

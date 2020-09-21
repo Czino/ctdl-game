@@ -21,7 +21,8 @@ import {
   fadeIntoGameOver,
   circadianRhythm,
   spawnEnemies,
-  cleanUpStage
+  cleanUpStage,
+  showShop
 } from './gameUtils'
 import { writeMenu } from './textUtils'
 import Wizard from './wizard'
@@ -124,6 +125,16 @@ function tick() {
     time = getTimeOfDay()
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) {
       checkBlocks()
+    }
+
+
+    if (CTDLGAME.showShop) {
+      showShop()
+      showMenu(CTDLGAME.inventory)
+      writeMenu()
+      CTDLGAME.frame++
+      window.requestAnimationFrame(tick)
+      return
     }
 
     clearCanvas()

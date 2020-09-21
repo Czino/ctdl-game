@@ -14,6 +14,7 @@ export const CTDLGAME = {
   },
   viewport: constants.START,
   objects: [],
+  eventButtons: [],
   blockHeight: -1,
   inventory: {
     usd: 0,
