@@ -5,11 +5,17 @@ import { addClass } from '../htmlUtils'
 import Character from '../character'
 import Brian from '../Brian'
 
+
+const makeBoundary = boundingBox => ({
+  isSolid: true,
+  getBoundingBox: () => boundingBox,
+  update: () => {}
+})
+
 /**
  * @description Method to prepare new game
  */
 export const newGame = () => {
-  CTDLGAME.objects = []
   CTDLGAME.inventory = { // TODO refactor into factory
     usd: 0,
     sats: 0,
@@ -17,6 +23,13 @@ export const newGame = () => {
   }
   CTDLGAME.blockHeight = -1
   CTDLGAME.world = constants.WORLD
+
+  CTDLGAME.objects = [
+    makeBoundary({ x: 0, y: -12, w: CTDLGAME.world.w, h: 12 }),
+    makeBoundary({ x: CTDLGAME.world.w, y: 0, w: 12, h: CTDLGAME.world.h }),
+    makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }),
+    makeBoundary({ x: -12, y: 0, w: 12, h: CTDLGAME.world.h })
+  ]
 
   CTDLGAME.gameOver = false
   CTDLGAME.wizardCountdown = 16
