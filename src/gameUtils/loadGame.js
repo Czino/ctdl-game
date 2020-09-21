@@ -10,7 +10,7 @@ import Brian from '../brian'
 import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
-import { initSoundtrack, startMusic } from '../soundtrack'
+import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { makeBoundary } from '../geometryUtils'
 
@@ -97,8 +97,7 @@ export const loadGame = async () => {
     addClass(constants.skyCanvas, 'ctdl-day')
   }
 
-  initSoundtrack('stellaSplendence')
-  if (CTDLGAME.options.music) startMusic()
+  initSoundtrack('stellaSplendence', CTDLGAME.options.music)
 
   setTimeout(() => addClass(constants.skyCanvas, 'transition-background-color'))
 }

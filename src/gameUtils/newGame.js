@@ -1,6 +1,6 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-import { initSoundtrack, startMusic } from '../soundtrack'
+import { initSoundtrack } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
@@ -67,8 +67,7 @@ export const newGame = () => {
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
-  initSoundtrack('stellaSplendence')
-  if (CTDLGAME.options.music) startMusic()
+  initSoundtrack('stellaSplendence', CTDLGAME.options.music)
 
   setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }

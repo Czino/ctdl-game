@@ -28,6 +28,7 @@ import { writeMenu } from './textUtils'
 import Wizard from './wizard'
 import { applyGravity } from './physicsUtils'
 import { intersects } from './geometryUtils'
+import { isSoundLoaded } from './sounds'
 
 // import { playSound } from './sounds'
 
@@ -67,10 +68,16 @@ const moon = new Moon({
   y: CTDLGAME.viewport.y + 10
 })
 
-init()
+let waitingForSound = setInterval(() => {
+  if (isSoundLoaded()) {
+    clearInterval(waitingForSound)
+    init()
+  }
+}, 100)
 
 async function init() {
   let i = 0
+
   for (let key in CTDLGAME.assets) {
     CTDLGAME.assets[key] = await loadAsset(CTDLGAME.assets[key])
     constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -80,6 +87,10 @@ async function init() {
   }
 
   await db.init(constants.debug)
+
+  let options = await db.get('options')
+  if (options) CTDLGAME.options = options
+
 
   if (!(await saveStateExists())) {
     CTDLGAME.newGame = true
@@ -99,6 +110,8 @@ async function init() {
 function tick() {
   if (CTDLGAME.startScreen) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+    clearCanvas()
+
     showStartScreen()
     CTDLGAME.frame++
     window.requestAnimationFrame(tick)

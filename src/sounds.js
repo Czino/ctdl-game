@@ -39,17 +39,14 @@ const sineOptions = {
   }
 };
 
-const pulseSynth = new Synth(pulseOptions).connect(gain).toMaster()
-const pulse2Synth = new Synth(pulseOptions).connect(gain).toMaster()
-const squareSynth = new Synth(squareOptions).connect(gain).toMaster()
-const triangleSynth = new Synth(triangleOptions).connect(gain).toMaster()
-const sineSynth = new Synth(sineOptions).connect(gain).toMaster()
-const noiseSynth = new NoiseSynth().connect(gain).toMaster()
-const noise2Synth = new NoiseSynth().connect(gain).toMaster()
+const pulseSynth = new Synth(pulseOptions).connect(gain).toDestination()
+const squareSynth = new Synth(squareOptions).connect(gain).toDestination()
+const triangleSynth = new Synth(triangleOptions).connect(gain).toDestination()
+const sineSynth = new Synth(sineOptions).connect(gain).toDestination()
+const noiseSynth = new NoiseSynth().connect(gain).toDestination()
+const noise2Synth = new NoiseSynth().connect(gain).toDestination()
 
 let enabled = true
-
-now()
 
 const sounds = {
   'select': () => {
@@ -241,6 +238,9 @@ const sounds = {
     triangleSynth.triggerRelease(time + dur)
   }
 }
+
+export const isSoundLoaded = () => now() > .1
+
 export const toggleSounds = enable => {
   enabled = enable
 }
@@ -248,7 +248,10 @@ export const toggleSounds = enable => {
 export const playSound = id => {
   try {
     if (enabled) sounds[id]()
-  } catch {
+  } catch(e) {
+    console.log(e)
     // do nothing
   }
 }
+
+window.playSound = playSound

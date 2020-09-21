@@ -1,9 +1,10 @@
+import * as db from './db'
 import { contains } from './geometryUtils'
 import constants from './constants'
 import { CTDLGAME, loadGame, newGame, showOverlay } from './gameUtils'
 import { addTextToQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
-import { stopMusic, startMusic } from './soundtrack'
+import { stopMusic } from './soundtrack'
 import { playSound, toggleSounds } from './sounds'
 
 
@@ -20,7 +21,8 @@ constants.BUTTONS = constants.BUTTONS.concat([
     h: 10,
     active: false,
     onclick: async () => {
-        playSound('select')
+      stopMusic()
+      playSound('select')
 
       CTDLGAME.startScreen = false
       await loadGame()
@@ -42,6 +44,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
     h: 10,
     active: true,
     onclick: () => {
+      stopMusic()
       playSound('select')
 
       newGame()
@@ -63,11 +66,10 @@ constants.BUTTONS = constants.BUTTONS.concat([
     w: 9,
     h: 9,
     active: true,
-    onclick: () => {
+    onclick: async () => {
       CTDLGAME.options.music = !CTDLGAME.options.music
+      await db.set('options', CTDLGAME.options)
       if (!CTDLGAME.options.music) return stopMusic(true)
-
-      startMusic(true)
     }
   },
   {
@@ -77,8 +79,9 @@ constants.BUTTONS = constants.BUTTONS.concat([
     w: 9,
     h: 9,
     active: true,
-    onclick: () => {
+    onclick: async () => {
       CTDLGAME.options.sound = !CTDLGAME.options.sound
+      await db.set('options', CTDLGAME.options)
       toggleSounds(CTDLGAME.options.sound)
     }
   },
