@@ -68,6 +68,14 @@ export default function(id, options) {
   this.back = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'back'
+
+    const boundingBox = this.getBoundingBox()
+    const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+      .filter(obj => obj.backEvent)
+      .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+
+    if (!eventObject) return
+    eventObject.backEvent()
   }
   this.action = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return

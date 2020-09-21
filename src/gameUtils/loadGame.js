@@ -1,6 +1,8 @@
 import constants from '../constants'
 import * as db from '../db'
 import { CTDLGAME } from './CTDLGAME'
+import Tiles from '../tiles'
+import cityMap from '../maps/city'
 import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
@@ -55,10 +57,13 @@ export const loadGame = async () => {
     })
   }
 
+
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }))
   CTDLGAME.objects.push(makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }))
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }))
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h }))
+
+  CTDLGAME.tiles = new Tiles('city', cityMap)
 
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
@@ -82,7 +87,6 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
-  CTDLGAME.objects.forEach(object => object.update())
 
   let timeOfDay = getTimeOfDay()
   if (timeOfDay > 18.5) {

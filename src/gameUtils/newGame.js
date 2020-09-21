@@ -2,9 +2,11 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, startMusic } from '../soundtrack'
 import { addClass } from '../htmlUtils'
+import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
 import Brian from '../brian'
-import { makeBoundary } from '../geometryUtils'
+import Tiles from '../tiles'
+import cityMap from '../maps/city'
 
 /**
  * @description Method to prepare new game
@@ -25,13 +27,15 @@ export const newGame = () => {
     makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h })
   ]
 
+  CTDLGAME.tiles = new Tiles('city', cityMap)
+
   CTDLGAME.gameOver = false
   CTDLGAME.wizardCountdown = 16
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     {
-      x: CTDLGAME.viewport.x + 50,
+      x: 50,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
     }
   )
@@ -39,7 +43,7 @@ export const newGame = () => {
     'katoshi',
     {
       active: false,
-      x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+      x: 70,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
       direction: 'left'
     }

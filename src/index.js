@@ -1,8 +1,6 @@
 import * as db from './db'
 import Sun from './sun'
 import Moon from './moon'
-import Tiles from './tiles'
-import cityMap from './maps/city'
 import { initEvents } from './events'
 import constants from './constants'
 import {
@@ -35,22 +33,20 @@ import { intersects } from './geometryUtils'
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
-// TODO can't set blocks
+// TODO add shop
+// TODO add exchange
 // TODO brian click on him creates multiple items
 // TODO change character on tab (mobile?)
 // TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
+// TODO add gates to other worlds
 // TODO add new stage
 // TODO load assets only when needed
 // TODO dynamically load songs when needed
 // TODO fix infinite noise sound
-// TODO add gates to other worlds
 // TODO make canvas draw clean pixels
 // TODO refactor code
-// TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
-// TODO add exchange
-// TODO add shop
 // TODO consider Chef Nomi #SushiSwap
 // TODO add more enemies and bosses
 // TODO add moon ending scene
@@ -69,7 +65,6 @@ const moon = new Moon({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
 })
-const tiles = new Tiles('city', cityMap)
 
 init()
 
@@ -157,9 +152,12 @@ function tick() {
 
     sun.update()
     moon.update()
-    tiles.update()
+    CTDLGAME.tiles.update()
 
     applyGravity()
+    CTDLGAME.objects
+      .filter(object => object.update)
+      .forEach(object => object.update())
 
     updateViewport()
     showOverlay()

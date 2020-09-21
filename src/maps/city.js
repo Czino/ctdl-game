@@ -1,5 +1,6 @@
 import { mapTile, parsePattern } from '../mapUtils'
 import { random } from '../arrayUtils'
+import GameObject from '../gameObject'
 
 const tileSize = 8 // tileSize
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t010 = [0, 10],
@@ -14,6 +15,7 @@ const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 
 let parallax = []
 let bg = []
 let fg = []
+let events = []
 
 const ruinedWall1 = [
   [ t00, t20 ],
@@ -45,6 +47,32 @@ const ruinedBuilding2 = [
   [ t110, t34, t34, t34, t34, t34, t34, t34, t24 ],
   [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
   [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t18, t34, t34, t18, t34, t34, t24 ],
+  [ t34, t34, t19, t34, t34, t19, t34, t34, t24 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t18, t34, t34, t18, t34, t34, t24 ],
+  [ t34, t34, t19, t34, t34, t19, t34, t34, t24 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t18, t34, t34, t18, t34, t310, t32 ],
+  [ t34, t34, t19, t34, t34, t19, t34, t210, t32 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t58, t34, t34, t34, t34, t34, t24 ],
+  [ t34, t34, t59, t34, t34, t34, t34, t34, t24 ],
+]
+const ruinedBuilding3 = [
+  [ t10, t20, t20, t20, t01, t64, t64, t64, t74 ],
+  [ t110, t34, t34, t34, t34, t34, t34, t310, t32 ],
+  [ t34, t34, t18, t34, t34, t18, t310, t07, t32 ],
+  [ t34, t34, t19, t34, t34, t19, t07, t07, t32 ],
+  [ t34, t34, t34, t34, t34, t210, t07, t07, t32 ],
+  [ t34, t34, t34, t34, t34, t34, t34, t210, t32 ],
+  [ t34, t34, t18, t34, t34, t18, t34, t310, t32 ],
+  [ t34, t34, t19, t34, t34, t19, t34, t07, t32 ],
+  [ t34, t34, t34, t34, t34, t34, t310, t07, t32 ],
+  [ t34, t34, t34, t34, t34, t34, t210, t07, t32 ],
   [ t34, t34, t18, t34, t34, t18, t34, t34, t24 ],
   [ t34, t34, t19, t34, t34, t19, t34, t34, t24 ],
   [ t34, t34, t34, t34, t34, t34, t34, t34, t24 ],
@@ -111,7 +139,7 @@ const door = [
 const undergroundTiles = [
   t62, t71, t72, t72, t72, t72, t72, t72, t72
 ]
-for (let i = 0; i < 128; i++) {
+for (let i = -30; i < 158; i++) {
   fg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
 }
 
@@ -127,6 +155,8 @@ parallax = parallax.concat(parsePattern(ruinedBuilding1, 10, 108))
 parallax = parallax.concat(parsePattern(ruinedBuilding2, 47, 101))
 parallax = parallax.concat(parsePattern(ruinedBuilding1, 63, 108))
 parallax = parallax.concat(parsePattern(justWalls, 30, 116))
+bg = bg.concat(parsePattern(ruinedBuilding3, -7, 103))
+fg = fg.concat(parsePattern(ruinedWall3, -5, 117))
 bg = bg.concat(parsePattern(shop, 34, 109))
 bg = bg.concat(parsePattern(ruinedWall2, 30, 117))
 fg = fg.concat(parsePattern(ruinedWall1, 50, 117))
@@ -138,8 +168,19 @@ fg = fg.concat(parsePattern(ruinedWall3, 90, 117))
 bg = bg.concat(parsePattern(cont10sebg, 110, 109))
 fg = fg.concat(parsePattern(cont10sefg, 110, 109))
 
+const goToShop = new GameObject('goToShop', {
+  x: 41 * tileSize,
+  y: 116 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+goToShop.backEvent = () => {
+  // TODO add code to enable shop
+}
+events = events.concat(goToShop)
 export default {
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
-  fg: fg.map(tile => mapTile(tile, tileSize))
+  fg: fg.map(tile => mapTile(tile, tileSize)),
+  events: events
 }
