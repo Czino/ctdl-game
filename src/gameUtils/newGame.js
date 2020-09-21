@@ -3,7 +3,7 @@ import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, startMusic } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import Character from '../character'
-import Brian from '../Brian'
+import Brian from '../brian'
 import { makeBoundary } from '../geometryUtils'
 
 /**
