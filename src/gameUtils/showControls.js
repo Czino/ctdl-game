@@ -21,7 +21,7 @@ export const showControls = () => {
   constants.menuContext.beginPath()
 
   constants.BUTTONS
-    .filter(button => button.active)
+    .filter(button => button.active && button.hasBorder)
     .map(button => {
       constants.menuContext.rect(
         pos.x - .5 + button.x,

@@ -1,8 +1,6 @@
 import * as db from './db'
 import Sun from './sun'
 import Moon from './moon'
-import Tiles from './tiles'
-import cityMap from './maps/city'
 import { initEvents } from './events'
 import constants from './constants'
 import {
@@ -23,34 +21,34 @@ import {
   fadeIntoGameOver,
   circadianRhythm,
   spawnEnemies,
-  cleanUpStage
+  cleanUpStage,
+  showShop
 } from './gameUtils'
 import { writeMenu } from './textUtils'
 import Wizard from './wizard'
 import { applyGravity } from './physicsUtils'
 import { intersects } from './geometryUtils'
+import { isSoundLoaded } from './sounds'
 
 // import { playSound } from './sounds'
 
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
-// TODO can't set blocks
+// TODO add shop
+// TODO add exchange
 // TODO brian click on him creates multiple items
 // TODO change character on tab (mobile?)
 // TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
+// TODO add gates to other worlds
 // TODO add new stage
 // TODO load assets only when needed
 // TODO dynamically load songs when needed
 // TODO fix infinite noise sound
-// TODO add gates to other worlds
 // TODO make canvas draw clean pixels
 // TODO refactor code
-// TODO find out why music sometimes does not play
 // TODO fix receiving blocks doubled
-// TODO add exchange
-// TODO add shop
 // TODO consider Chef Nomi #SushiSwap
 // TODO add more enemies and bosses
 // TODO add moon ending scene
@@ -69,12 +67,17 @@ const moon = new Moon({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
 })
-const tiles = new Tiles('city', cityMap)
 
-init()
+let waitingForSound = setInterval(() => {
+  if (isSoundLoaded()) {
+    clearInterval(waitingForSound)
+    init()
+  }
+}, 100)
 
 async function init() {
   let i = 0
+
   for (let key in CTDLGAME.assets) {
     CTDLGAME.assets[key] = await loadAsset(CTDLGAME.assets[key])
     constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -84,6 +87,10 @@ async function init() {
   }
 
   await db.init(constants.debug)
+
+  let options = await db.get('options')
+  if (options) CTDLGAME.options = options
+
 
   if (!(await saveStateExists())) {
     CTDLGAME.newGame = true
@@ -103,6 +110,8 @@ async function init() {
 function tick() {
   if (CTDLGAME.startScreen) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+    clearCanvas()
+
     showStartScreen()
     CTDLGAME.frame++
     window.requestAnimationFrame(tick)
@@ -131,6 +140,16 @@ function tick() {
       checkBlocks()
     }
 
+
+    if (CTDLGAME.showShop) {
+      showShop()
+      showMenu(CTDLGAME.inventory)
+      writeMenu()
+      CTDLGAME.frame++
+      window.requestAnimationFrame(tick)
+      return
+    }
+
     clearCanvas()
 
     CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
@@ -157,9 +176,12 @@ function tick() {
 
     sun.update()
     moon.update()
-    tiles.update()
+    CTDLGAME.tiles.update()
 
     applyGravity()
+    CTDLGAME.objects
+      .filter(object => object.update)
+      .forEach(object => object.update())
 
     updateViewport()
     showOverlay()

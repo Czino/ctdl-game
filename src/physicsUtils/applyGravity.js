@@ -14,8 +14,6 @@ export const applyGravity = () => {
       .filter(obj => intersects(CTDLGAME.viewport, obj)) // only apply gravity to objects in viewport
       .map(obj => obj.vy += constants.GRAVITY)
 
-    CTDLGAME.objects.forEach(object => object.update())
-
     // workaround for worst case
     if (CTDLGAME.hodlonaut.y > 1024) CTDLGAME.hodlonaut.y = 800
     if (CTDLGAME.katoshi.y > 1024) CTDLGAME.katoshi.y = 800

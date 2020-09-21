@@ -68,6 +68,14 @@ export default function(id, options) {
   this.back = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'back'
+
+    const boundingBox = this.getBoundingBox()
+    const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+      .filter(obj => obj.backEvent)
+      .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+
+    if (!eventObject) return
+    eventObject.backEvent(this)
   }
   this.action = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return
@@ -126,6 +134,11 @@ export default function(id, options) {
       this.health = 0
       this.die() // :(
     }
+  }
+
+  this.eat = item => {
+    if (item === 'pizza') this.heal(2)
+    if (item === 'taco') this.heal(5)
   }
 
   this.heal = heal => {
@@ -251,8 +264,8 @@ export default function(id, options) {
       .filter(obj => obj.class === 'Item' && !obj.collected && obj.vy === 0)
       .filter(item => intersects(this.getBoundingBox(), item.getBoundingBox()))
       .forEach(item => {
-        if (item.id === 'pizza') this.heal(2)
-        if (item.id === 'taco') this.heal(5)
+        this.eat(item.id) // try eating it
+
         if (item.id === 'opendime') {
           let sats = Math.round(Math.random() * 10000)
           addTextToQueue(`You found an opendime with\nś${sats}`, () => {

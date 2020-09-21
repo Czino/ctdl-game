@@ -1,15 +1,17 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-import { initSoundtrack, startMusic } from '../soundtrack'
+import { initSoundtrack } from '../soundtrack'
 import { addClass } from '../htmlUtils'
+import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
-import Brian from '../Brian'
+import Brian from '../brian'
+import Tiles from '../tiles'
+import cityMap from '../maps/city'
 
 /**
  * @description Method to prepare new game
  */
 export const newGame = () => {
-  CTDLGAME.objects = []
   CTDLGAME.inventory = { // TODO refactor into factory
     usd: 0,
     sats: 0,
@@ -18,13 +20,22 @@ export const newGame = () => {
   CTDLGAME.blockHeight = -1
   CTDLGAME.world = constants.WORLD
 
+  CTDLGAME.objects = [
+    makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }),
+    makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }),
+    makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }),
+    makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h })
+  ]
+
+  CTDLGAME.tiles = new Tiles('city', cityMap)
+
   CTDLGAME.gameOver = false
   CTDLGAME.wizardCountdown = 16
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     {
-      x: CTDLGAME.viewport.x + 50,
+      x: 50,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
     }
   )
@@ -32,7 +43,7 @@ export const newGame = () => {
     'katoshi',
     {
       active: false,
-      x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+      x: 70,
       y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
       direction: 'left'
     }
@@ -56,8 +67,7 @@ export const newGame = () => {
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
-  initSoundtrack('stellaSplendence')
-  if (CTDLGAME.options.music) startMusic()
+  initSoundtrack('stellaSplendence', CTDLGAME.options.music)
 
   setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }

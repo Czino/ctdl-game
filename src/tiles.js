@@ -5,6 +5,7 @@ export default function (id, map) {
   this.id = id
   this.map = map
 
+  CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
   this.update = () => {
     let sprite = CTDLGAME.assets[this.id]
     this.map.parallax.map(tile => {

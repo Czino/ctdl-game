@@ -20,6 +20,7 @@ export default function(id, options) {
 
   this.collect = () => {
     playSound('item')
+    console.log('collect')
     this.remove = true
     this.collected = true
   }
@@ -37,7 +38,7 @@ export default function(id, options) {
       if (this.vy < -6) this.vy = -6
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) {
+      if (hasCollided) {
         this.vy = 0
       }
     }

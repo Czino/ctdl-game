@@ -1,6 +1,8 @@
 import constants from '../constants'
 import * as db from '../db'
 import { CTDLGAME } from './CTDLGAME'
+import Tiles from '../tiles'
+import cityMap from '../maps/city'
 import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
@@ -8,8 +10,9 @@ import Brian from '../brian'
 import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
-import { initSoundtrack, startMusic } from '../soundtrack'
+import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
+import { makeBoundary } from '../geometryUtils'
 
 /**
  * @description Method to load game
@@ -29,7 +32,13 @@ export const loadGame = async () => {
   CTDLGAME.world = constants.WORLD
   if (objects) {
     CTDLGAME.objects = objects.map(object => {
-      if (object.class === 'Shitcoiner') {
+      if (object.class === 'Block') {
+        return new Block(
+          object.id,
+          constants.gameContext,
+          object
+        )
+      } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
           object.id,
           object
@@ -47,6 +56,15 @@ export const loadGame = async () => {
       }
     })
   }
+
+
+  CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }))
+  CTDLGAME.objects.push(makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }))
+  CTDLGAME.objects.push(makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }))
+  CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h }))
+
+  CTDLGAME.tiles = new Tiles('city', cityMap)
+
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
   if (options) CTDLGAME.options = options
@@ -60,7 +78,7 @@ export const loadGame = async () => {
     katoshi
   )
 
-  if (CTDLGAME.katoshi.selected) CTDLGAME.hodlonaut.select()
+  if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
   updateViewport()
@@ -69,7 +87,6 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
-  CTDLGAME.objects.forEach(object => object.update())
 
   let timeOfDay = getTimeOfDay()
   if (timeOfDay > 18.5) {
@@ -80,8 +97,7 @@ export const loadGame = async () => {
     addClass(constants.skyCanvas, 'ctdl-day')
   }
 
-  initSoundtrack('stellaSplendence')
-  if (CTDLGAME.options.music) startMusic()
+  initSoundtrack('stellaSplendence', CTDLGAME.options.music)
 
   setTimeout(() => addClass(constants.skyCanvas, 'transition-background-color'))
 }

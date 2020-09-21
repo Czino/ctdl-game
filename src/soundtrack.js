@@ -10,6 +10,13 @@ import santaMariaNoise from './tracks/santa-maria/noise'
 import santaMariaPulse from './tracks/santa-maria/pulse'
 import santaMariaSine from './tracks/santa-maria/sine'
 
+import mariamCello from './tracks/mariam-matrem-virginem/cello'
+import mariamHarp from './tracks/mariam-matrem-virginem/harp'
+import mariamPipe from './tracks/mariam-matrem-virginem/pipe'
+import mariamStrings from './tracks/mariam-matrem-virginem/strings'
+import mariamViola from './tracks/mariam-matrem-virginem/viola'
+// import mariamViolin from './tracks/mariam-matrem-virginem/violin'
+
 Transport.bpm.value = 136;
 
 const gain = new Gain(0).toDestination()
@@ -55,12 +62,12 @@ const sineOptions = {
   }
 };
 
-const pulseSynth = new Synth(pulseOptions).connect(gain).toMaster()
-const pulse2Synth = new Synth(pulseOptions).connect(gain).toMaster()
-const squareSynth = new Synth(squareOptions).connect(gain).toMaster()
-const triangleSynth = new Synth(triangleOptions).connect(gain).toMaster()
-const sineSynth = new Synth(sineOptions).connect(gain).toMaster()
-const noiseSynth = new NoiseSynth().connect(gain).toMaster()
+const pulseSynth = new Synth(pulseOptions).connect(gain).toDestination()
+const pulse2Synth = new Synth(pulseOptions).connect(gain).toDestination()
+const squareSynth = new Synth(squareOptions).connect(gain).toDestination()
+const triangleSynth = new Synth(triangleOptions).connect(gain).toDestination()
+const sineSynth = new Synth(sineOptions).connect(gain).toDestination()
+const noiseSynth = new NoiseSynth().connect(gain).toDestination()
 
 pulseSynth.volume.value = -19
 pulse2Synth.volume.value = -19
@@ -70,6 +77,18 @@ sineSynth.volume.value = -19
 noiseSynth.volume.value = -19
 
 const songs = {
+    // Llibre Vermell de Montserrat. Mariam Matrem Virginem
+    mariamMatremVirginem: {
+      length: 200.97,
+      bpm: 136,
+      pulse: mariamStrings,
+      pulse2: mariamViola,
+      triangle: mariamCello,
+      sine: mariamPipe,
+      square: mariamHarp,
+      // mariamViolin
+      loop: true
+    },
     // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {
       length: 136.575,
@@ -110,8 +129,11 @@ let trianglePart = new Part()
 let sinePart = new Part()
 let noisePart = new Part()
 
-export const initSoundtrack = id => {
+export const initSoundtrack = (id, enable) => {
+  let wasEnabled = enable || enabled
   song = songs[id]
+
+  if (Transport.state === 'started') stopMusic(true)
 
   if (song.sineReverb) {
     sineSynth.connect(reverb)
@@ -126,52 +148,54 @@ export const initSoundtrack = id => {
   // sinePart.removeAll()
   // noisePart.removeAll()
 
-  if (song.pulse != null) {
+  if (song.pulse) {
     pulsePart = new Part((time, note) => {
-
       pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(song.pulse))
   }
-  if (song.pulse2 != null) {
+  if (song.pulse2) {
     pulse2Part = new Part((time, note) => {
       pulse2Synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(song.pulse2))
   }
 
-  if (song.square != null) {
+  if (song.square) {
     squarePart = new Part((time, note) => {
       squareSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(song.square))
   }
 
-  if (song.triangle != null) {
+  if (song.triangle) {
     trianglePart = new Part((time, note) => {
       triangleSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(song.triangle))
   }
 
-  if (song.sine != null) {
+  if (song.sine) {
     sinePart = new Part((time, note) => {
       sineSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(song.sine))
   }
 
-  if (song.noise != null) {
+  if (song.noise) {
     noisePart = new Part((time, note) => {
       noiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
     }, parseNotes(song.noise))
   }
+
+  if (wasEnabled) startMusic(wasEnabled)
 }
 
-export const startMusic = enable => {
+export const startMusic = async enable => {
   if (typeof enable !== 'undefined') enabled = enable
-  Transport.start('+0.1', 0)
-  if (song.pulse != null) pulsePart.start(0)
-  if (song.pulse2 != null) pulse2Part.start(0)
-  if (song.square != null) squarePart.start(0)
-  if (song.triangle != null) trianglePart.start(0)
-  if (song.sine != null) sinePart.start(0)
-  if (song.noise != null) noisePart.start(0)
+
+  await Transport.start('+0.1', 0)
+  if (song.pulse) pulsePart.start(0)
+  if (song.pulse2) pulse2Part.start(0)
+  if (song.square) squarePart.start(0)
+  if (song.triangle) trianglePart.start(0)
+  if (song.sine) sinePart.start(0)
+  if (song.noise) noisePart.start(0)
 
   Transport.stop('+' + song.length);
 }
@@ -179,12 +203,12 @@ export const startMusic = enable => {
 export const stopMusic = disable => {
   if (typeof disable !== 'undefined') enabled = !disable
   Transport.stop()
-  if (song.pulse != null) pulsePart.stop(0)
-  if (song.pulse2 != null) pulse2Part.stop(0)
-  if (song.square != null) squarePart.stop(0)
-  if (song.triangle != null) trianglePart.stop(0)
-  if (song.sine != null) sinePart.stop(0)
-  if (song.noise != null) noisePart.stop(0)
+  if (song.pulse) pulsePart.stop(0)
+  if (song.pulse2) pulse2Part.stop(0)
+  if (song.square) squarePart.stop(0)
+  if (song.triangle) trianglePart.stop(0)
+  if (song.sine) sinePart.stop(0)
+  if (song.noise) noisePart.stop(0)
 }
 
 export const changeVolume = value => {
@@ -203,3 +227,7 @@ function parseNotes(notes) {
     'velocity': note[3]
   }))
 }
+
+window.initSoundtrack = initSoundtrack
+window.startMusic = startMusic
+window.Transport = Transport
