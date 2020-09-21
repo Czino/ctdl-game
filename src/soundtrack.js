@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Transport, Part, Gain } from 'tone'
+import { Synth, NoiseSynth, Transport, Part, Gain, Reverb } from 'tone'
 import bass1 from './tracks/stella-splendence/bass1'
 import bass2 from './tracks/stella-splendence/bass2'
 import flute1 from './tracks/stella-splendence/flute1'
@@ -6,9 +6,17 @@ import flute2 from './tracks/stella-splendence/flute2'
 import sine from './tracks/stella-splendence/sine'
 import lead from './tracks/game-over/lead'
 
+import santaMariaNoise from './tracks/santa-maria/noise'
+import santaMariaPulse from './tracks/santa-maria/pulse'
+import santaMariaSine from './tracks/santa-maria/sine'
+
 Transport.bpm.value = 136;
 
 const gain = new Gain(0).toDestination()
+const reverb = new Reverb({
+  decay: 17,
+  wet: 1
+}).toDestination()
 
 const pulseOptions = {
   oscillator: {
@@ -62,6 +70,7 @@ sineSynth.volume.value = -19
 noiseSynth.volume.value = -19
 
 const songs = {
+    // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {
       length: 136.575,
       bpm: 136,
@@ -73,6 +82,17 @@ const songs = {
       square: sine,
       loop: true
     },
+    //Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
+    santaMaria: {
+      length: 79.7342,
+      bpm: 90,
+      noise: santaMariaNoise,
+      triangle: santaMariaPulse,
+      sine: santaMariaSine,
+      sineReverb: true,
+      loop: true
+    },
+    // Czino - I'm sad
     gameOver: {
       length: 16.97,
       bpm: 136,
@@ -93,6 +113,11 @@ let noisePart = new Part()
 export const initSoundtrack = id => {
   song = songs[id]
 
+  if (song.sineReverb) {
+    sineSynth.connect(reverb)
+  } else {
+    reverb.disconnect(sineSynth)
+  }
   Transport.bpm.value = song.bpm;
 
   // pulsePart.removeAll()

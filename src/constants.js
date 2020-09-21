@@ -144,6 +144,7 @@ export default {
   ],
   skyCanvas,
   skyContext,
+  parallaxCanvas,
   parallaxContext,
   bgContext,
   gameContext,
