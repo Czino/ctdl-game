@@ -137,15 +137,14 @@ export default function(id, options) {
   }
 
   this.eat = item => {
-    if (item === 'pizza') return this.heal(2)
-    if (item === 'taco') return this.heal(5)
+    if (item === 'pizza') this.heal(2)
+    if (item === 'taco') this.heal(5)
   }
 
   this.heal = heal => {
     if (/hurt|rekt/.test(this.status)) return
     this.heals.push({y: -8, heal})
     this.health = Math.min(this.health + heal, this.maxHealth)
-    return true
   }
 
   this.die = () => {
@@ -265,7 +264,8 @@ export default function(id, options) {
       .filter(obj => obj.class === 'Item' && !obj.collected && obj.vy === 0)
       .filter(item => intersects(this.getBoundingBox(), item.getBoundingBox()))
       .forEach(item => {
-        if(this.eat(item.id))
+        this.eat(item.id) // try eating it
+
         if (item.id === 'opendime') {
           let sats = Math.round(Math.random() * 10000)
           addTextToQueue(`You found an opendime with\nś${sats}`, () => {
