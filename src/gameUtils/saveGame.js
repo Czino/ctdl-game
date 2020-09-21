@@ -9,7 +9,7 @@ export const saveGame = async () => {
   await db.set('hodlonaut', CTDLGAME.hodlonaut.toJSON())
   await db.set('katoshi', CTDLGAME.katoshi.toJSON())
   await db.set('objects', CTDLGAME.objects
-    .filter(object => object.class !== 'Character')
+    .filter(object => object.class !== 'Character' && object.toJSON)
     .map(object => {
       return object.toJSON()
     }))

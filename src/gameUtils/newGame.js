@@ -4,13 +4,7 @@ import { initSoundtrack, startMusic } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import Character from '../character'
 import Brian from '../Brian'
-
-
-const makeBoundary = boundingBox => ({
-  isSolid: true,
-  getBoundingBox: () => boundingBox,
-  update: () => {}
-})
+import { makeBoundary } from '../geometryUtils'
 
 /**
  * @description Method to prepare new game
@@ -25,10 +19,10 @@ export const newGame = () => {
   CTDLGAME.world = constants.WORLD
 
   CTDLGAME.objects = [
-    makeBoundary({ x: 0, y: -12, w: CTDLGAME.world.w, h: 12 }),
-    makeBoundary({ x: CTDLGAME.world.w, y: 0, w: 12, h: CTDLGAME.world.h }),
+    makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }),
+    makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }),
     makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }),
-    makeBoundary({ x: -12, y: 0, w: 12, h: CTDLGAME.world.h })
+    makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h })
   ]
 
   CTDLGAME.gameOver = false

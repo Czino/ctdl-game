@@ -10,6 +10,7 @@ import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
 import { initSoundtrack, startMusic } from '../soundtrack'
 import { updateViewport } from './updateViewport'
+import { makeBoundary } from '../geometryUtils'
 
 /**
  * @description Method to load game
@@ -29,7 +30,13 @@ export const loadGame = async () => {
   CTDLGAME.world = constants.WORLD
   if (objects) {
     CTDLGAME.objects = objects.map(object => {
-      if (object.class === 'Shitcoiner') {
+      if (object.class === 'Block') {
+        return new Block(
+          object.id,
+          constants.gameContext,
+          object
+        )
+      } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
           object.id,
           object
@@ -47,6 +54,12 @@ export const loadGame = async () => {
       }
     })
   }
+
+  CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }))
+  CTDLGAME.objects.push(makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }))
+  CTDLGAME.objects.push(makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }))
+  CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h }))
+
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
   if (options) CTDLGAME.options = options
@@ -60,7 +73,7 @@ export const loadGame = async () => {
     katoshi
   )
 
-  if (CTDLGAME.katoshi.selected) CTDLGAME.hodlonaut.select()
+  if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
   updateViewport()

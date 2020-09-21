@@ -9,14 +9,13 @@ import { intersects } from './intersects'
  */
 export const moveObject = (object, vector, tree) => {
   let hasCollided = true
-  
 
   while (hasCollided && (vector.x !== 0 || vector.y !== 0)) {
     object.x += vector.x
     object.y += vector.y
 
     hasCollided = tree.query(object.getBoundingBox())
-        .filter(point => point.isSolid && point.id !== object.id)
+      .filter(point => point.isSolid && point.id !== object.id)
       .some(point => {
         if (intersects(object.getBoundingBox(), point.getBoundingBox())) {
           // would collide, roll back change
