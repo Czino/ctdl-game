@@ -7,10 +7,8 @@ import { intersects } from '../geometryUtils'
  * @returns {void}
  */
 export const applyGravity = () => {
-    CTDLGAME.hodlonaut.vy += constants.GRAVITY
-    CTDLGAME.katoshi.vy += constants.GRAVITY
     CTDLGAME.objects
-      .filter(obj => obj.enemy || obj.class === 'Item')
+      .filter(obj => obj.class === 'Character' || obj.enemy || obj.class === 'Item')
       .filter(obj => intersects(CTDLGAME.viewport, obj)) // only apply gravity to objects in viewport
       .map(obj => obj.vy += constants.GRAVITY)
 
