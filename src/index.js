@@ -6,6 +6,7 @@ import constants from './constants'
 import {
   CTDLGAME,
   loadAsset,
+  showStartGameScreen,
   showStartScreen,
   showGameOverScreen,
   showProgressBar,
@@ -67,12 +68,7 @@ const moon = new Moon({
   y: CTDLGAME.viewport.y + 10
 })
 
-let waitingForSound = setInterval(() => {
-  if (isSoundLoaded()) {
-    clearInterval(waitingForSound)
-    init()
-  }
-}, 100)
+init()
 
 async function init() {
   let i = 0
@@ -91,15 +87,21 @@ async function init() {
   if (options) CTDLGAME.options = options
   toggleSoundtrack(CTDLGAME.options.music)
 
-  if (!(await saveStateExists())) {
-    CTDLGAME.newGame = true
-  } else {
+  CTDLGAME.isSoundLoaded = isSoundLoaded()
+  if (CTDLGAME.isSoundLoaded) {
     constants.BUTTONS
-      .filter(button => /loadGame/.test(button.action))
-      .forEach(button => button.active = true)
-  }
+        .filter(button => /initGame/.test(button.action))
+        .forEach(button => button.active = false)
+    if (!(await saveStateExists())) {
+      CTDLGAME.newGame = true
+    } else {
+      constants.BUTTONS
+        .filter(button => /loadGame/.test(button.action))
+        .forEach(button => button.active = true)
+    }
 
-  initEvents(CTDLGAME.startScreen)
+    initEvents(CTDLGAME.startScreen)
+  }
 
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
@@ -107,6 +109,13 @@ async function init() {
 }
 
 function tick() {
+  if (!CTDLGAME.isSoundLoaded) {
+    if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+    showStartGameScreen()
+    CTDLGAME.frame++
+    window.requestAnimationFrame(tick)
+    return
+  }
   if (CTDLGAME.startScreen) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     clearCanvas()

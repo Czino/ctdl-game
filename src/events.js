@@ -1,18 +1,51 @@
 import * as db from './db'
 import { contains } from './geometryUtils'
 import constants from './constants'
-import { CTDLGAME, loadGame, newGame, showOverlay } from './gameUtils'
+import { CTDLGAME, loadGame, newGame, saveStateExists } from './gameUtils'
 import { addTextToQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
-import { playSound, toggleSounds } from './sounds'
-
+import { isSoundLoaded, playSound, toggleSounds } from './sounds'
+import { start } from 'tone'
 
 window.KEYS = []
 window.BUTTONS = []
 
 // TODO refactor into eventUtils
 constants.BUTTONS = constants.BUTTONS.concat([
+  {
+    action: 'initGame',
+    x: 0,
+    y: 0,
+    w: constants.WIDTH,
+    h: constants.HEIGHT,
+    active: true,
+    onclick: async () => {
+      await start() // start tone JS
+
+      CTDLGAME.isSoundLoaded = isSoundLoaded()
+
+      if (!CTDLGAME.isSoundLoaded) return
+
+      constants.BUTTONS
+        .filter(button => /initGame/.test(button.action))
+        .forEach(button => button.active = false)
+
+      constants.BUTTONS
+        .filter(button => /newGame/.test(button.action))
+        .forEach(button => button.active = true)
+
+      if (!(await saveStateExists())) {
+        CTDLGAME.newGame = true
+      } else {
+        constants.BUTTONS
+          .filter(button => /loadGame/.test(button.action))
+          .forEach(button => button.active = true)
+      }
+
+      initEvents(true)
+    }
+  },
   {
     action: 'loadGame',
     x: constants.WIDTH / 2 - 41,
@@ -127,6 +160,10 @@ export const startScreenHandler = async (e) => {
   if (buttonPressed?.onclick) buttonPressed.onclick()
 }
 
+window.addEventListener('mousemove', mouseMoveHandler)
+window.addEventListener('mousedown', startScreenHandler)
+window.addEventListener('touchstart', startScreenHandler)
+
 export const initEvents = startScreen => {
   try {
     document.createEvent('TouchEvent')
@@ -145,9 +182,6 @@ export const initEvents = startScreen => {
     window.removeEventListener('mousemove', mouseMove)
     window.removeEventListener('touchmove', mouseMove)
     window.removeEventListener('touchmove', zoomHandler)
-    window.addEventListener('mousemove', mouseMoveHandler)
-    window.addEventListener('mousedown', startScreenHandler)
-    window.addEventListener('touchstart', startScreenHandler)
     window.addEventListener('resize', resize)
     return
   }
