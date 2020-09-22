@@ -166,6 +166,16 @@ export const initEvents = startScreen => {
         addTextToQueue('Multiplayer activated')
       }
     }
+    if (e.key.toLowerCase() === 'tab') {
+      e.preventDefault()
+      console.log('swap')
+      if (window.SELECTEDCHARACTER.id === 'hodlonaut') {
+        CTDLGAME.katoshi.select()
+      } else {
+        CTDLGAME.hodlonaut.select()
+
+      }
+    }
     KEYS.push(e.key.toLowerCase());
   })
 

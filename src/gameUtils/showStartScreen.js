@@ -79,7 +79,9 @@ export const showStartScreen = () => {
         '',
         'move:',
         'jump:',
-        'attack:'
+        'attack:',
+        '',
+        'switch: TAB'
       ].join('\n'), {
         x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 41,
         y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
