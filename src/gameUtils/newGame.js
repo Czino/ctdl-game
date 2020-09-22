@@ -52,8 +52,8 @@ export const newGame = () => {
   const brian = new Brian(
     'brian',
     {
-      x: 980,
-      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
+      x: 970,
+      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 32
     }
   )
 
