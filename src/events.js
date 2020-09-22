@@ -144,6 +144,7 @@ export const initEvents = startScreen => {
     window.removeEventListener('touchend', clickEnd)
     window.removeEventListener('mousemove', mouseMove)
     window.removeEventListener('touchmove', mouseMove)
+    window.removeEventListener('touchmove', zoomHandler)
     window.addEventListener('mousemove', mouseMoveHandler)
     window.addEventListener('mousedown', startScreenHandler)
     window.addEventListener('touchstart', startScreenHandler)
@@ -151,14 +152,18 @@ export const initEvents = startScreen => {
     return
   }
 
-  window.addEventListener('mousedown', click)
-  window.addEventListener('mousedown', skipText)
-  window.addEventListener('touchstart', click)
-  window.addEventListener('touchstart', skipText)
-  window.addEventListener('mouseup', clickEnd)
-  window.addEventListener('touchend', clickEnd)
-  window.addEventListener('mousemove', mouseMove)
-  window.addEventListener('touchmove', mouseMove)
+  if (CTDLGAME.touchScreen) {
+    window.addEventListener('touchstart', click)
+    window.addEventListener('touchstart', skipText)
+    window.addEventListener('touchend', clickEnd)
+    window.addEventListener('touchmove', mouseMove)
+    window.addEventListener('touchmove', zoomHandler)
+  } else {
+    window.addEventListener('mousedown', click)
+    window.addEventListener('mousedown', skipText)
+    window.addEventListener('mouseup', clickEnd)
+    window.addEventListener('mousemove', mouseMove)
+  }
 
   window.addEventListener('keydown', e => {
     if (!CTDLGAME.multiplayer) {
@@ -236,6 +241,7 @@ function click (e) {
       }
 
       let buttonPressed = constants.BUTTONS.find(button =>
+        button.active && 
         CTDLGAME.cursor.x > button.x &&
         CTDLGAME.cursor.x < button.x + button.w &&
         CTDLGAME.cursor.y > button.y &&
@@ -252,34 +258,6 @@ function click (e) {
   if (!/ctdl-game/.test(canvas.id)) {
     return
   }
-
-  let click = {
-    x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
-    y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
-    w: 1, h: 1
-  }
-
-  let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
-
-  if (!object && CTDLGAME.ghostBlock) {
-    // TODO refactor into placeBlock method
-    playSound('block')
-    CTDLGAME.ghostBlock.context = constants.gameContext
-    CTDLGAME.ghostBlock.opacity = 1
-    CTDLGAME.ghostBlock.isSolid = true
-    CTDLGAME.inventory.blocks.shift()
-    CTDLGAME.objects.push(CTDLGAME.ghostBlock)
-    window.SELECTEDCHARACTER.action()
-    CTDLGAME.ghostBlock = null
-  }
-
-  if (object?.class === 'Character') window.SELECTEDCHARACTER.unselect()
-  if (window.SELECTED) window.SELECTED.unselect()
-  if (!object) return
-  if (object.select) object.select()
-  if (object.class === 'Block') {
-    object.toggleSolid()
-  }
 }
 
 function clickEnd (e) {
@@ -292,6 +270,7 @@ function clickEnd (e) {
     }
   } else if (e.touches?.length > 0) {
     e.stopPropagation()
+
     Array.from(e.touches).forEach(touch => {
       CTDLGAME.cursor = {
         x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
@@ -309,6 +288,35 @@ function clickEnd (e) {
         window.BUTTONS.unshift(buttonPressed)
       }
     })
+  }
+
+  CTDLGAME.showOverlay = false
+  CTDLGAME.zoom = null
+
+  let click = {
+    x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
+    y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
+    w: 1, h: 1
+  }
+  let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
+
+  if (!object && CTDLGAME.ghostBlock) {
+    // TODO refactor into placeBlock method
+    playSound('block')
+    CTDLGAME.ghostBlock.context = constants.gameContext
+    CTDLGAME.ghostBlock.opacity = 1
+    CTDLGAME.ghostBlock.isSolid = true
+    CTDLGAME.inventory.blocks.shift()
+    CTDLGAME.objects.push(CTDLGAME.ghostBlock)
+    window.SELECTEDCHARACTER.action()
+    CTDLGAME.ghostBlock = null
+  }
+  if (window.SELECTED) window.SELECTED.unselect()
+  if (!object) return
+  if (object.class === 'Character') window.SELECTEDCHARACTER.unselect()
+  if (object.select) object.select()
+  if (object.class === 'Block') {
+    object.toggleSolid()
   }
 }
 
@@ -337,7 +345,19 @@ function mouseMove (e) {
 
   if (CTDLGAME.showShop) return
 
-  showOverlay()
+  CTDLGAME.showOverlay = true
+}
+
+function zoomHandler (e) {
+  let canvas = e.target
+  if (!/ctdl-game/.test(canvas.id)) {
+    return
+  }
+
+  CTDLGAME.zoom = {
+    x: CTDLGAME.viewport.x + CTDLGAME.cursor.x,
+    y: CTDLGAME.viewport.y + CTDLGAME.cursor.y
+  }
 }
 
 function switchCharacter() {

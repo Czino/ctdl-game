@@ -1,6 +1,6 @@
 import constants from '../constants'
 import Block from '../block'
-import { CTDLGAME } from './CTDLGAME'
+import { CTDLGAME, showZoom } from '../gameUtils'
 import { touches, intersects, sharpLine } from '../geometryUtils'
 
 export const showOverlay = () => {
@@ -45,6 +45,8 @@ export const showOverlay = () => {
       )
       CTDLGAME.ghostBlock.update()
     }
+
+    if (CTDLGAME.zoom) showZoom(CTDLGAME.zoom)
 
     if (intersectingObject || !touchingObject) {
       CTDLGAME.ghostBlock = null

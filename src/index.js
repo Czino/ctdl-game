@@ -37,8 +37,8 @@ import { toggleSoundtrack } from './soundtrack'
 // setInterval(() => playSound('woosh'), 3000)
 
 // TODO add exchange
+// TODO allow character AI to jump when necessary
 // TODO brian click on him creates multiple items
-// TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
 // TODO add gates to other worlds
 // TODO add new stage
@@ -153,7 +153,6 @@ function tick() {
 
     CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
 
-
     cleanUpStage()
 
     if (CTDLGAME.isNight) {
@@ -183,7 +182,8 @@ function tick() {
       .forEach(object => object.update())
 
     updateViewport()
-    showOverlay()
+
+    if (CTDLGAME.showOverlay) showOverlay()
 
     showMenu(CTDLGAME.inventory)
     writeMenu()
