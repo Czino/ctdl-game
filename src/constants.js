@@ -73,6 +73,7 @@ const CONTROLS = {
   buttons: {
     attack: 'attack',
     back: 'back',
+    switch: 'switch',
     moveLeft: 'moveLeft',
     moveRight: 'moveRight',
     jump: 'jump'

@@ -89,7 +89,8 @@ constants.BUTTONS = constants.BUTTONS.concat([
   { action: 'attack', x: 21 * 5, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
   { action: 'moveLeft', x: 0, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
   { action: 'moveRight', x: 21, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
-  { action: 'back', x: 21 * 2, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true}
+  { action: 'back', x: 21 * 2, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
+  { action: 'switch', x: 21 * 3, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true, onclick: switchCharacter}
 ])
 
 export const startScreenHandler = async (e) => {
@@ -112,7 +113,7 @@ export const startScreenHandler = async (e) => {
     CTDLGAME.touchScreen = true
 
     constants.BUTTONS
-      .filter(button => /moveLeft|moveRight|jump|back|attack/.test(button.action))
+      .filter(button => /moveLeft|moveRight|jump|back|switch|attack/.test(button.action))
       .forEach(button => button.active = true)
   }
   let buttonPressed = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
@@ -168,13 +169,8 @@ export const initEvents = startScreen => {
     }
     if (e.key.toLowerCase() === 'tab') {
       e.preventDefault()
-      console.log('swap')
-      if (window.SELECTEDCHARACTER.id === 'hodlonaut') {
-        CTDLGAME.katoshi.select()
-      } else {
-        CTDLGAME.hodlonaut.select()
-
-      }
+      switchCharacter()
+    }
     }
     KEYS.push(e.key.toLowerCase());
   })
@@ -247,7 +243,9 @@ function click (e) {
         CTDLGAME.cursor.y < button.y + button.h
       )
 
-      if (buttonPressed) {
+      if (buttonPressed?.onclick) {
+        buttonPressed.onclick()
+      } else if (buttonPressed) {
         window.BUTTONS.unshift(buttonPressed)
       }
     })
@@ -341,4 +339,12 @@ function mouseMove (e) {
   if (CTDLGAME.showShop) return
 
   showOverlay()
+}
+
+function switchCharacter() {
+  if (window.SELECTEDCHARACTER.id === 'hodlonaut') {
+    CTDLGAME.katoshi.select()
+  } else {
+    CTDLGAME.hodlonaut.select()
+  }
 }
