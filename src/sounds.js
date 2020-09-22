@@ -155,15 +155,15 @@ const sounds = {
     const present = now()
     const dur = .05
 
-    noiseSynth.noise.type = 'brown'
+    noise2Synth.noise.type = 'brown'
 
-    noiseSynth.envelope.attack = .05
-    noiseSynth.envelope.decay = .1
-    noiseSynth.envelope.sustain = .3
-    noiseSynth.envelope.release = .17
+    noise2Synth.envelope.attack = .05
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .17
 
-    noiseSynth.triggerAttack(present, .1)
-    noiseSynth.triggerRelease(present + dur)
+    noise2Synth.triggerAttack(present, .1)
+    noise2Synth.triggerRelease(present + dur)
   },
   'shitcoinerHurt': () => {
     const present = now()
