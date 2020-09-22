@@ -4,7 +4,7 @@ import constants from './constants'
 import { CTDLGAME, loadGame, newGame, showOverlay } from './gameUtils'
 import { addTextToQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
-import { stopMusic } from './soundtrack'
+import { stopMusic, toggleSoundtrack } from './soundtrack'
 import { playSound, toggleSounds } from './sounds'
 
 
@@ -68,8 +68,8 @@ constants.BUTTONS = constants.BUTTONS.concat([
     active: true,
     onclick: async () => {
       CTDLGAME.options.music = !CTDLGAME.options.music
+      toggleSoundtrack(CTDLGAME.options.music)
       await db.set('options', CTDLGAME.options)
-      if (!CTDLGAME.options.music) return stopMusic(true)
     }
   },
   {
@@ -170,7 +170,6 @@ export const initEvents = startScreen => {
     if (e.key.toLowerCase() === 'tab') {
       e.preventDefault()
       switchCharacter()
-    }
     }
     KEYS.push(e.key.toLowerCase());
   })

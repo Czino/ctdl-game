@@ -29,16 +29,15 @@ import Wizard from './wizard'
 import { applyGravity } from './physicsUtils'
 import { intersects } from './geometryUtils'
 import { isSoundLoaded } from './sounds'
+import { toggleSoundtrack } from './soundtrack'
 
 // import { playSound } from './sounds'
 
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
-// TODO add shop
 // TODO add exchange
 // TODO brian click on him creates multiple items
-// TODO change character on tab (mobile?)
 // TODO improve setting of blocks for mobile
 // TODO add a way to revive rekt characters
 // TODO add gates to other worlds
@@ -90,7 +89,7 @@ async function init() {
 
   let options = await db.get('options')
   if (options) CTDLGAME.options = options
-
+  toggleSoundtrack(CTDLGAME.options.music)
 
   if (!(await saveStateExists())) {
     CTDLGAME.newGame = true

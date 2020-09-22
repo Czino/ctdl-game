@@ -17,7 +17,7 @@ import mariamStrings from './tracks/mariam-matrem-virginem/strings'
 import mariamViola from './tracks/mariam-matrem-virginem/viola'
 // import mariamViolin from './tracks/mariam-matrem-virginem/violin'
 
-Transport.bpm.value = 136;
+Transport.bpm.value = 136
 
 const gain = new Gain(0).toDestination()
 const reverb = new Reverb({
@@ -32,7 +32,7 @@ const pulseOptions = {
   envelope: {
     release: 0.07
   }
-};
+}
 
 const triangleOptions = {
   oscillator: {
@@ -41,7 +41,7 @@ const triangleOptions = {
   envelope: {
     release: 0.07
   }
-};
+}
 
 const squareOptions = {
   oscillator: {
@@ -50,7 +50,7 @@ const squareOptions = {
   envelope: {
     release: 0.07
   }
-};
+}
 
 const sineOptions = {
   oscillator: {
@@ -60,7 +60,7 @@ const sineOptions = {
     sustain: .8,
     release: 0.8
   }
-};
+}
 
 const pulseSynth = new Synth(pulseOptions).connect(gain).toDestination()
 const pulse2Synth = new Synth(pulseOptions).connect(gain).toDestination()
@@ -77,7 +77,7 @@ sineSynth.volume.value = -19
 noiseSynth.volume.value = -19
 
 const songs = {
-    // Llibre Vermell de Montserrat. Mariam Matrem Virginem
+    // Llibre Vermell de Montserrat: Anonymous - Mariam Matrem Virginem
     mariamMatremVirginem: {
       length: 200.97,
       bpm: 136,
@@ -101,7 +101,7 @@ const songs = {
       square: sine,
       loop: true
     },
-    //Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
+    // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
     santaMaria: {
       length: 79.7342,
       bpm: 90,
@@ -119,7 +119,7 @@ const songs = {
       loop: false
     }
 }
-let enabled = true
+let enabled
 let song
 
 let pulsePart = new Part()
@@ -129,24 +129,22 @@ let trianglePart = new Part()
 let sinePart = new Part()
 let noisePart = new Part()
 
-export const initSoundtrack = (id, enable) => {
-  let wasEnabled = enable || enabled
+export const initSoundtrack = id => {
   song = songs[id]
 
-  if (Transport.state === 'started') stopMusic(true)
+  if (Transport.state === 'started') stopMusic()
 
   if (song.sineReverb) {
     sineSynth.connect(reverb)
   } else {
     reverb.disconnect(sineSynth)
   }
-  Transport.bpm.value = song.bpm;
 
-  // pulsePart.removeAll()
-  // squarePart.removeAll()
-  // trianglePart.removeAll()
-  // sinePart.removeAll()
-  // noisePart.removeAll()
+  Transport.loop = song.loop
+  Transport.loopStart = 0
+  Transport.loopEnd = song.length
+
+  Transport.bpm.value = song.bpm
 
   if (song.pulse) {
     pulsePart = new Part((time, note) => {
@@ -183,25 +181,33 @@ export const initSoundtrack = (id, enable) => {
     }, parseNotes(song.noise))
   }
 
-  if (wasEnabled) startMusic(wasEnabled)
+  if (enabled) startMusic()
 }
 
-export const startMusic = async enable => {
-  if (typeof enable !== 'undefined') enabled = enable
+export const toggleSoundtrack = enable => {
+  enabled = enable
+  if (!enabled) {
+    stopMusic()
+  } else if (enabled && song) {
+    startMusic()
+  }
+}
 
-  await Transport.start('+0.1', 0)
+export const startMusic = async () => {
+  if (!song || !enabled) return
+
+  await Transport.start('+0', 0)
   if (song.pulse) pulsePart.start(0)
   if (song.pulse2) pulse2Part.start(0)
   if (song.square) squarePart.start(0)
   if (song.triangle) trianglePart.start(0)
   if (song.sine) sinePart.start(0)
   if (song.noise) noisePart.start(0)
-
-  Transport.stop('+' + song.length);
 }
 
-export const stopMusic = disable => {
-  if (typeof disable !== 'undefined') enabled = !disable
+export const stopMusic = () => {
+  if (!song) return
+
   Transport.stop()
   if (song.pulse) pulsePart.stop(0)
   if (song.pulse2) pulse2Part.stop(0)
@@ -212,12 +218,8 @@ export const stopMusic = disable => {
 }
 
 export const changeVolume = value => {
-  gain.gain.rampTo(value - 1, 0);
+  gain.gain.rampTo(value - 1, 0)
 }
-
-Transport.on('stop', () => {
-  if (song.loop && enabled) startMusic()
-})
 
 function parseNotes(notes) {
   return notes.map(note => ({
@@ -227,7 +229,3 @@ function parseNotes(notes) {
     'velocity': note[3]
   }))
 }
-
-window.initSoundtrack = initSoundtrack
-window.startMusic = startMusic
-window.Transport = Transport

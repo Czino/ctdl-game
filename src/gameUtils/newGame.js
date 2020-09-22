@@ -67,7 +67,7 @@ export const newGame = () => {
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
-  initSoundtrack('stellaSplendence', CTDLGAME.options.music)
+  initSoundtrack('stellaSplendence')
 
   setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }

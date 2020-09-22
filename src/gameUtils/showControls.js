@@ -55,6 +55,10 @@ export const showControls = () => {
     x: pos.x + 5 + 21 * 2,
     y: pos.y + 1
   })
+  drawIcon(constants.menuContext, `switch-${selectedCharacter}`, {
+    x: pos.x + 3 + 21 * 3,
+    y: pos.y + 1
+  })
   drawIcon(constants.menuContext, `jump-${selectedCharacter}`, {
     x: pos.x + 5 + 21 * 4,
     y: pos.y + 1

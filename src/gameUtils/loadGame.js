@@ -97,7 +97,7 @@ export const loadGame = async () => {
     addClass(constants.skyCanvas, 'ctdl-day')
   }
 
-  initSoundtrack('stellaSplendence', CTDLGAME.options.music)
+  initSoundtrack('stellaSplendence')
 
   setTimeout(() => addClass(constants.skyCanvas, 'transition-background-color'))
 }

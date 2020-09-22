@@ -31,7 +31,7 @@ export const fadeIntoGameOver = () => {
 
     stopMusic()
     changeVolume(1)
-    initSoundtrack('gameOver', CTDLGAME.options.music)
+    initSoundtrack('gameOver')
     constants.BUTTONS.find(button => button.action === 'newGame').active = true
   }
 }

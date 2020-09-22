@@ -20,7 +20,6 @@ export default function(id, options) {
 
   this.collect = () => {
     playSound('item')
-    console.log('collect')
     this.remove = true
     this.collected = true
   }

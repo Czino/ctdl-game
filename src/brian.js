@@ -187,7 +187,6 @@ export default function(id, options) {
     if (this.canMove && !/rekt|hurt/.test(this.status)) {
       const enemies = this.senseEnemies()
       if (enemies.length > 0) {
-        console.log(enemies)
         const enemy = getClosest(this.getCenter(), enemies)
         const attackBox = this.getBoundingBox()
         attackBox.x -= this.attackRange
