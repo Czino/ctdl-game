@@ -47,6 +47,19 @@ export default function(id, options) {
 
     if (hasMoved) {
       this.status = 'move'
+    } else if (!CTDLGAME.multiplayer && !this.selected) {
+      let jumpTo = this.getBoundingBox()
+      jumpTo.y -=4
+      jumpTo.x -= 3
+      jumpTo.w += 3
+      jumpTo.h = 24
+
+      let obstacles = CTDLGAME.quadTree.query(jumpTo)
+        .filter(obj => obj.isSolid && !obj.enemy)
+        .filter(obj => intersects(obj, jumpTo))
+
+      let canJump = obstacles.length === 0
+      if (canJump) this.jump()
     }
   }
   this.moveRight = () => {
@@ -56,6 +69,18 @@ export default function(id, options) {
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
+    } else if (!CTDLGAME.multiplayer && !this.selected) {
+      let jumpTo = this.getBoundingBox()
+      jumpTo.y -=4
+      jumpTo.w += 3
+      jumpTo.h = 24
+
+      let obstacles = CTDLGAME.quadTree.query(jumpTo)
+        .filter(obj => obj.isSolid && !obj.enemy)
+        .filter(obj => intersects(obj, jumpTo))
+
+      let canJump = obstacles.length === 0
+      if (canJump) this.jump()
     }
   }
   this.jump = () => {
