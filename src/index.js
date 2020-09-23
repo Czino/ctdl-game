@@ -38,14 +38,12 @@ import { toggleSoundtrack } from './soundtrack'
 // setInterval(() => playSound('woosh'), 3000)
 
 // TODO add exchange
-// TODO allow character AI to jump when necessary
 // TODO brian click on him creates multiple items
 // TODO add a way to revive rekt characters
 // TODO add gates to other worlds
 // TODO add new stage
 // TODO load assets only when needed
 // TODO dynamically load songs when needed
-// TODO fix infinite noise sound
 // TODO make canvas draw clean pixels
 // TODO refactor code
 // TODO fix receiving blocks doubled
@@ -53,7 +51,6 @@ import { toggleSoundtrack } from './soundtrack'
 // TODO add more enemies and bosses
 // TODO add moon ending scene
 // TODO add "mempool"
-// TODO make KEYS, BUTTONS, SELECTED and SELECTEDCHARACTER private
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
@@ -147,7 +144,6 @@ function tick() {
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) {
       checkBlocks()
     }
-
 
     if (CTDLGAME.showShop) {
       showShop()

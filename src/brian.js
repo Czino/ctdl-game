@@ -174,8 +174,8 @@ export default function(id, options) {
       addTextToQueue('Brian:\nWelcome to crypto!')
       addTextToQueue('Brian:\nGrab a conbase account\nwhen you\'re ready to use\nthat Bitcoin')
       addTextToQueue('Brian:\nand get into any of the\nmany other cryptos\nout there.')
-      addTextToQueue('Brian:\nWhat?\nYou don\'t like our service?\nYou think we are bad?')
-      addTextToQueue('Brian:\nI show you how bad\nI can be!', () => {
+      addTextToQueue('Brian:\nWhat?\nYou want to delete your account?')
+      addTextToQueue('Brian:\nI will delete you!', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
         // TODO change to brian's theme
