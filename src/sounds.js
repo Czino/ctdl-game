@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Gain, now } from 'tone'
+import { Synth, NoiseSynth, Gain, now, start } from 'tone'
 
 const gain = new Gain(0).toDestination()
 
@@ -9,7 +9,7 @@ const pulseOptions = {
   envelope: {
     release: 0
   }
-};
+}
 
 const triangleOptions = {
   oscillator: {
@@ -18,7 +18,7 @@ const triangleOptions = {
   envelope: {
     release: 0.07
   }
-};
+}
 
 const squareOptions = {
   oscillator: {
@@ -27,7 +27,7 @@ const squareOptions = {
   envelope: {
     release: 0.07
   }
-};
+}
 
 const sineOptions = {
   oscillator: {
@@ -37,7 +37,7 @@ const sineOptions = {
     sustain: .8,
     release: 0.8
   }
-};
+}
 
 const pulseSynth = new Synth(pulseOptions).connect(gain).toDestination()
 const squareSynth = new Synth(squareOptions).connect(gain).toDestination()
@@ -239,6 +239,9 @@ const sounds = {
   }
 }
 
+document.addEventListener('click', () => {
+  start()
+})
 export const isSoundLoaded = () => now() > .1
 
 export const toggleSounds = enable => {

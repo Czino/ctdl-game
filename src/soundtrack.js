@@ -17,7 +17,10 @@ import mariamStrings from './tracks/mariam-matrem-virginem/strings'
 import mariamViola from './tracks/mariam-matrem-virginem/viola'
 // import mariamViolin from './tracks/mariam-matrem-virginem/violin'
 
-Transport.bpm.value = 136
+import bullsVsBearsTriangle from './tracks/bulls-vs-bears/triangle'
+import bullsVsBearsPulse1 from './tracks/bulls-vs-bears/pulse1.js'
+import bullsVsBearsPulse2 from './tracks/bulls-vs-bears/pulse2'
+import bullsVsBearsSine from './tracks/bulls-vs-bears/sine'
 
 const gain = new Gain(0).toDestination()
 const reverb = new Reverb({
@@ -111,6 +114,18 @@ const songs = {
       sineReverb: true,
       loop: true
     },
+    bullsVsBears: {
+      length: 26.182,
+      bpm: 110,
+      noise: bullsVsBearsTriangle,
+      triangle: bullsVsBearsTriangle,
+      pulse: bullsVsBearsPulse1,
+      pulse2: bullsVsBearsPulse2,
+      sine: bullsVsBearsSine,
+      sineReverb: true,
+      pulseReverb: true,
+      loop: true
+    },
     // Czino - I'm sad
     gameOver: {
       length: 16.97,
@@ -138,6 +153,13 @@ export const initSoundtrack = id => {
     sineSynth.connect(reverb)
   } else {
     reverb.disconnect(sineSynth)
+  }
+  if (song.pulseReverb) {
+    pulseSynth.connect(reverb)
+    pulse2Synth.connect(reverb)
+  } else {
+    reverb.disconnect(pulseSynth)
+    reverb.disconnect(pulse2Synth)
   }
 
   Transport.loop = song.loop
