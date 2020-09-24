@@ -114,6 +114,7 @@ export default function(id, options) {
 
     if (this.id === 'katoshi' && this.frame !== 3) return
 
+    // TODO make lightningTorch stronger with increasing sats count
     if (this.id === 'hodlonaut') playSound('lightningTorch')
     if (this.id === 'katoshi') playSound('sword')
 
@@ -331,7 +332,6 @@ export default function(id, options) {
     const eventObject =  CTDLGAME.quadTree.query(boundingBox)
       .filter(obj => obj.touchEvent)
       .find(obj => intersects(boundingBox, obj.getBoundingBox()))
-
 
     if (eventObject) eventObject.touchEvent(this)
 

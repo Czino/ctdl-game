@@ -5,6 +5,8 @@ import { loadMap } from './mapUtils'
 export default function (id) {
   this.id = id
   this.map = loadMap(id)
+  this.w = this.map.world.w
+  this.h = this.map.world.h
 
   CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
   this.update = () => {

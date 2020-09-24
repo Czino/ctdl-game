@@ -9,7 +9,7 @@ export const spawnEnemies = () => {
       'shitcoiner-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
-        y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
+        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
         status: 'spawn'
       }
     )

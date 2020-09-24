@@ -38,6 +38,8 @@ import { toggleSoundtrack } from './soundtrack'
 // setInterval(() => playSound('woosh'), 3000)
 
 // TODO add exchange
+// TODO brian is not emptying text queeue
+// TODO no twilight
 // TODO brian click on him creates multiple items
 // TODO add a way to revive rekt characters
 // TODO add gates to other worlds
@@ -169,7 +171,7 @@ function tick() {
         'wizard',
         {
           x: CTDLGAME.hodlonaut.x - 40,
-          y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
+          y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
         }
       )
       CTDLGAME.objects.push(wizard)
@@ -179,7 +181,7 @@ function tick() {
 
     sun.update()
     moon.update()
-    CTDLGAME.tiles.update()
+    CTDLGAME.world.update()
 
     applyGravity()
     CTDLGAME.objects
@@ -204,7 +206,7 @@ function tick() {
       })
       .forEach(object => CTDLGAME.quadTree.insert(object))
 
-    if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.gameContext)
+    if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
 
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
       saveGame()

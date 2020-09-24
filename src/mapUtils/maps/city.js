@@ -4,6 +4,7 @@ import { parsePattern } from '../parsePattern'
 import { random } from '../../arrayUtils'
 import GameObject from '../../gameObject'
 import { CTDLGAME } from '../../gameUtils'
+import constants from '../../constants'
 
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t010 = [0, 10],
@@ -190,7 +191,7 @@ const goToForest = new GameObject('goToForest', {
 })
 
 goToForest.touchEvent = () => {
-  changeMap()
+  changeMap('forest', 'city')
 }
 
 events.push(goToShop)
@@ -198,6 +199,10 @@ events.push(goToForest)
 
 export default {
   world: { w: 1000, h: 1024 },
+  start: {
+    newGame: { x: 60, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 30 },
+    forest: { x: 960, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 30 }
+  },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),

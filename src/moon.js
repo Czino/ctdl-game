@@ -14,7 +14,7 @@ export default function(options) {
   this.update = () => {
     let timeOfDay = getTimeOfDay()
     this.y = Math.round(CTDLGAME.viewport.y + 10)
-    this.w = this.h = Math.max(14, (1 - (CTDLGAME.viewport.y + constants.HEIGHT) / constants.WORLD.h) * 110)
+    this.w = this.h = Math.max(14, (1 - (CTDLGAME.viewport.y + constants.HEIGHT) / CTDLGAME.world.h) * 110)
 
     if (timeOfDay >= 6 && timeOfDay < 18) return
     if (timeOfDay > 18 && timeOfDay < 19) {
@@ -25,7 +25,7 @@ export default function(options) {
     }
 
     let newMiddle = CTDLGAME.viewport.x + constants.WIDTH / 2
-    this.x = Math.round(newMiddle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
+    this.x = Math.round(newMiddle - (CTDLGAME.viewport.x * 8 / CTDLGAME.world.w))
     let sprite = CTDLGAME.assets.moon
     constants.skyContext.drawImage(
       sprite,

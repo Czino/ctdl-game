@@ -4,7 +4,7 @@ import constants from '../constants'
 export const cleanUpStage = () => {
   CTDLGAME.objects = CTDLGAME.objects.filter(obj => {
     // remove objects that have obviously fallen into the abyss
-    return obj.y < constants.WORLD.h * 2
+    return obj.y < CTDLGAME.world.h * 2
   })
   if (!CTDLGAME.isNight) {
     CTDLGAME.objects = CTDLGAME.objects.filter(obj => {

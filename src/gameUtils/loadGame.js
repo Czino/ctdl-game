@@ -1,7 +1,7 @@
 import constants from '../constants'
 import * as db from '../db'
-import { CTDLGAME } from './CTDLGAME'
-import Tiles from '../tiles'
+import { CTDLGAME, setWorld } from './CTDLGAME'
+import World from '../world'
 import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
@@ -18,17 +18,17 @@ import { makeBoundary } from '../geometryUtils'
  */
 export const loadGame = async () => {
   let time = await db.get('time')
+  let worldId = await db.get('worldId')
 
   let hodlonaut = await db.get('hodlonaut')
   let katoshi = await db.get('katoshi')
-  let objects = await db.get('objects')
+  let objects = await db.get(`objects-${worldId}`)
   let blockHeight = await db.get('blockHeight')
   let inventory = await db.get('inventory')
   let options = await db.get('options')
 
   if (time) CTDLGAME.frame = time
 
-  CTDLGAME.world = constants.WORLD
   if (objects) {
     CTDLGAME.objects = objects.map(object => {
       if (object.class === 'Block') {
@@ -56,13 +56,12 @@ export const loadGame = async () => {
     })
   }
 
+  setWorld(new World(worldId))
 
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }))
   CTDLGAME.objects.push(makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }))
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }))
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h }))
-
-  CTDLGAME.tiles = new Tiles('city')
 
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory

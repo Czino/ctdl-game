@@ -1,11 +1,11 @@
 import constants from '../constants'
-import { CTDLGAME } from './CTDLGAME'
+import { CTDLGAME, setWorld } from './CTDLGAME'
 import { initSoundtrack } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
 import Brian from '../brian'
-import Tiles from '../tiles'
+import World from '../world'
 
 /**
  * @description Method to prepare new game
@@ -17,16 +17,14 @@ export const newGame = () => {
     blocks: []
   }
   CTDLGAME.blockHeight = -1
-  CTDLGAME.world = constants.WORLD
+  setWorld(new World('city'))
 
-  CTDLGAME.objects = [
+  CTDLGAME.objects = CTDLGAME.objects.concat([
     makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }),
     makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }),
     makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }),
     makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h })
-  ]
-
-  CTDLGAME.tiles = new Tiles('city')
+  ])
 
   CTDLGAME.gameOver = false
   CTDLGAME.wizardCountdown = 16
@@ -34,28 +32,28 @@ export const newGame = () => {
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
     {
-      x: 50,
-      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30
+      x: CTDLGAME.world.map.start.newGame.x - 10,
+      y: CTDLGAME.world.map.start.newGame.y
     }
   )
   CTDLGAME.katoshi = new Character(
     'katoshi',
     {
+      x: CTDLGAME.world.map.start.newGame.x + 10,
+      y: CTDLGAME.world.map.start.newGame.y,
       active: false,
-      x: 70,
-      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 30,
       direction: 'left'
     }
   )
 
+  // TODO move to world
   const brian = new Brian(
     'brian',
     {
       x: 970,
-      y: constants.WORLD.h - constants.GROUNDHEIGHT - constants.MENU.h - 32
+      y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 32
     }
   )
-
   CTDLGAME.objects.push(brian)
 
   CTDLGAME.hodlonaut.select()

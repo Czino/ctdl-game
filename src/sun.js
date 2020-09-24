@@ -24,7 +24,7 @@ export default function(options) {
     }
 
     let middle = CTDLGAME.viewport.x + constants.WIDTH / 2
-    this.x = Math.round(middle - (CTDLGAME.viewport.x * 8 / constants.WORLD.w))
+    this.x = Math.round(middle - (CTDLGAME.viewport.x * 8 / CTDLGAME.world.w))
     let center = this.getCenter()
 
     constants.skyContext.fillStyle = '#FFF'

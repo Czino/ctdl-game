@@ -21,9 +21,13 @@ export const CTDLGAME = {
     sats: 0,
     blocks: []
   },
-  quadTree: new QuadTree(new Boundary({
+}
+
+export const setWorld = world => {
+  CTDLGAME.world = world
+  CTDLGAME.quadTree = new QuadTree(new Boundary({
     x: 0,
     y: 0,
-    ...constants.WORLD
+    ...world
   }))
 }
