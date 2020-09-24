@@ -245,9 +245,9 @@ export const changeVolume = value => {
 
 function parseNotes(notes) {
   return notes.map(note => ({
-    'time': note[0],
-    'duration': note[1],
-    'name': note[2],
-    'velocity': note[3]
+    time: note[0],
+    duration: note[1],
+    name: note[2],
+    velocity: note[3]
   }))
 }

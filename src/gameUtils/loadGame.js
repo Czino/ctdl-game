@@ -2,7 +2,6 @@ import constants from '../constants'
 import * as db from '../db'
 import { CTDLGAME } from './CTDLGAME'
 import Tiles from '../tiles'
-import cityMap from '../maps/city'
 import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
@@ -63,7 +62,7 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }))
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h }))
 
-  CTDLGAME.tiles = new Tiles('city', cityMap)
+  CTDLGAME.tiles = new Tiles('city')
 
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory

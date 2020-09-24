@@ -1,9 +1,11 @@
-import { mapTile, parsePattern } from '../mapUtils'
-import { random } from '../arrayUtils'
-import GameObject from '../gameObject'
-import { CTDLGAME } from '../gameUtils'
+import { changeMap } from '../changeMap'
+import { mapTile } from '../mapTile'
+import { parsePattern } from '../parsePattern'
+import { random } from '../../arrayUtils'
+import GameObject from '../../gameObject'
+import { CTDLGAME } from '../../gameUtils'
 
-const tileSize = 8 // tileSize
+const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t010 = [0, 10],
   t10 = [1, 0], t11 = [1, 1], t15 = [1, 5], t18 = [1, 8], t17 = [1, 7], t19 = [1, 9], t110 = [1, 10],
   t20 = [2, 0], t21 = [2, 1], t22 = [2, 2], t24 = [2, 4], t25 = [2, 5], t27 = [2, 7], t28 = [2, 8], t210 = [2, 10],
@@ -180,10 +182,24 @@ goToShop.backEvent = character => {
   CTDLGAME.showShop = character
 }
 
-events = events.concat(goToShop)
+const goToForest = new GameObject('goToForest', {
+  x: 122 * tileSize,
+  y: 116 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+goToForest.touchEvent = () => {
+  changeMap()
+}
+
+events.push(goToShop)
+events.push(goToForest)
+
 export default {
+  world: { w: 1000, h: 1024 },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),
-  events: events
+  events
 }

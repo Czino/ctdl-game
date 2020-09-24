@@ -1,9 +1,10 @@
 import constants from './constants'
 import { CTDLGAME } from './gameUtils'
+import { loadMap } from './mapUtils'
 
-export default function (id, map) {
+export default function (id) {
   this.id = id
-  this.map = map
+  this.map = loadMap(id)
 
   CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
   this.update = () => {

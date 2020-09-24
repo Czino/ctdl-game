@@ -284,10 +284,12 @@ export default function(id, options) {
       }
     }
 
+    const boundingBox = this.getBoundingBox()
+
     // collect touched items
-    CTDLGAME.quadTree.query(this.getBoundingBox())
+    CTDLGAME.quadTree.query(boundingBox)
       .filter(obj => obj.class === 'Item' && !obj.collected && obj.vy === 0)
-      .filter(item => intersects(this.getBoundingBox(), item.getBoundingBox()))
+      .filter(item => intersects(boundingBox, item.getBoundingBox()))
       .forEach(item => {
         this.eat(item.id) // try eating it
 
@@ -324,6 +326,14 @@ export default function(id, options) {
     } else {
       this.autoPilot()
     }
+
+    // find out if eventObject has been touched
+    const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+      .filter(obj => obj.touchEvent)
+      .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+
+
+    if (eventObject) eventObject.touchEvent(this)
 
     if (this.status !== 'idle' || Math.random() < .05) {
       this.frame++

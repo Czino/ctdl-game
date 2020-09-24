@@ -6,7 +6,6 @@ import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
 import Brian from '../brian'
 import Tiles from '../tiles'
-import cityMap from '../maps/city'
 
 /**
  * @description Method to prepare new game
@@ -27,7 +26,7 @@ export const newGame = () => {
     makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h })
   ]
 
-  CTDLGAME.tiles = new Tiles('city', cityMap)
+  CTDLGAME.tiles = new Tiles('city')
 
   CTDLGAME.gameOver = false
   CTDLGAME.wizardCountdown = 16
