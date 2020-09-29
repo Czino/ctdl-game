@@ -17,7 +17,7 @@ export const updateViewport = () => {
   CTDLGAME.viewport.x = Math.min(CTDLGAME.world.w - constants.WIDTH, CTDLGAME.viewport.x)
 
   constants.parallaxContext.setTransform(1, 0, 0, 1, 0, 0);
-  constants.parallaxContext.translate(-(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2), -CTDLGAME.viewport.y);
+  constants.parallaxContext.translate(-(CTDLGAME.viewport.x - Math.round(CTDLGAME.viewport.x / 2)), -CTDLGAME.viewport.y);
 
   [
     constants.skyContext,
