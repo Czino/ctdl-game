@@ -40,6 +40,7 @@ import { toggleSoundtrack } from './soundtrack'
 // TODO add exchange
 // TODO brian is not emptying text queeue
 // TODO no twilight
+// TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
 // TODO brian click on him creates multiple items
 // TODO add a way to revive rekt characters
 // TODO add gates to other worlds

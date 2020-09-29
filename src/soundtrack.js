@@ -1,31 +1,12 @@
 import { Synth, NoiseSynth, Transport, Part, Gain, Reverb } from 'tone'
-import bass1 from './tracks/stella-splendence/bass1'
-import bass2 from './tracks/stella-splendence/bass2'
-import flute1 from './tracks/stella-splendence/flute1'
-import flute2 from './tracks/stella-splendence/flute2'
-import sine from './tracks/stella-splendence/sine'
-import lead from './tracks/game-over/lead'
 
-import santaMariaNoise from './tracks/santa-maria/noise'
-import santaMariaPulse from './tracks/santa-maria/pulse'
-import santaMariaSine from './tracks/santa-maria/sine'
-
-import mariamCello from './tracks/mariam-matrem-virginem/cello'
-import mariamHarp from './tracks/mariam-matrem-virginem/harp'
-import mariamPipe from './tracks/mariam-matrem-virginem/pipe'
-import mariamStrings from './tracks/mariam-matrem-virginem/strings'
-import mariamViola from './tracks/mariam-matrem-virginem/viola'
-// import mariamViolin from './tracks/mariam-matrem-virginem/violin'
-
-import bullsVsBearsTriangle from './tracks/bulls-vs-bears/triangle'
-import bullsVsBearsPulse1 from './tracks/bulls-vs-bears/pulse1'
-import bullsVsBearsPulse2 from './tracks/bulls-vs-bears/pulse2'
-import bullsVsBearsSine from './tracks/bulls-vs-bears/sine'
-
-import aNewHopeTriangle from './tracks/a-new-hope/triangle'
-import aNewHopePulse1 from './tracks/a-new-hope/sine'
-import aNewHopePulse2 from './tracks/a-new-hope/pulse2'
-import aNewHopeSine from './tracks/a-new-hope/sine'
+import mariamMatremVirginem from './tracks/mariam-matrem-virginem'
+import stellaSplendence from './tracks/stella-splendence/'
+import gameOver from './tracks/game-over/'
+import santaMaria from './tracks/santa-maria/'
+import bullsVsBears from './tracks/bulls-vs-bears/'
+import aNewHope from './tracks/a-new-hope'
+import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
 
 const gain = new Gain(0).toDestination()
 const reverb = new Reverb({
@@ -76,6 +57,7 @@ const squareSynth = new Synth(squareOptions).connect(gain).toDestination()
 const triangleSynth = new Synth(triangleOptions).connect(gain).toDestination()
 const sineSynth = new Synth(sineOptions).connect(gain).toDestination()
 const noiseSynth = new NoiseSynth().connect(gain).toDestination()
+const brownNoiseSynth = new NoiseSynth().connect(gain).toDestination()
 
 pulseSynth.volume.value = -19
 pulse2Synth.volume.value = -19
@@ -83,47 +65,60 @@ squareSynth.volume.value = -19
 triangleSynth.volume.value = -19
 sineSynth.volume.value = -19
 noiseSynth.volume.value = -19
+brownNoiseSynth.volume.value = -19
+brownNoiseSynth.noise.type = 'brown'
 
 const songs = {
     // Llibre Vermell de Montserrat: Anonymous - Mariam Matrem Virginem
     mariamMatremVirginem: {
       length: 200.97,
-      pulse: mariamStrings,
-      pulse2: mariamViola,
-      triangle: mariamCello,
-      sine: mariamPipe,
-      square: mariamHarp,
-      // mariamViolin
+      pulse: mariamMatremVirginem.strings,
+      pulse2: mariamMatremVirginem.viola,
+      triangle: mariamMatremVirginem.cello,
+      sine: mariamMatremVirginem.pipe,
+      square: mariamMatremVirginem.harp,
       loop: true
     },
     // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {
       length: 136.575,
-      noise: bass1,
-      pulse: bass1,
-      pulse2: bass2,
-      triangle: flute1,
-      sine: flute2,
-      square: sine,
+      noise: stellaSplendence.bass1,
+      pulse: stellaSplendence.bass1,
+      pulse2: stellaSplendence.bass2,
+      triangle: stellaSplendence.flute1,
+      sine: stellaSplendence.flute2,
+      square: stellaSplendence.sine,
+      loop: true
+    },
+    // Llibre Vermell de Montserrat: Anonymous - Imperayritz De La Ciutat Ioyosa
+    imperayritzDeLaCiutatIoyosa: {
+      length: 190.7624,
+      brownNoise: imperayritzDeLaCiutatIoyosa.drum,
+      noise: imperayritzDeLaCiutatIoyosa.noise,
+      triangle: imperayritzDeLaCiutatIoyosa.pulse1,
+      square: imperayritzDeLaCiutatIoyosa.square,
+      pulse: imperayritzDeLaCiutatIoyosa.triangle,
+      sine: imperayritzDeLaCiutatIoyosa.sine,
+      pulseReverb: true,
       loop: true
     },
     // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
     santaMaria: {
       length: 79.7342,
-      noise: santaMariaNoise,
-      triangle: santaMariaPulse,
-      sine: santaMariaSine,
+      noise: santaMaria.noise,
+      triangle: santaMaria.pulse,
+      sine: santaMaria.sine,
       sineReverb: true,
       loop: true
     },
     // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
     bullsVsBears: {
       length: 26.182,
-      noise: bullsVsBearsTriangle,
-      triangle: bullsVsBearsTriangle,
-      pulse: bullsVsBearsPulse1,
-      pulse2: bullsVsBearsPulse2,
-      sine: bullsVsBearsSine,
+      noise: bullsVsBears.triangle,
+      triangle: bullsVsBears.triangle,
+      pulse: bullsVsBears.pulse1,
+      pulse2: bullsVsBears.pulse2,
+      sine: bullsVsBears.sine,
       sineReverb: true,
       pulseReverb: true,
       loop: true
@@ -131,12 +126,12 @@ const songs = {
     // Vlad Costea - A New Hope (Czino 8-bit remix)
     aNewHope: {
       length: 54.2608,
-      noise: aNewHopeTriangle,
-      triangle: aNewHopeTriangle,
-      pulse: aNewHopePulse1,
-      pulse2: aNewHopePulse2,
-      sine: aNewHopeSine,
-      square: aNewHopeSine,
+      noise: aNewHope.triangle,
+      triangle: aNewHope.triangle,
+      pulse: aNewHope.pulse1,
+      pulse2: aNewHope.pulse2,
+      sine: aNewHope.sine,
+      square: aNewHope.sine,
       sineReverb: true,
       pulseReverb: true,
       loop: true
@@ -144,7 +139,7 @@ const songs = {
     // Czino - I'm sad
     gameOver: {
       length: 16.97,
-      sine: lead,
+      sine: gameOver.lead,
       loop: false
     }
 }
@@ -157,6 +152,7 @@ let squarePart = new Part()
 let trianglePart = new Part()
 let sinePart = new Part()
 let noisePart = new Part()
+let brownNoisePart = new Part()
 
 export const initSoundtrack = id => {
   song = songs[id]
@@ -215,6 +211,11 @@ export const initSoundtrack = id => {
       noiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
     }, parseNotes(song.noise))
   }
+  if (song.brownNoise) {
+    brownNoisePart = new Part((time, note) => {
+      brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
+    }, parseNotes(song.brownNoise))
+  }
 
   if (enabled) startMusic()
 }
@@ -238,6 +239,7 @@ export const startMusic = async () => {
   if (song.triangle) trianglePart.start(0)
   if (song.sine) sinePart.start(0)
   if (song.noise) noisePart.start(0)
+  if (song.brownNoise) brownNoisePart.start(0)
 }
 
 export const stopMusic = () => {
@@ -250,6 +252,7 @@ export const stopMusic = () => {
   if (song.triangle) trianglePart.stop(0)
   if (song.sine) sinePart.stop(0)
   if (song.noise) noisePart.stop(0)
+  if (song.brownNoise) brownNoisePart.stop(0)
 }
 
 export const changeVolume = value => {

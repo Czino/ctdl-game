@@ -4,7 +4,6 @@ import { initSoundtrack } from '../soundtrack'
 import { addClass } from '../htmlUtils'
 import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
-import Brian from '../brian'
 import World from '../world'
 
 /**
@@ -27,7 +26,7 @@ export const newGame = () => {
   ])
 
   CTDLGAME.gameOver = false
-  CTDLGAME.wizardCountdown = 16
+  CTDLGAME.wizardCountdown = 64
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
@@ -46,16 +45,6 @@ export const newGame = () => {
     }
   )
 
-  // TODO move to world
-  const brian = new Brian(
-    'brian',
-    {
-      x: 970,
-      y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 32
-    }
-  )
-  CTDLGAME.objects.push(brian)
-
   CTDLGAME.hodlonaut.select()
 
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
@@ -64,7 +53,7 @@ export const newGame = () => {
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
-  initSoundtrack('stellaSplendence')
+  initSoundtrack(CTDLGAME.world.map.track)
 
   setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }
