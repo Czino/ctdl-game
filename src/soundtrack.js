@@ -18,9 +18,14 @@ import mariamViola from './tracks/mariam-matrem-virginem/viola'
 // import mariamViolin from './tracks/mariam-matrem-virginem/violin'
 
 import bullsVsBearsTriangle from './tracks/bulls-vs-bears/triangle'
-import bullsVsBearsPulse1 from './tracks/bulls-vs-bears/pulse1.js'
+import bullsVsBearsPulse1 from './tracks/bulls-vs-bears/pulse1'
 import bullsVsBearsPulse2 from './tracks/bulls-vs-bears/pulse2'
 import bullsVsBearsSine from './tracks/bulls-vs-bears/sine'
+
+import aNewHopeTriangle from './tracks/a-new-hope/triangle'
+import aNewHopePulse1 from './tracks/a-new-hope/sine'
+import aNewHopePulse2 from './tracks/a-new-hope/pulse2'
+import aNewHopeSine from './tracks/a-new-hope/sine'
 
 const gain = new Gain(0).toDestination()
 const reverb = new Reverb({
@@ -83,7 +88,6 @@ const songs = {
     // Llibre Vermell de Montserrat: Anonymous - Mariam Matrem Virginem
     mariamMatremVirginem: {
       length: 200.97,
-      bpm: 136,
       pulse: mariamStrings,
       pulse2: mariamViola,
       triangle: mariamCello,
@@ -95,7 +99,6 @@ const songs = {
     // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {
       length: 136.575,
-      bpm: 136,
       noise: bass1,
       pulse: bass1,
       pulse2: bass2,
@@ -107,16 +110,15 @@ const songs = {
     // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
     santaMaria: {
       length: 79.7342,
-      bpm: 90,
       noise: santaMariaNoise,
       triangle: santaMariaPulse,
       sine: santaMariaSine,
       sineReverb: true,
       loop: true
     },
+    // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
     bullsVsBears: {
       length: 26.182,
-      bpm: 110,
       noise: bullsVsBearsTriangle,
       triangle: bullsVsBearsTriangle,
       pulse: bullsVsBearsPulse1,
@@ -126,10 +128,22 @@ const songs = {
       pulseReverb: true,
       loop: true
     },
+    // Vlad Costea - A New Hope (Czino 8-bit remix)
+    aNewHope: {
+      length: 54.2608,
+      noise: aNewHopeTriangle,
+      triangle: aNewHopeTriangle,
+      pulse: aNewHopePulse1,
+      pulse2: aNewHopePulse2,
+      sine: aNewHopeSine,
+      square: aNewHopeSine,
+      sineReverb: true,
+      pulseReverb: true,
+      loop: true
+    },
     // Czino - I'm sad
     gameOver: {
       length: 16.97,
-      bpm: 136,
       sine: lead,
       loop: false
     }
@@ -166,7 +180,6 @@ export const initSoundtrack = id => {
   Transport.loopStart = 0
   Transport.loopEnd = song.length
 
-  Transport.bpm.value = song.bpm
 
   if (song.pulse) {
     pulsePart = new Part((time, note) => {
