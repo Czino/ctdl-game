@@ -4,7 +4,7 @@ import { CTDLGAME } from './CTDLGAME'
 import { intersects } from '../geometryUtils'
 
 export const spawnEnemies = () => {
-  if (Math.random() < constants.SPAWNRATES.shitcoiner) {
+  if (Math.random() < constants.SPAWNRATES.shitcoiner[CTDLGAME.world.id]) {
     let shitcoiner = new Shitcoiner(
       'shitcoiner-' + Math.random(),
       {

@@ -38,7 +38,6 @@ import { toggleSoundtrack } from './soundtrack'
 // setInterval(() => playSound('woosh'), 3000)
 
 // TODO refactor ramp code
-// TODO make shitcoiners only spawn in city
 // TODO add forest enemies
 // TODO brian is not emptying text queeue
 // TODO add exchange

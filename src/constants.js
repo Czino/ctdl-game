@@ -131,6 +131,8 @@ export default {
   CONTROLS,
   BUTTONS,
   SPAWNRATES: {
-    shitcoiner: .01
+    shitcoiner: {
+      city: .01
+    }
   }
 }
