@@ -58,6 +58,14 @@ export const loadGame = async () => {
 
   setWorld(new World(worldId))
 
+  if (!objects) {
+    CTDLGAME.objects = CTDLGAME.world.map.objects
+  } else {
+    CTDLGAME.world.map.objects
+      .filter(object => !object.class || object.class === 'Ramp')
+      .map(object => CTDLGAME.objects.push(object))
+  }
+
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }))
   CTDLGAME.objects.push(makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }))
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }))

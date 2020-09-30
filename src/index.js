@@ -38,6 +38,10 @@ import { toggleSoundtrack } from './soundtrack'
 // setInterval(() => playSound('woosh'), 3000)
 
 // TODO add exchange
+// TODO fix turning off sound
+// TODO refactor ramp code
+// TODO make shitcoiners only spawn in city
+// TODO add forest enemies
 // TODO brian is not emptying text queeue
 // TODO no twilight
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)

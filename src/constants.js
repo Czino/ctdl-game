@@ -13,7 +13,8 @@ const gameCanvas = document.getElementById('ctdl-game')
 const charCanvas = document.getElementById('ctdl-game-chars')
 const fgCanvas = document.getElementById('ctdl-game-fg')
 const overlayCanvas = document.getElementById('ctdl-game-overlay')
-const menuCanvas = document.getElementById('ctdl-game-menu');
+const menuCanvas = document.getElementById('ctdl-game-menu')
+const helperCanvas = document.getElementById('ctdl-game-helper');
 
 [
   skyCanvas,
@@ -30,6 +31,9 @@ const menuCanvas = document.getElementById('ctdl-game-menu');
   canvas.style.height = (Math.round(window.innerHeight / 2) * 2) + 'px'
 })
 
+helperCanvas.width = 16
+helperCanvas.height = 16
+
 const skyContext = skyCanvas.getContext('2d')
 const parallaxContext = parallaxCanvas.getContext('2d')
 const bgContext = bgCanvas.getContext('2d')
@@ -37,7 +41,8 @@ const gameContext = gameCanvas.getContext('2d')
 const fgContext = fgCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
 const overlayContext = overlayCanvas.getContext('2d')
-const menuContext = menuCanvas.getContext('2d');
+const menuContext = menuCanvas.getContext('2d')
+const helperContext = helperCanvas.getContext('2d');
 
 [
   skyContext,
@@ -122,6 +127,7 @@ export default {
   overlayCanvas,
   overlayContext,
   menuContext,
+  helperContext,
   CONTROLS,
   BUTTONS,
   SPAWNRATES: {

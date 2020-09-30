@@ -404,20 +404,34 @@ export default function(id, options) {
   }
 
   this.getBoundingBox = () => this.status !== 'rekt'
-  ? ({
-      id: this.id,
-      x: this.x + 5,
-      y: this.y + 3,
-      w: this.w - 10,
-      h: this.h - 4
+    ? ({
+        id: this.id,
+        x: this.x + 5,
+        y: this.y + 3,
+        w: this.w - 10,
+        h: this.h - 4
+      })
+    : ({
+        id: this.id,
+        x: this.x,
+        y: this.y,
+        w: this.w,
+        h: this.h
+      })
+
+  this.getAnchor = () => this.status !== 'rekt'
+    ? ({
+        x: this.getBoundingBox().x + 2,
+        y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
+        w: this.getBoundingBox().w - 5,
+        h: 1
     })
-  : ({
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      w: this.w,
-      h: this.h
-    })
+    : ({
+      x: this.getBoundingBox().x,
+      y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
+      w: this.getBoundingBox().w,
+      h: 1
+  })
 
   this.getCenter = () => ({
     x: this.x + this.w / 2,

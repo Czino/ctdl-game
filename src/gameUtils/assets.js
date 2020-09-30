@@ -13,6 +13,7 @@ import brian from '../sprites/brian.png'
 import moon from '../sprites/moon.png'
 import genesisBlock from '../sprites/genesis-block.png'
 import block from '../sprites/block.png'
+import stairs from '../sprites/stairs.png'
 import city from '../sprites/city.png'
 import forest from '../sprites/forest.png'
 import inventoryBlock from '../sprites/inventory-block.png'
@@ -32,6 +33,7 @@ export const assets = {
   moon,
   genesisBlock,
   block,
+  stairs,
   city,
   forest,
   inventoryBlock

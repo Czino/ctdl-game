@@ -56,8 +56,6 @@ export const changeMap = async (id, from) => {
   CTDLGAME.katoshi.x = newWorld.map.start[from].x + 10
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
 
-  console.log('change map to ', id, newWorld.map)
-
   // save again the new map
   saveGame()
 

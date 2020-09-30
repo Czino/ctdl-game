@@ -5,6 +5,8 @@ import { random } from '../../arrayUtils'
 import GameObject from '../../gameObject'
 import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
+import Ramp from '../../ramp'
+import { makeBoundary } from '../../geometryUtils'
 
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
@@ -17,10 +19,24 @@ const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 
   t70 = [7, 0], t71 = [7, 1], t72 = [7, 2], t73 = [7, 3], t74 = [7, 4], t75 = [7, 5], t76 = [7, 6], t77 = [7, 7], t78 = [7, 8], t79 = [7, 9], t710 = [7, 10],
   t80 = [8, 0], t81 = [8, 1], t82 = [8, 2], t83 = [8, 3], t84 = [8, 4], t85 = [8, 5], t86 = [8, 6], t87 = [8, 7], t88 = [8, 8], t89 = [8, 9], t810 = [8, 10]
 
+const ramps = [
+  t01, t11,
+  t02, t12,
+  t03, t13,
+  t26, t36,
+].map(tile => tile.toString())
+const solids = [
+  t10,
+  t04, t14,
+  t05, t15,
+  t06, t16,
+].map(tile => tile.toString())
+
 let parallax = []
 let bg = []
 let fg = []
 let events = []
+let objects = []
 
 const bgStart = [
   [ t30, t20, t23, t23 ],
@@ -54,9 +70,29 @@ const randomBg = () => {
   return rand
 }
 
+const fillArea = (tiles, w, h) => {
+  let area = []
+
+  for (let i = h; i > 0; i--) {
+    let row = []
+    for (let j = w; j > 0; j--) {
+      row.push(random(tiles))
+    }
+    area.push(row)
+  }
+  return area
+}
+
+const ground = [
+  [ ],
+  [ t00, t00, t00, t00, t00, t00, t00, t01, t03, t12, t03, t13 ],
+  [ t00, t00, t01, t03, t12, t03, t13, t05, t04, t04, t04, t04 ],
+  [ t03, t13, t05, t04, t04, t04, t04, t06, t10, t10, t10, t10 ],
+  [ t04, t04, t06, t10, t10, t10, t10, t10, t10, t10, t10, t10 ]
+]
 const stump = [
-  [ t05, t15 ],
-  [ t06, t16 ]
+  [ t09, t19 ],
+  [ t010, t110 ]
 ]
 const bigTree1 = [
   [ t00, t00, t00, t40, t50, t60, t40, t50, t71 ],
@@ -101,7 +137,35 @@ fg = fg.concat(parsePattern(bigTree1, 14, 104))
 bg = bg.concat(parsePattern(bigTree1, 17, 104))
 bg = bg.concat(parsePattern(bigTree1, 22, 104))
 fg = fg.concat(parsePattern(bigTree1, 24, 104))
+fg = fg.concat(parsePattern(ground, 29, 115))
+fg = fg.concat(parsePattern(fillArea([t10], 10, 4), 41, 116))
+fg = fg.concat(parsePattern(ground, 39, 113))
 
+fg.forEach(tile => {
+  if (ramps.indexOf(tile.tile.toString()) !== -1) {
+    objects.push(new Ramp(
+      'ramp',
+      constants.bgContext,
+      {
+        x: tile.x * tileSize,
+        y: tile.y * tileSize + 3,
+        w: tileSize,
+        h: tileSize,
+        sprite: 'forest',
+        spriteData: { x: tile.tile[0] * tileSize, y: tile.tile[1] * tileSize, w: tileSize, h: tileSize},
+        direction: 'right',
+        isSolid: true,
+      },
+    ))
+  } else if (solids.indexOf(tile.tile.toString()) !== -1) {
+    objects.push(makeBoundary({
+      x: tile.x * tileSize,
+      y: tile.y * tileSize + 3,
+      w: tileSize,
+      h: tileSize
+    }))
+  }
+})
 export default {
   world: { w: 1000, h: 1024 },
   start: {
@@ -110,6 +174,7 @@ export default {
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),
+  objects,
   events,
   track: 'santaMaria'
 }
