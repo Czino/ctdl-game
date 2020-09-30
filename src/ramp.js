@@ -11,9 +11,7 @@ export default function(id, context, options) {
   this.x = options.x
   this.y = options.y
   this.spriteData = options.spriteData || { x: 0, y: 0, w: this.w, h: this.h}
-  this.direction = options.direction || 'left'
   this.isSolid = options.isSolid
-  this.opacity = options.opacity ?? 1
   this.status = options.status
 
   this.toggleSolid = () => {

@@ -58,7 +58,7 @@ export const loadGame = async () => {
 
   setWorld(new World(worldId))
 
-  if (!objects) {
+  if (CTDLGAME.objects.length === 0) {
     CTDLGAME.objects = CTDLGAME.world.map.objects
   } else {
     CTDLGAME.world.map.objects

@@ -10,12 +10,12 @@ import Item from '../item'
 
 export const changeMap = async (id, from) => {
   // save state before changing
-  saveGame()
+  await saveGame()
 
   const newWorld = new World(id)
-  const objects = await loadWorldObjects()
+  const objects = await loadWorldObjects(id)
   // Save state of old world
-  CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character')
+  CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character' || obj.backEvent || obj.touchEvent)
 
   setWorld(newWorld)
 
@@ -26,39 +26,45 @@ export const changeMap = async (id, from) => {
   CTDLGAME.objects.push(makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h }))
 
   if (objects) {
-    CTDLGAME.objects = objects.map(object => {
-      if (object.class === 'Block') {
-        return new Block(
-          object.id,
-          constants.gameContext,
-          object
-        )
-      } else if (object.class === 'Shitcoiner') {
-        return new Shitcoiner(
-          object.id,
-          object
-        )
-      } else if (object.class === 'Brian') {
-        return new Brian(
-          object.id,
-          object
-        )
-      } else if (object.class === 'Item') {
-        return new Item(
-          object.id,
-          object
-        )
-      }
-    })
+    objects
+      .map(object => {
+        if (object.class === 'Block') {
+          return new Block(
+            object.id,
+            constants.gameContext,
+            object
+          )
+        } else if (object.class === 'Shitcoiner') {
+          return new Shitcoiner(
+            object.id,
+            object
+          )
+        } else if (object.class === 'Brian') {
+          return new Brian(
+            object.id,
+            object
+          )
+        } else if (object.class === 'Item') {
+          return new Item(
+            object.id,
+            object
+          )
+        }
+      })
+    .map(object => CTDLGAME.objects.push(object))
   }
-  CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 10
+
+  CTDLGAME.world.map.objects
+    .filter(object => !object.class || object.class === 'Ramp')
+    .map(object => CTDLGAME.objects.push(object))
+
+  CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 5
   CTDLGAME.hodlonaut.y = newWorld.map.start[from].y
-  CTDLGAME.katoshi.x = newWorld.map.start[from].x + 10
+  CTDLGAME.katoshi.x = newWorld.map.start[from].x + 5
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
 
   // save again the new map
-  saveGame()
-
+  await saveGame()
 }
 
 export default changeMap

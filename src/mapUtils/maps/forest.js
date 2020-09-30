@@ -166,10 +166,24 @@ fg.forEach(tile => {
     }))
   }
 })
+
+
+const gotToCity = new GameObject('gotToCity', {
+  x: 1 * tileSize,
+  y: 116 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+gotToCity.touchEvent = () => {
+  changeMap('city', 'forest')
+}
+events.push(gotToCity)
+
 export default {
   world: { w: 1000, h: 1024 },
   start: {
-    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 30}
+    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32}
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),

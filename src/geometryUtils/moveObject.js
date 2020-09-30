@@ -53,15 +53,10 @@ export const moveObject = (object, vector, tree) => {
               }
             }
 
-            constants.overlayContext.fillStyle = 'red'
-            constants.overlayContext.fillRect(anchor.x, anchor.y, anchor.w, 1)
-
-            // if (intersects(anchorB, point.getBoundingBox())) {
-
-            // }
-            // console.log(anchorA, anchorB, heightMask)
-            // object.y -= 2
-            // return true
+            if (window.DRAWSENSORS) {
+              constants.overlayContext.fillStyle = 'red'
+              constants.overlayContext.fillRect(anchor.x, anchor.y, anchor.w, 1)
+            }
           }
           // would collide, roll back change
           object.x -= vector.x
