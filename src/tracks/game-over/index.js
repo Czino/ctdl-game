@@ -1,5 +1,7 @@
-import lead from './lead'
+import rhythm from './rhythm'
+import melody from './melody'
 
 export default {
-  lead
+  rhythm,
+  melody
 }

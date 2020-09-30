@@ -8,11 +8,12 @@ import bullsVsBears from './tracks/bulls-vs-bears/'
 import aNewHope from './tracks/a-new-hope'
 import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
 
-const gain = new Gain(0).toDestination()
+const gain = new Gain(1).toDestination()
 const reverb = new Reverb({
   decay: 17,
-  wet: 1
-}).toDestination()
+  wet: .5,
+})
+window.reverb = reverb
 
 const pulseOptions = {
   oscillator: {
@@ -51,21 +52,26 @@ const sineOptions = {
   }
 }
 
-const pulseSynth = new Synth(pulseOptions).connect(gain).toDestination()
-const pulse2Synth = new Synth(pulseOptions).connect(gain).toDestination()
-const squareSynth = new Synth(squareOptions).connect(gain).toDestination()
-const triangleSynth = new Synth(triangleOptions).connect(gain).toDestination()
-const sineSynth = new Synth(sineOptions).connect(gain).toDestination()
-const noiseSynth = new NoiseSynth().connect(gain).toDestination()
-const brownNoiseSynth = new NoiseSynth().connect(gain).toDestination()
+const pulseSynth = new Synth(pulseOptions)
+const pulse2Synth = new Synth(pulseOptions)
+const squareSynth = new Synth(squareOptions)
+const triangleSynth = new Synth(triangleOptions)
+const sineSynth = new Synth(sineOptions)
+const noiseSynth = new NoiseSynth()
+const brownNoiseSynth = new NoiseSynth()
 
-pulseSynth.volume.value = -19
-pulse2Synth.volume.value = -19
-squareSynth.volume.value = -19
-triangleSynth.volume.value = -19
-sineSynth.volume.value = -19
-noiseSynth.volume.value = -19
-brownNoiseSynth.volume.value = -19
+const synths = [
+  pulseSynth,
+  pulse2Synth,
+  squareSynth,
+  triangleSynth,
+  sineSynth,
+  noiseSynth,
+  brownNoiseSynth
+]
+
+synths.map(synth => synth.volume.value = -19)
+
 brownNoiseSynth.noise.type = 'brown'
 
 const songs = {
@@ -99,7 +105,6 @@ const songs = {
       square: imperayritzDeLaCiutatIoyosa.square,
       pulse: imperayritzDeLaCiutatIoyosa.triangle,
       sine: imperayritzDeLaCiutatIoyosa.sine,
-      pulseReverb: true,
       loop: true
     },
     // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
@@ -108,7 +113,7 @@ const songs = {
       noise: santaMaria.noise,
       triangle: santaMaria.pulse,
       sine: santaMaria.sine,
-      sineReverb: true,
+      reverbs: [ sineSynth ],
       loop: true
     },
     // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
@@ -119,8 +124,7 @@ const songs = {
       pulse: bullsVsBears.pulse1,
       pulse2: bullsVsBears.pulse2,
       sine: bullsVsBears.sine,
-      sineReverb: true,
-      pulseReverb: true,
+      reverbs: [ sineSynth, pulseSynth, pulse2Synth ],
       loop: true
     },
     // Vlad Costea - A New Hope (Czino 8-bit remix)
@@ -132,14 +136,15 @@ const songs = {
       pulse2: aNewHope.pulse2,
       sine: aNewHope.sine,
       square: aNewHope.sine,
-      sineReverb: true,
-      pulseReverb: true,
+      reverbs: [ sineSynth, pulseSynth, pulse2Synth ],
       loop: true
     },
     // Czino - I'm sad
     gameOver: {
-      length: 16.97,
-      sine: gameOver.lead,
+      length: 20.00,
+      sine: gameOver.melody,
+      triangle: gameOver.rhythm,
+      // reverbs: [ sineSynth ],
       loop: false
     }
 }
@@ -159,17 +164,12 @@ export const initSoundtrack = id => {
 
   if (Transport.state === 'started') stopMusic()
 
-  if (song.sineReverb) {
-    sineSynth.connect(reverb)
-  } else {
-    reverb.disconnect(sineSynth)
-  }
-  if (song.pulseReverb) {
-    pulseSynth.connect(reverb)
-    pulse2Synth.connect(reverb)
-  } else {
-    reverb.disconnect(pulseSynth)
-    reverb.disconnect(pulse2Synth)
+  synths.map(synth => synth.connect(gain))
+  if (song.reverbs) {
+    song.reverbs.map(synth => {
+      synth.disconnect()
+      synth.chain(reverb, gain)
+    })
   }
 
   Transport.loop = song.loop
@@ -256,7 +256,7 @@ export const stopMusic = () => {
 }
 
 export const changeVolume = value => {
-  gain.gain.rampTo(value - 1, 0)
+  gain.gain.rampTo(value, 0)
 }
 
 function parseNotes(notes) {

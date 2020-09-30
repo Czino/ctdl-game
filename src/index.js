@@ -45,8 +45,6 @@ import { toggleSoundtrack } from './soundtrack'
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
 // TODO brian click on him creates multiple items
 // TODO add a way to revive rekt characters
-// TODO add gates to other worlds
-// TODO add new stage
 // TODO load assets only when needed
 // TODO dynamically load songs when needed
 // TODO make canvas draw clean pixels
