@@ -29,7 +29,7 @@ import { writeMenu } from './textUtils'
 import Wizard from './wizard'
 import { applyGravity } from './physicsUtils'
 import { intersects } from './geometryUtils'
-import { isSoundLoaded } from './sounds'
+import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 
 // import { playSound } from './sounds'
@@ -37,12 +37,11 @@ import { toggleSoundtrack } from './soundtrack'
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
-// TODO add exchange
-// TODO fix turning off sound
 // TODO refactor ramp code
 // TODO make shitcoiners only spawn in city
 // TODO add forest enemies
 // TODO brian is not emptying text queeue
+// TODO add exchange
 // TODO no twilight
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
 // TODO brian click on him creates multiple items
@@ -90,6 +89,7 @@ async function init() {
   let options = await db.get('options')
   if (options) CTDLGAME.options = options
   toggleSoundtrack(CTDLGAME.options.music)
+  toggleSounds(CTDLGAME.options.sound)
 
   CTDLGAME.isSoundLoaded = isSoundLoaded()
   if (CTDLGAME.isSoundLoaded) {
