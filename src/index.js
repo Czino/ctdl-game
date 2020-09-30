@@ -37,7 +37,7 @@ import { toggleSoundtrack } from './soundtrack'
 // playSound('woosh')
 // setInterval(() => playSound('woosh'), 3000)
 
-// TODO refactor ramp code
+// TODO finish forest tiling
 // TODO add forest enemies
 // TODO brian is not emptying text queeue
 // TODO add exchange
@@ -203,7 +203,7 @@ function tick() {
     CTDLGAME.quadTree.clear()
     CTDLGAME.objects
       .filter(object => {
-        if (object.class === 'Block') {
+        if (object.class === 'Block' || object.class === 'Ramp') {
           return intersects(object, CTDLGAME.viewport)
         }
         return true
