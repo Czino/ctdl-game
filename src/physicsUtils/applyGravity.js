@@ -8,8 +8,12 @@ import { intersects } from '../geometryUtils'
  */
 export const applyGravity = () => {
     CTDLGAME.objects
+      .map(obj => {
+        obj.inViewport = intersects(CTDLGAME.viewport, obj)
+        return obj
+      })
       .filter(obj => obj.class === 'Character' || obj.enemy || obj.class === 'Item')
-      .filter(obj => intersects(CTDLGAME.viewport, obj)) // only apply gravity to objects in viewport
+      .filter(obj => obj.inViewport) // only apply gravity to objects in viewport
       .map(obj => obj.vy += constants.GRAVITY)
 
     // workaround for worst case

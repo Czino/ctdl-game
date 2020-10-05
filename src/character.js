@@ -273,7 +273,7 @@ export default function(id, options) {
       if (this.vx > 0) this.vx -= 1
     }
 
-    if (this.vy !== 0) {
+    if (this.vy !== 0 && this.inViewport) {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)

@@ -24,12 +24,12 @@ const ramps = [
   t01, t11,
   t02, t12,
   t03, t13,
-  t26, t36
+  t26, t36,
+  t59, t69, t510, t610,
+  t76, t86
 ].map(tile => tile.toString())
 const solids = [
-  t04, t14,
-  t05, t15,
-  t06, t16,
+  t04, t14, t77, t87, t78, t88
 ].map(tile => tile.toString())
 const undergroundTiles = [
   t04, t14
@@ -101,14 +101,23 @@ const groundUp = [
   [ t03, t13, t05, t04, t04, t04, t04, t06, t10, t10, t10, t10 ],
   [ t04, t04, t06, t10, t10, t10, t10, t10, t10, t10, t10, t10 ]
 ]
+const groundDown = [
+  [ ],
+  [ t11, t12 ],
+  [ t04, t15, t02, t36, t12 ],
+  [ t10, t16, t14, t04, t15, t02, t12 ],
+  [ t10, t10, t10, t10, t16, t04, t15, t02, t12 ],
+  [ t10, t10, t10, t10, t10, t10, t16, t14, t15, t02 ],
+  [ t10, t10, t10, t10, t10, t10, t10, t10, t16, t14 ]
+]
 const groundDownTwistBg = [
   [ ],
   [ ],
   [ t16, t04, t14, t14, t04, t04 ],
   [ t00, t10, t37, t37, t27, t03, t10 ],
   [ t00, t00, t00 ],
-
 ]
+
 const groundDownTwist = [
   [ t01, t12 ],
   [ t15, t20, t02, t01, t03, t12, t00, t00, t00, t00, t00, t03, t12, t01 ],
@@ -160,7 +169,6 @@ const stoneMoss = [
   [ t00, t89 ],
   [ t710, t810 ]
 ]
-
 
 const bigTree1 = [
   [ t00, t00, t00, t40, t50, t60, t40, t50, t71 ],
@@ -220,9 +228,9 @@ const bush = [
 ]
 
 const branches = [
-  [ t00, t34, t50, t40, t50, t70 ],
+  [ t00, t34, t50, t50, t50, t70 ],
   [ t34, t61, t51, t41, t51, t62, t80 ],
-  [ t32, t73, t83, t43, t73, t82 ],
+  [ t32, t73, t82, t33, t73, t82 ],
 ]
 const branches2 = [
   [ t00, t00, t01 ],
@@ -230,6 +238,10 @@ const branches2 = [
   [ t30, t41, t61, t51, t41, t50, t51, t80 ],
   [ t00, t32, t73, t37, t43, t61, t82 ],
   [ t00, t00, t00, t00, t00, t27, t00 ],
+]
+const twig = [
+  [ t01 ],
+  [ t27 ],
 ]
 
 // create random underground texture
@@ -250,6 +262,12 @@ parallax = parallax.concat(parsePattern(bigTree2, 14, 106))
 parallax = parallax.concat(parsePattern(bigTree1, 19, 107))
 parallax = parallax.concat(parsePattern(bigTree1, 26, 104))
 parallax = parallax.concat(parsePattern(bigTree2, 32, 109))
+parallax = parallax.concat(parsePattern(climbTree, 36, 109))
+parallax = parallax.concat(parsePattern(bush, 41, 115))
+parallax = parallax.concat(parsePattern(bigTree1, 40, 104))
+parallax = parallax.concat(parsePattern(bigTree2, 45, 111))
+parallax = parallax.concat(parsePattern(bigTree2, 49, 109))
+parallax = parallax.concat(parsePattern(climbTree, 52, 110))
 
 fg = fg.concat(parsePattern(groundUp, 29, 115))
 fg = fg.concat(parsePattern(groundUp, 39, 113))
@@ -266,6 +284,7 @@ bg = bg.concat(parsePattern(fillArea([t10], 13, 5), 51, 115))
 fg = fg.concat(parsePattern(fillArea([t10], 11, 1), 61, 119))
 bg = bg.concat(parsePattern(groundDownTwistBg, 58, 113))
 fg = fg.concat(parsePattern(groundDownTwist, 58, 113))
+fg = fg.concat(parsePattern(groundDown, 72, 113))
 
 fg = fg.concat(parsePattern(stump, 5, 117))
 fg = fg.concat(parsePattern(bigTree1, 7, 104))
@@ -281,24 +300,36 @@ bg = bg.concat(parsePattern(stoneMoss, 32, 116))
 bg = bg.concat(parsePattern(smallStoneMoss, 34, 117))
 bg = bg.concat(parsePattern(bigTree1, 34, 102))
 bg = bg.concat(parsePattern(bigTree2, 38, 101))
-bg = bg.concat(parsePattern(stoneMoss, 69, 113))
-bg = bg.concat(parsePattern(stumpMoss, 70, 112))
 fg = fg.concat(parsePattern(climbTree, 44, 104))
 bg = bg.concat(parsePattern(bush, 50, 110))
 fg = fg.concat(parsePattern(branches, 50, 110))
-fg = fg.concat(parsePattern(branches, 57, 108))
-bg = bg.concat(parsePattern(bigTree1, 61, 105))
-fg = fg.concat(parsePattern(branches2, 63, 108))
 fg = fg.concat(parsePattern(mushroom1, 55, 118))
 fg = fg.concat(parsePattern(mushroom3, 57, 118))
 fg = fg.concat(parsePattern(mushroom4, 58, 118))
 fg = fg.concat(parsePattern(mushroom5, 59, 118))
-objects.push(makeBoundary({
-  x: 70 * tileSize,
-  y: 112 * tileSize,
-  w: tileSize * 2,
-  h: tileSize * 3
-}))
+fg = fg.concat(parsePattern(branches, 57, 108))
+bg = bg.concat(parsePattern(bigTree1, 61, 105))
+fg = fg.concat(parsePattern(branches2, 63, 108))
+bg = bg.concat(parsePattern(stoneMoss, 69, 113))
+fg = fg.concat(parsePattern(stumpMoss, 70, 112))
+fg = fg.concat(parsePattern(twig, 74, 112))
+fg = fg.concat(parsePattern(branches, 75, 113))
+bg = bg.concat(parsePattern(bigTree2, 73, 103))
+bg = bg.concat(parsePattern(climbTree, 77, 109))
+fg = fg.concat(parsePattern(bigTree1, 80, 104))
+fg = fg.concat(parsePattern(branches2, 83, 115))
+fg = fg.concat(parsePattern(climbTree, 89, 108))
+fg = fg.concat(parsePattern(stone, 94, 117))
+fg = fg.concat(parsePattern(smallStone, 96, 118))
+fg = fg.concat(parsePattern(bigTree1, 94, 104))
+fg = fg.concat(parsePattern(mushroom1, 101, 118))
+fg = fg.concat(parsePattern(mushroom2, 104, 118))
+fg = fg.concat(parsePattern(log, 105, 117))
+fg = fg.concat(parsePattern(mushroom4, 105, 118))
+fg = fg.concat(parsePattern(mushroom5, 107, 118))
+bg = bg.concat(parsePattern(bigTree2, 101, 107))
+bg = bg.concat(parsePattern(bigTree1, 107, 106))
+bg = bg.concat(parsePattern(bush, 111, 115))
 
 fg.forEach(tile => {
   if (ramps.indexOf(tile.tile.toString()) !== -1) {
