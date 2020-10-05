@@ -1,5 +1,5 @@
 import constants from '../constants'
-import { loadWorldObjects, saveGame } from '../gameUtils'
+import { loadWorldObjects, saveGame, updateViewport } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
 import { makeBoundary } from '../geometryUtils'
 import World from '../world'
@@ -63,6 +63,7 @@ export const changeMap = async (id, from) => {
   CTDLGAME.katoshi.x = newWorld.map.start[from].x + 5
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
 
+  updateViewport()
   // save again the new map
   await saveGame()
 }

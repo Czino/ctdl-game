@@ -196,12 +196,11 @@ goToForest.touchEvent = () => {
   changeMap('forest', 'city')
 }
 
-// TODO move to world
 objects.push(new Brian(
   'brian',
   {
     x: 970,
-    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32
+    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
   }
 ))
 
@@ -211,8 +210,8 @@ events.push(goToForest)
 export default {
   world: { w: 1000, h: 1024 },
   start: {
-    newGame: { x: 60, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 30 },
-    forest: { x: 950, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 30 }
+    newGame: { x: 60, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31 },
+    forest: { x: 950, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31 }
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),

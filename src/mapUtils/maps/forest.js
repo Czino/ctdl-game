@@ -373,7 +373,7 @@ events.push(gotToCity)
 export default {
   world: { w: 1000, h: 1024 },
   start: {
-    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32}
+    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 33}
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),

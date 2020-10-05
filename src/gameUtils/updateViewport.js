@@ -10,7 +10,7 @@ export const updateViewport = () => {
     CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
   } else {
     CTDLGAME.viewport.x = Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2)
-    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h / 2))
+    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h - constants.HEIGHT / 2))
   }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)
