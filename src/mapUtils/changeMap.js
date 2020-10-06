@@ -8,6 +8,7 @@ import Shitcoiner from '../shitcoiner'
 import Rabbit from '../rabbit'
 import Brian from '../brian'
 import Item from '../item'
+import { initSoundtrack } from '../soundtrack'
 
 export const changeMap = async (id, from) => {
   // save state before changing
@@ -70,6 +71,7 @@ export const changeMap = async (id, from) => {
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
 
   updateViewport()
+  initSoundtrack(newWorld.map.track)
   // save again the new map
   await saveGame()
 }

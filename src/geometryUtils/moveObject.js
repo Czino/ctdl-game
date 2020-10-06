@@ -12,7 +12,7 @@ const collidesWithHeightMask = (anchor, point, heightMask) => {
         x: anchorPoint.x - point.x,
         y: anchorPoint.y - point.y
       }
-      const isSolid = heightMask[touchPoint.y][touchPoint.x] > 0
+      const isSolid = !heightMask[touchPoint.y] || heightMask[touchPoint.y][touchPoint.x] > 0
       if (isSolid) return true
     }
   }

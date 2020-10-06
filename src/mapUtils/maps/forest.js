@@ -29,7 +29,7 @@ const ramps = [
   t76, t86
 ].map(tile => tile.toString())
 const solids = [
-  t04, t14, t77, t87, t78, t88
+  t10, t04, t14, t77, t87, t78, t88
 ].map(tile => tile.toString())
 const undergroundTiles = [
   t04, t14
