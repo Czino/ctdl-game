@@ -7,6 +7,7 @@ import { playSound } from './sounds';
 export default function(id, options) {
   this.id = id;
   this.class = 'Item'
+  this.applyGravity = true
   this.spriteData = spriteData[this.id]
 
   this.w = this.spriteData.w

@@ -130,9 +130,12 @@ export default {
   helperContext,
   CONTROLS,
   BUTTONS,
-  SPAWNRATES: {
+  SPAWNRATES: { // TODO move to individal map
     shitcoiner: {
       city: .01
+    },
+    rabbit: {
+      forest: .005
     }
   }
 }

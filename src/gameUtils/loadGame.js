@@ -5,6 +5,7 @@ import World from '../world'
 import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
+import Rabbit from '../rabbit'
 import Brian from '../brian'
 import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
@@ -30,7 +31,8 @@ export const loadGame = async () => {
   if (time) CTDLGAME.frame = time
 
   if (objects) {
-    CTDLGAME.objects = objects.map(object => {
+    CTDLGAME.objects = objects
+      .map(object => {
       if (object.class === 'Block') {
         return new Block(
           object.id,
@@ -39,6 +41,11 @@ export const loadGame = async () => {
         )
       } else if (object.class === 'Shitcoiner') {
         return new Shitcoiner(
+          object.id,
+          object
+        )
+      } else if (object.class === 'Rabbit') {
+        return new Rabbit(
           object.id,
           object
         )
@@ -92,7 +99,9 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
-  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
+  CTDLGAME.objects.forEach(object => {
+    CTDLGAME.quadTree.insert(object)
+  })
 
   let timeOfDay = getTimeOfDay()
   if (timeOfDay > 18.5) {

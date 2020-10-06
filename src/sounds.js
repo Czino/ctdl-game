@@ -1,6 +1,10 @@
-import { Synth, NoiseSynth, Gain, now, start } from 'tone'
+import { Synth, NoiseSynth, Gain, BitCrusher, now, start } from 'tone'
 
-const gain = new Gain(0).toDestination()
+const gain = new Gain(1).toDestination()
+const crusher = new BitCrusher({
+  bits: 8,
+  wet: 1
+});
 
 const pulseOptions = {
   oscillator: {
@@ -39,12 +43,14 @@ const sineOptions = {
   }
 }
 
-const pulseSynth = new Synth(pulseOptions).connect(gain).toDestination()
-const squareSynth = new Synth(squareOptions).connect(gain).toDestination()
-const triangleSynth = new Synth(triangleOptions).connect(gain).toDestination()
-const sineSynth = new Synth(sineOptions).connect(gain).toDestination()
-const noiseSynth = new NoiseSynth().connect(gain).toDestination()
-const noise2Synth = new NoiseSynth().connect(gain).toDestination()
+let pulseSynth = new Synth(pulseOptions).connect(gain)
+let squareSynth = new Synth(squareOptions).connect(gain)
+let triangleSynth = new Synth(triangleOptions).connect(gain)
+let sineSynth = new Synth(sineOptions).connect(gain)
+let noiseSynth = new NoiseSynth().connect(gain)
+let noise2Synth = new NoiseSynth()
+
+noise2Synth.chain(crusher, gain)
 
 let enabled = true
 
@@ -67,6 +73,10 @@ const sounds = {
     const present = now()
     const dur = .1
 
+
+    noiseSynth.dispose()
+    noiseSynth = new NoiseSynth()
+    noiseSynth.connect(gain)
     noiseSynth.noise.type = 'pink'
 
     noiseSynth.envelope.attack = .005
@@ -105,6 +115,9 @@ const sounds = {
     const present = now()
     const dur = .05
 
+    noiseSynth.dispose()
+    noiseSynth = new NoiseSynth()
+    noiseSynth.connect(gain)
     noiseSynth.noise.type = 'brown'
     noiseSynth.envelope.attack = .005
     noiseSynth.envelope.decay = .1
@@ -141,6 +154,9 @@ const sounds = {
     const present = now()
     const dur = .05
 
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
     noiseSynth.noise.type = 'pink'
 
     noiseSynth.envelope.attack = .05
@@ -155,6 +171,9 @@ const sounds = {
     const present = now()
     const dur = .05
 
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
     noise2Synth.noise.type = 'brown'
 
     noise2Synth.envelope.attack = .05
@@ -162,13 +181,17 @@ const sounds = {
     noise2Synth.envelope.sustain = .3
     noise2Synth.envelope.release = .17
 
-    noise2Synth.triggerAttack(present, .1)
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .1)
     noise2Synth.triggerRelease(present + dur)
   },
   'shitcoinerHurt': () => {
     const present = now()
     const dur = .05
 
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
     noise2Synth.noise.type = 'brown'
 
     noise2Synth.envelope.attack = .005
@@ -176,7 +199,8 @@ const sounds = {
     noise2Synth.envelope.sustain = .3
     noise2Synth.envelope.release = .07
 
-    noise2Synth.triggerAttack(present, .3)
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .3)
     noise2Synth.triggerRelease(present + dur)
 
     pulseSynth.portamento = 0
@@ -189,10 +213,39 @@ const sounds = {
     pulseSynth.setNote('G1', present + dur / 2, .05)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
+  'rabbitHurt': () => {
+    const present = now()
+    const dur = .05
+
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+    noise2Synth.noise.type = 'white'
+
+    noise2Synth.envelope.attack = .005
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .01)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    squareSynth.portamento = dur / 3
+    pulseSynth.envelope.attack = dur
+    pulseSynth.envelope.decay = .1
+    pulseSynth.envelope.sustain = .3
+    pulseSynth.envelope.release = .07
+
+    pulseSynth.triggerAttack('A#7', present + dur / 3, .01)
+    pulseSynth.setNote('G6', present + dur / 2 * 1.5, .05)
+    pulseSynth.triggerRelease(present + dur / 2 + dur)
+  },
   'drop': () => {
     const present = now()
     const dur = .05
 
+    crusher.bits = 16
     noise2Synth.noise.type = 'brown'
 
     noise2Synth.envelope.attack = .005
@@ -200,7 +253,8 @@ const sounds = {
     noise2Synth.envelope.sustain = .3
     noise2Synth.envelope.release = .07
 
-    noise2Synth.triggerAttack(present, .05)
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .05)
     noise2Synth.triggerRelease(present + dur)
 
     triangleSynth.portamento = 0
@@ -236,6 +290,25 @@ const sounds = {
     })
     noiseSynth.triggerRelease(time + dur)
     triangleSynth.triggerRelease(time + dur)
+  },
+  'burn': () => {
+    const present = now()
+    const dur = .3
+
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.chain(crusher, gain)
+    crusher.bits = 8
+    noise2Synth.noise.type = 'brown'
+
+    noise2Synth.envelope.attack = .004
+    noise2Synth.envelope.decay = 1
+    noise2Synth.envelope.sustain = 1
+    noise2Synth.envelope.release = 3
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .03)
+    noise2Synth.triggerRelease(present + dur)
   }
 }
 

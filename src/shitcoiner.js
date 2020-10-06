@@ -19,6 +19,7 @@ const items = [
 export default function(id, options) {
   this.id = id;
   this.class = 'Shitcoiner'
+  this.applyGravity = true
   this.enemy = true
   this.spriteData = sprites.shitcoiner
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
@@ -36,7 +37,7 @@ export default function(id, options) {
   this.kneels = false
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 2
-  this.senseRadius = Math.random() * 50 + 30
+  this.senseRadius = Math.round(Math.random() * 50) + 30
 
   this.idle = () => {
     this.status = 'idle'
@@ -286,6 +287,7 @@ export default function(id, options) {
     frame: this.frame,
     usd: this.usd,
     item: this.item,
-    walkingSpeed: this.walkingSpeed
+    walkingSpeed: this.walkingSpeed,
+    senseRadius: this.senseRadius
   })
 }

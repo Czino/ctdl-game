@@ -13,7 +13,6 @@ const reverb = new Reverb({
   decay: 17,
   wet: .5,
 })
-window.reverb = reverb
 
 const pulseOptions = {
   oscillator: {
@@ -164,7 +163,14 @@ export const initSoundtrack = id => {
 
   if (Transport.state === 'started') stopMusic()
 
-  synths.map(synth => synth.connect(gain))
+  if (pulsePart) pulsePart.remove()
+  if (pulse2Part) pulse2Part.remove()
+  if (sinePart) sinePart.remove()
+  if (trianglePart) trianglePart.remove()
+  if (noisePart) noisePart.remove()
+  if (brownNoisePart) brownNoisePart.remove()
+
+  synths.map(synth => synth.disconnect() && synth.connect(gain))
   if (song.reverbs) {
     song.reverbs.map(synth => {
       synth.disconnect()
@@ -175,7 +181,6 @@ export const initSoundtrack = id => {
   Transport.loop = song.loop
   Transport.loopStart = 0
   Transport.loopEnd = song.length
-
 
   if (song.pulse) {
     pulsePart = new Part((time, note) => {
@@ -246,13 +251,13 @@ export const stopMusic = () => {
   if (!song) return
 
   Transport.stop()
-  if (song.pulse) pulsePart.stop(0)
-  if (song.pulse2) pulse2Part.stop(0)
-  if (song.square) squarePart.stop(0)
-  if (song.triangle) trianglePart.stop(0)
-  if (song.sine) sinePart.stop(0)
-  if (song.noise) noisePart.stop(0)
-  if (song.brownNoise) brownNoisePart.stop(0)
+  if (pulsePart) pulsePart.stop(0)
+  if (pulse2Part) pulse2Part.stop(0)
+  if (squarePart) squarePart.stop(0)
+  if (trianglePart) trianglePart.stop(0)
+  if (sinePart) sinePart.stop(0)
+  if (noisePart) noisePart.stop(0)
+  if (brownNoisePart) brownNoisePart.stop(0)
 }
 
 export const changeVolume = value => {

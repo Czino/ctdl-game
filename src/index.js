@@ -33,9 +33,8 @@ import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 
 // import { playSound } from './sounds'
-
-// playSound('woosh')
-// setInterval(() => playSound('woosh'), 3000)
+// playSound('burn')
+// setInterval(() => playSound('burn'), 3000)
 
 // TODO finish forest tiling
 // TODO add forest enemies
@@ -164,9 +163,7 @@ function tick() {
 
     cleanUpStage()
 
-    if (CTDLGAME.isNight) {
-      spawnEnemies()
-    }
+    spawnEnemies()
 
     if (CTDLGAME.wizardCountdown === 0) {
       const wizard = new Wizard(
@@ -188,6 +185,7 @@ function tick() {
     applyGravity()
     CTDLGAME.objects
       .filter(object => object.update)
+      .filter(obj => obj.inViewport)
       .forEach(object => object.update())
 
     updateViewport()

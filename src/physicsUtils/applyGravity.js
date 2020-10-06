@@ -12,7 +12,7 @@ export const applyGravity = () => {
         obj.inViewport = intersects(CTDLGAME.viewport, obj)
         return obj
       })
-      .filter(obj => obj.class === 'Character' || obj.enemy || obj.class === 'Item')
+      .filter(obj => obj.applyGravity)
       .filter(obj => obj.inViewport) // only apply gravity to objects in viewport
       .map(obj => obj.vy += constants.GRAVITY)
 

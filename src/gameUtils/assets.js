@@ -9,6 +9,7 @@ import wizard from '../sprites/wizard.png'
 import explosion from '../sprites/explosion.png'
 import items from '../sprites/items.png'
 import shitcoiner from '../sprites/shitcoiner.png'
+import rabbit from '../sprites/rabbit.png'
 import brian from '../sprites/brian.png'
 import moon from '../sprites/moon.png'
 import genesisBlock from '../sprites/genesis-block.png'
@@ -18,6 +19,7 @@ import city from '../sprites/city.png'
 import forest from '../sprites/forest.png'
 import inventoryBlock from '../sprites/inventory-block.png'
 
+// TODO can I somehow dynamically load assets when needed?
 export const assets = {
   font,
   logo,
@@ -29,6 +31,7 @@ export const assets = {
   explosion,
   items,
   shitcoiner,
+  rabbit,
   brian,
   moon,
   genesisBlock,

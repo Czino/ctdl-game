@@ -1,10 +1,11 @@
 import constants from '../constants'
 import Shitcoiner from '../shitcoiner'
+import Rabbit from '../rabbit'
 import { CTDLGAME } from './CTDLGAME'
 import { intersects } from '../geometryUtils'
 
 export const spawnEnemies = () => {
-  if (Math.random() < constants.SPAWNRATES.shitcoiner[CTDLGAME.world.id]) {
+  if (CTDLGAME.isNight && Math.random() < constants.SPAWNRATES.shitcoiner[CTDLGAME.world.id]) {
     let shitcoiner = new Shitcoiner(
       'shitcoiner-' + Math.random(),
       {
@@ -18,5 +19,31 @@ export const spawnEnemies = () => {
       .filter(point => point.isSolid && point.id !== shitcoiner.id)
       .some(point => intersects(shitcoiner.getBoundingBox(), point.getBoundingBox()))
     if (!hasCollided) CTDLGAME.objects.push(shitcoiner)
+  }
+  if (Math.random() < constants.SPAWNRATES.rabbit[CTDLGAME.world.id]) {
+    let rabbit = new Rabbit(
+      'rabbit-' + Math.random(),
+      {
+        x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
+        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
+        status: 'spawn'
+      }
+    )
+
+    // spawn extra high and test down until ground is found
+
+    let spawned = false
+    do {
+      let hasCollided = CTDLGAME.quadTree.query(rabbit.getBoundingBox())
+        .filter(point => point.isSolid && point.id !== rabbit.id)
+        .some(point => intersects(rabbit.getBoundingBox(), point.getBoundingBox()))
+
+      if (!hasCollided) {
+        spawned = true
+        CTDLGAME.objects.push(rabbit)
+      } else {
+        rabbit.y -= 1
+      }
+    } while (!spawned && rabbit.y > 0)
   }
 }

@@ -20,6 +20,7 @@ const items = [
 export default function(id, options) {
   this.id = id;
   this.class = 'Brian'
+  this.applyGravity = true
   this.enemy = true
   this.spriteData = sprites.brian
   this.health = 25

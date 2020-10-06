@@ -16,6 +16,7 @@ const sprites = {
 export default function(id, options) {
   this.id = id;
   this.class = 'Character'
+  this.applyGravity = true
   this.spriteData = sprites[id]
   this.maxHealth = options.maxHealth ?? 21
   this.health = options.health ?? 21
@@ -150,8 +151,12 @@ export default function(id, options) {
 
   this.hurt = (dmg, direction) => {
     if (/hurt|rekt/.test(this.status)) return
-    this.dmgs.push({y: -8, dmg})
+    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
+
+    if (!lostFullPoint) return
+
+    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
     this.status = 'hurt'
     this.vx = direction === 'left' ? 6 : -6
     this.vy = -3
@@ -217,7 +222,7 @@ export default function(id, options) {
       w: this.w + this.senseRadius,
       h: this.h + this.senseRadius
     })
-      .filter(prey => prey.class === 'Shitcoiner' && prey.status !== 'rekt' && prey.status !== 'burning')
+      .filter(prey => prey.enemy && prey.status !== 'rekt' && prey.status !== 'burning')
       .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     let enemy = getClosest(this.getCenter(), enemies)
