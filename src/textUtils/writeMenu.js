@@ -21,6 +21,28 @@ export const writeMenu = () => {
     text.callback()
   }
 
+  if (text.cutScene) {
+    constants.menuContext.fillStyle = '#212121'
+    constants.menuContext.fillRect(
+      CTDLGAME.viewport.x,
+      CTDLGAME.viewport.y,
+      constants.WIDTH,
+      constants.HEIGHT
+    )
+    write(
+      constants.menuContext,
+      text.text, {
+        x: CTDLGAME.viewport.x + constants.TEXTBOX.x,
+        y: CTDLGAME.viewport.y + Math.round(constants.HEIGHT / 3),
+        w: constants.TEXTBOX.w
+      },
+      'left',
+      false,
+      CTDLGAME.frame - text.frame
+    )
+    return
+  }
+
   if (CTDLGAME.lockCharacters) {
     constants.menuContext.fillStyle = '#212121'
     constants.menuContext.fillRect(

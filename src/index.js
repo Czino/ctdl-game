@@ -23,7 +23,7 @@ import {
   circadianRhythm,
   spawnEnemies,
   cleanUpStage,
-  showShop
+  showShop, showSettings
 } from './gameUtils'
 import { writeMenu } from './textUtils'
 import Wizard from './wizard'
@@ -125,6 +125,15 @@ function tick() {
     window.requestAnimationFrame(tick)
     return
   }
+  if (CTDLGAME.cutScene) {
+    clearCanvas()
+
+    writeMenu()
+    showSettings()
+    CTDLGAME.frame++
+    window.requestAnimationFrame(tick)
+    return
+  }
   if (!CTDLGAME.hodlonaut) {
     window.requestAnimationFrame(tick)
     return
@@ -183,7 +192,6 @@ function tick() {
     CTDLGAME.world.update()
 
     applyGravity()
-    console.log(CTDLGAME.objects)
     CTDLGAME.objects
       .filter(object => object.update)
       .filter(obj => obj.inViewport)

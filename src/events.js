@@ -1,7 +1,7 @@
 import * as db from './db'
 import { contains } from './geometryUtils'
 import constants from './constants'
-import { CTDLGAME, loadGame, newGame, saveStateExists } from './gameUtils'
+import { CTDLGAME, loadGame, newGame, saveStateExists, showIntro } from './gameUtils'
 import { addTextToQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
@@ -77,11 +77,11 @@ constants.BUTTONS = constants.BUTTONS.concat([
     h: 10,
     active: true,
     onclick: () => {
-      stopMusic()
       playSound('select')
 
-      newGame()
+      showIntro()
       CTDLGAME.startScreen = false
+      CTDLGAME.cutScene = true
 
       constants.BUTTONS
         .filter(button => /newGame|loadGame/.test(button.action))
