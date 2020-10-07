@@ -62,6 +62,15 @@ export default function(id, options) {
     y: this.y + this.h / 2
   })
 
+
+  this.getAnchor = () => ({
+      x: this.getBoundingBox().x,
+      y: this.getBoundingBox().y + this.getBoundingBox().h,
+      w: this.getBoundingBox().w,
+      h: 1
+  })
+
+
   this.select = () => {}
 
   this.toJSON = () => ({

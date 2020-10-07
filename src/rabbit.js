@@ -120,12 +120,12 @@ export default function(id, options) {
     this.status = 'rekt'
   }
 
-  this.sensePrey = () => {
+  this.senseEnemies = () => {
     let preys = CTDLGAME.quadTree.query({
       x: this.x - this.senseRadius,
       y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius,
-      h: this.h + this.senseRadius
+      w: this.w + this.senseRadius * 2,
+      h: this.h + this.senseRadius * 2
     })
       .filter(prey => prey.class === 'Character')
       .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
@@ -136,7 +136,17 @@ export default function(id, options) {
   this.update = () => {
     const sprite = CTDLGAME.assets.rabbit
 
-    if (CTDLGAME.lockCharacters) return
+    if (CTDLGAME.lockCharacters) {
+      let data = this.spriteData[this.direction][this.status][0]
+      constants.charContext.globalAlpha = 1
+
+      constants.charContext.drawImage(
+        sprite,
+        data.x, data.y, this.w, this.h,
+        this.x, this.y, this.w, this.h
+      )
+      return
+    }
 
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
@@ -163,7 +173,7 @@ export default function(id, options) {
       this.status = 'turnEvil'
     }
     if (!/turnEvil|rekt|spawn/.test(this.status)) {
-      const prey = this.sensePrey()
+      const prey = this.senseEnemies()
       if (prey) {
         if (this.isEvil) {
           if (intersects(this.getBoundingBox(), prey.getBoundingBox())) { // biting distance
@@ -258,14 +268,7 @@ export default function(id, options) {
     h: this.h
   })
 
-  this.getAnchor = () => this.status !== 'rekt'
-    ? ({
-        x: this.getBoundingBox().x,
-        y: this.getBoundingBox().y + this.getBoundingBox().h,
-        w: this.getBoundingBox().w,
-        h: 1
-    })
-    : ({
+  this.getAnchor = () => ({
       x: this.getBoundingBox().x,
       y: this.getBoundingBox().y + this.getBoundingBox().h,
       w: this.getBoundingBox().w,

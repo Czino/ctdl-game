@@ -7,6 +7,7 @@ import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
 import Ramp from '../../ramp'
 import { makeBoundary } from '../../geometryUtils'
+import Bear from '../../bear'
 
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
@@ -370,6 +371,14 @@ gotToCity.touchEvent = () => {
 }
 events.push(gotToCity)
 
+
+objects.push(new Bear(
+  'bigBear',
+  {
+    x: 970,
+    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
+  }
+))
 export default {
   world: { w: 1000, h: 1024 },
   start: {

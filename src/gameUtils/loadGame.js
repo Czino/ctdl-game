@@ -6,6 +6,7 @@ import Character from '../character'
 import Block from '../block'
 import Shitcoiner from '../shitcoiner'
 import Rabbit from '../rabbit'
+import Bear from '../bear'
 import Brian from '../brian'
 import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
@@ -54,6 +55,11 @@ export const loadGame = async () => {
           object.id,
           object
         )
+      } else if (object.class === 'Bear') {
+        return new Bear(
+          object.id,
+          object
+        )
       } else if (object.class === 'Item') {
         return new Item(
           object.id,
@@ -91,6 +97,7 @@ export const loadGame = async () => {
     katoshi
   )
 
+  
   if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
@@ -99,6 +106,13 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
+  // CTDLGAME.objects.push(new Bear(
+  //   'bigBear',
+  //   {
+  //     x: 46,
+  //     y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 33
+  //   }
+  // ))
   CTDLGAME.objects.forEach(object => {
     CTDLGAME.quadTree.insert(object)
   })

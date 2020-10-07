@@ -1,4 +1,4 @@
-import brian from './sprites/brian'
+import bear from './sprites/bear'
 import Item from './item'
 import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects, getClosest } from './geometryUtils'
@@ -8,27 +8,26 @@ import constants from './constants';
 import { playSound } from './sounds';
 
 const sprites = {
-  brian
+  bear
 }
 const items = [
-  { id: 'pizza', chance: 0.01 },
-  { id: 'taco', chance: 0.02 },
-  { id: 'opendime', chance: 0.3 },
-  { id: 'coldcard', chance: 0.05 }
+  { id: 'taco', chance: 0.03 },
+  { id: 'opendime', chance: 0.1 },
+  { id: 'coldcard', chance: 0.05 },
+  { id: 'honeybadger', chance: 0.025 }
 ]
 
 export default function(id, options) {
   this.id = id;
-  this.class = 'Brian'
+  this.class = 'Bear'
   this.applyGravity = true
   this.enemy = true
-  this.spriteData = sprites.brian
-  this.health = 25
-  this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
+  this.spriteData = sprites.bear
+  this.health = options.health ?? Math.round(Math.random() * 20 + 40)
   this.item = options.item || items.find(item => item.chance > Math.random())
   this.dmgs = []
-  this.w = 16
-  this.h = 30
+  this.w = 27
+  this.h = 28
   this.x = options.x
   this.y = options.y
   this.vx = options.vx || 0
@@ -36,41 +35,54 @@ export default function(id, options) {
   this.status = options.status || 'idle'
   this.direction = options.direction || 'left'
   this.frame = options.frame || 0
-  this.walkingSpeed = 3
-  this.senseRadius = 60
-  this.attackRange = 1
-  this.hadIntro = options.hadIntro || false
-  this.canMove = options.canMove || false
+  this.walkingSpeed = 2
+  this.attackRange = 2
+  this.senseRadius = 160
 
   this.idle = () => {
     this.status = 'idle'
   }
   this.moveLeft = () => {
-    if (/hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/hurt|block|rekt/.test(this.status) || this.vy !== 0) return
     this.direction = 'left'
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
       this.status = 'move'
+      if (this.frame % 5 === 0) playSound('drop')
     }
   }
   this.moveRight = () => {
-    if (/hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/hurt|block|rekt/.test(this.status) || this.vy !== 0) return
+    this.kneels = false
     this.direction = 'right'
 
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
+      if (this.frame % 5 === 0) playSound('drop')
     }
   }
 
-  this.hurt = dmg => {
-    if (/hurt|rekt/.test(this.status)) return
+  this.hurt = (dmg, direction) => {
+    if (/hurt|block|rekt/.test(this.status)) return
 
-    playSound('shitcoinerHurt')
-    this.dmgs.push({y: -12, dmg})
+    if (dmg < 2 && Math.random() < .3) {
+      if (Math.random() < .1) this.status = 'block'
+      return
+    } else if (dmg >= 2 && Math.random() < .3) {
+      return
+    }
+    playSound('bearHurt')
+    this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
-    this.status = 'hurt'
+
+    if (dmg > 2 && Math.random() < .5) {
+      this.status = 'hurt'
+      this.vy = -8
+      this.vx = direction === 'left' ? 4 : -4
+    }
+
     if (this.health <= 0) {
       this.health = 0
       this.die()
@@ -78,17 +90,12 @@ export default function(id, options) {
   }
   this.die = () => {
     CTDLGAME.inventory.usd += this.usd
-    this.status = 'rekt'
     this.frame = 0
+    this.status = 'rekt'
+
     setTextQueue([])
-    addTextToQueue('Brian:\nHow could this happen?', () => this.frame++)
-    addTextToQueue('Brian:\nI am ruined..', () => {
-      this.frame++
-      playSound('drop')
-    })
-    addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
-    addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
-      // TODO change back to main theme
+    addTextToQueue('Big Bear:\n*growl*', () => this.frame++)
+    addTextToQueue(`The Big Bear got rekt\nthe bull run begins!`, () => {
       if (this.item) {
         let item = new Item(
           this.item.id,
@@ -105,36 +112,19 @@ export default function(id, options) {
   }
 
   this.attack = enemy => {
-    if (/hurt|rekt/.test(this.status) || this.vy !== 0) return
-    const dmg = Math.round(Math.random()) * 2 + 3
+    if (/hurt|block|rekt/.test(this.status) || this.vy !== 0) return
 
-    if (this.status === 'attack' && this.frame === 3) {
-      playSound('woosh')
-      return enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+    if (this.status === 'attack' && this.frame === 2) {
+      playSound('bearGrowl')
     }
-    if (this.status === 'attack' && this.frame < 4) return
+    if (this.status === 'attack' && this.frame === 5) {
+      playSound('woosh')
+      return enemy.hurt(7, this.direction === 'left' ? 'right' : 'left')
+    }
+    if (this.status === 'attack') return
 
     this.frame = 0
     this.status = 'attack'
-  }
-  this.hurtAttack = () => {
-    if (/rekt/.test(this.status) || this.vy !== 0) return
-    this.status = 'hurtAttack'
-
-    const enemies = this.senseEnemies()
-    const attackBox = this.getBoundingBox()
-    attackBox.x -= this.attackRange
-    attackBox.w += this.attackRange * 2
-
-    playSound('woosh')
-
-    enemies
-      .filter(enemy => intersects(attackBox, enemy.getBoundingBox()))
-      .forEach(enemy => {
-        const dmg = Math.round(Math.random()) * 1 + 3
-        const direction = this.getCenter().x > enemy.getCenter().x ? 'right' : 'left'
-        enemy.hurt(dmg, direction)
-      })
   }
   this.senseEnemies = () => {
     let enemies = CTDLGAME.quadTree.query({
@@ -143,14 +133,14 @@ export default function(id, options) {
       w: this.w + this.senseRadius * 2,
       h: this.h + this.senseRadius * 2
     })
-      .filter(enemy => enemy.class === 'Character')
+      .filter(enemy => enemy.class === 'Character' && enemy.status !== 'rekt')
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     return enemies
   }
 
   this.update = () => {
-    const sprite = CTDLGAME.assets.brian
+    const sprite = CTDLGAME.assets.bear
 
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
@@ -160,7 +150,6 @@ export default function(id, options) {
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
     }
-
     if (this.vy !== 0 && this.inViewport) {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
@@ -169,29 +158,30 @@ export default function(id, options) {
       if (hasCollided) this.vy = 0
     }
 
+
     if (!this.hadIntro && this.senseEnemies().length > 0) {
       CTDLGAME.lockCharacters = true
 
-      addTextToQueue('Brian:\nWelcome to crypto!')
-      addTextToQueue('Brian:\nGrab a conbase account\nwhen you\'re ready to use\nthat Bitcoin')
-      addTextToQueue('Brian:\nand get into any of the\nmany other cryptos\nout there.')
-      addTextToQueue('Brian:\nWhat?\nYou want to delete\nyour account?')
-      addTextToQueue('Brian:\nI will delete you!', () => {
+      playSound('bearGrowl')
+      addTextToQueue('Big Bear:\n*rraawww*', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
-        // TODO change to brian's theme
+        // TODO change to bear's theme
       })
       this.hadIntro = true
     }
 
     // AI logic
-    if (this.canMove && !/rekt|hurt/.test(this.status)) {
+    if (this.canMove && !/rekt|spawn/.test(this.status)) {
       const enemies = this.senseEnemies()
+
       if (enemies.length > 0) {
         const enemy = getClosest(this.getCenter(), enemies)
-        const attackBox = this.getBoundingBox()
-        attackBox.x -= this.attackRange
-        attackBox.w += this.attackRange * 2
+        const attackBox = this.getCenter()
+        attackBox.x -= this.w / 2
+        attackBox.w = this.w
+        attackBox.h = 1
+
         if (intersects(attackBox, enemy.getBoundingBox())) { // attack distance
           if (this.getCenter().x > enemy.getCenter().x) {
             this.direction = 'left'
@@ -211,12 +201,10 @@ export default function(id, options) {
 
     let spriteData = this.spriteData[this.direction][this.status]
 
-    if (!/hurt|rekt/.test(this.status)) this.frame++
-    if (this.status === 'hurtAttack' && Math.random() < .25) this.status = 'idle'
+    if (!/rekt/.test(this.status)) this.frame++
+    if (this.status === 'hurt' && this.frame === 3) this.status = 'idle'
+    if (this.status === 'block' && Math.random() < .3) this.status = 'idle'
 
-    if (this.status === 'hurt' && Math.random() < .1) {
-      this.hurtAttack()
-    }
     if (this.frame >= spriteData.length) {
       this.frame = 0
     }
@@ -232,7 +220,7 @@ export default function(id, options) {
     )
 
     this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -30)
+      .filter(dmg => dmg.y > -24)
       .map(dmg => {
         write(constants.gameContext, `-${dmg.dmg}`, {
           x: this.getCenter().x - 2,
@@ -246,19 +234,27 @@ export default function(id, options) {
       })
   }
 
-  this.getBoundingBox = () => ({
-    id: this.id,
-    x: this.x + 5,
-    y: this.y + 3,
-    w: this.w - 10,
-    h: this.h - 4
-  })
+  this.getBoundingBox = () => /idle|move/.test(this.status)
+    ? ({
+      id: this.id,
+      x: this.x,
+      y: this.y + 12,
+      w: this.w,
+      h: this.h - 12
+    })
+    : ({
+      id: this.id,
+      x: this.x + 5,
+      y: this.y + 5,
+      w: this.w - 8,
+      h: this.h - 5
+    })
 
-  this.getAnchor = () => this.status !== 'rekt'
+  this.getAnchor = () => /idle|move/.test(this.status)
     ? ({
         x: this.getBoundingBox().x + 2,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-        w: this.getBoundingBox().w - 5,
+        w: this.getBoundingBox().w - 2,
         h: 1
     })
     : ({
@@ -273,11 +269,7 @@ export default function(id, options) {
     y: this.y + this.h / 2
   })
 
-  this.select = () => {
-    if (this.status === 'rekt') return addTextToQueue('Brian:\nLeave me alone...')
-    setTextQueue([])
-    addTextToQueue('Brian:\nCompliance is key to digital currencys\' success!')
-  }
+  this.select = () => {}
 
   this.toJSON = () => ({
     id: this.id,
@@ -292,8 +284,6 @@ export default function(id, options) {
     direction: this.direction,
     frame: this.frame,
     usd: this.usd,
-    item: this.item,
-    hadIntro: this.hadIntro,
-    canMove: this.canMove
+    item: this.item
   })
 }

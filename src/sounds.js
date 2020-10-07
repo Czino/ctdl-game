@@ -241,6 +241,72 @@ const sounds = {
     pulseSynth.setNote('G6', present + dur / 2 * 1.5, .05)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
+  'bearGrowl': () => {
+    const present = now()
+    const dur = .3
+
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+
+    noise2Synth.noise.type = 'brown'
+    noise2Synth.envelope.attack = dur / 2
+    noise2Synth.envelope.decay = dur
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = dur
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .02)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    noiseSynth.dispose()
+    noiseSynth = new NoiseSynth()
+    noiseSynth.chain(crusher, gain)
+    crusher.bits = 8
+
+    noiseSynth.noise.type = 'pink'
+    noiseSynth.envelope.attack = dur
+    noiseSynth.envelope.decay = dur
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = dur
+
+    noiseSynth.triggerRelease(present)
+    noiseSynth.triggerAttack(present + dur / 4, .01)
+    noiseSynth.triggerRelease(present + dur)
+
+    triangleSynth.envelope.attack = dur
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = dur / 4
+
+    triangleSynth.triggerAttack('A0', present, .3)
+    triangleSynth.triggerAttack('F#0', present + dur * 0.75, .8)
+    triangleSynth.triggerRelease(present + dur)
+  },
+  'bearHurt': () => {
+    const present = now()
+    const dur = .3
+
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+
+    noise2Synth.noise.type = 'brown'
+    noise2Synth.envelope.attack = dur / 2
+    noise2Synth.envelope.decay = dur
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = dur
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .2)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    triangleSynth.envelope.attack = 0.004
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = 0.004
+
+    triangleSynth.triggerAttack('F1', present, .3)
+    triangleSynth.triggerRelease(present + dur)
+  },
   'drop': () => {
     const present = now()
     const dur = .05

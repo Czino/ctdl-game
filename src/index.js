@@ -228,3 +228,8 @@ function tick() {
   CTDLGAME.frame++
   window.requestAnimationFrame(tick)
 }
+
+window.heal = () => {
+  CTDLGAME.hodlonaut.heal(5)
+  CTDLGAME.katoshi.heal(5)
+}

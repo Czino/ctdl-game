@@ -10,6 +10,7 @@ import explosion from '../sprites/explosion.png'
 import items from '../sprites/items.png'
 import shitcoiner from '../sprites/shitcoiner.png'
 import rabbit from '../sprites/rabbit.png'
+import bear from '../sprites/bear.png'
 import brian from '../sprites/brian.png'
 import moon from '../sprites/moon.png'
 import genesisBlock from '../sprites/genesis-block.png'
@@ -32,6 +33,7 @@ export const assets = {
   items,
   shitcoiner,
   rabbit,
+  bear,
   brian,
   moon,
   genesisBlock,
