@@ -12,7 +12,6 @@ import { initSoundtrack } from '../soundtrack'
 
 export const changeMap = async (id, from) => {
   // save state before changing
-  console.log('changeMap', id, from)
   if (from !== 'newGame') await saveGame()
 
   const newWorld = new World(id)

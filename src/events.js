@@ -2,7 +2,7 @@ import * as db from './db'
 import { contains } from './geometryUtils'
 import constants from './constants'
 import { CTDLGAME, loadGame, newGame, saveStateExists, showIntro } from './gameUtils'
-import { addTextToQueue, skipText } from './textUtils'
+import { addTextToQueue, setTextQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
 import { isSoundLoaded, playSound, toggleSounds } from './sounds'
@@ -61,7 +61,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
       await loadGame()
 
       constants.BUTTONS
-        .filter(button => /newGame|loadGame/.test(button.action))
+        .filter(button => /newGame|loadGame|skipIntro/.test(button.action))
         .forEach(button => button.active = false)
 
       window.removeEventListener('mouseup', startScreenHandler)
@@ -90,6 +90,26 @@ constants.BUTTONS = constants.BUTTONS.concat([
       window.removeEventListener('mouseup', startScreenHandler)
       window.removeEventListener('touchend', startScreenHandler)
       initEvents(false)
+    }
+  },
+  {
+    action: 'skipIntro',
+    x: constants.WIDTH / 2 - 9,
+    y: constants.HEIGHT - 60,
+    w: 60,
+    h: 10,
+    active: true,
+    onclick: () => {
+      playSound('select')
+
+      setTextQueue([])
+      stopMusic()
+      CTDLGAME.cutScene = false
+      newGame()
+
+      constants.BUTTONS
+        .filter(button => /skipIntro/.test(button.action))
+        .forEach(button => button.active = false)
     }
   },
   {

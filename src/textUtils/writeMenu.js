@@ -40,6 +40,15 @@ export const writeMenu = () => {
       false,
       CTDLGAME.frame - text.frame
     )
+    write(
+      constants.menuContext,
+      'skip', {
+        x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 9,
+        y: CTDLGAME.viewport.y + constants.HEIGHT - 60,
+        w: 60
+      },
+      'right'
+    )
     return
   }
 
