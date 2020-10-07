@@ -375,7 +375,7 @@ events.push(gotToCity)
 objects.push(new Bear(
   'bigBear',
   {
-    x: 970,
+    x: 960,
     y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
   }
 ))

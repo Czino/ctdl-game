@@ -119,7 +119,8 @@ export default function(id, options) {
     }
     if (this.status === 'attack' && this.frame === 5) {
       playSound('woosh')
-      return enemy.hurt(7, this.direction === 'left' ? 'right' : 'left')
+      let dmg = Math.round(Math.random() * 2) + 5
+      return enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
     }
     if (this.status === 'attack') return
 
@@ -281,6 +282,7 @@ export default function(id, options) {
     vx: this.vx,
     vy: this.vy,
     status: this.status,
+    health: this.health,
     direction: this.direction,
     frame: this.frame,
     usd: this.usd,
