@@ -6,6 +6,7 @@ import GameObject from '../../gameObject'
 import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
 import Brian from '../../brian'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
 
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t010 = [0, 10],
@@ -185,6 +186,18 @@ goToShop.backEvent = character => {
   CTDLGAME.showShop = character
 }
 
+const goToBuilding = new GameObject('goToBuilding', {
+  x: 69 * tileSize,
+  y: 116 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+goToBuilding.backEvent = () => {
+  setTextQueue([])
+  addTextToQueue('Something seems to be\nblocking the entry\nto the building')
+}
+
 const goToForest = new GameObject('goToForest', {
   x: 122 * tileSize,
   y: 116 * tileSize,
@@ -193,7 +206,10 @@ const goToForest = new GameObject('goToForest', {
 })
 
 goToForest.touchEvent = () => {
-  changeMap('forest', 'city')
+  const canGoToForest = !CTDLGAME.objects.find(obj => obj.id === 'brian' && obj.status !== 'rekt')
+  if (canGoToForest) {
+    changeMap('forest', 'city')
+  }
 }
 
 objects.push(new Brian(
@@ -205,6 +221,7 @@ objects.push(new Brian(
 ))
 
 events.push(goToShop)
+events.push(goToBuilding)
 events.push(goToForest)
 
 export default {

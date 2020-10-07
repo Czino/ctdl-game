@@ -1,59 +1,46 @@
 import constants from '../constants'
-import { CTDLGAME, setWorld } from './CTDLGAME'
-import { initSoundtrack } from '../soundtrack'
+import { CTDLGAME } from './CTDLGAME'
 import { addClass } from '../htmlUtils'
-import { makeBoundary } from '../geometryUtils'
 import Character from '../character'
-import World from '../world'
+import { changeMap } from '../mapUtils'
 
 /**
  * @description Method to prepare new game
  */
-export const newGame = () => {
+export const newGame = async () => {
   CTDLGAME.inventory = { // TODO refactor into factory
     usd: 0,
     sats: 0,
     blocks: []
   }
   CTDLGAME.blockHeight = -1
-  setWorld(new World('city'))
 
-  CTDLGAME.objects = CTDLGAME.objects.concat([
-    makeBoundary({ x: 0, y: 0, w: CTDLGAME.world.w, h: 12 }),
-    makeBoundary({ x: CTDLGAME.world.w - 12, y: 0, w: 12, h: CTDLGAME.world.h }),
-    makeBoundary({ x: 0, y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h, w: CTDLGAME.world.w, h: 12 }),
-    makeBoundary({ x: 0, y: 0, w: 12, h: CTDLGAME.world.h })
-  ])
-
-  CTDLGAME.gameOver = false
-  CTDLGAME.wizardCountdown = 64
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
-    {
-      x: CTDLGAME.world.map.start.newGame.x - 10,
-      y: CTDLGAME.world.map.start.newGame.y
-    }
+    {}
   )
   CTDLGAME.katoshi = new Character(
     'katoshi',
     {
-      x: CTDLGAME.world.map.start.newGame.x + 10,
-      y: CTDLGAME.world.map.start.newGame.y,
       active: false,
       direction: 'left'
     }
   )
 
+  CTDLGAME.startedNewGame = true
   CTDLGAME.hodlonaut.select()
 
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
+  CTDLGAME.gameOver = false
+  CTDLGAME.wizardCountdown = 64
+
+  await changeMap('city', 'newGame')
+
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
-
-  initSoundtrack(CTDLGAME.world.map.track)
 
   setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }

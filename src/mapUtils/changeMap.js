@@ -12,10 +12,11 @@ import { initSoundtrack } from '../soundtrack'
 
 export const changeMap = async (id, from) => {
   // save state before changing
-  await saveGame()
+  console.log('changeMap', id, from)
+  if (from !== 'newGame') await saveGame()
 
   const newWorld = new World(id)
-  const objects = await loadWorldObjects(id)
+  const objects = from !== 'newGame' ? await loadWorldObjects(id) : null
   // Save state of old world
 
   CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character' || obj.backEvent || obj.touchEvent)
@@ -59,6 +60,10 @@ export const changeMap = async (id, from) => {
         }
       })
     .map(object => CTDLGAME.objects.push(object))
+  } else {
+    CTDLGAME.world.map.objects
+    .filter(object => object.enemy)
+    .map(object => CTDLGAME.objects.push(object))
   }
 
   CTDLGAME.world.map.objects
@@ -73,7 +78,7 @@ export const changeMap = async (id, from) => {
   updateViewport()
   initSoundtrack(newWorld.map.track)
   // save again the new map
-  await saveGame()
+  if (from !== 'newGame') await saveGame()
 }
 
 export default changeMap

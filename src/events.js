@@ -193,6 +193,9 @@ export const initEvents = startScreen => {
     window.addEventListener('touchmove', mouseMove)
     window.addEventListener('touchmove', zoomHandler)
   } else {
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ') skipText()
+    })
     window.addEventListener('mousedown', click)
     window.addEventListener('mousedown', skipText)
     window.addEventListener('mouseup', clickEnd)
@@ -332,6 +335,9 @@ function clickEnd (e) {
     y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
     w: 1, h: 1
   }
+
+  if (!CTDLGAME.quadTree) return
+
   let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
 
   if (!object && CTDLGAME.ghostBlock) {

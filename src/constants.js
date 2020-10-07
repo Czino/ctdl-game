@@ -88,7 +88,7 @@ const CONTROLS = {
 let BUTTONS = []
 
 export default {
-  SLOT: '-new',
+  SLOT: '',
   WIDTH,
   HEIGHT,
   WORLD,

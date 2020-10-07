@@ -161,7 +161,7 @@ function tick() {
 
     CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
 
-    cleanUpStage()
+    if (CTDLGAME.world) cleanUpStage()
 
     spawnEnemies()
 
@@ -169,7 +169,7 @@ function tick() {
       const wizard = new Wizard(
         'wizard',
         {
-          x: CTDLGAME.hodlonaut.x - 40,
+          x: window.SELECTEDCHARACTER.x - 40,
           y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
         }
       )
@@ -183,6 +183,7 @@ function tick() {
     CTDLGAME.world.update()
 
     applyGravity()
+    console.log(CTDLGAME.objects)
     CTDLGAME.objects
       .filter(object => object.update)
       .filter(obj => obj.inViewport)

@@ -27,7 +27,7 @@ export const fadeIntoGameOver = () => {
   )
   if (deathCounter === 0) {
     CTDLGAME.gameOver = true
-    // db.destroy()
+    db.destroy()
 
     stopMusic()
     changeVolume(1)

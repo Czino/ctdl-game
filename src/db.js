@@ -37,7 +37,7 @@ export const init = dbg => {
 
 export const destroy = () => {
   return new Promise(resolve => {
-    let dbRequest = indexedDB.deleteDatabase('ctdl-game')
+    let dbRequest = indexedDB.deleteDatabase('ctdl-game' + constants.SLOT)
     dbRequest.onsuccess = () => {
       if (debug) console.log('Database destroyed')
       resolve()
@@ -59,11 +59,31 @@ export const set = (key, value) => {
       resolve()
     }
     updateRequest.onsuccess = () => {
-      if (debug) console.log('Update entry', key, value)
+      if (debug) console.log('Updated entry', key, value)
       state.put({
         'id': key,
         'value': value
       })
+      resolve()
+    }
+  })
+}
+
+export const remove = (key) => {
+  return new Promise(resolve => {
+    let state = db.transaction(['state'], 'readwrite').objectStore('state')
+    let deleteRequest = state.delete(key)
+
+    deleteRequest.onerror = () => {
+      if (debug) console.log('Remove entry', key)
+      state.add({
+        'id': key,
+        'value': value
+      })
+      resolve()
+    }
+    deleteRequest.onsuccess = () => {
+      if (debug) console.log('Removed entry', key)
       resolve()
     }
   })

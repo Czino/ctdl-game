@@ -106,13 +106,6 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
-  // CTDLGAME.objects.push(new Bear(
-  //   'bigBear',
-  //   {
-  //     x: 46,
-  //     y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 33
-  //   }
-  // ))
   CTDLGAME.objects.forEach(object => {
     CTDLGAME.quadTree.insert(object)
   })
