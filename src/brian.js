@@ -23,7 +23,7 @@ export default function(id, options) {
   this.applyGravity = true
   this.enemy = true
   this.spriteData = sprites.brian
-  this.health = 25
+  this.health = options.health ?? 25
   this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
   this.item = options.item || items.find(item => item.chance > Math.random())
   this.dmgs = []
@@ -289,6 +289,7 @@ export default function(id, options) {
     vx: this.vx,
     vy: this.vy,
     status: this.status,
+    health: this.health,
     direction: this.direction,
     frame: this.frame,
     usd: this.usd,
