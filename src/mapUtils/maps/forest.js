@@ -8,6 +8,7 @@ import constants from '../../constants'
 import Ramp from '../../ramp'
 import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../bear'
+import NPC from '../../npc'
 
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
@@ -25,12 +26,14 @@ const ramps = [
   t01, t11,
   t02, t12,
   t03, t13,
+  t04, t14,
+  t05, t15,
   t26, t36,
   t59, t69, t510, t610,
   t76, t86
 ].map(tile => tile.toString())
 const solids = [
-  t10, t04, t14, t77, t87, t78, t88
+  t10, t14, t77, t87, t78, t88
 ].map(tile => tile.toString())
 const undergroundTiles = [
   t04, t14
@@ -101,6 +104,14 @@ const groundUp = [
   [ t00, t00, t01, t03, t12, t03, t13, t05, t04, t04, t04, t04 ],
   [ t03, t13, t05, t04, t04, t04, t04, t06, t10, t10, t10, t10 ],
   [ t04, t04, t06, t10, t10, t10, t10, t10, t10, t10, t10, t10 ]
+]
+const groundUpSteep = [
+  [ t00, t00, t00, t00, t00, t00, t00, t00, t00, t03, t01 ],
+  [ t00, t00, t00, t00, t00, t00, t00, t03, t13, t05, t04 ],
+  [ t00, t00, t00, t00, t00, t03, t13, t05, t04, t06, t10 ],
+  [ t00, t00, t00, t03, t13, t05, t04, t06, t10, t10, t10 ],
+  [ t00, t03, t13, t05, t04, t06, t10, t10, t10, t10, t10 ],
+  [ t13, t05, t04, t06, t10, t10, t10, t10, t10, t10, t10 ]
 ]
 const groundDown = [
   [ ],
@@ -246,7 +257,7 @@ const twig = [
 ]
 
 // create random underground texture
-for (let i = -30; i < 158; i++) {
+for (let i = -30; i < 128; i++) {
   fg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
 }
 
@@ -286,6 +297,24 @@ fg = fg.concat(parsePattern(fillArea([t10], 11, 1), 61, 119))
 bg = bg.concat(parsePattern(groundDownTwistBg, 58, 113))
 fg = fg.concat(parsePattern(groundDownTwist, 58, 113))
 fg = fg.concat(parsePattern(groundDown, 72, 113))
+fg = fg.concat(parsePattern(groundUp, 128, 115))
+fg = fg.concat(parsePattern(groundUp, 138, 113))
+bg = bg.concat(parsePattern(fillArea([t10], 10, 3), 140, 117))
+fg = fg.concat(parsePattern(groundUp, 148, 111))
+bg = bg.concat(parsePattern(fillArea([t10], 10, 5), 150, 115))
+fg = fg.concat(parsePattern(fillArea([t03], 1, 1), 160, 111))
+fg = fg.concat(parsePattern(fillArea([t05], 1, 1), 160, 112))
+fg = fg.concat(parsePattern(groundDown, 161, 110))
+bg = bg.concat(parsePattern(fillArea([t10], 1, 7), 160, 113))
+bg = bg.concat(parsePattern(fillArea([t10], 16, 5), 161, 116))
+fg = fg.concat(parsePattern(groundUp, 165, 111))
+fg = fg.concat(parsePattern(groundUp, 175, 109))
+bg = bg.concat(parsePattern(fillArea([t10], 12, 6), 175, 114))
+fg = fg.concat(parsePattern(groundUpSteep, 186, 105))
+bg = bg.concat(parsePattern(fillArea([t10], 12, 9), 187, 111))
+fg = fg.concat(parsePattern(fillArea(grassTiles, 20, 1), 197, 105))
+fg = fg.concat(parsePattern(fillArea(undergroundTiles, 20, 1), 197, 106))
+bg = bg.concat(parsePattern(fillArea([t10], 20, 15), 197, 107))
 
 fg = fg.concat(parsePattern(stump, 5, 117))
 fg = fg.concat(parsePattern(bigTree1, 7, 104))
@@ -304,6 +333,7 @@ bg = bg.concat(parsePattern(bigTree2, 38, 101))
 fg = fg.concat(parsePattern(climbTree, 44, 104))
 bg = bg.concat(parsePattern(bush, 50, 110))
 fg = fg.concat(parsePattern(branches, 50, 110))
+bg = bg.concat(parsePattern(stump, 53, 117))
 fg = fg.concat(parsePattern(mushroom1, 55, 118))
 fg = fg.concat(parsePattern(mushroom3, 57, 118))
 fg = fg.concat(parsePattern(mushroom4, 58, 118))
@@ -375,12 +405,19 @@ events.push(gotToCity)
 objects.push(new Bear(
   'bigBear',
   {
-    x: 960,
+    x: 1960,
     y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
   }
 ))
+objects.push(new NPC(
+  'monk',
+  {
+    x: 427,
+    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 17 - tileSize
+  }
+))
 export default {
-  world: { w: 1000, h: 1024 },
+  world: { w: 2048, h: 1024 },
   start: {
     city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 33}
   },

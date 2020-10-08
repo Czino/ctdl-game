@@ -8,6 +8,7 @@ import Shitcoiner from '../shitcoiner'
 import Rabbit from '../rabbit'
 import Bear from '../bear'
 import Brian from '../brian'
+import NPC from '../npc'
 import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
@@ -65,6 +66,11 @@ export const loadGame = async () => {
           object.id,
           object
         )
+      } else if (object.class === 'NPC') {
+        return new NPC(
+          object.id,
+          object
+        )
       }
     })
   }
@@ -97,7 +103,6 @@ export const loadGame = async () => {
     katoshi
   )
 
-  
   if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
   if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
 
