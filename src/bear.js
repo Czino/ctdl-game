@@ -50,6 +50,8 @@ export default function(id, options) {
     if (hasMoved) {
       this.status = 'move'
       if (this.frame % 5 === 0) playSound('drop')
+    } else {
+      this.idle()
     }
   }
   this.moveRight = () => {
@@ -61,6 +63,8 @@ export default function(id, options) {
     if (hasMoved) {
       this.status = 'move'
       if (this.frame % 5 === 0) playSound('drop')
+    } else {
+      this.idle()
     }
   }
 
@@ -194,8 +198,11 @@ export default function(id, options) {
           this.moveLeft()
         } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
           this.moveRight()
+        } else {
+          this.idle()
         }
       } else {
+        console.log('idle')
         this.idle()
       }
     }
@@ -253,9 +260,9 @@ export default function(id, options) {
 
   this.getAnchor = () => /idle|move/.test(this.status)
     ? ({
-        x: this.getBoundingBox().x + 2,
+        x: this.getBoundingBox().x + 7,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-        w: this.getBoundingBox().w - 2,
+        w: this.getBoundingBox().w - 14,
         h: 1
     })
     : ({

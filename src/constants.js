@@ -135,7 +135,7 @@ export default {
       city: .01
     },
     rabbit: {
-      // forest: .005
+      forest: .005
     }
   }
 }

@@ -235,5 +235,6 @@ export default {
   fg: fg.map(tile => mapTile(tile, tileSize)),
   objects,
   events,
-  track: 'imperayritzDeLaCiutatIoyosa'
+  track: 'imperayritzDeLaCiutatIoyosa',
+  canSetBlocks: true
 }

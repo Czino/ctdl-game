@@ -3,6 +3,7 @@ import { CTDLGAME } from './gameUtils'
 import { moveObject } from './geometryUtils';
 import spriteData from './sprites/items'
 import { playSound } from './sounds';
+import { addTextToQueue } from './textUtils';
 
 export default function(id, options) {
   this.id = id;
@@ -19,10 +20,33 @@ export default function(id, options) {
 
   const sprite = CTDLGAME.assets.items
 
-  this.collect = () => {
+  this.touch = character => {
+    if (this.vy !== 0) return
     playSound('item')
     this.remove = true
     this.collected = true
+
+    if (this.id === 'pizza') {
+      character.heal(2)
+    } else if (this.id === 'taco') {
+      character.heal(5)
+    } else if (this.id === 'opendime') {
+      let sats = Math.round(Math.random() * 10000)
+      addTextToQueue(`You found an opendime with\nś${sats}`, () => {
+        CTDLGAME.inventory.sats += sats
+      })
+    } else if (this.id === 'coldcard') {
+      let sats = Math.round(Math.random() * 100000)
+      addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
+        CTDLGAME.inventory.sats += sats
+      })
+    } else if (this.id === 'honeybadger') {
+      addTextToQueue(`You gained the strength of the honey badger`, () => {
+        this.stength += Math.round(Math.random() + 1)
+        this.maxHealth += Math.round(Math.random() * 3 + 1)
+        this.health = this.maxHealth
+      })
+    }
   }
   this.update = () => {
     if (this.vx !== 0) {

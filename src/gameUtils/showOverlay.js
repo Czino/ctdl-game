@@ -9,7 +9,7 @@ export const showOverlay = () => {
   if (Math.abs(window.SELECTEDCHARACTER.getCenter().x - (CTDLGAME.viewport.x + CTDLGAME.cursor.x)) > 30) return
   if (Math.abs(window.SELECTEDCHARACTER.getCenter().y - (CTDLGAME.viewport.y + CTDLGAME.cursor.y)) > 30) return
 
-  if (CTDLGAME.inventory.blocks.length > 0) {
+  if (CTDLGAME.inventory.blocks.length > 0 && CTDLGAME.world.map.canSetBlocks) {
     let block = CTDLGAME.inventory.blocks[0]
     CTDLGAME.ghostBlock = new Block(
       block.id,
@@ -51,6 +51,5 @@ export const showOverlay = () => {
     if (intersectingObject || !touchingObject) {
       CTDLGAME.ghostBlock = null
     }
-
   }
 }

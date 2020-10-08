@@ -7,6 +7,7 @@ import { intersects } from '../geometryUtils'
  * @returns {void}
  */
 export const applyGravity = () => {
+    if (CTDLGAME.lockCharacters) return
     CTDLGAME.objects
       .map(obj => {
         obj.inViewport = intersects(CTDLGAME.viewport, obj)

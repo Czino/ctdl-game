@@ -56,7 +56,11 @@ export default function(id, options) {
         .filter(obj => intersects(obj, jumpTo))
 
       let canJump = obstacles.length === 0
-      if (canJump) this.jump()
+      if (canJump) {
+        this.jump()
+      } else {
+        this.idle()
+      }
     }
   }
   this.moveRight = () => {
@@ -77,7 +81,11 @@ export default function(id, options) {
         .filter(obj => intersects(obj, jumpTo))
 
       let canJump = obstacles.length === 0
-      if (canJump) this.jump()
+      if (canJump) {
+        this.jump()
+      } else {
+        this.idle()
+      }
     }
   }
   this.jump = () => {
@@ -137,7 +145,7 @@ export default function(id, options) {
     const sprite = CTDLGAME.assets.rabbit
 
     if (CTDLGAME.lockCharacters) {
-      let data = this.spriteData[this.direction][this.status][0]
+      let data = this.spriteData[this.isEvil ? 'evil' : 'good'][this.direction][this.status][0]
       constants.charContext.globalAlpha = 1
 
       constants.charContext.drawImage(

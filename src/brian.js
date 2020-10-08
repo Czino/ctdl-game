@@ -52,6 +52,8 @@ export default function(id, options) {
 
     if (hasMoved) {
       this.status = 'move'
+    } else {
+      this.idle()
     }
   }
   this.moveRight = () => {
@@ -61,6 +63,8 @@ export default function(id, options) {
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
+    } else {
+      this.idle()
     }
   }
 
@@ -143,7 +147,7 @@ export default function(id, options) {
       w: this.w + this.senseRadius * 2,
       h: this.h + this.senseRadius * 2
     })
-      .filter(enemy => enemy.class === 'Character')
+      .filter(enemy => enemy.class === 'Character' && enemy.status !== 'rekt')
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     return enemies

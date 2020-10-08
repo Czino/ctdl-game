@@ -167,11 +167,6 @@ export default function(id, options) {
     }
   }
 
-  this.eat = item => {
-    if (item === 'pizza') this.heal(2)
-    if (item === 'taco') this.heal(5)
-  }
-
   this.heal = heal => {
     if (/hurt|rekt/.test(this.status)) return
     this.heals.push({y: -8, heal})
@@ -294,31 +289,10 @@ export default function(id, options) {
 
     // collect touched items
     CTDLGAME.quadTree.query(boundingBox)
-      .filter(obj => obj.class === 'Item' && !obj.collected && obj.vy === 0)
-      .filter(item => intersects(boundingBox, item.getBoundingBox()))
-      .forEach(item => {
-        this.eat(item.id) // try eating it
-
-        if (item.id === 'opendime') {
-          let sats = Math.round(Math.random() * 10000)
-          addTextToQueue(`You found an opendime with\nś${sats}`, () => {
-            CTDLGAME.inventory.sats += sats
-          })
-        }
-        if (item.id === 'coldcard') {
-          let sats = Math.round(Math.random() * 100000)
-          addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
-            CTDLGAME.inventory.sats += sats
-          })
-        }
-        if (item.id === 'honeybadger') {
-          addTextToQueue(`You gained the strength of the honey badger`, () => {
-            this.stength += Math.round(Math.random() + 1)
-            this.maxHealth += Math.round(Math.random() * 3 + 1)
-            this.health = this.maxHealth
-          })
-        }
-        item.collect()
+      .filter(obj => obj.touch)
+      .filter(obj => intersects(boundingBox, obj.getBoundingBox()))
+      .forEach(obj => {
+        obj.touch(this)
       })
     
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'

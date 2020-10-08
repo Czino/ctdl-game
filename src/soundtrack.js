@@ -82,7 +82,7 @@ const songs = {
       triangle: mariamMatremVirginem.cello,
       sine: mariamMatremVirginem.pipe,
       square: mariamMatremVirginem.harp,
-      loop: true
+      loop: false
     },
     // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {

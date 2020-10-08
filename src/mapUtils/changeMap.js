@@ -8,6 +8,7 @@ import Shitcoiner from '../shitcoiner'
 import Rabbit from '../rabbit'
 import Brian from '../brian'
 import Item from '../item'
+import NPC from '../npc'
 import { initSoundtrack } from '../soundtrack'
 
 export const changeMap = async (id, from) => {
@@ -56,13 +57,18 @@ export const changeMap = async (id, from) => {
             object.id,
             object
           )
+        } else if (object.class === 'NPC') {
+          return new NPC(
+            object.id,
+            object
+          )
         }
       })
     .map(object => CTDLGAME.objects.push(object))
   } else {
     CTDLGAME.world.map.objects
-    .filter(object => object.enemy)
-    .map(object => CTDLGAME.objects.push(object))
+      .filter(object => object.enemy || object.class === 'NPC')
+      .map(object => CTDLGAME.objects.push(object))
   }
 
   CTDLGAME.world.map.objects

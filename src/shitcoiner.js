@@ -62,7 +62,11 @@ export default function(id, options) {
         .filter(obj => intersects(obj, climbTo))
 
       let canClimb = obstacles.length === 0
-      if (canClimb) this.climb()
+      if (canClimb) {
+        this.climb()
+      } else {
+        this.idle()
+      }
     }
   }
   this.moveRight = () => {
@@ -84,7 +88,11 @@ export default function(id, options) {
         .filter(obj => intersects(obj, climbTo))
 
       let canClimb = obstacles.length === 0
-      if (canClimb) this.climb()
+      if (canClimb) {
+        this.climb()
+      } else {
+        this.idle()
+      }
     }
   }
   this.climb = () => {
