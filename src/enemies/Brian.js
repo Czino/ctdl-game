@@ -161,6 +161,7 @@ export default function(id, options) {
     if (!this.hadIntro && senseCharacters(this).length > 0) {
       CTDLGAME.lockCharacters = true
 
+      setTextQueue([])
       addTextToQueue('Brian:\nWelcome to crypto!')
       addTextToQueue('Brian:\nGrab a conbase account\nwhen you\'re ready to use\nthat Bitcoin')
       addTextToQueue('Brian:\nand get into any of the\nmany other cryptos\nout there.')

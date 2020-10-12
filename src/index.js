@@ -38,7 +38,6 @@ import { toggleSoundtrack } from './soundtrack'
 
 // TODO finish forest tiling
 // TODO add forest enemies
-// TODO brian is not emptying text queeue
 // TODO add exchange
 // TODO no twilight
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
