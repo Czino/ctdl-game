@@ -107,6 +107,10 @@ export default function(id, options) {
         CTDLGAME.objects.push(item)
       }
     })
+    addTextToQueue('Czino:\nDear alpha-tester,\nthank you for testing\nthe game prototype.')
+    addTextToQueue('Czino:\nI hope you enjoyed it so far.')
+    addTextToQueue('Czino:\I am really curious\nwhat you think.\nI have prepared a form\n for you.\n')
+    // TODO open form?
   }
 
   this.attack = enemy => {
