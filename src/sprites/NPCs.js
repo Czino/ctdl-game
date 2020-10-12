@@ -53,4 +53,42 @@ export default {
       })
     }
   },
+  'dave': {
+    frames: [
+      { x: 0, y: 15, w: 11, h: 15 },
+      { x: 11, y: 15, w: 11, h: 15 }
+    ],
+    select: npc => {
+      addTextToQueue('Dave:\nI wish I held Bitcoin\nlonger than just a week.', () => {
+        npc.isSelected = false
+      })
+    },
+    touch: npc => {
+      const thingsToSay = [
+        [
+          'Dave:\nPlease, I need some sats...'
+        ],
+        [
+          'Dave:\nHave a sat to spare?'
+        ],
+        [
+          'Dave:\nI used to be rich...'
+        ],
+        [
+          'Dave:\nHow are your hands\nso strong?'
+        ]
+      ]
+
+      let whatToSay = random(thingsToSay)
+      whatToSay.map((text, index) => {
+        if (index === whatToSay.length - 1) {
+          addTextToQueue(text, () => {
+            npc.isTouched = false
+          })
+        } else {
+          addTextToQueue(text)
+        }
+      })
+    }
+  }
 }

@@ -18,6 +18,12 @@ export default function(id, options) {
 
   this.update = () => {
     const data = this.spriteData.frames[this.frame]
+
+    this.frame++
+    if (this.frame >= this.spriteData.frames.length) {
+      this.frame = 0
+    }
+
     constants.gameContext.drawImage(
       CTDLGAME.assets.NPCs,
       data.x, data.y, data.w, data.h,

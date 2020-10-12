@@ -6,6 +6,7 @@ import GameObject from '../../gameObject'
 import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
 import Brian from '../../enemies/Brian'
+import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 
 const tileSize = 8
@@ -217,6 +218,13 @@ objects.push(new Brian(
   {
     x: 970,
     y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
+  }
+))
+objects.push(new NPC(
+  'dave',
+  {
+    x: 347,
+    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 15
   }
 ))
 
