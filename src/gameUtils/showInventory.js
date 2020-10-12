@@ -14,6 +14,8 @@ const backpack = {
  * @description Method to show current inventory
  * @param {Object} inventory inventory object
  * @param {Object[]} inventory.blocks found blocks
+ * @param {Number} inventory.sats Bitcoin balance in sats
+ * @param {Number} inventory.usd USD Balance
  */
 export const showInventory = inventory => {
   const pos = {

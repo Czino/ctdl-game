@@ -1,9 +1,10 @@
 import { intersects } from './intersects'
 
 /**
- * @description Method to check whether two objects touch.
+ * @description Method to check whether two objects touch but do not intersect.
  * @param {Object} obj1 object1
  * @param {Object} obj2 object2
+ * @returns {Boolean} true if two objects touch
  */
 export const touches = (obj1, obj2) => {
   const feelingObj = {

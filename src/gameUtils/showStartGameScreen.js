@@ -4,7 +4,7 @@ import { write } from '../font'
 
 /**
  * @description Method to display progress bar
- * @param {Number} progress current progress between 0 - 1
+ * @returns {void}
  */
 export const showStartGameScreen = () => {
   constants.overlayContext.fillStyle = '#212121'

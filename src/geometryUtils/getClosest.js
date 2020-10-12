@@ -2,6 +2,7 @@
  * @description Method to determine which object is the closest to given object
  * @param {Object} point point determine proximity for
  * @param {Object[]} objects objects to inspect
+ * @returns {Object} closest object to given rectangle
  */
 export const getClosest = (obj1, objects) => {
   let centerX = obj1.x

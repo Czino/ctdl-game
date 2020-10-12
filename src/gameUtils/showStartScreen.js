@@ -10,7 +10,7 @@ let logoOffsetBottom = 200
 
 /**
  * @description Method to display progress bar
- * @param {Number} progress current progress between 0 - 1
+ * @returns {void}
  */
 export const showStartScreen = () => {
   constants.overlayContext.fillStyle = '#212121'

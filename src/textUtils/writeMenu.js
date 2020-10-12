@@ -7,6 +7,7 @@ const timeToShowFinishedText = 256
 
 /**
  * @description Method to write text from queue to the textbox
+ * @returns {void}
  */
 export const writeMenu = () => {
   if (textQueue.length === 0) return

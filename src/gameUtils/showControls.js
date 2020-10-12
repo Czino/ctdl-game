@@ -8,6 +8,10 @@ const controls = {
   h: 18
 }
 
+/**
+ * @description Method to render game controls
+ * @returns {void}
+ */
 export const showControls = () => {
   const pos = {
     x: controls.x + CTDLGAME.viewport.x,

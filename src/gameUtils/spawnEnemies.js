@@ -4,8 +4,14 @@ import Rabbit from '../rabbit'
 import { CTDLGAME } from './CTDLGAME'
 import { intersects } from '../geometryUtils'
 
+/**
+ * @description Method that takes care of spawning enemies according to spawn rate and world
+ * @returns {void}
+ */
 export const spawnEnemies = () => {
   if (CTDLGAME.isNight && Math.random() < constants.SPAWNRATES.shitcoiner[CTDLGAME.world.id]) {
+    // TODO maybe spawn shitcoiners like rabbits
+    // TODO maybe consider iterating through worldObects
     let shitcoiner = new Shitcoiner(
       'shitcoiner-' + Math.random(),
       {
@@ -31,7 +37,6 @@ export const spawnEnemies = () => {
     )
 
     // spawn extra high and test down until ground is found
-
     let spawned = false
     do {
       let hasCollided = CTDLGAME.quadTree.query(rabbit.getBoundingBox())

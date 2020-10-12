@@ -6,6 +6,7 @@ import { changeMap } from '../mapUtils'
 
 /**
  * @description Method to prepare new game
+ * @returns {void}
  */
 export const newGame = async () => {
   CTDLGAME.inventory = { // TODO refactor into factory
@@ -13,8 +14,7 @@ export const newGame = async () => {
     sats: 0,
     blocks: []
   }
-  CTDLGAME.blockHeight = -1
-
+  CTDLGAME.blockHeight = -1 // set blockHeight to -1 to enable fetching genesis block
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',

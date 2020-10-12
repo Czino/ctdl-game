@@ -1,3 +1,9 @@
+/**
+ * @description Method to render polygon
+ * @param {Context} context context to render only
+ * @param {Object[]} coords array of coordinates to draw. First item gives starting point, successive items are relative coordinates.
+ * @returns {void}
+ */
 export const drawPolygon = (context, coords) => {
   let pointer = coords.shift()
   context.beginPath()

@@ -5,6 +5,11 @@ import { showHealth } from './showHealth'
 import { showSettings } from './showSettings'
 import { showControls } from './showControls'
 
+/**
+ * @description Method to render game menu
+ * @param {Object} inventory inventory object
+ * @returns {void}
+ */
 export const showMenu = inventory => {
   constants.menuContext.fillStyle = '#212121'
   constants.menuContext.fillRect(

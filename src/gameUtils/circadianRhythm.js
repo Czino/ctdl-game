@@ -1,10 +1,10 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-
 import { addClass, removeClass } from '../htmlUtils'
 
 /**
  * @description Method to switch between day and night
+ * @returns {void}
  */
 export const circadianRhythm = time => {
   if (time >= 5 && time < 5.1) {

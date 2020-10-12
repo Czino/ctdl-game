@@ -1,8 +1,11 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-
 import { drawIcon } from '../icons'
 
+/**
+ * @description Method to render character's health
+ * @returns {void}
+ */
 export const showHealth = () => {
   const pos = {
     x: constants.WIDTH + CTDLGAME.viewport.x - 30,

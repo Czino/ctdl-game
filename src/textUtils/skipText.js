@@ -4,6 +4,10 @@ import { CTDLGAME } from '../gameUtils'
 
 const timeToShowFinishedText = 256
 
+/**
+ * @description Method to skip text in queue
+ * @returns {void}
+ */
 export const skipText = () => {
   let currentText = textQueue[0]
   if (currentText) {

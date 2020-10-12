@@ -4,6 +4,7 @@ import { addTextToQueue } from '../textUtils'
 /**
  * @description Method to add a block to the inventory
  * @param {Object} block the block to add
+ * @returns {void}
  */
 const addBlockToInventory = block => {
   if (CTDLGAME.blockHeight >= block.height && block.height !== 0) return
@@ -20,6 +21,7 @@ const addBlockToInventory = block => {
 /**
  * @description Method to fetch new blocks from the blockchain
  * @param {Number} startHeight height to start from
+ * @returns {void}
  */
 export const checkBlocks = startHeight => {
   let url = 'https://blockstream.info/api/blocks/'

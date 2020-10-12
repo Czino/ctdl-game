@@ -3,6 +3,7 @@ import { CTDLGAME } from './CTDLGAME'
 
 /**
  * @description Method to translate canvas to show current viewport based on where the characters are
+ * @returns {void}
  */
 export const updateViewport = () => {
   if (CTDLGAME.multiplayer) {

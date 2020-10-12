@@ -1,9 +1,9 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 
-
 /**
  * @description Method to clear canvas for next draw
+ * @returns {void}
  */
 export const clearCanvas = () => {
   constants.parallaxContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT);

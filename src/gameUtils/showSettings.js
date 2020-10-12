@@ -2,6 +2,10 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
 
+/**
+ * @description Method to render in game settings (music, sound)
+ * @returns {void}
+ */
 export const showSettings = () => {
   const musicButton = constants.BUTTONS.find(button => button.action === 'music')
   const soundButton = constants.BUTTONS.find(button => button.action === 'sound')

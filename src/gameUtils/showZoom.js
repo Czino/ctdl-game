@@ -12,6 +12,14 @@ const zoomCanvasses = [
   constants.fgCanvas,
   constants.overlayCanvas
 ]
+
+/**
+ * @description Method to render zoom bubble
+ * @param {Object} position zoom position
+ * @param {Number} position.x zoom x
+ * @param {Number} position.y zoom y
+ * @returns {void}
+ */
 export const showZoom = ({ x, y }) => {
   constants.overlayContext.globalAlpha = 1
 

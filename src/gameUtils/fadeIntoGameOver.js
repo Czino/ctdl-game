@@ -1,13 +1,13 @@
-// import * as db from '../db'
+import * as db from '../db'
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-
 import { initSoundtrack, stopMusic, changeVolume } from '../soundtrack'
 import { initEvents } from '../events'
 
 let deathCounter = 64
 /**
  * @description Method to fade into game over screen
+ * @returns {void}
  */
 export const fadeIntoGameOver = () => {
   if (deathCounter === 64) {
