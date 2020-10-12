@@ -5,7 +5,7 @@ import { random } from '../../arrayUtils'
 import GameObject from '../../gameObject'
 import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
-import Brian from '../../brian'
+import Brian from '../../enemies/Brian'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 
 const tileSize = 8

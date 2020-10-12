@@ -1,25 +1,28 @@
 import constants from '../constants'
-import { loadWorldObjects, saveGame, updateViewport } from '../gameUtils'
+import { loadWorldObjects, saveGame, updateViewport, gameObjects } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
 import { makeBoundary } from '../geometryUtils'
 import World from '../world'
-import Block from '../block'
-import Shitcoiner from '../shitcoiner'
-import Rabbit from '../rabbit'
-import Brian from '../brian'
-import Item from '../item'
-import NPC from '../npc'
 import { initSoundtrack } from '../soundtrack'
 
+/**
+ * @description Method to fascilitate changing of maps
+ * @param {String} id world id
+ * @param {String} from world id
+ * @returns {void}
+ */
 export const changeMap = async (id, from) => {
   // save state before changing
   if (from !== 'newGame') await saveGame()
 
+  // remove all objects but characters
+  CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character')
+
+  // create new world
   const newWorld = new World(id)
   const objects = from !== 'newGame' ? await loadWorldObjects(id) : null
   // Save state of old world
 
-  CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character' || obj.backEvent || obj.touchEvent)
 
   setWorld(newWorld)
 
@@ -30,40 +33,8 @@ export const changeMap = async (id, from) => {
 
   if (objects) {
     objects
-      .map(object => {
-        if (object.class === 'Block') {
-          return new Block(
-            object.id,
-            constants.gameContext,
-            object
-          )
-        } else if (object.class === 'Shitcoiner') {
-          return new Shitcoiner(
-            object.id,
-            object
-          )
-        } else if (object.class === 'Rabbit') {
-          return new Rabbit(
-            object.id,
-            object
-          )
-        } else if (object.class === 'Brian') {
-          return new Brian(
-            object.id,
-            object
-          )
-        } else if (object.class === 'Item') {
-          return new Item(
-            object.id,
-            object
-          )
-        } else if (object.class === 'NPC') {
-          return new NPC(
-            object.id,
-            object
-          )
-        }
-      })
+    .filter(object => gameObjects[object.class])
+    .map(object => new gameObjects[object.class](object.id, object))
     .map(object => CTDLGAME.objects.push(object))
   } else {
     CTDLGAME.world.map.objects

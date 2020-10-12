@@ -1,7 +1,6 @@
-import NPCSprite from './sprites/NPCs'
-import { CTDLGAME } from "./gameUtils"
-import { addTextToQueue } from './textUtils'
-import constants from './constants';
+import NPCSprite from '../sprites/NPCs'
+import { CTDLGAME } from "../gameUtils"
+import constants from '../constants';
 
 export default function(id, options) {
   this.id = id;

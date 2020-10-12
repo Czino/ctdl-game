@@ -3,12 +3,11 @@ import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import { random } from '../../arrayUtils'
 import GameObject from '../../gameObject'
-import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
 import Ramp from '../../ramp'
 import { makeBoundary } from '../../geometryUtils'
-import Bear from '../../bear'
-import NPC from '../../npc'
+import Bear from '../../enemies/Bear'
+import NPC from '../../npcs/NPC'
 
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
@@ -258,7 +257,7 @@ const twig = [
 
 // create random underground texture
 for (let i = -30; i < 128; i++) {
-  fg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
+  bg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
 }
 
 // create random grass
@@ -268,6 +267,16 @@ for (let i = 0; i < 128; i++) {
 
 // parallax = parallax.concat(parsePattern(bgStart, 4, 106))
 // parallax = parallax.concat(parsePattern(randomBg(), 8, 106))
+
+
+const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
+  objects.push(makeBoundary({
+    x: x * tileSize,
+    y: y * tileSize,
+    w: w * tileSize,
+    h: h * tileSize,
+  }))
+}
 
 parallax = parallax.concat(parsePattern(bigTree1, 2, 106))
 parallax = parallax.concat(parsePattern(bigTree2, 14, 106))
@@ -300,21 +309,34 @@ fg = fg.concat(parsePattern(groundDown, 72, 113))
 fg = fg.concat(parsePattern(groundUp, 128, 115))
 fg = fg.concat(parsePattern(groundUp, 138, 113))
 bg = bg.concat(parsePattern(fillArea([t10], 10, 3), 140, 117))
+makeConsolidatedBoundary(140, 117, 10, 3)
+
 fg = fg.concat(parsePattern(groundUp, 148, 111))
 bg = bg.concat(parsePattern(fillArea([t10], 10, 5), 150, 115))
+makeConsolidatedBoundary(150, 115, 10, 5)
+
 fg = fg.concat(parsePattern(fillArea([t03], 1, 1), 160, 111))
 fg = fg.concat(parsePattern(fillArea([t05], 1, 1), 160, 112))
 fg = fg.concat(parsePattern(groundDown, 161, 110))
 bg = bg.concat(parsePattern(fillArea([t10], 1, 7), 160, 113))
+makeConsolidatedBoundary(160, 113, 1, 7)
+
 bg = bg.concat(parsePattern(fillArea([t10], 16, 5), 161, 116))
+makeConsolidatedBoundary(161, 116, 16, 5)
+
 fg = fg.concat(parsePattern(groundUp, 165, 111))
 fg = fg.concat(parsePattern(groundUp, 175, 109))
 bg = bg.concat(parsePattern(fillArea([t10], 12, 6), 175, 114))
+makeConsolidatedBoundary(175, 114, 12, 6)
+
 fg = fg.concat(parsePattern(groundUpSteep, 186, 105))
 bg = bg.concat(parsePattern(fillArea([t10], 12, 9), 187, 111))
+makeConsolidatedBoundary(187, 111, 12, 9)
+
 fg = fg.concat(parsePattern(fillArea(grassTiles, 20, 1), 197, 105))
 fg = fg.concat(parsePattern(fillArea(undergroundTiles, 20, 1), 197, 106))
 bg = bg.concat(parsePattern(fillArea([t10], 20, 15), 197, 107))
+makeConsolidatedBoundary(197, 107, 20, 15)
 
 fg = fg.concat(parsePattern(stump, 5, 117))
 fg = fg.concat(parsePattern(bigTree1, 7, 104))
@@ -405,8 +427,8 @@ events.push(gotToCity)
 objects.push(new Bear(
   'bigBear',
   {
-    x: 1960,
-    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
+    x: 1692,
+    y: 818 - constants.GROUNDHEIGHT - constants.MENU.h - 31
   }
 ))
 objects.push(new NPC(

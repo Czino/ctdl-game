@@ -1,11 +1,12 @@
-import shitcoiner from './sprites/shitcoiner'
-import Item from './item'
-import { CTDLGAME } from './gameUtils'
-import { moveObject, intersects, getClosest } from './geometryUtils'
-import { write } from './font';
-import { addTextToQueue } from './textUtils';
-import constants from './constants';
-import { playSound } from './sounds';
+import shitcoiner from '../sprites/shitcoiner'
+import Item from '../item'
+import { CTDLGAME } from '../gameUtils'
+import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { write } from '../font'
+import { addTextToQueue } from '../textUtils'
+import constants from '../constants'
+import { playSound } from '../sounds'
+import { senseCharacters } from './enemyUtils'
 
 const sprites = {
   shitcoiner
@@ -17,14 +18,14 @@ const items = [
 ]
 
 export default function(id, options) {
-  this.id = id;
+  this.id = id
   this.class = 'Shitcoiner'
   this.applyGravity = true
   this.enemy = true
   this.spriteData = sprites.shitcoiner
   this.health = options.health ?? Math.round(Math.random() * 7 + 1)
   this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
-  this.item = options.item || items.find(item => item.chance > Math.random())
+  this.item = options.item || items.find(item => item.chance >= Math.random())
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -138,30 +139,18 @@ export default function(id, options) {
     }
   }
 
-  this.bite = prey => {
+  this.attack = enemy => {
     if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
 
-    this.kneels = prey.status === 'rekt'
+    this.kneels = enemy.status === 'rekt'
 
-    if (this.status === 'bite' && this.frame === 3) {
-      return prey.hurt(1, this.direction === 'left' ? 'right' : 'left')
+    if (this.status === 'attack' && this.frame === 3) {
+      return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
     }
-    if (this.status === 'bite') return
+    if (this.status === 'attack') return
 
     this.frame = 0
-    this.status = 'bite'
-  }
-  this.senseEnemies = () => {
-    let preys = CTDLGAME.quadTree.query({
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    })
-      .filter(prey => prey.class === 'Character')
-      .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
-
-    return getClosest(this.getCenter(), preys)
+    this.status = 'attack'
   }
 
   this.update = () => {
@@ -201,18 +190,18 @@ export default function(id, options) {
 
     // AI logic
     if (!/rekt|burning|spawn/.test(this.status)) {
-      const prey = this.senseEnemies()
-      if (prey) {
-        if (intersects(this.getBoundingBox(), prey.getBoundingBox())) { // biting distance
-          if (this.getCenter().x > prey.getCenter().x) {
+      const enemy = getClosest(this.getCenter(), senseCharacters(this))
+      if (enemy) {
+        if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance
+          if (this.getCenter().x > enemy.getCenter().x) {
             this.direction = 'left'
           } else {
             this.direction = 'right'
           }
-          this.bite(prey)
-        } else if (this.getBoundingBox().x > prey.getBoundingBox().x + prey.getBoundingBox().w - 1) {
+          this.attack(enemy)
+        } else if (this.getBoundingBox().x > enemy.getBoundingBox().x + enemy.getBoundingBox().w - 1) {
           this.moveLeft()
-        } else if (prey.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
+        } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
           this.moveRight()
         }
       } else {

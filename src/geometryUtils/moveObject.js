@@ -1,7 +1,15 @@
 import constants from '../constants'
 import { intersects } from './intersects'
 
-const collidesWithHeightMask = (anchor, point, heightMask) => {
+/**
+ * @description Method to check if an anchor point is inside heightmap
+ * @param {Object} anchor anchor object for testing
+ * @param {Object} point Object that has heightMask
+ * @returns {Boolean} true if anchor point collides
+ */
+const collidesWithHeightMap = (anchor, point) => {
+  const heightMap = point.getHeightMap()
+
   for (let i = 3; i > 0; i--) {
     let anchorPoint = {
       ...anchor,
@@ -13,7 +21,7 @@ const collidesWithHeightMask = (anchor, point, heightMask) => {
         y: anchorPoint.y - point.y
       }
 
-      const isSolid = !heightMask[touchPoint.y] || heightMask[touchPoint.y][touchPoint.x] > 0
+      const isSolid = !heightMap[touchPoint.y] || heightMap[touchPoint.y][touchPoint.x] > 0
       if (isSolid) return true
     }
   }
@@ -39,12 +47,10 @@ export const moveObject = (object, vector, tree) => {
       .some(point => {
         if (intersects(object.getBoundingBox(), point.getBoundingBox())) {
           if (point.getHeightMap) {
-            const heightMask = point.getHeightMap()
-
             const anchor = object.getAnchor()
 
             for (let i = 0; i < 3; i++) {
-              if (collidesWithHeightMask(anchor, point, heightMask)) {
+              if (collidesWithHeightMap(anchor, point)) {
                 anchor.y--
               } else {
                 object.y -= i

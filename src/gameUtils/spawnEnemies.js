@@ -1,6 +1,6 @@
 import constants from '../constants'
-import Shitcoiner from '../shitcoiner'
-import Rabbit from '../rabbit'
+import Shitcoiner from '../enemies/Shitcoiner'
+import Rabbit from '../enemies/Rabbit'
 import { CTDLGAME } from './CTDLGAME'
 import { intersects } from '../geometryUtils'
 

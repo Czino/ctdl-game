@@ -1,3 +1,4 @@
+import { flatten } from './arrayUtils'
 import { intersects } from './geometryUtils'
 
 export const Boundary = function ({ x, y, w, h }) {
@@ -15,6 +16,7 @@ export const QuadTree = function (boundary, capacity, level) {
   this.level = level || 0
 
   this.insert = object => {
+    // TODO is there maybe a more performant way?
     if (object.getBoundingBox) {
       const boundingBox = object.getBoundingBox()
       object = {
@@ -132,12 +134,4 @@ export const QuadTree = function (boundary, capacity, level) {
   }
 }
 
-function flatten(arr, item) {
-  if (Array.isArray(item)) {
-    arr = arr.concat(item)
-  } else {
-    arr.push(item)
-  }
-  return arr
-}
 export default QuadTree

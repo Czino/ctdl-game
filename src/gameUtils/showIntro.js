@@ -24,7 +24,7 @@ export const showIntro = () => {
     'The global economy is',
     'collapsing while all the',
     'money rapidly loses',
-    'their value.'
+    'its value.'
   ].join('\n'), null, true)
   addTextToQueue([
     'Many people fell victim',

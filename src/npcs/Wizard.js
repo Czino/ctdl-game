@@ -1,8 +1,8 @@
-import constants from './constants'
-import { CTDLGAME, checkBlocks } from './gameUtils'
-import { addTextToQueue } from './textUtils'
-import { playSound } from './sounds'
-import Explosion from './explosion'
+import constants from '../constants'
+import { CTDLGAME, checkBlocks } from '../gameUtils'
+import { addTextToQueue } from '../textUtils'
+import { playSound } from '../sounds'
+import Explosion from '../explosion'
 
 export default function(id, options) {
   this.id = id;
@@ -39,6 +39,11 @@ export default function(id, options) {
       addTextToQueue('You received...\n the Genesis Block', () => {
         checkBlocks(0)
       })
+      if (CTDLGAME.touchScreen) {
+        addTextToQueue('Tap and hold the screen\nto set blocks near you.')
+      } else {
+        addTextToQueue('Use the mouse\nto set blocks near you.')
+      }
       addTextToQueue([
         'Wizard:\n Use this to set the first',
         'block of your citadel.',

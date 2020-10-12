@@ -3,6 +3,9 @@ import Block from '../block'
 import { CTDLGAME, showZoom } from '../gameUtils'
 import { touches, intersects, sharpLine } from '../geometryUtils'
 
+/**
+ * @description Method to render overlay layer, typically to display block placement and zoom
+ */
 export const showOverlay = () => {
   constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
@@ -13,12 +16,12 @@ export const showOverlay = () => {
     let block = CTDLGAME.inventory.blocks[0]
     CTDLGAME.ghostBlock = new Block(
       block.id,
-      constants.overlayContext,
       {
         x: Math.round((CTDLGAME.viewport.x + CTDLGAME.cursor.x) / 3) * 3 - 3,
         y: Math.round((CTDLGAME.viewport.y + CTDLGAME.cursor.y) / 3) * 3 - 3,
         w: 6,
         h: 6,
+        context: 'overlayContext',
         opacity: .5,
         info: {
           height: block.height

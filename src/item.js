@@ -21,7 +21,7 @@ export default function(id, options) {
   const sprite = CTDLGAME.assets.items
 
   this.touch = character => {
-    if (this.vy !== 0) return
+    if (this.collected && this.vy !== 0) return
     playSound('item')
     this.remove = true
     this.collected = true

@@ -1,12 +1,13 @@
 import blockSprite from './sprites/block'
-import { CTDLGAME } from "./gameUtils"
+import { CTDLGAME } from './gameUtils'
 import { addTextToQueue } from './textUtils'
+import constants from './constants';
 
-export default function(id, context, options) {
+export default function(id, options) {
   this.id = id;
   this.class = 'Block'
   this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
-  this.context = context
+  this.context = constants[options.context || 'gameContext']
   this.w = options.w || 6
   this.h = options.h || 6
   this.x = options.x

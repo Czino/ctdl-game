@@ -1,4 +1,5 @@
 import * as db from '../db'
+import { maps } from '../mapUtils'
 import { CTDLGAME } from './CTDLGAME'
 
 /**
@@ -11,9 +12,9 @@ export const saveGame = async () => {
     await db.remove('hodlonaut')
     await db.remove('katoshi')
     await db.remove('worldId')
-    // TODO iterate through a list of worlds
-    await db.remove('objects-city')
-    await db.remove('objects-forest')
+    for (let map in maps) {
+      await db.remove(`objects-${map}`)
+    }
     await db.remove('blockHeight')
     await db.remove('inventory')
     await db.remove('options')

@@ -1,31 +1,28 @@
-import brian from './sprites/brian'
-import Item from './item'
-import { CTDLGAME } from './gameUtils'
-import { moveObject, intersects, getClosest } from './geometryUtils'
-import { write } from './font';
-import { addTextToQueue, setTextQueue } from './textUtils';
-import constants from './constants';
-import { playSound } from './sounds';
+import brianSprite from '../sprites/brian'
+import Item from '../item'
+import { CTDLGAME } from '../gameUtils'
+import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { write } from '../font'
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import constants from '../constants'
+import { playSound } from '../sounds'
+import { senseCharacters } from './enemyUtils'
 
-const sprites = {
-  brian
-}
 const items = [
   { id: 'pizza', chance: 0.01 },
   { id: 'taco', chance: 0.02 },
-  { id: 'opendime', chance: 0.3 },
-  { id: 'coldcard', chance: 0.05 }
+  { id: 'coldcard', chance: 0.05 },
+  { id: 'opendime', chance: 1 },
 ]
 
 export default function(id, options) {
-  this.id = id;
+  this.id = id
   this.class = 'Brian'
   this.applyGravity = true
   this.enemy = true
-  this.spriteData = sprites.brian
   this.health = options.health ?? 25
   this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
-  this.item = options.item || items.find(item => item.chance > Math.random())
+  this.item = options.item || items.find(item => item.chance >= Math.random())
   this.dmgs = []
   this.w = 16
   this.h = 30
@@ -125,7 +122,7 @@ export default function(id, options) {
     if (/rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'hurtAttack'
 
-    const enemies = this.senseEnemies()
+    const enemies = senseCharacters(this)
     const attackBox = this.getBoundingBox()
     attackBox.x -= this.attackRange
     attackBox.w += this.attackRange * 2
@@ -139,18 +136,6 @@ export default function(id, options) {
         const direction = this.getCenter().x > enemy.getCenter().x ? 'right' : 'left'
         enemy.hurt(dmg, direction)
       })
-  }
-  this.senseEnemies = () => {
-    let enemies = CTDLGAME.quadTree.query({
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    })
-      .filter(enemy => enemy.class === 'Character' && enemy.status !== 'rekt')
-      .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
-
-    return enemies
   }
 
   this.update = () => {
@@ -173,7 +158,7 @@ export default function(id, options) {
       if (hasCollided) this.vy = 0
     }
 
-    if (!this.hadIntro && this.senseEnemies().length > 0) {
+    if (!this.hadIntro && senseCharacters(this).length > 0) {
       CTDLGAME.lockCharacters = true
 
       addTextToQueue('Brian:\nWelcome to crypto!')
@@ -190,7 +175,7 @@ export default function(id, options) {
 
     // AI logic
     if (this.canMove && !/rekt|hurt/.test(this.status)) {
-      const enemies = this.senseEnemies()
+      const enemies = senseCharacters(this)
       if (enemies.length > 0) {
         const enemy = getClosest(this.getCenter(), enemies)
         const attackBox = this.getBoundingBox()
@@ -213,7 +198,7 @@ export default function(id, options) {
       }
     }
 
-    let spriteData = this.spriteData[this.direction][this.status]
+    let spriteData = brianSprite[this.direction][this.status]
 
     if (!/hurt|rekt/.test(this.status)) this.frame++
     if (this.status === 'hurtAttack' && Math.random() < .25) this.status = 'idle'
@@ -280,7 +265,7 @@ export default function(id, options) {
   this.select = () => {
     if (this.status === 'rekt') return addTextToQueue('Brian:\nLeave me alone...')
     setTextQueue([])
-    addTextToQueue('Brian:\nCompliance is key to digital currencys\' success!')
+    addTextToQueue('Brian:\nCompliance is key to digital currencies\' success!')
   }
 
   this.toJSON = () => ({

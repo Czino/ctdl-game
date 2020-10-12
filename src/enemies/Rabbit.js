@@ -1,17 +1,18 @@
-import rabbit from './sprites/rabbit'
-import { CTDLGAME } from './gameUtils'
-import { moveObject, intersects, getClosest } from './geometryUtils'
-import { write } from './font';
-import { addTextToQueue } from './textUtils';
-import constants from './constants';
-import { playSound } from './sounds';
+import rabbit from '../sprites/rabbit'
+import { CTDLGAME } from '../gameUtils'
+import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { write } from '../font'
+import { addTextToQueue } from '../textUtils'
+import constants from '../constants'
+import { playSound } from '../sounds'
+import { senseCharacters } from './enemyUtils'
 
 const sprites = {
   rabbit
 }
 
 export default function(id, options) {
-  this.id = id;
+  this.id = id
   this.class = 'Rabbit'
   this.applyGravity = true
   this.enemy = options.isEvil ?? false
@@ -89,6 +90,7 @@ export default function(id, options) {
     }
   }
   this.jump = () => {
+    // TODO allow rabbits to jump
     // if (/turnEvil|spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
 
     // this.status = 'jump'
@@ -98,16 +100,16 @@ export default function(id, options) {
     this.status = 'idle'
   }
 
-  this.bite = prey => {
+  this.attack = prey => {
     if (/turnEvil|spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
 
-    if (this.status === 'bite' && this.frame === 2) {
+    if (this.status === 'attack' && this.frame === 2) {
       this.frame = 0
       return prey.hurt(.5, this.direction === 'left' ? 'right' : 'left')
     }
-    if (this.status === 'bite') return
+    if (this.status === 'attack') return
 
-    this.status = 'bite'
+    this.status = 'attack'
   }
 
   this.hurt = (dmg, direction) => {
@@ -126,19 +128,6 @@ export default function(id, options) {
     playSound('burn')
     addTextToQueue(`evil rabbit got rekt`)
     this.status = 'rekt'
-  }
-
-  this.senseEnemies = () => {
-    let preys = CTDLGAME.quadTree.query({
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    })
-      .filter(prey => prey.class === 'Character')
-      .filter(prey => Math.abs(prey.getCenter().x - this.getCenter().x) <= this.senseRadius)
-
-    return getClosest(this.getCenter(), preys)
   }
 
   this.update = () => {
@@ -181,25 +170,25 @@ export default function(id, options) {
       this.status = 'turnEvil'
     }
     if (!/turnEvil|rekt|spawn/.test(this.status)) {
-      const prey = this.senseEnemies()
-      if (prey) {
+      const enemy = getClosest(this.getCenter(), senseCharacters(this))
+      if (enemy) {
         if (this.isEvil) {
-          if (intersects(this.getBoundingBox(), prey.getBoundingBox())) { // biting distance
-            if (this.getCenter().x > prey.getCenter().x) {
+          if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance
+            if (this.getCenter().x > enemy.getCenter().x) {
               this.direction = 'left'
             } else {
               this.direction = 'right'
             }
-            this.bite(prey)
-          } else if (this.getBoundingBox().x > prey.getBoundingBox().x + prey.getBoundingBox().w - 1) {
+            this.attack(enemy)
+          } else if (this.getBoundingBox().x > enemy.getBoundingBox().x + enemy.getBoundingBox().w - 1) {
             this.moveLeft()
-          } else if (prey.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
+          } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
             this.moveRight()
           }
         } else if (!this.canTurnEvil) {
-          if (this.getCenter().x < prey.getCenter().x) {
+          if (this.getCenter().x < enemy.getCenter().x) {
             this.moveLeft()
-          } else if (prey.getCenter().x <= this.getCenter().x) {
+          } else if (enemy.getCenter().x <= this.getCenter().x) {
             this.moveRight()
           }
         } else {

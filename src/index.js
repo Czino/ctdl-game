@@ -26,7 +26,7 @@ import {
   showShop, showSettings
 } from './gameUtils'
 import { writeMenu } from './textUtils'
-import Wizard from './wizard'
+import Wizard from './npcs/Wizard'
 import { applyGravity } from './physicsUtils'
 import { intersects } from './geometryUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
@@ -58,6 +58,8 @@ window.SELECTED = null
 window.SELECTEDCHARACTER = null
 
 let time
+
+// TODO sun and moon seem lost here
 const sun = new Sun({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
   y: CTDLGAME.viewport.y + 10
@@ -69,6 +71,10 @@ const moon = new Moon({
 
 init()
 
+/**
+ * @description Method to init the game
+ * @returns {void}
+ */
 async function init() {
   let i = 0
 
@@ -88,6 +94,7 @@ async function init() {
   toggleSounds(CTDLGAME.options.sound)
 
   CTDLGAME.isSoundLoaded = isSoundLoaded()
+
   if (CTDLGAME.isSoundLoaded) {
     constants.BUTTONS
         .filter(button => /initGame/.test(button.action))
@@ -108,13 +115,16 @@ async function init() {
   tick()
 }
 
+/**
+ * @description Method to to execute game logic for each tick
+ * It also takes care of rendering a frame at specified framerate
+ */
 function tick() {
   if (!CTDLGAME.isSoundLoaded) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     showStartGameScreen()
     CTDLGAME.frame++
-    window.requestAnimationFrame(tick)
-    return
+    return window.requestAnimationFrame(tick)
   }
   if (CTDLGAME.startScreen) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
@@ -122,8 +132,7 @@ function tick() {
 
     showStartScreen()
     CTDLGAME.frame++
-    window.requestAnimationFrame(tick)
-    return
+    return window.requestAnimationFrame(tick)
   }
   if (CTDLGAME.cutScene) {
     clearCanvas()
@@ -131,58 +140,50 @@ function tick() {
     writeMenu()
     showSettings()
     CTDLGAME.frame++
-    window.requestAnimationFrame(tick)
-    return
+    return window.requestAnimationFrame(tick)
   }
   if (!CTDLGAME.hodlonaut) {
-    window.requestAnimationFrame(tick)
-    return
+    return window.requestAnimationFrame(tick)
   }
 
   if (CTDLGAME.gameOver) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     showGameOverScreen()
     CTDLGAME.frame++
-    window.requestAnimationFrame(tick)
-    return
+    return window.requestAnimationFrame(tick)
   }
 
 
   if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
+    // TODO sometimes it happens that the background does not change
     circadianRhythm(time)
   }
   if (CTDLGAME.frame % constants.FRAMERATE === 0) {
     time = getTimeOfDay()
-    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) {
-      checkBlocks()
-    }
+    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) checkBlocks()
 
     if (CTDLGAME.showShop) {
       showShop()
       showMenu(CTDLGAME.inventory)
       writeMenu()
       CTDLGAME.frame++
-      window.requestAnimationFrame(tick)
-      return
+      return window.requestAnimationFrame(tick)
     }
 
     clearCanvas()
-
-    CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj && !obj.remove && obj.y < 2048)
 
     if (CTDLGAME.world) cleanUpStage()
 
     spawnEnemies()
 
     if (CTDLGAME.wizardCountdown === 0) {
-      const wizard = new Wizard(
+      CTDLGAME.objects.push(new Wizard(
         'wizard',
         {
           x: window.SELECTEDCHARACTER.x - 40,
           y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
         }
-      )
-      CTDLGAME.objects.push(wizard)
+      ))
     } else if (CTDLGAME.wizardCountdown) {
       CTDLGAME.wizardCountdown--
     }
@@ -192,6 +193,8 @@ function tick() {
     CTDLGAME.world.update()
 
     applyGravity()
+
+    // update objects that shall update and are in viewport
     CTDLGAME.objects
       .filter(object => object.update)
       .filter(obj => obj.inViewport)
@@ -235,10 +238,26 @@ function tick() {
   }
 
   CTDLGAME.frame++
-  window.requestAnimationFrame(tick)
+  return window.requestAnimationFrame(tick)
 }
 
+// Developer cheat codes
 window.heal = () => {
   CTDLGAME.hodlonaut.heal(5)
   CTDLGAME.katoshi.heal(5)
+}
+window.revive = () => {
+  CTDLGAME.hodlonaut.heal(5)
+  CTDLGAME.katoshi.heal(5)
+  if (CTDLGAME.hodlonaut.status === 'rekt') {
+    CTDLGAME.hodlonaut.y -= 21
+    CTDLGAME.hodlonaut.status = 'idle'
+  }
+  if (CTDLGAME.katoshi.status === 'rekt') {
+    CTDLGAME.katoshi.y -= 21
+    CTDLGAME.katoshi.status = 'idle'
+  }
+}
+window.save = () => {
+  saveGame()
 }

@@ -1,30 +1,24 @@
-import bear from './sprites/bear'
-import Item from './item'
-import { CTDLGAME } from './gameUtils'
-import { moveObject, intersects, getClosest } from './geometryUtils'
-import { write } from './font';
-import { addTextToQueue, setTextQueue } from './textUtils';
-import constants from './constants';
-import { playSound } from './sounds';
+import bearSprite from '../sprites/bear'
+import Item from '../item'
+import { CTDLGAME } from '../gameUtils'
+import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { write } from '../font'
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import constants from '../constants'
+import { playSound } from '../sounds'
+import { senseCharacters } from './enemyUtils'
 
-const sprites = {
-  bear
-}
 const items = [
-  { id: 'taco', chance: 0.03 },
-  { id: 'opendime', chance: 0.1 },
-  { id: 'coldcard', chance: 0.05 },
-  { id: 'honeybadger', chance: 0.025 }
+  { id: 'honeybadger', chance: 1 }
 ]
 
 export default function(id, options) {
-  this.id = id;
+  this.id = id
   this.class = 'Bear'
   this.applyGravity = true
   this.enemy = true
-  this.spriteData = sprites.bear
   this.health = options.health ?? Math.round(Math.random() * 20 + 40)
-  this.item = options.item || items.find(item => item.chance > Math.random())
+  this.item = options.item || items.find(item => item.chance >= Math.random())
   this.dmgs = []
   this.w = 27
   this.h = 28
@@ -131,18 +125,6 @@ export default function(id, options) {
     this.frame = 0
     this.status = 'attack'
   }
-  this.senseEnemies = () => {
-    let enemies = CTDLGAME.quadTree.query({
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    })
-      .filter(enemy => enemy.class === 'Character' && enemy.status !== 'rekt')
-      .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
-
-    return enemies
-  }
 
   this.update = () => {
     const sprite = CTDLGAME.assets.bear
@@ -164,7 +146,7 @@ export default function(id, options) {
     }
 
 
-    if (!this.hadIntro && this.senseEnemies().length > 0) {
+    if (!this.hadIntro && senseCharacters(this).length > 0) {
       CTDLGAME.lockCharacters = true
 
       playSound('bearGrowl')
@@ -178,7 +160,7 @@ export default function(id, options) {
 
     // AI logic
     if (this.canMove && !/rekt|spawn/.test(this.status)) {
-      const enemies = this.senseEnemies()
+      const enemies = senseCharacters(this)
 
       if (enemies.length > 0) {
         const enemy = getClosest(this.getCenter(), enemies)
@@ -207,7 +189,7 @@ export default function(id, options) {
       }
     }
 
-    let spriteData = this.spriteData[this.direction][this.status]
+    let spriteData = bearSprite[this.direction][this.status]
 
     if (!/rekt/.test(this.status)) this.frame++
     if (this.status === 'hurt' && this.frame === 3) this.status = 'idle'

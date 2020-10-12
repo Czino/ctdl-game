@@ -97,7 +97,7 @@ export default {
   TEXTBOX,
   FRAMESINADAY: Math.pow(2, 14),
   FRAMERESET: Math.pow(2, 64),
-  CHECKBLOCKTIME: Math.pow(2, 11), // check every X frame
+  CHECKBLOCKTIME: Math.pow(2, 12), // check every X frame
   GROUNDHEIGHT: 6,
   FRAMERATE: 8, // render every X frame
   SAVERATE: Math.pow(2, 12), // render every X frame

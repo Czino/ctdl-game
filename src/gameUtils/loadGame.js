@@ -3,21 +3,16 @@ import * as db from '../db'
 import { CTDLGAME, setWorld } from './CTDLGAME'
 import World from '../world'
 import Character from '../character'
-import Block from '../block'
-import Shitcoiner from '../shitcoiner'
-import Rabbit from '../rabbit'
-import Bear from '../bear'
-import Brian from '../brian'
-import NPC from '../npc'
-import Item from '../item'
 import { removeClass, addClass } from '../htmlUtils'
 import { getTimeOfDay } from './getTimeOfDay'
 import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { makeBoundary } from '../geometryUtils'
+import { gameObjects } from './gameObjects'
 
 /**
  * @description Method to load game
+ * @returns {void}
  */
 export const loadGame = async () => {
   let time = await db.get('time')
@@ -34,45 +29,8 @@ export const loadGame = async () => {
 
   if (objects) {
     CTDLGAME.objects = objects
-      .map(object => {
-      if (object.class === 'Block') {
-        return new Block(
-          object.id,
-          constants.gameContext,
-          object
-        )
-      } else if (object.class === 'Shitcoiner') {
-        return new Shitcoiner(
-          object.id,
-          object
-        )
-      } else if (object.class === 'Rabbit') {
-        return new Rabbit(
-          object.id,
-          object
-        )
-      } else if (object.class === 'Brian') {
-        return new Brian(
-          object.id,
-          object
-        )
-      } else if (object.class === 'Bear') {
-        return new Bear(
-          object.id,
-          object
-        )
-      } else if (object.class === 'Item') {
-        return new Item(
-          object.id,
-          object
-        )
-      } else if (object.class === 'NPC') {
-        return new NPC(
-          object.id,
-          object
-        )
-      }
-    })
+      .filter(object => gameObjects[object.class])
+      .map(object => new gameObjects[object.class](object.id, object))
   }
 
   setWorld(new World(worldId))
