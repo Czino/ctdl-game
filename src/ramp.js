@@ -39,7 +39,7 @@ export default function(id, context, options) {
     let imageData = constants.helperContext.getImageData(0, 0, this.spriteData.w, this.spriteData.h)
     // return only the alpha
     this.heightMap = imageData.data
-      .filter((val, i) => i % 4 === 0)
+      .filter((val, i) => (i + 1) % 4 === 0)
       .reduce((rows, val) => { // make array two dimensional
         let foundRow = rows.find(row => {
           if (row.length < this.w) {
