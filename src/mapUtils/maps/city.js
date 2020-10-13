@@ -8,16 +8,28 @@ import constants from '../../constants'
 import Brian from '../../enemies/Brian'
 import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
+import { makeBoundary } from '../../geometryUtils'
+import Ramp from '../../Ramp'
 
 const tileSize = 8
-const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t010 = [0, 10],
-  t10 = [1, 0], t11 = [1, 1], t15 = [1, 5], t18 = [1, 8], t17 = [1, 7], t19 = [1, 9], t110 = [1, 10],
-  t20 = [2, 0], t21 = [2, 1], t22 = [2, 2], t24 = [2, 4], t25 = [2, 5], t27 = [2, 7], t28 = [2, 8], t210 = [2, 10],
-  t31 = [3, 1], t32 = [3, 2], t34 = [3, 4], t37 = [3, 7], t310 = [3, 10],
-  t41 = [4, 1], t43 = [4, 3], t44 = [4, 4], t45 = [4, 5], t47 = [4, 7], t48 = [4, 8], t49 = [4, 9],
-  t56 = [5, 6], t57 = [5, 7], t58 = [5, 8], t59 = [5, 9],
-  t62 = [6, 2], t64 = [6, 4], t67 = [6, 7], t68 = [6, 8],
-  t71 = [7, 1], t72 = [7, 2], t74 = [7, 4], t78 = [7, 8]
+const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
+  t10 = [1, 0], t11 = [1, 1], t12 = [1, 2], t13 = [1, 3], t14 = [1, 4], t15 = [1, 5], t16 = [1, 6], t17 = [1, 7], t18 = [1, 8], t19 = [1, 9], t110 = [1, 10],
+  t20 = [2, 0], t21 = [2, 1], t22 = [2, 2], t23 = [2, 3], t24 = [2, 4], t25 = [2, 5], t26 = [2, 6], t27 = [2, 7], t28 = [2, 8], t29 = [2, 9], t210 = [2, 10],
+  t30 = [3, 0], t31 = [3, 1], t32 = [3, 2], t33 = [3, 3], t34 = [3, 4], t35 = [3, 5], t36 = [3, 6], t37 = [3, 7], t38 = [3, 8], t39 = [3, 9], t310 = [3, 10],
+  t40 = [4, 0], t41 = [4, 1], t42 = [4, 2], t43 = [4, 3], t44 = [4, 4], t45 = [4, 5], t46 = [4, 6], t47 = [4, 7], t48 = [4, 8], t49 = [4, 9], t410 = [4, 10],
+  t50 = [5, 0], t51 = [5, 1], t52 = [5, 2], t53 = [5, 3], t54 = [5, 4], t55 = [5, 5], t56 = [5, 6], t57 = [5, 7], t58 = [5, 8], t59 = [5, 9], t510 = [5, 10],
+  t60 = [6, 0], t61 = [6, 1], t62 = [6, 2], t63 = [6, 3], t64 = [6, 4], t65 = [6, 5], t66 = [6, 6], t67 = [6, 7], t68 = [6, 8], t69 = [6, 9], t610 = [6, 10],
+  t70 = [7, 0], t71 = [7, 1], t72 = [7, 2], t73 = [7, 3], t74 = [7, 4], t75 = [7, 5], t76 = [7, 6], t77 = [7, 7], t78 = [7, 8], t79 = [7, 9], t710 = [7, 10],
+  t80 = [8, 0], t81 = [8, 1], t82 = [8, 2], t83 = [8, 3], t84 = [8, 4], t85 = [8, 5], t86 = [8, 6], t87 = [8, 7], t88 = [8, 8], t89 = [8, 9], t810 = [8, 10]
+
+const ramps = [
+  t61, t51,
+  t42, t52
+].map(tile => tile.toString())
+const solids = [
+  t71,
+  t62, t72
+].map(tile => tile.toString())
 
 let parallax = []
 let bg = []
@@ -142,13 +154,23 @@ const door = [
   [ t59 ],
   [ t59 ]
 ]
+const stairsUp = [
+  [ t00, t00, t52 ],
+  [ t00, t52, t61 ],
+  [ t52, t61 ]
+]
+const stairsDown = [
+  [ t42 ],
+  [ t51, t42 ],
+  [ t00, t51, t42 ]
+]
 
 // create random underground texture
 const undergroundTiles = [
   t62, t71, t72, t72, t72, t72, t72, t72, t72
 ]
 for (let i = -30; i < 158; i++) {
-  fg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
+  bg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
 }
 
 // create random grass
@@ -156,7 +178,7 @@ const grassTiles = [
   t41, t00, t00, t00, t00, t00
 ]
 for (let i = 0; i < 128; i++) {
-  fg.unshift({ x: i, y: 118, tile: random(grassTiles) })
+  bg.unshift({ x: i, y: 118, tile: random(grassTiles) })
 }
 
 parallax = parallax.concat(parsePattern(ruinedBuilding1, 10, 108))
@@ -166,6 +188,8 @@ parallax = parallax.concat(parsePattern(justWalls, 30, 116))
 bg = bg.concat(parsePattern(ruinedBuilding3, -7, 103))
 fg = fg.concat(parsePattern(ruinedWall3, -5, 117))
 bg = bg.concat(parsePattern(shop, 34, 109))
+// fg = fg.concat(parsePattern(stairsUp, 48, 116))
+// fg = fg.concat(parsePattern(stairsDown, 51, 116))
 bg = bg.concat(parsePattern(ruinedWall2, 30, 117))
 fg = fg.concat(parsePattern(ruinedWall1, 50, 117))
 bg = bg.concat(parsePattern(ruinedBuilding2, 67, 101))
@@ -227,10 +251,43 @@ objects.push(new NPC(
     y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 15
   }
 ))
+objects.push(new NPC(
+  'peter',
+  {
+    x: 563,
+    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 25
+  }
+))
 
 events.push(goToShop)
 events.push(goToBuilding)
 events.push(goToForest)
+
+fg.forEach(tile => {
+  if (ramps.indexOf(tile.tile.toString()) !== -1) {
+    objects.push(new Ramp(
+      'ramp',
+      constants.bgContext,
+      {
+        x: tile.x * tileSize,
+        y: tile.y * tileSize + 3,
+        w: tileSize,
+        h: tileSize,
+        sprite: 'city',
+        spriteData: { x: tile.tile[0] * tileSize, y: tile.tile[1] * tileSize, w: tileSize, h: tileSize},
+        direction: 'right',
+        isSolid: true,
+      },
+    ))
+  } else if (solids.indexOf(tile.tile.toString()) !== -1) {
+    objects.push(makeBoundary({
+      x: tile.x * tileSize,
+      y: tile.y * tileSize + 3,
+      w: tileSize,
+      h: tileSize
+    }))
+  }
+})
 
 export default {
   world: { w: 1000, h: 1024 },
