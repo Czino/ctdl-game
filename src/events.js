@@ -224,7 +224,8 @@ export const initEvents = startScreen => {
 
   window.addEventListener('keydown', e => {
     if (!CTDLGAME.multiplayer) {
-      if (Object.keys(constants.CONTROLS.katoshi).indexOf(e.key.toLowerCase()) !== -1) {
+      if (Object.keys(constants.CONTROLS.katoshi).indexOf(e.key.toLowerCase()) !== -1 &&
+        CTDLGAME.hodlonaut.inViewport && CTDLGAME.katoshi.inViewport) {
         CTDLGAME.multiplayer = true
         addTextToQueue('Multiplayer activated')
       }
