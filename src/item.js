@@ -22,10 +22,10 @@ export default function(id, options) {
   const sprite = CTDLGAME.assets.items
 
   this.touch = character => {
-    if (this.collected || this.vy <= 0) return
+    if (this.collected || this.vy < 0) return
     this.remove = true
     this.collected = true
-
+    
     if (this.id === 'pizza') {
       character.heal(2)
       playSound('item')
