@@ -53,15 +53,16 @@ export const writeMenu = () => {
     return
   }
 
-  if (CTDLGAME.lockCharacters) {
-    constants.menuContext.fillStyle = '#212121'
-    constants.menuContext.fillRect(
-      CTDLGAME.viewport.x + constants.TEXTBOX.x,
-      CTDLGAME.viewport.y + constants.TEXTBOX.y,
-      constants.TEXTBOX.w,
-      constants.MENU.h
-    )
-  }
+  constants.menuContext.globalAlpha = CTDLGAME.lockCharacters ? 1 : .7
+  constants.menuContext.fillStyle = '#212121'
+  constants.menuContext.fillRect(
+    CTDLGAME.viewport.x + constants.TEXTBOX.x,
+    CTDLGAME.viewport.y + constants.TEXTBOX.y,
+    constants.TEXTBOX.w,
+    constants.MENU.h
+  )
+  constants.menuContext.globalAlpha = 1
+
   write(
     constants.menuContext,
     text.text, {

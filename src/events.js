@@ -194,9 +194,7 @@ export const initEvents = startScreen => {
 
   if (startScreen) {
     window.removeEventListener('mousedown', click)
-    window.removeEventListener('mousedown', skipText)
     window.removeEventListener('touchstart', click)
-    window.removeEventListener('touchstart', skipText)
     window.removeEventListener('mouseup', clickEnd)
     window.removeEventListener('touchend', clickEnd)
     window.removeEventListener('mousemove', mouseMove)
@@ -208,7 +206,6 @@ export const initEvents = startScreen => {
 
   if (CTDLGAME.touchScreen) {
     window.addEventListener('touchstart', click)
-    window.addEventListener('touchstart', skipText)
     window.addEventListener('touchend', clickEnd)
     window.addEventListener('touchmove', mouseMove)
     window.addEventListener('touchmove', zoomHandler)
@@ -217,7 +214,6 @@ export const initEvents = startScreen => {
       if (e.key === ' ') skipText()
     })
     window.addEventListener('mousedown', click)
-    window.addEventListener('mousedown', skipText)
     window.addEventListener('mouseup', clickEnd)
     window.addEventListener('mousemove', mouseMove)
   }
@@ -313,9 +309,10 @@ function click (e) {
       }
     })
   }
-  if (!/ctdl-game/.test(canvas.id)) {
-    return
-  }
+
+  if (!/ctdl-game/.test(canvas.id)) return
+
+  if (CTDLGAME.cursor.y > 215 && CTDLGAME.cursor.y < 232) skipText()
 }
 
 function clickEnd (e) {
