@@ -31,6 +31,7 @@ import { applyGravity } from './physicsUtils'
 import { intersects } from './geometryUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
+import { changeMap } from './mapUtils'
 
 // import { playSound } from './sounds'
 // playSound('burn')
@@ -260,3 +261,9 @@ window.revive = () => {
 window.save = () => {
   saveGame()
 }
+window.killEnemies = () => CTDLGAME.objects
+  .filter(obj => obj.enemy)
+  .map(obj => obj.die())
+
+window.changeMap = changeMap
+window.CTDLGAME = CTDLGAME

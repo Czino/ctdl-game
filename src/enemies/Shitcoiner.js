@@ -256,7 +256,7 @@ export default function(id, options) {
     x: this.x + 5,
     y: this.y + 3,
     w: this.w - 10,
-    h: this.h - 4
+    h: this.h - 3
   })
 
   this.getAnchor = () => this.status !== 'rekt'

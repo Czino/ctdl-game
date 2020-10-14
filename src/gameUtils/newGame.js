@@ -42,6 +42,6 @@ export const newGame = async () => {
   CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
   CTDLGAME.objects.forEach(object => object.update())
 
-  CTDLGAME.frame = 4096 + 250
+  CTDLGAME.frame = 6096 + 250
   setTimeout(() => addClass(constants.parallaxCanvas, 'transition-background-color'))
 }

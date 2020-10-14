@@ -77,6 +77,7 @@ brownNoiseSynth.noise.type = 'brown'
 const songs = {
     // Llibre Vermell de Montserrat: Anonymous - Mariam Matrem Virginem
     mariamMatremVirginem: {
+      id: 'mariamMatremVirginem',
       length: 200.97,
       pulse: mariamMatremVirginem.strings,
       pulse2: mariamMatremVirginem.viola,
@@ -87,6 +88,7 @@ const songs = {
     },
     // Czino - Brian's theme
     briansTheme: {
+      id: 'briansTheme',
       length: 31.8333 + 0.1667,
       noise: briansTheme.noise,
       pulse: briansTheme.pulse1,
@@ -95,6 +97,7 @@ const songs = {
     },
     // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {
+      id: 'stellaSplendence',
       length: 136.575,
       noise: stellaSplendence.bass1,
       pulse: stellaSplendence.bass1,
@@ -106,6 +109,7 @@ const songs = {
     },
     // Llibre Vermell de Montserrat: Anonymous - Imperayritz De La Ciutat Ioyosa
     imperayritzDeLaCiutatIoyosa: {
+      id: 'imperayritzDeLaCiutatIoyosa',
       length: 190.7624,
       brownNoise: imperayritzDeLaCiutatIoyosa.drum,
       noise: imperayritzDeLaCiutatIoyosa.noise,
@@ -117,6 +121,7 @@ const songs = {
     },
     // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
     santaMaria: {
+      id: 'santaMaria',
       length: 79.7342,
       noise: santaMaria.noise,
       triangle: santaMaria.pulse,
@@ -126,6 +131,7 @@ const songs = {
     },
     // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
     bullsVsBears: {
+      id: 'bullsVsBears',
       length: 26.182,
       noise: bullsVsBears.triangle,
       triangle: bullsVsBears.triangle,
@@ -137,6 +143,7 @@ const songs = {
     },
     // Vlad Costea - A New Hope (Czino 8-bit remix)
     aNewHope: {
+      id: 'aNewHope',
       length: 54.2608,
       noise: aNewHope.triangle,
       triangle: aNewHope.triangle,
@@ -149,6 +156,7 @@ const songs = {
     },
     // Czino - I'm sad
     gameOver: {
+      id: 'gameOver',
       length: 20.00,
       sine: gameOver.melody,
       triangle: gameOver.rhythm,
@@ -233,6 +241,8 @@ export const initSoundtrack = id => {
 
   if (enabled) startMusic()
 }
+
+export const getSoundtrack = () => song?.id
 
 export const toggleSoundtrack = enable => {
   enabled = enable

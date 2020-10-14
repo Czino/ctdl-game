@@ -6,7 +6,7 @@ import { write } from '../font'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
-import { initSoundtrack } from './soundtrack';
+import { getSoundtrack, initSoundtrack } from '../soundtrack';
 import { senseCharacters } from './enemyUtils'
 
 const items = [
@@ -90,19 +90,16 @@ export default function(id, options) {
     })
     addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
     addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
-      initSoundtrack(CTDLGAME.world.map.soundtrack)
-      if (this.item) {
-        let item = new Item(
-          this.item.id,
-          {
-            x: this.x,
-            y: this.y,
-            vy: -8,
-            vx: Math.round((Math.random() - .5) * 10)
-          }
-        )
-        CTDLGAME.objects.push(item)
-      }
+      initSoundtrack(CTDLGAME.world.map.track)
+      CTDLGAME.objects.push(new Item(
+        this.item.id,
+        {
+          x: this.x,
+          y: this.y,
+          vy: -8,
+          vx: Math.round((Math.random() - .5) * 10)
+        }
+      ))
     })
   }
 
@@ -170,13 +167,14 @@ export default function(id, options) {
       addTextToQueue('Brian:\nI will delete you!', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
-        initSoundtrack('briansTheme')
       })
       this.hadIntro = true
     }
 
     // AI logic
     if (this.canMove && !/rekt|hurt/.test(this.status)) {
+      if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
+
       const enemies = senseCharacters(this)
       if (enemies.length > 0) {
         const enemy = getClosest(this.getCenter(), enemies)
@@ -242,7 +240,7 @@ export default function(id, options) {
     x: this.x + 5,
     y: this.y + 3,
     w: this.w - 10,
-    h: this.h - 4
+    h: this.h - 3
   })
 
   this.getAnchor = () => this.status !== 'rekt'
