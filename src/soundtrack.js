@@ -1,12 +1,13 @@
 import { Synth, NoiseSynth, Transport, Part, Gain, Reverb } from 'tone'
 
 import mariamMatremVirginem from './tracks/mariam-matrem-virginem'
+import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
+import briansTheme from './tracks/brians-theme'
 import stellaSplendence from './tracks/stella-splendence/'
 import gameOver from './tracks/game-over/'
 import santaMaria from './tracks/santa-maria/'
 import bullsVsBears from './tracks/bulls-vs-bears/'
 import aNewHope from './tracks/a-new-hope'
-import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
 
 const gain = new Gain(1).toDestination()
 const reverb = new Reverb({
@@ -83,6 +84,14 @@ const songs = {
       sine: mariamMatremVirginem.pipe,
       square: mariamMatremVirginem.harp,
       loop: false
+    },
+    // Czino - Brian's theme
+    briansTheme: {
+      length: 31.8333 + 0.1667,
+      noise: briansTheme.noise,
+      pulse: briansTheme.pulse1,
+      triangle: briansTheme.triangle,
+      loop: true
     },
     // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
     stellaSplendence: {

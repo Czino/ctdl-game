@@ -6,6 +6,7 @@ import { write } from '../font'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
+import { initSoundtrack } from './soundtrack';
 import { senseCharacters } from './enemyUtils'
 
 const items = [
@@ -89,7 +90,7 @@ export default function(id, options) {
     })
     addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
     addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
-      // TODO change back to main theme
+      initSoundtrack(CTDLGAME.world.map.soundtrack)
       if (this.item) {
         let item = new Item(
           this.item.id,
@@ -169,7 +170,7 @@ export default function(id, options) {
       addTextToQueue('Brian:\nI will delete you!', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
-        // TODO change to brian's theme
+        initSoundtrack('briansTheme')
       })
       this.hadIntro = true
     }
