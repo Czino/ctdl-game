@@ -87,7 +87,6 @@ export default function(id, options) {
     }
   }
   this.die = () => {
-    CTDLGAME.inventory.usd += this.usd
     this.frame = 0
     this.status = 'rekt'
 

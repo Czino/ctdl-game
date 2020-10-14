@@ -432,7 +432,7 @@ objects.push(new Bear(
   'bigBear',
   {
     x: 1692,
-    y: 818 - constants.GROUNDHEIGHT - constants.MENU.h - 31
+    y: 817
   }
 ))
 objects.push(new NPC(
@@ -443,9 +443,9 @@ objects.push(new NPC(
   }
 ))
 export default {
-  world: { w: 2048, h: 1024 },
+  world: { w: 1736, h: 1024 },
   start: {
-    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 33}
+    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 34}
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
