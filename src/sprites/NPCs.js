@@ -90,5 +90,33 @@ export default {
         }
       })
     }
+  },
+  'peter': {
+    frames: [
+      { x: 0, y: 30, w: 11, h: 25 }
+    ],
+    select: npc => {
+      addTextToQueue('Peter:\nGold has intrinsic value.', () => {
+        npc.isSelected = false
+      })
+    },
+    touch: npc => {
+      const thingsToSay = [
+        [
+          'Peter:\nBuy my gold!'
+        ]
+      ]
+
+      let whatToSay = random(thingsToSay)
+      whatToSay.map((text, index) => {
+        if (index === whatToSay.length - 1) {
+          addTextToQueue(text, () => {
+            npc.isTouched = false
+          })
+        } else {
+          addTextToQueue(text)
+        }
+      })
+    }
   }
 }
