@@ -7,6 +7,7 @@ import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
+import { getSoundtrack, initSoundtrack } from '../soundtrack'
 
 const items = [
   { id: 'honeybadger', chance: 1 }
@@ -93,6 +94,8 @@ export default function(id, options) {
     setTextQueue([])
     addTextToQueue('Big Bear:\n*growl*', () => this.frame++)
     addTextToQueue(`The Big Bear got rekt\nthe bull run begins!`, () => {
+      initSoundtrack(CTDLGAME.world.map.track)
+
       if (this.item) {
         let item = new Item(
           this.item.id,
@@ -156,13 +159,14 @@ export default function(id, options) {
       addTextToQueue('Big Bear:\n*rraawww*', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
-        // TODO change to bear's theme
       })
       this.hadIntro = true
     }
 
     // AI logic
     if (this.canMove && !/rekt|spawn/.test(this.status)) {
+      if (getSoundtrack() !== 'bear') initSoundtrack('bear')
+
       const enemies = senseCharacters(this)
 
       if (enemies.length > 0) {

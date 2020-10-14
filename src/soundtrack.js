@@ -1,12 +1,13 @@
-import { Synth, NoiseSynth, Transport, Part, Gain, Reverb } from 'tone'
+import { Synth, NoiseSynth, Transport, AutoFilter,  Part, Gain, Reverb } from 'tone'
 
 import mariamMatremVirginem from './tracks/mariam-matrem-virginem'
 import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
 import briansTheme from './tracks/brians-theme'
-import stellaSplendence from './tracks/stella-splendence/'
-import gameOver from './tracks/game-over/'
-import santaMaria from './tracks/santa-maria/'
-import bullsVsBears from './tracks/bulls-vs-bears/'
+import stellaSplendence from './tracks/stella-splendence'
+import gameOver from './tracks/game-over'
+import santaMaria from './tracks/santa-maria'
+import bear from './tracks/bear'
+import bullsVsBears from './tracks/bulls-vs-bears'
 import aNewHope from './tracks/a-new-hope'
 
 const gain = new Gain(1).toDestination()
@@ -14,6 +15,7 @@ const reverb = new Reverb({
   decay: 17,
   wet: .5,
 })
+let autoFilter
 
 const pulseOptions = {
   oscillator: {
@@ -129,6 +131,34 @@ const songs = {
       reverbs: [ sineSynth ],
       loop: true
     },
+    // Czino - Bear
+    bear: {
+      id: 'bear',
+      length: 24.8182 + 1.3636,
+      brownNoise: bear.triangle,
+      pulse: bear.pulse1,
+      triangle: bear.triangle,
+      sine: bear.sine,
+      noise: bear.noise,
+      init: () => {
+        autoFilter = new AutoFilter(1 / 1.3636)
+        sineSynth.envelope.attack = 0.0
+        sineSynth.envelope.release = 1.36
+        sineSynth.disconnect()
+        sineSynth.chain(autoFilter, reverb, gain)
+        autoFilter.start()
+
+        noiseSynth.noise.type = 'pink'
+      },
+      deinit: () => {
+        sineSynth.envelope.attack = 0.005
+        sineSynth.envelope.release = 0.8
+        autoFilter.stop()
+
+        noiseSynth.noise.type = 'white'
+      },
+      loop: true
+    },
     // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
     bullsVsBears: {
       id: 'bullsVsBears',
@@ -176,6 +206,8 @@ let noisePart = new Part()
 let brownNoisePart = new Part()
 
 export const initSoundtrack = id => {
+  if (song?.deinit) song.deinit()
+
   song = songs[id]
 
   if (Transport.state === 'started') stopMusic()
@@ -194,6 +226,8 @@ export const initSoundtrack = id => {
       synth.chain(reverb, gain)
     })
   }
+
+  if (song.init) song.init()
 
   Transport.loop = song.loop
   Transport.loopStart = 0
