@@ -17,35 +17,39 @@ export default function(id, options) {
   this.y = options.y
   this.vx = options.vx || 0
   this.vy = options.vy || 0
+  this.collected = false
 
   const sprite = CTDLGAME.assets.items
 
   this.touch = character => {
-    if (this.collected || this.vy !== 0) return
-    playSound('item')
+    if (this.collected || this.vy <= 0) return
     this.remove = true
     this.collected = true
 
     if (this.id === 'pizza') {
       character.heal(2)
+      playSound('item')
     } else if (this.id === 'taco') {
       character.heal(5)
+      playSound('item')
     } else if (this.id === 'opendime') {
       let sats = Math.round(Math.random() * 10000)
       addTextToQueue(`You found an opendime with\nś${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
+      playSound('item')
     } else if (this.id === 'coldcard') {
       let sats = Math.round(Math.random() * 100000)
       addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
+      playSound('item')
     } else if (this.id === 'honeybadger') {
-      addTextToQueue(`You gained the strength of the honey badger`, () => {
-        this.stength += Math.round(Math.random() + 1)
-        this.maxHealth += Math.round(Math.random() * 3 + 1)
-        this.health = this.maxHealth
-      })
+      addTextToQueue(`You gained the strength of the honey badger`)
+      character.strength += Math.round(Math.random() + 1)
+      character.maxHealth += Math.round(Math.random() * 3 + 1)
+      character.health = character.maxHealth
+      playSound('honeyBadger')
     }
   }
   this.update = () => {

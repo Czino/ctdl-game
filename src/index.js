@@ -32,17 +32,18 @@ import { intersects } from './geometryUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 import { changeMap } from './mapUtils'
+import Item from './Item'
 
 // import { playSound } from './sounds'
-// playSound('burn')
-// setInterval(() => playSound('burn'), 3000)
+// playSound('honeyBadger')
+// setInterval(() => playSound('honeyBadger'), 3000)
 
 // TODO finish forest tiling
+// TODO add option to buy Schiff's gold
 // TODO add forest enemies
 // TODO add exchange
 // TODO no twilight
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
-// TODO brian click on him creates multiple items
 // TODO add a way to revive rekt characters
 // TODO load assets only when needed
 // TODO dynamically load songs when needed
@@ -260,6 +261,13 @@ window.revive = () => {
 }
 window.save = () => {
   saveGame()
+}
+
+window.dropItem = id => {
+  CTDLGAME.objects.push(new Item(
+    id,
+    window.SELECTEDCHARACTER.toJSON()
+  ))
 }
 window.killEnemies = () => CTDLGAME.objects
   .filter(obj => obj.enemy)

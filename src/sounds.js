@@ -111,6 +111,38 @@ const sounds = {
     sineSynth.setNote('G5', present + dur / 2, .2)
     sineSynth.triggerRelease(present + dur)
   },
+  'honeyBadger': () => {
+    const dur = .08
+    const notes = ['A4', 'C5', 'E5', 'A5', 'G6']
+    let time = now()
+
+    sineSynth.portamento = 0
+    sineSynth.envelope.attack = .05
+    sineSynth.envelope.decay = .1
+    sineSynth.envelope.sustain = .3
+    sineSynth.envelope.release = dur * notes.length * 2
+
+
+    notes.forEach(note => {
+      sineSynth.triggerAttack(note, time, .01)
+      time += dur
+    })
+    sineSynth.triggerRelease(time)
+
+  },
+  'blockFound': () => {
+    const present = now()
+    const dur = .05
+
+    sineSynth.portamento = 0
+    sineSynth.envelope.attack = .005
+    sineSynth.envelope.decay = .1
+    sineSynth.envelope.sustain = .3
+    sineSynth.envelope.release = .07
+
+    sineSynth.triggerAttack('A#5', present, .2)
+    sineSynth.triggerRelease(present + dur)
+  },
   'block': () => {
     const present = now()
     const dur = .05
