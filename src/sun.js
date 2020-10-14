@@ -10,9 +10,31 @@ export default function(options) {
   this.y = options.y
   this.isSolid = false
 
+  this.easeInOut = (x, a) => Math.pow(x, a) / (Math.pow(x, a) + Math.pow(1 - x, a))
+  this.drawSky = timeOfDay => {
+    let y = timeOfDay < 4 || timeOfDay > 20 ? 0 : 1
+
+    if (timeOfDay >= 4 && timeOfDay <= 6) {
+      y = this.easeInOut((timeOfDay - 4) / 2, 3)
+    } else if (timeOfDay >= 17 && timeOfDay <= 20) {
+      y = this.easeInOut((timeOfDay - 20) / -3, 3)
+    }
+
+    let sky = {
+      h: Math.max(245, Math.min(338, 338 - y * 93)),
+      s: Math.max(11, Math.min(50, 50 - y * 39)),
+      l: Math.min(78, Math.max(3, 3 + y * 75))
+    }
+
+    constants.skyContext.fillStyle = `hsl(${sky.h}, ${sky.s}%, ${sky.l}%)`
+    constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  }
   this.update = () => {
     let timeOfDay = getTimeOfDay()
+    // first column, is day time, second is night time
     this.y = Math.round(CTDLGAME.viewport.y + 10)
+    
+    this.drawSky(timeOfDay)
 
     if (timeOfDay < 5 || timeOfDay > 19) return
     if (timeOfDay < 6) {

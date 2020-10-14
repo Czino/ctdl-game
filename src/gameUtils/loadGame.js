@@ -76,13 +76,9 @@ export const loadGame = async () => {
   let timeOfDay = getTimeOfDay()
   if (timeOfDay > 18.5) {
     CTDLGAME.isNight = true
-    removeClass(constants.skyCanvas, 'ctdl-day')
   } else if (timeOfDay > 5.5) {
     CTDLGAME.isNight = false
-    addClass(constants.skyCanvas, 'ctdl-day')
   }
 
   initSoundtrack(CTDLGAME.world.map.track)
-
-  setTimeout(() => addClass(constants.skyCanvas, 'transition-background-color'))
 }

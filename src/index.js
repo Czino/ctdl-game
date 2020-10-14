@@ -41,12 +41,10 @@ import Item from './Item'
 // TODO add option to buy Schiff's gold
 // TODO add forest enemies
 // TODO add exchange
-// TODO no twilight
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
 // TODO add a way to revive rekt characters
 // TODO load assets only when needed
 // TODO dynamically load songs when needed
-// TODO make canvas draw clean pixels
 // TODO refactor code
 // TODO fix receiving blocks doubled
 // TODO consider Chef Nomi #SushiSwap

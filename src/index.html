@@ -12,9 +12,6 @@
       justify-content: center;
       background-color: #212121;
     }
-    .transition-background-color {
-      transition: background-color 10s ease-in-out;
-    }
     .cursor-crosshair {
       cursor: crosshair;
     }
@@ -28,9 +25,6 @@
     #ctdl-game-sky {
       background-color: #212121;
       position: absolute;
-    }
-    #ctdl-game-sky.ctdl-day {
-      background-color: #c2c1cd;
     }
     #ctdl-game-parallax, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
       position: absolute;
@@ -51,7 +45,7 @@
   </style>
 </head>
 <body class="cursor-crosshair">
-  <canvas id="ctdl-game-sky" class="ctdl-day"></canvas>
+  <canvas id="ctdl-game-sky"></canvas>
   <canvas id="ctdl-game-parallax"></canvas>
   <canvas id="ctdl-game-bg"></canvas>
   <canvas id="ctdl-game"></canvas>
