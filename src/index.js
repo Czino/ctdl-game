@@ -38,7 +38,6 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
-// TODO finish forest tiling
 // TODO add option to buy Schiff's gold
 // TODO add forest enemies
 // TODO add exchange

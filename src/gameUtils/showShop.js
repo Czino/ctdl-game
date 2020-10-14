@@ -31,7 +31,7 @@ export const showShop = () => {
 
   write(
     constants.overlayContext,
-    'Shoppe',
+    'Spaeti',
     {
       x: CTDLGAME.viewport.x + 30,
       y: CTDLGAME.viewport.y + 60,
