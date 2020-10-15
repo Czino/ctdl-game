@@ -34,6 +34,7 @@ export const showOverlay = () => {
       obj.class !== 'Character'
     )
     if (!touchingObject) CTDLGAME.ghostBlock.status = 'bad'
+    if (CTDLGAME.ghostBlock.y > CTDLGAME.world.h - constants.MENU.h) CTDLGAME.ghostBlock.status = 'bad'
 
     let intersectingObject = CTDLGAME.quadTree.query(CTDLGAME.ghostBlock).find(obj => intersects(CTDLGAME.ghostBlock, obj.getBoundingBox()))
 

@@ -64,7 +64,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
         .filter(button => /newGame|loadGame|skipIntro/.test(button.action))
         .forEach(button => button.active = false)
 
-      window.removeEventListener('mousedown', startScreenHandler)
+      window.removeEventListener('mouseup', startScreenHandler)
       window.removeEventListener('touchstart', startScreenHandler)
       initEvents(false)
     }
@@ -87,7 +87,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
         .filter(button => /newGame|loadGame/.test(button.action))
         .forEach(button => button.active = false)
 
-      window.removeEventListener('mousedown', startScreenHandler)
+      window.removeEventListener('mouseup', startScreenHandler)
       window.removeEventListener('touchstart', startScreenHandler)
       initEvents(false)
     }
@@ -181,7 +181,7 @@ export const startScreenHandler = async (e) => {
 }
 
 window.addEventListener('mousemove', mouseMoveHandler)
-window.addEventListener('mousedown', startScreenHandler)
+window.addEventListener('mouseup', startScreenHandler)
 window.addEventListener('touchstart', startScreenHandler)
 
 export const initEvents = startScreen => {
@@ -199,8 +199,13 @@ export const initEvents = startScreen => {
     window.removeEventListener('touchend', clickEnd)
     window.removeEventListener('mousemove', mouseMove)
     window.removeEventListener('touchmove', mouseMove)
+    window.removeEventListener('touchstart', zoomHandler)
     window.removeEventListener('touchmove', zoomHandler)
     window.addEventListener('resize', resize)
+
+    constants.BUTTONS
+      .filter(button => /newGame|loadGame|skipIntro/.test(button.action))
+      .forEach(button => button.active = true)
     return
   }
 
@@ -208,6 +213,7 @@ export const initEvents = startScreen => {
     window.addEventListener('touchstart', click)
     window.addEventListener('touchend', clickEnd)
     window.addEventListener('touchmove', mouseMove)
+    window.addEventListener('touchstart', zoomHandler)
     window.addEventListener('touchmove', zoomHandler)
   } else {
     window.addEventListener('keydown', (e) => {
@@ -359,7 +365,7 @@ function clickEnd (e) {
 
   let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
 
-  if (!object && CTDLGAME.ghostBlock) {
+  if (!object && CTDLGAME.ghostBlock && CTDLGAME.ghostBlock.status !== 'bad') {
     // TODO refactor into placeBlock method
     playSound('block')
     CTDLGAME.ghostBlock.context = constants.gameContext
@@ -412,6 +418,8 @@ function zoomHandler (e) {
   if (!/ctdl-game/.test(canvas.id)) {
     return
   }
+
+  CTDLGAME.showOverlay = true
 
   CTDLGAME.zoom = {
     x: CTDLGAME.viewport.x + CTDLGAME.cursor.x,
