@@ -281,7 +281,6 @@ export default function(id, options) {
     health: this.health,
     direction: this.direction,
     frame: this.frame,
-    usd: this.usd,
     item: this.item
   })
 }

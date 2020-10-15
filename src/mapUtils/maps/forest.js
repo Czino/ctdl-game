@@ -432,7 +432,7 @@ objects.push(new Bear(
   'bigBear',
   {
     x: 1692,
-    y: 817
+    y: 815
   }
 ))
 objects.push(new NPC(

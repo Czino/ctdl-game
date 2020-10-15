@@ -208,12 +208,7 @@ function tick() {
     // Don't add blocks to Quadtree that are not in viewport
     CTDLGAME.quadTree.clear()
     CTDLGAME.objects
-      .filter(object => {
-        if (object.class === 'Block' || object.class === 'Ramp') {
-          return intersects(object, CTDLGAME.viewport)
-        }
-        return true
-      })
+      .filter(obj => obj.inViewport)
       .forEach(object => CTDLGAME.quadTree.insert(object))
 
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)

@@ -8,9 +8,15 @@ import { intersects } from '../geometryUtils'
  */
 export const applyGravity = () => {
     if (CTDLGAME.lockCharacters) return
+    const extendedViewport = {
+      x: CTDLGAME.viewportx - 8,
+      y: CTDLGAME.viewport.y,
+      w: CTDLGAME.viewport.w + 16,
+      h: CTDLGAME.viewport.h
+    }
     CTDLGAME.objects
       .map(obj => {
-        obj.inViewport = intersects(CTDLGAME.viewport, obj)
+        obj.inViewport = intersects(extendedViewport, obj.getBoundingBox())
         return obj
       })
       .filter(obj => obj.applyGravity)
