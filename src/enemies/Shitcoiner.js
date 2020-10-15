@@ -11,7 +11,7 @@ import { senseCharacters } from './enemyUtils'
 const sprites = {
   shitcoiner
 }
-const items = [
+const items = [
   { id: 'pizza', chance: 0.05 },
   { id: 'taco', chance: 0.02 },
   { id: 'opendime', chance: 0.01 }
@@ -185,11 +185,11 @@ export default function(id, options) {
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) this.vy = 0
+      if (hasCollided) this.vy = 0
     }
 
     // AI logic
-    if (!/rekt|burning|spawn/.test(this.status)) {
+    if (!/rekt|burning|spawn/.test(this.status)) {
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
         if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance

@@ -15,7 +15,7 @@ export default function(id, options) {
   this.id = id
   this.class = 'Rabbit'
   this.applyGravity = true
-  this.enemy = options.isEvil ?? false
+  this.enemy = options.isEvil ?? false
   this.spriteData = sprites.rabbit
   this.health = options.health ?? Math.round(Math.random() * 2 + 1)
   this.item = null
@@ -162,14 +162,14 @@ export default function(id, options) {
       if (this.vy < -6) this.vy = -6
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) this.vy = 0
+      if (hasCollided) this.vy = 0
     }
 
     // AI logic
     if (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate) {
       this.status = 'turnEvil'
     }
-    if (!/turnEvil|rekt|spawn/.test(this.status)) {
+    if (!/turnEvil|rekt|spawn/.test(this.status)) {
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
         if (this.isEvil) {

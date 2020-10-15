@@ -9,7 +9,7 @@ import { playSound } from '../sounds'
 import { getSoundtrack, initSoundtrack } from '../soundtrack';
 import { senseCharacters } from './enemyUtils'
 
-const items = [
+const items = [
   { id: 'pizza', chance: 0.01 },
   { id: 'taco', chance: 0.02 },
   { id: 'coldcard', chance: 0.05 },
@@ -153,7 +153,7 @@ export default function(id, options) {
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) this.vy = 0
+      if (hasCollided) this.vy = 0
     }
 
     if (!this.hadIntro && senseCharacters(this).length > 0) {
@@ -172,7 +172,7 @@ export default function(id, options) {
     }
 
     // AI logic
-    if (this.canMove && !/rekt|hurt/.test(this.status)) {
+    if (this.canMove && !/rekt|hurt/.test(this.status)) {
       if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
 
       const enemies = senseCharacters(this)

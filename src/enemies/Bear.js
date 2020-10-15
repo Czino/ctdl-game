@@ -9,7 +9,7 @@ import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 
-const items = [
+const items = [
   { id: 'honeybadger', chance: 1 }
 ]
 
@@ -113,7 +113,7 @@ export default function(id, options) {
     })
     addTextToQueue('Czino:\nDear alpha-tester,\nthank you for testing\nthe game prototype.')
     addTextToQueue('Czino:\nI hope you enjoyed it so far.')
-    addTextToQueue('Czino:\I am really curious\nwhat you think.\nI have prepared a form\n for you.\n')
+    addTextToQueue('Czino:\nI am really curious\nwhat you think.\nI have prepared a form\n for you.\n')
     // TODO open form?
   }
 
@@ -150,7 +150,7 @@ export default function(id, options) {
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) this.vy = 0
+      if (hasCollided) this.vy = 0
     }
 
     if (!this.hadIntro && senseCharacters(this).length > 0) {
@@ -165,7 +165,7 @@ export default function(id, options) {
     }
 
     // AI logic
-    if (this.canMove && !/rekt|spawn/.test(this.status)) {
+    if (this.canMove && !/rekt|spawn/.test(this.status)) {
       if (getSoundtrack() !== 'bear') initSoundtrack('bear')
 
       const enemies = senseCharacters(this)
@@ -192,7 +192,6 @@ export default function(id, options) {
           this.idle()
         }
       } else {
-        console.log('idle')
         this.idle()
       }
     }
