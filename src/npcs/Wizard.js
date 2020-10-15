@@ -2,7 +2,7 @@ import constants from '../constants'
 import { CTDLGAME, checkBlocks } from '../gameUtils'
 import { addTextToQueue } from '../textUtils'
 import { playSound } from '../sounds'
-import Explosion from '../explosion'
+import Explosion from '../Explosion'
 
 export default function(id, options) {
   this.id = id;

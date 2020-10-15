@@ -2,7 +2,7 @@ import constants from '../constants'
 import { loadWorldObjects, saveGame, updateViewport, gameObjects } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
 import { makeBoundary } from '../geometryUtils'
-import World from '../world'
+import World from '../World'
 import { initSoundtrack } from '../soundtrack'
 
 /**

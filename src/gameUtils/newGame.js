@@ -1,7 +1,5 @@
-import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-import { addClass } from '../htmlUtils'
-import Character from '../character'
+import Character from '../Character'
 import { changeMap } from '../mapUtils'
 
 /**

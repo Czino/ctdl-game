@@ -110,9 +110,7 @@ export default {
     overlayCanvas,
     menuCanvas
   ],
-  skyCanvas,
   skyContext,
-  parallaxCanvas,
   parallaxContext,
   bgCanvas,
   bgContext,

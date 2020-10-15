@@ -1,5 +1,5 @@
 import brianSprite from '../sprites/brian'
-import Item from '../item'
+import Item from '../Item'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'

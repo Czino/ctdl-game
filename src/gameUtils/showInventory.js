@@ -1,6 +1,5 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
-
 import { write } from '../font'
 
 const backpack = {

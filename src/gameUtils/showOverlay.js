@@ -1,5 +1,5 @@
 import constants from '../constants'
-import Block from '../block'
+import Block from '../Block'
 import { CTDLGAME, showZoom } from '../gameUtils'
 import { touches, intersects, sharpLine } from '../geometryUtils'
 

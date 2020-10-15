@@ -1,5 +1,5 @@
 import bearSprite from '../sprites/bear'
-import Item from '../item'
+import Item from '../Item'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
