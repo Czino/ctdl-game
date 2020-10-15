@@ -33,6 +33,8 @@ export default function(id, options) {
   this.walkingSpeed = 2
   this.attackRange = 2
   this.senseRadius = 160
+  this.hadIntro = options.hadIntro
+  this.canMove = options.canMove
 
   this.idle = () => {
     this.status = 'idle'
@@ -150,7 +152,6 @@ export default function(id, options) {
 
       if (hasCollided) this.vy = 0
     }
-
 
     if (!this.hadIntro && senseCharacters(this).length > 0) {
       CTDLGAME.lockCharacters = true
@@ -280,6 +281,8 @@ export default function(id, options) {
     status: this.status,
     health: this.health,
     direction: this.direction,
+    hadIntro: this.hadIntro,
+    canMove: this.canMove,
     frame: this.frame,
     item: this.item
   })
