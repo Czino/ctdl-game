@@ -293,24 +293,25 @@ function click (e) {
         x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
         y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
       }
-
-      let buttonPressed = constants.BUTTONS.find(button =>
-        button.active && 
-        CTDLGAME.cursor.x > button.x &&
-        CTDLGAME.cursor.x < button.x + button.w &&
-        CTDLGAME.cursor.y > button.y &&
-        CTDLGAME.cursor.y < button.y + button.h
-      )
-
-      if (buttonPressed?.onclick) {
-        buttonPressed.onclick()
-      } else if (buttonPressed) {
-        window.BUTTONS.unshift(buttonPressed)
-      }
     })
+
   }
 
   if (!/ctdl-game/.test(canvas.id)) return
+
+  let buttonPressed = constants.BUTTONS.find(button =>
+    button.active && 
+    CTDLGAME.cursor.x > button.x &&
+    CTDLGAME.cursor.x < button.x + button.w &&
+    CTDLGAME.cursor.y > button.y &&
+    CTDLGAME.cursor.y < button.y + button.h
+  )
+
+  if (buttonPressed?.onclick) {
+    buttonPressed.onclick()
+  } else if (buttonPressed) {
+    window.BUTTONS.unshift(buttonPressed)
+  }
 
   if (CTDLGAME.cursor.y > 215 && CTDLGAME.cursor.y < 232) skipText()
 }
