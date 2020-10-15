@@ -1,5 +1,6 @@
 import constants from './constants'
 import { CTDLGAME } from './gameUtils'
+import { intersects } from './geometryUtils'
 import { loadMap } from './mapUtils'
 
 export default function (id) {
@@ -11,26 +12,38 @@ export default function (id) {
   CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
   this.update = () => {
     let sprite = CTDLGAME.assets[this.id]
-    this.map.parallax.map(tile => {
-      constants.parallaxContext.drawImage(
-        sprite,
-        tile.tile[0], tile.tile[1], tile.w, tile.h,
-        tile.x, tile.y, tile.w, tile.h
-      )
-    })
-    this.map.bg.map(tile => {
-      constants.bgContext.drawImage(
-        sprite,
-        tile.tile[0], tile.tile[1], tile.w, tile.h,
-        tile.x, tile.y, tile.w, tile.h
-      )
-    })
-    this.map.fg.map(tile => {
-      constants.fgContext.drawImage(
-        sprite,
-        tile.tile[0], tile.tile[1], tile.w, tile.h,
-        tile.x, tile.y, tile.w, tile.h
-      )
-    })
+    let parallaxViewport = {
+      x: CTDLGAME.viewport.x / 2,
+      y: CTDLGAME.viewport.y,
+      w: CTDLGAME.viewport.w,
+      h: CTDLGAME.viewport.h
+    }
+    this.map.parallax
+      .filter(tile => intersects(tile, parallaxViewport))
+      .map(tile => {
+        constants.parallaxContext.drawImage(
+          sprite,
+          tile.tile[0], tile.tile[1], tile.w, tile.h,
+          tile.x, tile.y, tile.w, tile.h
+        )
+      })
+    this.map.bg
+      .filter(tile => intersects(tile, CTDLGAME.viewport))
+      .map(tile => {
+        constants.bgContext.drawImage(
+          sprite,
+          tile.tile[0], tile.tile[1], tile.w, tile.h,
+          tile.x, tile.y, tile.w, tile.h
+        )
+      })
+    this.map.fg
+      .filter(tile => intersects(tile, CTDLGAME.viewport))
+      .map(tile => {
+        constants.fgContext.drawImage(
+          sprite,
+          tile.tile[0], tile.tile[1], tile.w, tile.h,
+          tile.x, tile.y, tile.w, tile.h
+        )
+      })
   }
 }

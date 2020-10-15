@@ -1,5 +1,5 @@
 import constants from '../constants'
-import { QuadTree, Boundary } from '../quadTree'
+import { QuadTree, Boundary } from '../Quadtree'
 import { assets} from './assets'
 
 export const CTDLGAME = {

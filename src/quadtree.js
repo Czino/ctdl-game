@@ -16,18 +16,7 @@ export const QuadTree = function (boundary, capacity, level) {
   this.level = level || 0
 
   this.insert = object => {
-    // TODO is there maybe a more performant way?
-    if (object.getBoundingBox) {
-      const boundingBox = object.getBoundingBox()
-      object = {
-        ...object,
-        x: boundingBox.x,
-        y: boundingBox.y,
-        w: boundingBox.w,
-        h: boundingBox.h,
-      }
-    }
-    if (!intersects(this.boundary, object)) {
+    if (!intersects(this.boundary, object.getBoundingBox ? object.getBoundingBox() : object)) {
       return false
     }
 
@@ -42,14 +31,14 @@ export const QuadTree = function (boundary, capacity, level) {
       // redistribute objects in newly created subs
       this.objects.forEach(o => {
         this.subs.forEach(sub => {
-          return sub.insert(o)
+          return sub.insert(o, true)
         })
       })
       this.objects = []
     }
 
     return this.subs.forEach(sub => {
-      return sub.insert(object)
+      return sub.insert(object, true)
     })
   }
   this.subdivide = () => {
