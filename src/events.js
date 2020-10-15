@@ -164,7 +164,7 @@ export const startScreenHandler = async (e) => {
       CTDLGAME.cursor.y > button.y &&
       CTDLGAME.cursor.y < button.y + button.h
     )
-  
+
     if (buttonPressed?.onclick) buttonPressed.onclick()
   } else if (e.touches?.length > 0) {
     e.stopPropagation()
@@ -299,8 +299,8 @@ function click (e) {
 
   if (!/ctdl-game/.test(canvas.id)) return
 
-  let buttonPressed = constants.BUTTONS.find(button =>
-    button.active && 
+  let buttonPressed = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
+    button.active &&
     CTDLGAME.cursor.x > button.x &&
     CTDLGAME.cursor.x < button.x + button.w &&
     CTDLGAME.cursor.y > button.y &&
