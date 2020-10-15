@@ -64,8 +64,8 @@ constants.BUTTONS = constants.BUTTONS.concat([
         .filter(button => /newGame|loadGame|skipIntro/.test(button.action))
         .forEach(button => button.active = false)
 
-      window.removeEventListener('mouseup', startScreenHandler)
-      window.removeEventListener('touchend', startScreenHandler)
+      window.removeEventListener('mousedown', startScreenHandler)
+      window.removeEventListener('touchstart', startScreenHandler)
       initEvents(false)
     }
   },
@@ -87,8 +87,8 @@ constants.BUTTONS = constants.BUTTONS.concat([
         .filter(button => /newGame|loadGame/.test(button.action))
         .forEach(button => button.active = false)
 
-      window.removeEventListener('mouseup', startScreenHandler)
-      window.removeEventListener('touchend', startScreenHandler)
+      window.removeEventListener('mousedown', startScreenHandler)
+      window.removeEventListener('touchstart', startScreenHandler)
       initEvents(false)
     }
   },
@@ -157,6 +157,15 @@ export const startScreenHandler = async (e) => {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
+    let buttonPressed = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
+      button.active &&
+      CTDLGAME.cursor.x > button.x &&
+      CTDLGAME.cursor.x < button.x + button.w &&
+      CTDLGAME.cursor.y > button.y &&
+      CTDLGAME.cursor.y < button.y + button.h
+    )
+  
+    if (buttonPressed?.onclick) buttonPressed.onclick()
   } else if (e.touches?.length > 0) {
     e.stopPropagation()
     CTDLGAME.cursor = {
@@ -169,15 +178,6 @@ export const startScreenHandler = async (e) => {
       .filter(button => /moveLeft|moveRight|jump|back|switch|attack/.test(button.action))
       .forEach(button => button.active = true)
   }
-  let buttonPressed = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
-    button.active &&
-    CTDLGAME.cursor.x > button.x &&
-    CTDLGAME.cursor.x < button.x + button.w &&
-    CTDLGAME.cursor.y > button.y &&
-    CTDLGAME.cursor.y < button.y + button.h
-  )
-
-  if (buttonPressed?.onclick) buttonPressed.onclick()
 }
 
 window.addEventListener('mousemove', mouseMoveHandler)
