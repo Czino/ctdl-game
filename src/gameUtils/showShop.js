@@ -2,8 +2,8 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
 import itemSpriteData from '../sprites/items'
-import { playSound } from '../sounds'
 import { addTextToQueue } from '../textUtils'
+import Item from '../Item'
 
 // TODO prize items (add inflation, lol)
 const priceList = {
@@ -75,10 +75,10 @@ export const showShop = () => {
           if (CTDLGAME.inventory.usd - priceList[item] < 0) return addTextToQueue('Not enough fiat!')
 
           CTDLGAME.inventory.usd -= priceList[item]
-          shopFor.eat(item)
+          const itm =  new Item(item, {})
+          itm.touch(shopFor)
 
           addTextToQueue(`Here is your ${item}`)
-          playSound('item')
         }
       })
     }
