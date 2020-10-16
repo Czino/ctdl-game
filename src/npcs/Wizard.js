@@ -57,7 +57,6 @@ export default function(id, options) {
       ].join('\n'))
       addTextToQueue('Wizard:\n We call them shitcoiners,\nlol')
       addTextToQueue('Wizard:\n I must go now, \nI will see you again,\non the moon!', () => {
-        CTDLGAME.frame = 0
         this.disappear()
       })
     } else {
