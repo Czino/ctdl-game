@@ -27,7 +27,7 @@ export const newGame = async () => {
   )
 
   CTDLGAME.startedNewGame = true
-  CTDLGAME.hodlonaut.select()
+  CTDLGAME.hodlonaut.choose()
 
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)

@@ -2,6 +2,7 @@ import constants from '../constants'
 import { write } from '../font'
 import { textQueue } from './textQueue'
 import { CTDLGAME } from '../gameUtils'
+import { skipCutSceneButton } from '../events'
 
 const timeToShowFinishedText = 256
 
@@ -50,6 +51,7 @@ export const writeMenu = () => {
       },
       'right'
     )
+
     return
   }
 
@@ -74,4 +76,17 @@ export const writeMenu = () => {
     false,
     CTDLGAME.frame - text.frame
   )
+
+  if (CTDLGAME.lockCharacters) {
+    write(
+      constants.menuContext,
+      'skip', {
+        x: CTDLGAME.viewport.x + skipCutSceneButton.x,
+        y: CTDLGAME.viewport.y + skipCutSceneButton.y,
+        w: skipCutSceneButton.w
+      },
+      'right',
+      false
+    )
+  }
 }

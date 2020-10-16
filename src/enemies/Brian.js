@@ -158,6 +158,7 @@ export default function(id, options) {
 
     if (!this.hadIntro && senseCharacters(this).length > 0) {
       CTDLGAME.lockCharacters = true
+      constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
 
       setTextQueue([])
       addTextToQueue('Brian:\nWelcome to crypto!')
@@ -167,6 +168,7 @@ export default function(id, options) {
       addTextToQueue('Brian:\nI will delete you!', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
+        constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = false
       })
       this.hadIntro = true
     }

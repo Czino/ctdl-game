@@ -7,6 +7,7 @@ import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
 import { isSoundLoaded, playSound, toggleSounds } from './sounds'
 import { start } from 'tone'
+import { textQueue } from './textUtils/textQueue'
 
 window.KEYS = []
 window.BUTTONS = []
@@ -140,6 +141,22 @@ constants.BUTTONS = constants.BUTTONS.concat([
     }
   },
   {
+    action: 'skipCutScene',
+    x: constants.WIDTH - 30,
+    y: constants.HEIGHT - 12,
+    w: 30,
+    h: 10,
+    active: false,
+    onclick: () => {
+      textQueue.map(text => text.callback ? text.callback() : null)
+      setTextQueue([])
+
+      constants.BUTTONS
+        .filter(button => /skipIntro/.test(button.action))
+        .forEach(button => button.active = false)
+    }
+  },
+  {
     action: 'music',
     x: constants.WIDTH - 3 - 9 - 11,
     y: 3,
@@ -172,6 +189,12 @@ constants.BUTTONS = constants.BUTTONS.concat([
   { action: 'back', x: 21 * 2, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
   { action: 'switch', x: 21 * 3, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true, onclick: switchCharacter}
 ])
+
+export const newGameButton = constants.BUTTONS.find(btn => btn.action === 'newGame')
+export const loadGameButton = constants.BUTTONS.find(btn => btn.action === 'loadGame')
+export const singlePlayerButton = constants.BUTTONS.find(btn => btn.action === 'singlePlayer')
+export const multiPlayerButton = constants.BUTTONS.find(btn => btn.action === 'multiPlayer')
+export const skipCutSceneButton = constants.BUTTONS.find(btn => btn.action === 'skipCutScene')
 
 export const startScreenHandler = async (e) => {
   let canvas = e.target

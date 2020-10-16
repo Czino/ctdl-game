@@ -4,14 +4,10 @@ import { write } from '../font'
 import { showSettings } from './showSettings'
 import { playSound } from '../sounds'
 import { initSoundtrack } from '../soundtrack'
+import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../events'
 
 let logoOffsetTop = 100
 let logoOffsetBottom = 200
-
-const newGame = constants.BUTTONS.find(btn => btn.action === 'newGame')
-const loadGame = constants.BUTTONS.find(btn => btn.action === 'loadGame')
-const singlePlayer = constants.BUTTONS.find(btn => btn.action === 'singlePlayer')
-const multiPlayer = constants.BUTTONS.find(btn => btn.action === 'multiPlayer')
 
 /**
  * @description Method to display progress bar
@@ -58,9 +54,9 @@ export const showStartScreen = () => {
     constants.overlayContext,
     CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ new game' : 'new game',
     {
-      x: CTDLGAME.viewport.x + newGame.x - 10,
-      y: CTDLGAME.viewport.y + newGame.y,
-      w: newGame.w
+      x: CTDLGAME.viewport.x + newGameButton.x - 10,
+      y: CTDLGAME.viewport.y + newGameButton.y,
+      w: newGameButton.w
     },
     'right'
   )
@@ -70,9 +66,9 @@ export const showStartScreen = () => {
       constants.overlayContext,
       CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ resume game' : 'resume game',
       {
-        x: CTDLGAME.viewport.x + loadGame.x - 10,
-        y: CTDLGAME.viewport.y + loadGame.y,
-        w: loadGame.w
+        x: CTDLGAME.viewport.x + loadGameButton.x - 10,
+        y: CTDLGAME.viewport.y + loadGameButton.y,
+        w: loadGameButton.w
       },
       'right'
     )
@@ -83,9 +79,9 @@ export const showStartScreen = () => {
       constants.overlayContext,
       CTDLGAME.multiPlayer ? '1P' : '> 1P',
       {
-        x: CTDLGAME.viewport.x + singlePlayer.x - 10,
-        y: CTDLGAME.viewport.y + singlePlayer.y,
-        w: singlePlayer.w
+        x: CTDLGAME.viewport.x + singlePlayerButton.x - 10,
+        y: CTDLGAME.viewport.y + singlePlayerButton.y,
+        w: singlePlayerButton.w
       },
       'right'
     )
@@ -93,9 +89,9 @@ export const showStartScreen = () => {
       constants.overlayContext,
       CTDLGAME.multiPlayer ? '> 2P' : '2P',
       {
-        x: CTDLGAME.viewport.x + multiPlayer.x - 10,
-        y: CTDLGAME.viewport.y + multiPlayer.y,
-        w: multiPlayer.w
+        x: CTDLGAME.viewport.x + multiPlayerButton.x - 10,
+        y: CTDLGAME.viewport.y + multiPlayerButton.y,
+        w: multiPlayerButton.w
       },
       'right'
     )

@@ -31,6 +31,7 @@ export default function(id, options) {
 
       CTDLGAME.wizardCountdown = null
       CTDLGAME.lockCharacters = true
+      constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
 
       addTextToQueue('Wizard:\n At last, I found you!')
       addTextToQueue('Wizard:\n I am the wizard of \nmagic internet money.')
@@ -84,6 +85,7 @@ export default function(id, options) {
     explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
     this.status = 'disappear'
     CTDLGAME.lockCharacters = false
+    constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = false
   }
 
   this.getBoundingBox = () => ({
