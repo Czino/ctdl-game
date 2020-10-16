@@ -79,7 +79,7 @@ export default function(id, options) {
       this.status = this.attacks ? 'moveAttack' : 'move'
       if (!this.attacks) return
       if (this.id === 'katoshi' && this.frame !== 3) return
-      this.makeDamage()
+      this.makeDamage(this.id === 'katoshi' ? .8 : 1)
     } else if (!CTDLGAME.multiPlayer && !this.selected) {
       let jumpTo = this.getBoundingBox()
       jumpTo.y -=4
@@ -129,10 +129,10 @@ export default function(id, options) {
     this.status = 'attack'
 
     if (this.id === 'katoshi' && this.frame !== 3) return
-    this.makeDamage()
+    this.makeDamage(1)
   }
 
-  this.makeDamage = () => {
+  this.makeDamage = multiplier => {
     // TODO make lightningTorch stronger with increasing sats count
     if (this.id === 'hodlonaut') playSound('lightningTorch')
     if (this.id === 'katoshi') playSound('sword')
@@ -146,7 +146,7 @@ export default function(id, options) {
       } else {
         this.direction = 'right'
       }
-      enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+      enemy.hurt(Math.round(dmg * multiplier), this.direction === 'left' ? 'right' : 'left')
     })
   }
 
