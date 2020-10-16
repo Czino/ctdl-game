@@ -6,7 +6,7 @@ import { CTDLGAME } from './CTDLGAME'
  * @returns {void}
  */
 export const updateViewport = () => {
-  if (CTDLGAME.multiplayer) {
+  if (CTDLGAME.multiPlayer) {
     CTDLGAME.viewport.x = Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2)
     CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
   } else {

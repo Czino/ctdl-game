@@ -58,21 +58,31 @@ const helperContext = helperCanvas.getContext('2d');
 })
 
 const CONTROLS = {
+  singlePlayer: {
+    q: 'jump',
+    ' ': 'jump',
+    e: 'attack',
+    enter: 'attack',
+    w: 'back',
+    a: 'moveLeft',
+    s: null,
+    d: 'moveRight'
+  },
   hodlonaut: {
+    q: 'jump',
     e: 'attack',
     w: 'back',
     a: 'moveLeft',
     s: null,
     d: 'moveRight',
-    q: 'jump'
   },
   katoshi: {
+    o: 'jump',
     u: 'attack',
     i: 'back',
     j: 'moveLeft',
     k: null,
-    l: 'moveRight',
-    o: 'jump',
+    l: 'moveRight'
   },
   buttons: {
     attack: 'attack',

@@ -31,6 +31,7 @@ import { applyGravity } from './physicsUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 import { changeMap } from './mapUtils'
+import { showButtons } from './debugUtils'
 import Item from './Item'
 
 // import { playSound } from './sounds'
@@ -135,12 +136,16 @@ function tick() {
   if (!CTDLGAME.isSoundLoaded) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     showStartGameScreen()
+
+    if (window.SHOWBUTTONS) showButtons()
+
     CTDLGAME.frame++
     return window.requestAnimationFrame(tick)
   }
   if (CTDLGAME.startScreen) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     clearCanvas()
+    if (window.SHOWBUTTONS) showButtons()
 
     showStartScreen()
     CTDLGAME.frame++
@@ -225,6 +230,7 @@ function tick() {
       .filter(obj => obj.inViewport)
       .forEach(object => CTDLGAME.quadTree.insert(object))
 
+    // TODO abstract into all in one debug function
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
 
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {

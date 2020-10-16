@@ -8,6 +8,11 @@ import { initSoundtrack } from '../soundtrack'
 let logoOffsetTop = 100
 let logoOffsetBottom = 200
 
+const newGame = constants.BUTTONS.find(btn => btn.action === 'newGame')
+const loadGame = constants.BUTTONS.find(btn => btn.action === 'loadGame')
+const singlePlayer = constants.BUTTONS.find(btn => btn.action === 'singlePlayer')
+const multiPlayer = constants.BUTTONS.find(btn => btn.action === 'multiPlayer')
+
 /**
  * @description Method to display progress bar
  * @returns {void}
@@ -49,25 +54,25 @@ export const showStartScreen = () => {
 
   showSettings()
 
-  let text = CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ new game' : 'new game'
   write(
     constants.overlayContext,
-    text, {
-      x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 35,
-      y: CTDLGAME.viewport.y + constants.HEIGHT / 2,
-      w: 60
+    CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ new game' : 'new game',
+    {
+      x: CTDLGAME.viewport.x + newGame.x - 10,
+      y: CTDLGAME.viewport.y + newGame.y,
+      w: newGame.w
     },
     'right'
   )
 
   if (!CTDLGAME.newGame) {
-    text = CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ resume game' : 'resume game'
     write(
       constants.overlayContext,
-      text, {
-        x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 41,
-        y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 20,
-        w: 80
+      CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ resume game' : 'resume game',
+      {
+        x: CTDLGAME.viewport.x + loadGame.x - 10,
+        y: CTDLGAME.viewport.y + loadGame.y,
+        w: loadGame.w
       },
       'right'
     )
@@ -76,13 +81,33 @@ export const showStartScreen = () => {
   if (!CTDLGAME.touchScreen) {
     write(
       constants.overlayContext,
+      CTDLGAME.multiPlayer ? '1P' : '> 1P',
+      {
+        x: CTDLGAME.viewport.x + singlePlayer.x - 10,
+        y: CTDLGAME.viewport.y + singlePlayer.y,
+        w: singlePlayer.w
+      },
+      'right'
+    )
+    write(
+      constants.overlayContext,
+      CTDLGAME.multiPlayer ? '> 2P' : '2P',
+      {
+        x: CTDLGAME.viewport.x + multiPlayer.x - 10,
+        y: CTDLGAME.viewport.y + multiPlayer.y,
+        w: multiPlayer.w
+      },
+      'right'
+    )
+
+    write(
+      constants.overlayContext,
       [
         '',
         'move:',
         'jump:',
         'attack:',
-        '',
-        'switch: TAB'
+        !CTDLGAME.multiPlayer ? 'switch:' : ''
       ].join('\n'), {
         x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 41,
         y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
@@ -95,8 +120,9 @@ export const showStartScreen = () => {
       [
         'P1:',
         'WASD',
-        'Q',
-        'E'
+        !CTDLGAME.multiPlayer ? 'Q / SPACE' : 'Q',
+        !CTDLGAME.multiPlayer ? 'E / ENTER' : 'E',
+        !CTDLGAME.multiPlayer ? 'TAB' : ''
       ].join('\n'), {
         x: CTDLGAME.viewport.x + constants.WIDTH / 2,
         y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
@@ -104,19 +130,21 @@ export const showStartScreen = () => {
       },
       'left'
     )
-    write(
-      constants.overlayContext,
-      [
-        'P2:',
-        'IJKL',
-        'O',
-        'U'
-      ].join('\n'), {
-        x: CTDLGAME.viewport.x + constants.WIDTH / 2 + 30,
-        y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
-        w: 60
-      },
-      'left'
-    )
+    if (CTDLGAME.multiPlayer) {
+      write(
+        constants.overlayContext,
+        [
+          'P2:',
+          'IJKL',
+          'O',
+          'U'
+        ].join('\n'), {
+          x: CTDLGAME.viewport.x + constants.WIDTH / 2 + 30,
+          y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 60,
+          w: 60
+        },
+        'left'
+      )
+    }
   }
 }

@@ -48,7 +48,7 @@ export default function(id, options) {
 
     if (hasMoved) {
       this.status = 'move'
-    } else if (!CTDLGAME.multiplayer && !this.selected) {
+    } else if (!CTDLGAME.multiPlayer && !this.selected) {
       let jumpTo = this.getBoundingBox()
       jumpTo.y -=4
       jumpTo.x -= 3
@@ -70,7 +70,7 @@ export default function(id, options) {
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
-    } else if (!CTDLGAME.multiplayer && !this.selected) {
+    } else if (!CTDLGAME.multiPlayer && !this.selected) {
       let jumpTo = this.getBoundingBox()
       jumpTo.y -=4
       jumpTo.w += 3
@@ -188,9 +188,9 @@ export default function(id, options) {
   }
 
   this.senseControls = () => {
-    let id = CTDLGAME.multiplayer ? this.id : 'hodlonaut'
-    let didAction = window.KEYS.find(key => {
-      if (!this[constants.CONTROLS[id][key]]) return false
+    let id = CTDLGAME.multiPlayer ? this.id : 'singlePlayer'
+    let didAction = Object.keys(constants.CONTROLS[id]).find(key => {
+      if (window.KEYS.indexOf(key) === -1) return false
 
       this[constants.CONTROLS[id][key]]()
       return true
@@ -301,7 +301,7 @@ export default function(id, options) {
       this.status = 'idle'
     }
 
-    if (CTDLGAME.multiplayer || this.selected) {
+    if (CTDLGAME.multiPlayer || this.selected) {
       this.senseControls()
     } else {
       this.autoPilot()

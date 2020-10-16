@@ -2,7 +2,7 @@ import * as db from './db'
 import { contains } from './geometryUtils'
 import constants from './constants'
 import { CTDLGAME, loadGame, newGame, saveStateExists, showIntro } from './gameUtils'
-import { addTextToQueue, setTextQueue, skipText } from './textUtils'
+import { setTextQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
 import { isSoundLoaded, playSound, toggleSounds } from './sounds'
@@ -93,6 +93,30 @@ constants.BUTTONS = constants.BUTTONS.concat([
       window.removeEventListener('mouseup', startScreenHandler)
       window.removeEventListener('touchstart', startScreenHandler)
       initEvents(false)
+    }
+  },
+  {
+    action: 'singlePlayer',
+    x: constants.WIDTH / 2 - 43,
+    y: constants.HEIGHT / 2 + 40,
+    w: 30,
+    h: 10,
+    active: true,
+    onclick: () => {
+      playSound('select')
+      CTDLGAME.multiPlayer = false
+    }
+  },
+  {
+    action: 'multiPlayer',
+    x: constants.WIDTH / 2 - 6,
+    y: constants.HEIGHT / 2 + 40,
+    w: 30,
+    h: 10,
+    active: true,
+    onclick: () => {
+      playSound('select')
+      CTDLGAME.multiPlayer = true
     }
   },
   {
@@ -207,7 +231,7 @@ export const initEvents = startScreen => {
     window.addEventListener('resize', resize)
 
     constants.BUTTONS
-      .filter(button => /newGame|loadGame|skipIntro/.test(button.action))
+      .filter(button => /newGame|loadGame/.test(button.action))
       .forEach(button => button.active = true)
     return
   }
@@ -228,18 +252,11 @@ export const initEvents = startScreen => {
   }
 
   window.addEventListener('keydown', e => {
-    if (!CTDLGAME.multiplayer) {
-      if (Object.keys(constants.CONTROLS.katoshi).indexOf(e.key.toLowerCase()) !== -1 &&
-        CTDLGAME.hodlonaut.inViewport && CTDLGAME.katoshi.inViewport) {
-        CTDLGAME.multiplayer = true
-        addTextToQueue('Multiplayer activated')
-      }
-    }
     if (e.key.toLowerCase() === 'tab') {
       e.preventDefault()
       switchCharacter()
     }
-    KEYS.push(e.key.toLowerCase());
+    window.KEYS.push(e.key.toLowerCase());
   })
 
   window.addEventListener('keyup', e => {
