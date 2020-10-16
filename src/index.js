@@ -28,7 +28,6 @@ import {
 import { writeMenu } from './textUtils'
 import Wizard from './npcs/Wizard'
 import { applyGravity } from './physicsUtils'
-import { intersects } from './geometryUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 import { changeMap } from './mapUtils'
@@ -38,6 +37,21 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
+// TODO select 2 player option on start screen
+// TODO make inactive player follow active one
+// TODO change controls for single player
+// TODO enable attack while walking (more action)
+// TODO can the game be a bit "faster"?
+// TODO add skip option to cut scenes
+// TODO evil rabbits too hard to beat
+// TODO thinking about toggling blocks (Wish all blocks that are stacked could be toggles together, unless there is value at not doing so)
+// TODO when one char dies make the other cry?
+// TODO prevent auto switching between maps
+// TODO double game start, how?
+// TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
+// TODO add game tutorial of some sorts
+// TODO katoshi rekt, set block > freeze
+// TODO cannot restart on Game Over
 // TODO add option to buy Schiff's gold
 // TODO add forest enemies
 // TODO add exchange

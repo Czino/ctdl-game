@@ -118,5 +118,16 @@ export default {
         }
       })
     }
+  },
+  'wyd_idk': {
+    frames: [
+      // TODO add sprite (inspiration https://www.google.com/imgres?imgurl=https%3A%2F%2Fcdnb.artstation.com%2Fp%2Fassets%2Fimages%2Fimages%2F009%2F914%2F965%2Flarge%2Foscar-kadejo-eva012.jpg%3F1521564808&imgrefurl=https%3A%2F%2Fkadejo.artstation.com%2Fprojects%2F3XqDo&tbnid=g7rk7UUqOpUZ6M&vet=12ahUKEwiToqaUr7fsAhULixoKHe3vCUUQMygHegUIARC0AQ..i&docid=gAzhw6XeyhMPAM&w=1250&h=1250&q=evangelion%20pixel%20art&ved=2ahUKEwiToqaUr7fsAhULixoKHe3vCUUQMygHegUIARC0AQ)
+      { x: 0, y: 30, w: 11, h: 25 }
+    ],
+    select: npc => {
+      addTextToQueue('wyd_idk:\nLess and less time is left before "Second Impact", stop trading shitcoins and look at your future seriously, Bitcoin has the most powerful monetary system, that\'s the only thing what matters.', () => {
+        npc.isSelected = false
+      })
+    }
   }
 }
