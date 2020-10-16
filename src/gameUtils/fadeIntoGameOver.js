@@ -2,7 +2,7 @@ import * as db from '../db'
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, stopMusic, changeVolume } from '../soundtrack'
-import { initEvents } from '../events'
+import { newGameButton } from '../events'
 
 let deathCounter = 64
 /**
@@ -10,9 +10,6 @@ let deathCounter = 64
  * @returns {void}
  */
 export const fadeIntoGameOver = () => {
-  if (deathCounter === 64) {
-    initEvents(true)
-  }
   deathCounter--
 
   changeVolume(deathCounter / 64)
@@ -29,9 +26,17 @@ export const fadeIntoGameOver = () => {
     CTDLGAME.gameOver = true
     db.destroy()
 
+    newGameButton.active = true
+
     stopMusic()
     changeVolume(1)
     initSoundtrack('gameOver')
+    CTDLGAME.objects = []
+    CTDLGAME.inventory = {
+      sats: 0,
+      usd: 0,
+      blocks: []
+    }
     constants.BUTTONS.find(button => button.action === 'newGame').active = true
   }
 }
