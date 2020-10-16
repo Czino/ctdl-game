@@ -39,16 +39,14 @@ import Item from './Item'
 // setInterval(() => playSound('honeyBadger'), 3000)
 
 // TODO can the game be a bit "faster"?
-// TODO add skip option to cut scenes
 // TODO evil rabbits too hard to beat
 // TODO thinking about toggling blocks (Wish all blocks that are stacked could be toggles together, unless there is value at not doing so)
 // TODO when one char dies make the other cry?
 // TODO prevent auto switching between maps
-// TODO double game start, how?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
 // TODO add game tutorial of some sorts
 // TODO katoshi rekt, set block > freeze
-// TODO cannot restart on Game Over
+// TODO rekt characters should stay in the map they got rekt
 // TODO add option to buy Schiff's gold
 // TODO add forest enemies
 // TODO add exchange
@@ -162,6 +160,9 @@ function tick() {
   if (CTDLGAME.gameOver) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     showGameOverScreen()
+
+    if (window.SHOWBUTTONS) showButtons()
+
     CTDLGAME.frame++
     return window.requestAnimationFrame(tick)
   }
@@ -287,3 +288,4 @@ window.killEnemies = () => CTDLGAME.objects
 
 window.changeMap = changeMap
 window.CTDLGAME = CTDLGAME
+window.constants = constants

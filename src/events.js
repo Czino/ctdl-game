@@ -85,7 +85,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
       CTDLGAME.cutScene = true
 
       constants.BUTTONS
-        .filter(button => /newGame|loadGame|singlePlayer|multiPlayer|/.test(button.action))
+        .filter(button => /newGame|loadGame|singlePlayer|multiPlayer/.test(button.action))
         .forEach(button => button.active = false)
       constants.BUTTONS
         .filter(button => /skipIntro/.test(button.action))
@@ -195,6 +195,8 @@ export const loadGameButton = constants.BUTTONS.find(btn => btn.action === 'load
 export const singlePlayerButton = constants.BUTTONS.find(btn => btn.action === 'singlePlayer')
 export const multiPlayerButton = constants.BUTTONS.find(btn => btn.action === 'multiPlayer')
 export const skipCutSceneButton = constants.BUTTONS.find(btn => btn.action === 'skipCutScene')
+export const musicButton = constants.BUTTONS.find(button => button.action === 'music')
+export const soundButton = constants.BUTTONS.find(button => button.action === 'sound')
 
 export const startScreenHandler = async (e) => {
   let canvas = e.target
