@@ -87,7 +87,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
         .filter(button => /newGame|loadGame/.test(button.action))
         .forEach(button => button.active = false)
       constants.BUTTONS
-        .filter(button => /|skipIntro/.test(button.action))
+        .filter(button => /skipIntro/.test(button.action))
         .forEach(button => button.active = true)
 
       window.removeEventListener('mouseup', startScreenHandler)
