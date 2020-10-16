@@ -38,9 +38,7 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
-// TODO select 2 player option on start screen
 // TODO make inactive player follow active one
-// TODO change controls for single player
 // TODO enable attack while walking (more action)
 // TODO can the game be a bit "faster"?
 // TODO add skip option to cut scenes

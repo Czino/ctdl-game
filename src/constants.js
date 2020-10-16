@@ -65,7 +65,7 @@ const CONTROLS = {
     enter: 'attack',
     w: 'back',
     a: 'moveLeft',
-    s: null,
+    // s: null,
     d: 'moveRight'
   },
   hodlonaut: {
@@ -73,7 +73,7 @@ const CONTROLS = {
     e: 'attack',
     w: 'back',
     a: 'moveLeft',
-    s: null,
+    // s: null,
     d: 'moveRight',
   },
   katoshi: {

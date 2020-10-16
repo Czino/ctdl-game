@@ -60,8 +60,8 @@ export const loadGame = async () => {
     katoshi
   )
 
-  if (CTDLGAME.hodlonaut.selected) CTDLGAME.hodlonaut.select()
-  if (CTDLGAME.katoshi.selected) CTDLGAME.katoshi.select()
+  if (CTDLGAME.hodlonaut.selected) window.SELECTEDCHARACTER = CTDLGAME.hodlonaut
+  if (CTDLGAME.katoshi.selected) window.SELECTEDCHARACTER = CTDLGAME.katoshi
 
   updateViewport()
 

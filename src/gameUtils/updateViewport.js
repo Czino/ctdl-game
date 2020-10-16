@@ -1,4 +1,5 @@
 import constants from '../constants'
+import { intersects } from '../geometryUtils'
 import { CTDLGAME } from './CTDLGAME'
 
 /**
@@ -12,6 +13,18 @@ export const updateViewport = () => {
   } else {
     CTDLGAME.viewport.x = Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2)
     CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h - constants.HEIGHT / 2))
+  }
+
+
+  if (CTDLGAME.hodlonaut.selected && CTDLGAME.katoshi.follow && !intersects(CTDLGAME.katoshi, CTDLGAME.viewport)) {
+    CTDLGAME.katoshi.x = CTDLGAME.hodlonaut.x
+    CTDLGAME.katoshi.y = CTDLGAME.hodlonaut.y
+    CTDLGAME.katoshi.teleporting = 16
+  }
+  if (CTDLGAME.katoshi.selected && CTDLGAME.hodlonaut.follow && !intersects(CTDLGAME.hodlonaut, CTDLGAME.viewport)) {
+    CTDLGAME.hodlonaut.x = CTDLGAME.katoshi.x
+    CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
+    CTDLGAME.hodlonaut.teleporting = 16
   }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)

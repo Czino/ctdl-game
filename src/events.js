@@ -398,7 +398,6 @@ function clickEnd (e) {
   }
   if (window.SELECTED) window.SELECTED.unselect()
   if (!object) return
-  if (object.class === 'Character') window.SELECTEDCHARACTER.unselect()
   if (object.select) object.select()
   if (object.class === 'Block') {
     object.toggleSolid()
@@ -449,8 +448,8 @@ function zoomHandler (e) {
 
 function switchCharacter() {
   if (window.SELECTEDCHARACTER.id === 'hodlonaut') {
-    CTDLGAME.katoshi.select()
+    CTDLGAME.katoshi.choose()
   } else {
-    CTDLGAME.hodlonaut.select()
+    CTDLGAME.hodlonaut.choose()
   }
 }

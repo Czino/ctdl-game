@@ -22,6 +22,7 @@ export default function(id, options) {
   this.health = options.health ?? 21
   this.dmgs = []
   this.heals = []
+  this.says = []
   this.selected = options.selected
   this.w = 16
   this.h = 30
@@ -32,10 +33,12 @@ export default function(id, options) {
   this.strength = id === 'hodlonaut' ? 1 : 3
   this.attackRange = id === 'hodlonaut' ? 1 : 5
   this.senseRadius = 50
+  this.follow = options.follow ?? true
   this.status = options.status || 'idle'
   this.direction = options.direction || 'right'
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 3
+  this.teleporting = 0
 
   this.idle = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return
@@ -179,9 +182,9 @@ export default function(id, options) {
 
     this.selected = false
     if (this.id === 'hodlonaut') {
-      CTDLGAME.katoshi.select()
+      CTDLGAME.katoshi.choose()
     } else {
-      CTDLGAME.hodlonaut.select()
+      CTDLGAME.hodlonaut.choose()
     }
 
     addTextToQueue(`${capitalize(this.id)} got rekt`)
@@ -240,6 +243,20 @@ export default function(id, options) {
         action = 'moveLeft'
       } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
         action = 'moveRight'
+      }
+    } else if (this.follow) {
+      let friends = [window.SELECTEDCHARACTER]
+        .filter(friend => friend.class === 'Character' && friend.status !== 'rekt')
+        .filter(friend => friend.id !== this.id)
+        .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
+
+      let friend = getClosest(this.getCenter(), friends)
+      if (friend) {
+        if (this.getBoundingBox().x > friend.getBoundingBox().x + friend.getBoundingBox().w + 10) {
+          action = 'moveLeft'
+        } else if (friend.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + 10) {
+          action = 'moveRight'
+        }
       }
     }
 
@@ -327,6 +344,10 @@ export default function(id, options) {
     this.w = data.w
     this.h = data.h
     constants.charContext.globalAlpha = data.opacity ?? 1
+    if (this.teleporting > 0) {
+      this.teleporting--
+      constants.charContext.globalAlpha = this.teleporting % 2
+    }
 
     constants.charContext.drawImage(
       sprite,
@@ -369,14 +390,38 @@ export default function(id, options) {
           y: heal.y - 1
         }
       })
+    this.says = this.says
+      .filter(say => say.y > -24)
+      .map(say => {
+        write(constants.charContext, say.say, {
+          x: this.getCenter().x - 12,
+          y: this.y + say.y,
+          w: 24
+        }, 'left', false, 4, false, '#FFF')
+        return {
+          ...say,
+          y: say.y - 1
+        }
+      })
+  }
+
+  this.say = say => {
+    this.says = [{y: -8, say}]
   }
 
   this.select = () => {
+    if (CTDLGAME.multiPlayer || this.status === 'rekt') return
+    this.follow = !this.follow
+    window.SELECTEDCHARACTER.say(this.follow ? 'come' : 'wait')
+  }
+
+  this.choose = () => {
     if (this.status === 'rekt') return
-    this.selected = true
     if (window.SELECTEDCHARACTER) window.SELECTEDCHARACTER.unselect()
+    this.selected = true
     window.SELECTEDCHARACTER = this
   }
+
   this.unselect = () => {
     this.selected = false
     window.SELECTEDCHARACTER = null
@@ -431,6 +476,7 @@ export default function(id, options) {
     status: this.status,
     direction: this.direction,
     frame: this.frame,
-    walkingSpeed: this.walkingSpeed
+    walkingSpeed: this.walkingSpeed,
+    follow: this.follow
   })
 }
