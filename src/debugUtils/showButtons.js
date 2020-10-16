@@ -12,7 +12,7 @@ export const showButtons = () => {
 
   constants.menuContext.beginPath()
 
-  constants.BUTTONS
+  constants.BUTTONS.concat(CTDLGAME.eventButtons)
     .filter(btn => btn.active)
     .map(btn => {
       constants.menuContext.rect(

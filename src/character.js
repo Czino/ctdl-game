@@ -35,6 +35,7 @@ export default function(id, options) {
   this.senseRadius = 50
   this.follow = options.follow ?? true
   this.status = options.status || 'idle'
+  this.attacks = false
   this.direction = options.direction || 'right'
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 3
@@ -50,7 +51,10 @@ export default function(id, options) {
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
-      this.status = 'move'
+      this.status = this.attacks ? 'moveAttack' : 'move'
+      if (!this.attacks) return
+      if (this.id === 'katoshi' && this.frame !== 3) return
+      this.makeDamage(this.id === 'katoshi' ? .8 : 1)
     } else if (!CTDLGAME.multiPlayer && !this.selected) {
       let jumpTo = this.getBoundingBox()
       jumpTo.y -=4
@@ -72,7 +76,10 @@ export default function(id, options) {
 
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
-      this.status = 'move'
+      this.status = this.attacks ? 'moveAttack' : 'move'
+      if (!this.attacks) return
+      if (this.id === 'katoshi' && this.frame !== 3) return
+      this.makeDamage()
     } else if (!CTDLGAME.multiPlayer && !this.selected) {
       let jumpTo = this.getBoundingBox()
       jumpTo.y -=4
@@ -111,13 +118,21 @@ export default function(id, options) {
     this.frame = 0
     this.status = 'action'
   }
+  this.triggerAttack = () => {
+    if (/jump|fall|action|hurt|rekt/.test(this.status)) return
+    this.status = 'attack'
+    this.attacks = true
+  }
   this.attack = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return
-    if (this.status !== 'attack') this.frame = 0
+    if (!/attack/i.test(this.status)) this.frame = 0
     this.status = 'attack'
 
     if (this.id === 'katoshi' && this.frame !== 3) return
+    this.makeDamage()
+  }
 
+  this.makeDamage = () => {
     // TODO make lightningTorch stronger with increasing sats count
     if (this.id === 'hodlonaut') playSound('lightningTorch')
     if (this.id === 'katoshi') playSound('sword')
@@ -125,12 +140,13 @@ export default function(id, options) {
     const enemies = this.senseEnemy()
     enemies.forEach((enemy, index) => {
       if (index > 2) return // can only hurt 3 enemies at once
+      let dmg = Math.round(this.strength * (1 + Math.random() / 4))
       if (this.getCenter().x > enemy.getCenter().x) {
         this.direction = 'left'
       } else {
         this.direction = 'right'
       }
-      enemy.hurt(this.strength, this.direction === 'left' ? 'right' : 'left')
+      enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
     })
   }
 
@@ -192,27 +208,40 @@ export default function(id, options) {
 
   this.senseControls = () => {
     let id = CTDLGAME.multiPlayer ? this.id : 'singlePlayer'
-    let didAction = Object.keys(constants.CONTROLS[id]).find(key => {
+    this.attacks = false
+
+    let didAction = false
+    Object.keys(constants.CONTROLS[id]).find(key => {
       if (window.KEYS.indexOf(key) === -1) return false
 
       this[constants.CONTROLS[id][key]]()
+      didAction = true
+
+      if (constants.CONTROLS[id][key] === 'triggerAttack') return false
       return true
     })
 
     if (this.selected) {
-      didAction = didAction || window.BUTTONS.find(button => {
-        if (!this[constants.CONTROLS.buttons[button.action]]) return false
-  
-        this[constants.CONTROLS.buttons[button.action]]()
+      Object.keys(constants.CONTROLS.buttons).find(key => {
+        let action = constants.CONTROLS.buttons[key]
+
+        if (!window.BUTTONS.some(button => button.action === key)) return false
+
+        this[action]()
+        didAction = true
+
+        if (action === 'triggerAttack') return false
         return true
       })
     }
 
+    if (this.attacks && this.status !== 'moveAttack') this.attack()
     if (!didAction) this.idle()
   }
 
   this.autoPilot = () => {
     let action = 'idle'
+    this.attacks = false
 
     let enemies = CTDLGAME.quadTree.query({
       x: this.x - this.senseRadius,
@@ -410,7 +439,7 @@ export default function(id, options) {
   }
 
   this.select = () => {
-    if (CTDLGAME.multiPlayer || this.status === 'rekt') return
+    if (this.selected || CTDLGAME.multiPlayer || this.status === 'rekt') return
     this.follow = !this.follow
     window.SELECTEDCHARACTER.say(this.follow ? 'come' : 'wait')
   }

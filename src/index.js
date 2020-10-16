@@ -38,8 +38,6 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
-// TODO make inactive player follow active one
-// TODO enable attack while walking (more action)
 // TODO can the game be a bit "faster"?
 // TODO add skip option to cut scenes
 // TODO evil rabbits too hard to beat
@@ -181,6 +179,9 @@ function tick() {
       showShop()
       showMenu(CTDLGAME.inventory)
       writeMenu()
+
+      if (window.SHOWBUTTONS) showButtons()
+
       CTDLGAME.frame++
       return window.requestAnimationFrame(tick)
     }
@@ -229,6 +230,7 @@ function tick() {
       .forEach(object => CTDLGAME.quadTree.insert(object))
 
     // TODO abstract into all in one debug function
+    if (window.SHOWBUTTONS) showButtons()
     if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
 
     if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {

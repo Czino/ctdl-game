@@ -3,6 +3,13 @@ import { intersects } from '../geometryUtils'
 import { CTDLGAME } from './CTDLGAME'
 
 /**
+ * @description Method to find out if character is eligible for teleporting
+ * @param {Character} character character
+ * @returns {Boolean} true if character is eligible for teleporting
+ */
+const canTeleport = character => character.status !== 'rekt' && character.follow && !intersects(character, CTDLGAME.viewport)
+
+/**
  * @description Method to translate canvas to show current viewport based on where the characters are
  * @returns {void}
  */
@@ -16,12 +23,12 @@ export const updateViewport = () => {
   }
 
 
-  if (CTDLGAME.hodlonaut.selected && CTDLGAME.katoshi.follow && !intersects(CTDLGAME.katoshi, CTDLGAME.viewport)) {
+  if (CTDLGAME.hodlonaut.selected && canTeleport(CTDLGAME.katoshi)) {
     CTDLGAME.katoshi.x = CTDLGAME.hodlonaut.x
     CTDLGAME.katoshi.y = CTDLGAME.hodlonaut.y
     CTDLGAME.katoshi.teleporting = 16
   }
-  if (CTDLGAME.katoshi.selected && CTDLGAME.hodlonaut.follow && !intersects(CTDLGAME.hodlonaut, CTDLGAME.viewport)) {
+  if (CTDLGAME.katoshi.selected && canTeleport(CTDLGAME.hodlonaut)) {
     CTDLGAME.hodlonaut.x = CTDLGAME.katoshi.x
     CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
     CTDLGAME.hodlonaut.teleporting = 16

@@ -61,7 +61,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
       await loadGame()
 
       constants.BUTTONS
-        .filter(button => /newGame|loadGame|skipIntro/.test(button.action))
+        .filter(button => /newGame|loadGame|singlePlayer|multiPlayer|skipIntro/.test(button.action))
         .forEach(button => button.active = false)
 
       window.removeEventListener('mouseup', startScreenHandler)
@@ -84,7 +84,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
       CTDLGAME.cutScene = true
 
       constants.BUTTONS
-        .filter(button => /newGame|loadGame/.test(button.action))
+        .filter(button => /newGame|loadGame|singlePlayer|multiPlayer|/.test(button.action))
         .forEach(button => button.active = false)
       constants.BUTTONS
         .filter(button => /skipIntro/.test(button.action))
@@ -319,8 +319,18 @@ function click (e) {
         x: (touch.clientX - e.target.offsetLeft) / canvas.clientWidth * canvas.getAttribute('width'),
         y: (touch.clientY - e.target.offsetTop) / canvas.clientHeight * canvas.getAttribute('height')
       }
-    })
+      let buttonPressed = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
+        button.active &&
+        CTDLGAME.cursor.x > button.x &&
+        CTDLGAME.cursor.x < button.x + button.w &&
+        CTDLGAME.cursor.y > button.y &&
+        CTDLGAME.cursor.y < button.y + button.h
+      )
 
+      if (buttonPressed && !buttonPressed.onclick) {
+        window.BUTTONS.unshift(buttonPressed)
+      }
+    })
   }
 
   if (!/ctdl-game/.test(canvas.id)) return
@@ -335,7 +345,7 @@ function click (e) {
 
   if (buttonPressed?.onclick) {
     buttonPressed.onclick()
-  } else if (buttonPressed) {
+  } else if (!CTDLGAME.touchScreen && buttonPressed) {
     window.BUTTONS.unshift(buttonPressed)
   }
 
