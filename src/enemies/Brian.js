@@ -44,26 +44,69 @@ export default function(id, options) {
     this.status = 'idle'
   }
   this.moveLeft = () => {
-    if (/hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/hurt|jump|fall|rekt/.test(this.status) || this.vy !== 0) return
     this.direction = 'left'
     const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
       this.status = 'move'
     } else {
-      this.idle()
+      let jumpTo = this.getBoundingBox()
+      jumpTo.y -= 12
+      jumpTo.x -= 4
+      jumpTo.w += 3
+
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.fillStyle = 'red'
+        constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
+      }
+      let obstacles = CTDLGAME.quadTree.query(jumpTo)
+        .filter(obj => obj.isSolid && !obj.enemy)
+        .filter(obj => intersects(obj, jumpTo))
+
+      let canjump = obstacles.length === 0
+      if (canjump) {
+        this.jump()
+      }
     }
   }
   this.moveRight = () => {
-    if (/hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/hurt|jump|fall|rekt/.test(this.status) || this.vy !== 0) return
     this.direction = 'right'
 
     const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
       this.status = 'move'
     } else {
-      this.idle()
+      let jumpTo = this.getBoundingBox()
+      jumpTo.y -= 12
+      jumpTo.w += 3
+
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.fillStyle = 'red'
+        constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
+      }
+      let obstacles = CTDLGAME.quadTree.query(jumpTo)
+        .filter(obj => obj.isSolid && !obj.enemy)
+        .filter(obj => intersects(obj, jumpTo))
+
+      let canjump = obstacles.length === 0
+      if (canjump) {
+        this.jump()
+      } else {
+        this.idle()
+      }
     }
+  }
+  this.jump = () => {
+    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
+
+    if (this.status !== 'jump') this.frame = 0
+    this.status = 'jump'
+
+    if (this.frame !== 2) return
+    this.vx = this.direction === 'right' ? 6 : -6
+    this.vy = -8
   }
 
   this.hurt = dmg => {
@@ -104,7 +147,7 @@ export default function(id, options) {
   }
 
   this.attack = enemy => {
-    if (/hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/hurt|jump|fall|rekt/.test(this.status) || this.vy !== 0) return
     const dmg = Math.round(Math.random()) * 2 + 3
 
     if (this.status === 'attack' && this.frame === 3) {
@@ -140,8 +183,8 @@ export default function(id, options) {
     const sprite = CTDLGAME.assets.brian
 
     if (this.vx !== 0) {
-      if (this.vx > 6) this.vx = 6
-      if (this.vx < -6) this.vx = -6
+      if (this.vx > 12) this.vx = 12
+      if (this.vx < -12) this.vx = -12
 
       moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
       if (this.vx < 0) this.vx += 1
@@ -153,7 +196,11 @@ export default function(id, options) {
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) this.vy = 0
+      if (hasCollided) {
+        this.vy = 0
+      } else if (!/jump|rekt|hurt/.test(this.status) && Math.abs(this.vy) > 4) {
+        this.status = 'fall'
+      }
     }
 
     if (!this.hadIntro && senseCharacters(this).length > 0) {
@@ -174,7 +221,7 @@ export default function(id, options) {
     }
 
     // AI logic
-    if (this.canMove && !/rekt|hurt/.test(this.status)) {
+    if (this.canMove && !/rekt|hurt|jump|fall/.test(this.status)) {
       if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
 
       const enemies = senseCharacters(this)
@@ -198,11 +245,15 @@ export default function(id, options) {
       } else {
         this.idle()
       }
+    } else if (this.status === 'jump') {
+      this.jump()
     }
 
     let spriteData = brianSprite[this.direction][this.status]
 
     if (!/hurt|rekt/.test(this.status)) this.frame++
+    if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
+
     if (this.status === 'hurtAttack' && Math.random() < .25) this.status = 'idle'
 
     if (this.status === 'hurt' && Math.random() < .1) {
@@ -210,6 +261,7 @@ export default function(id, options) {
     }
     if (this.frame >= spriteData.length) {
       this.frame = 0
+      if (/jump/.test(this.status)) this.status = 'idle'
     }
 
     let data = spriteData[this.frame]
@@ -226,9 +278,9 @@ export default function(id, options) {
       .filter(dmg => dmg.y > -30)
       .map(dmg => {
         write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 2,
+          x: this.getCenter().x - 4,
           y: this.y + dmg.y,
-          w: this.getBoundingBox().w
+          w: 8
         }, 'left', false, 4, true, '#F00')
         return {
           ...dmg,
@@ -260,8 +312,8 @@ export default function(id, options) {
   })
 
   this.getCenter = () => ({
-    x: this.x + this.w / 2,
-    y: this.y + this.h / 2
+    x: Math.round(this.x + this.w / 2),
+    y: Math.round(this.y + this.h / 2)
   })
 
   this.select = () => {

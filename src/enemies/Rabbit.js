@@ -246,9 +246,9 @@ export default function(id, options) {
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
         write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 2,
+          x: this.getCenter().x - 4,
           y: this.y + dmg.y,
-          w: this.getBoundingBox().w
+          w: 8
         }, 'left', false, 4, true, '#F00')
         return {
           ...dmg,
@@ -273,8 +273,8 @@ export default function(id, options) {
   })
 
   this.getCenter = () => ({
-    x: this.x + this.w / 2,
-    y: this.y + this.h / 2
+    x: Math.round(this.x + this.w / 2),
+    y: Math.round(this.y + this.h / 2)
   })
 
   this.select = () => {}

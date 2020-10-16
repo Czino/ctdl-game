@@ -169,7 +169,7 @@ export default function(id, options) {
 
 
   this.hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status)) return
+    if (/hurt|rekt/.test(this.status) || this.teleporting > 0) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
 
@@ -324,10 +324,10 @@ export default function(id, options) {
       if (this.vy < -12) this.vy = -12
       const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) {
+      if (hasCollided) {
         this.vy = 0
-      } else {
-        if (!/jump|rekt|hurt/.test(this.status) && Math.abs(this.vy) > 4) this.status = 'fall'
+      } else if (!/jump|rekt|hurt/.test(this.status) && Math.abs(this.vy) > 4) {
+        this.status = 'fall'
       }
     }
 
@@ -397,9 +397,9 @@ export default function(id, options) {
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
         write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 2,
+          x: this.getCenter().x - 4,
           y: this.y + dmg.y,
-          w: this.getBoundingBox().w
+          w: 8
         }, 'left', false, 4, true, '#F00')
         return {
           ...dmg,
@@ -410,9 +410,9 @@ export default function(id, options) {
       .filter(heal => heal.y > -24)
       .map(heal => {
         write(constants.charContext, `+${heal.heal}`, {
-          x: this.getCenter().x - 2,
+          x: this.getCenter().x - 4,
           y: this.y + heal.y,
-          w: this.getBoundingBox().w
+          w: 8
         }, 'left', false, 4, true, '#0F0')
         return {
           ...heal,
@@ -487,8 +487,8 @@ export default function(id, options) {
   })
 
   this.getCenter = () => ({
-    x: this.x + this.w / 2,
-    y: this.y + this.h / 2
+    x: Math.round(this.x + this.w / 2),
+    y: Math.round(this.y + this.h / 2)
   })
 
   this.toJSON = () => ({

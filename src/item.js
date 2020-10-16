@@ -86,10 +86,9 @@ export default function(id, options) {
   })
 
   this.getCenter = () => ({
-    x: this.x + this.w / 2,
-    y: this.y + this.h / 2
+    x: Math.round(this.x + this.w / 2),
+    y: Math.round(this.y + this.h / 2)
   })
-
 
   this.getAnchor = () => ({
       x: this.getBoundingBox().x,
