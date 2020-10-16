@@ -86,6 +86,9 @@ constants.BUTTONS = constants.BUTTONS.concat([
       constants.BUTTONS
         .filter(button => /newGame|loadGame/.test(button.action))
         .forEach(button => button.active = false)
+      constants.BUTTONS
+        .filter(button => /|skipIntro/.test(button.action))
+        .forEach(button => button.active = true)
 
       window.removeEventListener('mouseup', startScreenHandler)
       window.removeEventListener('touchstart', startScreenHandler)
@@ -98,7 +101,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
     y: constants.HEIGHT - 60,
     w: 60,
     h: 10,
-    active: true,
+    active: false,
     onclick: () => {
       playSound('select')
 
