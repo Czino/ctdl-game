@@ -33,9 +33,9 @@ export const changeMap = async (id, from) => {
 
   if (objects) {
     objects
-    .filter(object => gameObjects[object.class])
-    .map(object => new gameObjects[object.class](object.id, object))
-    .map(object => CTDLGAME.objects.push(object))
+      .filter(object => gameObjects[object.class])
+      .map(object => new gameObjects[object.class](object.id, object))
+      .map(object => CTDLGAME.objects.push(object))
   } else {
     CTDLGAME.world.map.npcs().map(object => CTDLGAME.objects.push(object))
   }
@@ -43,6 +43,11 @@ export const changeMap = async (id, from) => {
   CTDLGAME.world.map.objects
     .filter(object => !object.class || object.class === 'Ramp')
     .map(object => CTDLGAME.objects.push(object))
+
+  // prevent object falling into the floor
+  CTDLGAME.objects
+    .filter(obj => obj.applyGravity)
+    .map(obj => obj.vy = -2)
 
   CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 5
   CTDLGAME.hodlonaut.y = newWorld.map.start[from].y

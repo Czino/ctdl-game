@@ -224,7 +224,7 @@ goToBuilding.backEvent = () => {
 }
 
 const goToForest = new GameObject('goToForest', {
-  x: 122 * tileSize,
+  x: 123 * tileSize,
   y: 116 * tileSize,
   w: tileSize,
   h: 3 * tileSize,

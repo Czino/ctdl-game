@@ -422,10 +422,9 @@ export default function(id, options) {
     }
 
     const boundingBox = this.getBoundingBox()
-
-    // collect touched items
     const sensedObjects = CTDLGAME.quadTree.query(boundingBox)
 
+    // collect touched items
     sensedObjects
       .filter(obj => obj.touch)
       .filter(obj => intersects(boundingBox, obj.getBoundingBox()))
