@@ -187,6 +187,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
   { action: 'moveLeft', x: 0, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
   { action: 'moveRight', x: 21, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
   { action: 'back', x: 21 * 2, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
+  { action: 'duck', x: 21 * 2, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},
   { action: 'switch', x: 21 * 3, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true, onclick: switchCharacter}
 ])
 
@@ -197,6 +198,8 @@ export const multiPlayerButton = constants.BUTTONS.find(btn => btn.action === 'm
 export const skipCutSceneButton = constants.BUTTONS.find(btn => btn.action === 'skipCutScene')
 export const musicButton = constants.BUTTONS.find(button => button.action === 'music')
 export const soundButton = constants.BUTTONS.find(button => button.action === 'sound')
+export const duckButton = constants.BUTTONS.find(button => button.action === 'duck')
+export const backButton = constants.BUTTONS.find(button => button.action === 'back')
 
 export const startScreenHandler = async (e) => {
   let canvas = e.target
@@ -227,7 +230,7 @@ export const startScreenHandler = async (e) => {
     CTDLGAME.touchScreen = true
 
     constants.BUTTONS
-      .filter(button => /moveLeft|moveRight|jump|back|switch|attack/.test(button.action))
+      .filter(button => /moveLeft|moveRight|jump|duck|switch|attack/.test(button.action))
       .forEach(button => button.active = true)
   }
 }
@@ -277,18 +280,25 @@ export const initEvents = startScreen => {
   }
 
   window.addEventListener('keydown', e => {
-    if (e.key.toLowerCase() === 'tab') {
-      e.preventDefault()
+    let key = e.key.toLowerCase()
+    e.preventDefault()
+    if (key === 'tab') {
       switchCharacter()
     }
-    window.KEYS.push(e.key.toLowerCase());
+    if (window.KEYS.indexOf(key) !== -1) return
+    if (key === 'd' && window.KEYS.indexOf('a') !== -1) window.KEYS = window.KEYS.filter(key => key !== 'a')
+    if (key === 'a' && window.KEYS.indexOf('d') !== -1) window.KEYS = window.KEYS.filter(key => key !== 'd')
+    if (key === 'j' && window.KEYS.indexOf('l') !== -1) window.KEYS = window.KEYS.filter(key => key !== 'l')
+    if (key === 'l' && window.KEYS.indexOf('j') !== -1) window.KEYS = window.KEYS.filter(key => key !== 'j')
+
+    window.KEYS.push(key)
   })
 
   window.addEventListener('keyup', e => {
     if (e.key.toLowerCase() === 'enter') {
       skipText()
     }
-    KEYS = KEYS.filter(key => {
+    window.KEYS = window.KEYS.filter(key => {
       return key !== e.key.toLowerCase()
     })
   })

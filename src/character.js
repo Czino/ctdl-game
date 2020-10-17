@@ -7,6 +7,7 @@ import { write } from './font';
 import constants from './constants'
 import { addTextToQueue } from './textUtils';
 import { playSound } from './sounds';
+import { duckButton, backButton } from './events'
 
 const sprites = {
   hodlonaut,
@@ -39,70 +40,134 @@ export default function(id, options) {
   this.direction = options.direction || 'right'
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 3
+  this.duckSpeed = options.duckSpeed || 2
   this.teleporting = 0
 
   this.idle = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return
-    this.status = 'idle'
+    this.status = this.ducks ? 'duck' : 'idle'
   }
   this.moveLeft = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)|| this.vy !== 0) return
     this.direction = 'left'
-    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+    const hasMoved =  moveObject(this, { x: -(this.ducks ? this.duckSpeed : this.walkingSpeed), y: 0 }, CTDLGAME.quadTree)
 
     if (hasMoved) {
-      this.status = this.attacks ? 'moveAttack' : 'move'
+      this.status = this.ducks
+        ? 'duckMove'
+        : this.status = this.attacks
+        ? 'moveAttack'
+        : 'move'
       if (!this.attacks) return
       if (this.id === 'katoshi' && this.frame !== 3) return
       this.makeDamage(this.id === 'katoshi' ? .8 : 1)
     } else if (!CTDLGAME.multiPlayer && !this.selected) {
-      let jumpTo = this.getBoundingBox()
-      jumpTo.y -=4
-      jumpTo.x -= 3
-      jumpTo.w += 3
-      jumpTo.h = 24
+      let duckTo = this.getBoundingBox()
+      duckTo.y += 6
+      duckTo.x -= 3
+      duckTo.h -= 6
 
-      let obstacles = CTDLGAME.quadTree.query(jumpTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, jumpTo))
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.globalAlpha = .5
+        constants.overlayContext.fillStyle = 'blue'
+        constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+        constants.overlayContext.globalAlpha = 1
+      }
+      let obstacles = CTDLGAME.quadTree.query(duckTo)
+        .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+        .filter(obj => intersects(obj, duckTo))
 
-      let canJump = obstacles.length === 0
-      if (canJump) this.jump()
+      let canDuck = obstacles.length === 0
+      if (canDuck) {
+        this.triggerDuck()
+        this.moveLeft()
+      } else {
+        let jumpTo = this.getBoundingBox()
+        jumpTo.y -=4
+        jumpTo.x -= 3
+        jumpTo.w += 3
+        jumpTo.h = 24
+
+        if (window.DRAWSENSORS) {
+          constants.overlayContext.globalAlpha = .5
+          constants.overlayContext.fillStyle = 'red'
+          constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
+          constants.overlayContext.globalAlpha = 1
+        }
+        let obstacles = CTDLGAME.quadTree.query(jumpTo)
+          .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+          .filter(obj => intersects(obj, jumpTo))
+
+        let canJump = obstacles.length === 0
+        if (canJump) this.jump()
+      }
+
     }
   }
   this.moveRight = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.direction = 'right'
 
-    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+    const hasMoved = moveObject(this, { x: this.ducks ? this.duckSpeed : this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
     if (hasMoved) {
-      this.status = this.attacks ? 'moveAttack' : 'move'
+      this.status = this.ducks
+        ? 'duckMove'
+        : this.status = this.attacks
+        ? 'moveAttack'
+        : 'move'
       if (!this.attacks) return
       if (this.id === 'katoshi' && this.frame !== 3) return
       this.makeDamage(this.id === 'katoshi' ? .8 : 1)
     } else if (!CTDLGAME.multiPlayer && !this.selected) {
-      let jumpTo = this.getBoundingBox()
-      jumpTo.y -=4
-      jumpTo.w += 3
-      jumpTo.h = 24
+      let duckTo = this.getBoundingBox()
+      duckTo.y += 6
+      duckTo.x += 3
+      duckTo.h -= 6
 
-      let obstacles = CTDLGAME.quadTree.query(jumpTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, jumpTo))
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.globalAlpha = .5
+        constants.overlayContext.fillStyle = 'blue'
+        constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+        constants.overlayContext.globalAlpha = 1
+      }
+      let obstacles = CTDLGAME.quadTree.query(duckTo)
+        .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+        .filter(obj => intersects(obj, duckTo))
 
-      let canJump = obstacles.length === 0
-      if (canJump) this.jump()
+      let canDuck = obstacles.length === 0
+      if (canDuck) {
+        this.triggerDuck()
+        this.moveRight()
+      } else {
+        let jumpTo = this.getBoundingBox()
+        jumpTo.y -=4
+        jumpTo.w += 3
+        jumpTo.h = 24
+
+        if (window.DRAWSENSORS) {
+          constants.overlayContext.globalAlpha = .5
+          constants.overlayContext.fillStyle = 'red'
+          constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
+          constants.overlayContext.globalAlpha = 1
+        }
+        let obstacles = CTDLGAME.quadTree.query(jumpTo)
+          .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+          .filter(obj => intersects(obj, jumpTo))
+
+        let canJump = obstacles.length === 0
+        if (canJump) this.jump()
+      }
     }
   }
   this.jump = () => {
-    if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/jump|duck|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'jump'
     this.frame = 0
     this.vx = this.direction === 'right' ? 6 : -6
     this.vy = -6
   }
   this.back = () => {
-    if (/jump|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    if (/jump|duck|fall|action|hurt|rekt/.test(this.status) || this.vy !== 0) return
     this.status = 'back'
 
     const boundingBox = this.getBoundingBox()
@@ -111,20 +176,26 @@ export default function(id, options) {
       .find(obj => intersects(boundingBox, obj.getBoundingBox()))
 
     if (!eventObject) return
+
     eventObject.backEvent(this)
   }
   this.action = () => {
-    if (/jump|fall|action|hurt|rekt/.test(this.status)) return
+    if (/jump|duck|fall|action|hurt|rekt/.test(this.status)) return
     this.frame = 0
     this.status = 'action'
   }
   this.triggerAttack = () => {
-    if (/jump|fall|action|hurt|rekt/.test(this.status)) return
+    if (/jump|duck|fall|action|hurt|rekt/.test(this.status)) return
     this.status = 'attack'
     this.attacks = true
   }
-  this.attack = () => {
+  this.triggerDuck = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return
+    this.status = 'duck'
+    this.ducks = true
+  }
+  this.attack = () => {
+    if (/jump|duck|fall|action|hurt|rekt/.test(this.status)) return
     if (!/attack/i.test(this.status)) this.frame = 0
     this.status = 'attack'
 
@@ -208,6 +279,24 @@ export default function(id, options) {
 
   this.senseControls = () => {
     let id = CTDLGAME.multiPlayer ? this.id : 'singlePlayer'
+    if (this.ducks) {
+      let standUpTo = this.getBoundingBox()
+      standUpTo.y -= 6
+      standUpTo.h = 6
+  
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.globalAlpha = .5
+        constants.overlayContext.fillStyle = 'green'
+        constants.overlayContext.fillRect(standUpTo.x, standUpTo.y, standUpTo.w, standUpTo.h)
+        constants.overlayContext.globalAlpha = 1
+      }
+      let obstacles = CTDLGAME.quadTree.query(standUpTo)
+        .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+        .filter(obj => intersects(obj, standUpTo))
+  
+      let canStandUp = obstacles.length === 0
+      if (canStandUp) this.ducks = false
+    }
     this.attacks = false
 
     let didAction = false
@@ -217,7 +306,7 @@ export default function(id, options) {
       this[constants.CONTROLS[id][key]]()
       didAction = true
 
-      if (constants.CONTROLS[id][key] === 'triggerAttack') return false
+      if (/triggerAttack|triggerDuck/.test(constants.CONTROLS[id][key])) return false
       return true
     })
 
@@ -230,7 +319,7 @@ export default function(id, options) {
         this[action]()
         didAction = true
 
-        if (action === 'triggerAttack') return false
+        if (/triggerAttack|triggerDuck/.test(action)) return false
         return true
       })
     }
@@ -242,6 +331,7 @@ export default function(id, options) {
   this.autoPilot = () => {
     let action = 'idle'
     this.attacks = false
+    this.ducks = false
 
     let enemies = CTDLGAME.quadTree.query({
       x: this.x - this.senseRadius,
@@ -334,13 +424,30 @@ export default function(id, options) {
     const boundingBox = this.getBoundingBox()
 
     // collect touched items
-    CTDLGAME.quadTree.query(boundingBox)
+    const sensedObjects = CTDLGAME.quadTree.query(boundingBox)
+
+    sensedObjects
       .filter(obj => obj.touch)
       .filter(obj => intersects(boundingBox, obj.getBoundingBox()))
       .forEach(obj => {
         obj.touch(this)
       })
-    
+
+    // sense backEvents
+    if (CTDLGAME.touchScreen && this.selected) {
+      let backEvent = sensedObjects
+        .filter(obj => obj.backEvent)
+        .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+
+      if (backEvent) {
+        duckButton.active = false
+        backButton.active = true
+      } else {
+        duckButton.active = true
+        backButton.active = false
+      }
+    }
+
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
@@ -354,7 +461,7 @@ export default function(id, options) {
     }
 
     // find out if eventObject has been touched
-    const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+    const eventObject =  sensedObjects
       .filter(obj => obj.touchEvent)
       .find(obj => intersects(boundingBox, obj.getBoundingBox()))
 
@@ -457,19 +564,27 @@ export default function(id, options) {
   }
 
   this.getBoundingBox = () => this.status !== 'rekt'
-    ? ({
+    ? !this.ducks
+      ? ({ // normal
+          id: this.id,
+          x: this.x + 6,
+          y: this.y + 6,
+          w: this.w - 12,
+          h: this.h - 6
+        })
+      : ({ // ducking
+          id: this.id,
+          x: this.x + 6,
+          y: this.y + 12,
+          w: this.w - 12,
+          h: this.h - 12
+        })
+      : ({ // rekt
         id: this.id,
         x: this.x + 5,
         y: this.y + 3,
         w: this.w - 10,
         h: this.h - 3
-      })
-    : ({
-        id: this.id,
-        x: this.x,
-        y: this.y,
-        w: this.w,
-        h: this.h
       })
 
   this.getAnchor = () => this.status !== 'rekt'

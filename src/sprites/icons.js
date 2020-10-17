@@ -11,12 +11,14 @@ export default {
     "left-hodlonaut": { x: 8, y: 16, w: 7, h: 16},
     "jump-hodlonaut": { x: 16, y: 16, w: 7, h: 16},
     "back-hodlonaut": { x: 24, y: 16, w: 7, h: 16},
-    "attack-hodlonaut": { x: 31, y: 16, w: 9, h: 16},
-    "switch-hodlonaut": { x: 43, y: 16, w: 10, h: 16},
+    "duck-hodlonaut": { x: 31, y: 16, w: 7, h: 16},
+    "attack-hodlonaut": { x: 38, y: 16, w: 9, h: 16},
+    "switch-hodlonaut": { x: 50, y: 16, w: 10, h: 16},
     "right-katoshi": { x: 0, y: 33, w: 7, h: 16},
     "left-katoshi": { x: 8, y: 33, w: 7, h: 16},
     "jump-katoshi": { x: 16, y: 33, w: 7, h: 16},
     "back-katoshi": { x: 24, y: 33, w: 7, h: 16},
-    "attack-katoshi": { x: 31, y: 33, w: 9, h: 16},
-    "switch-katoshi": { x: 43, y: 33, w: 10, h: 16}
+    "duck-katoshi": { x: 31, y: 33, w: 7, h: 16},
+    "attack-katoshi": { x: 38, y: 33, w: 9, h: 16},
+    "switch-katoshi": { x: 50, y: 33, w: 10, h: 16}
 }

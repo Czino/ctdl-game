@@ -17,6 +17,7 @@ export const showControls = () => {
     x: controls.x + CTDLGAME.viewport.x,
     y: controls.y + CTDLGAME.viewport.y
   }
+  let duckOrBack = 'duck'
 
   constants.menuContext.strokeStyle = '#FFF'
   constants.menuContext.fillStyle = '#FFF'
@@ -27,6 +28,7 @@ export const showControls = () => {
   constants.BUTTONS
     .filter(button => button.active && button.hasBorder)
     .map(button => {
+      if (button.action === 'back') duckOrBack = 'back'
       constants.menuContext.rect(
         pos.x - .5 + button.x,
         button.y - .5 + CTDLGAME.viewport.y,
@@ -55,7 +57,7 @@ export const showControls = () => {
     x: pos.x + 5 + 21,
     y: pos.y + 1
   })
-  drawIcon(constants.menuContext, `back-${selectedCharacter}`, {
+  drawIcon(constants.menuContext, `${duckOrBack}-${selectedCharacter}`, {
     x: pos.x + 5 + 21 * 2,
     y: pos.y + 1
   })
