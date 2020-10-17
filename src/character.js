@@ -83,10 +83,8 @@ export default function(id, options) {
         this.moveLeft()
       } else {
         let jumpTo = this.getBoundingBox()
-        jumpTo.y -=4
-        jumpTo.x -= 3
-        jumpTo.w += 3
-        jumpTo.h = 24
+        jumpTo.y -= 6
+        jumpTo.x -= 2
 
         if (window.DRAWSENSORS) {
           constants.overlayContext.globalAlpha = .5
@@ -140,9 +138,8 @@ export default function(id, options) {
         this.moveRight()
       } else {
         let jumpTo = this.getBoundingBox()
-        jumpTo.y -=4
-        jumpTo.w += 3
-        jumpTo.h = 24
+        jumpTo.y -= 6
+        jumpTo.w += 2
 
         if (window.DRAWSENSORS) {
           constants.overlayContext.globalAlpha = .5
