@@ -48,8 +48,10 @@ export const changeMap = async (id, from) => {
 
   CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 5
   CTDLGAME.hodlonaut.y = newWorld.map.start[from].y
+  CTDLGAME.hodlonaut.teleporting = 24
   CTDLGAME.katoshi.x = newWorld.map.start[from].x + 5
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
+  CTDLGAME.katoshi.teleporting = 24
 
   updateViewport()
   initSoundtrack(newWorld.map.track)

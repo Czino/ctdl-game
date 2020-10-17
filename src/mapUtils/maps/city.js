@@ -293,7 +293,7 @@ export default {
   world: { w: 1000, h: 1024 },
   start: {
     newGame: { x: 60, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32 },
-    forest: { x: 950, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32 }
+    forest: { x: 940, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32 }
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),

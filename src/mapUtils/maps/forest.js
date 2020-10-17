@@ -446,7 +446,7 @@ objects.push(new NPC(
 export default {
   world: { w: 1736, h: 1024 },
   start: {
-    city: { x: 20, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 34}
+    city: { x: 30, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 34}
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
