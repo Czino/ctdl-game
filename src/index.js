@@ -38,6 +38,11 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
+// TODO make change directions work while buttons pressed
+// TODO new game, brian rekt but shouldn't ?
+// TODO Jump generally W?
+// TODO add duck for 's'
+// TODO should you be able to place blocks anywhere?
 // TODO can the game be a bit "faster"?
 // TODO evil rabbits too hard to beat
 // TODO thinking about toggling blocks (Wish all blocks that are stacked could be toggles together, unless there is value at not doing so)

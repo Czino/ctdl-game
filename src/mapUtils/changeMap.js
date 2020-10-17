@@ -37,9 +37,7 @@ export const changeMap = async (id, from) => {
     .map(object => new gameObjects[object.class](object.id, object))
     .map(object => CTDLGAME.objects.push(object))
   } else {
-    CTDLGAME.world.map.objects
-      .filter(object => object.enemy || object.class === 'NPC')
-      .map(object => CTDLGAME.objects.push(object))
+    CTDLGAME.world.map.npcs().map(object => CTDLGAME.objects.push(object))
   }
 
   CTDLGAME.world.map.objects

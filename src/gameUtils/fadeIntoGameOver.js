@@ -3,6 +3,7 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, stopMusic, changeVolume } from '../soundtrack'
 import { newGameButton } from '../events'
+import { setTextQueue } from '../textUtils'
 
 let deathCounter = 64
 /**
@@ -31,12 +32,8 @@ export const fadeIntoGameOver = () => {
     stopMusic()
     changeVolume(1)
     initSoundtrack('gameOver')
-    CTDLGAME.objects = []
-    CTDLGAME.inventory = {
-      sats: 0,
-      usd: 0,
-      blocks: []
-    }
+    setTextQueue([])
+
     constants.BUTTONS.find(button => button.action === 'newGame').active = true
   }
 }

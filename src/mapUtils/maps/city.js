@@ -237,27 +237,6 @@ goToForest.touchEvent = () => {
   }
 }
 
-objects.push(new Brian(
-  'brian',
-  {
-    x: 970,
-    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
-  }
-))
-objects.push(new NPC(
-  'dave',
-  {
-    x: 347,
-    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 15
-  }
-))
-objects.push(new NPC(
-  'peter',
-  {
-    x: 563,
-    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 25
-  }
-))
 
 events.push(goToShop)
 events.push(goToBuilding)
@@ -299,6 +278,29 @@ export default {
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),
   objects,
+  npcs: () => [
+    new Brian(
+      'brian',
+      {
+        x: 970,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 31
+      }
+    ),
+    new NPC(
+      'dave',
+      {
+        x: 347,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 15
+      }
+    ),
+    new NPC(
+      'peter',
+      {
+        x: 563,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 25
+      }
+    )
+  ],
   events,
   track: 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: true

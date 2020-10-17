@@ -428,21 +428,6 @@ gotToCity.touchEvent = () => {
 }
 events.push(gotToCity)
 
-
-objects.push(new Bear(
-  'bigBear',
-  {
-    x: 1692,
-    y: 815
-  }
-))
-objects.push(new NPC(
-  'monk',
-  {
-    x: 427,
-    y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 17 - tileSize
-  }
-))
 export default {
   world: { w: 1736, h: 1024 },
   start: {
@@ -452,6 +437,22 @@ export default {
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),
   objects,
+  npcs: () => [
+    new Bear(
+      'bigBear',
+      {
+        x: 1692,
+        y: 815
+      }
+    ),
+    new NPC(
+      'monk',
+      {
+        x: 427,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 17 - tileSize
+      }
+    )
+  ],
   events,
   track: 'santaMaria'
 }
