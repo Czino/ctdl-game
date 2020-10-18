@@ -2,8 +2,8 @@ import font from './sprites/font'
 import { CTDLGAME } from './gameUtils'
 
 export const write = (context, text, { x, y, w }, align = 'left', shadow, limit = 999, sub, color) => {
-  const startX = align === 'left' ? x : x + w
-  const endX = align === 'left' ? startX + w : startX - w
+  const startX = align !== 'right' ? x : x + w
+  const endX = align !== 'right' ? startX + w : startX - w
 
   if (shadow) {
     write(context, text, { x: x + 1, y: y, w }, align, false, limit, sub)
@@ -21,7 +21,14 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow, limit 
   if (align === 'right') {
     x = startX
     text.reverse()
+  } else if (align === 'center') {
+    let textWidth = text.reduce((w, char) => {
+      let data = !sub ? font[char] || font['?'] : font['sub-' + char] || font['?']
+      return w + data.w + 1
+    }, 0)
+    if (textWidth < w) x = startX + Math.round((w - textWidth) / 2)
   }
+
   text.some(char => {
     let data = !sub ? font[char] || font['?'] : font['sub-' + char] || font['?']
     if (char === '\n'
@@ -50,7 +57,7 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow, limit 
         context.globalCompositeOperation = 'source-over'
       }
 
-      if (align === 'left') {
+      if (align !== 'right') {
         x += data.w + 1
       } else {
         x -= 1

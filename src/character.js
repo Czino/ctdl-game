@@ -248,6 +248,7 @@ export default function(id, options) {
     this.vx = direction === 'left' ? 6 : -6
     this.vy = -3
     playSound('playerHurt')
+    if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
       this.health = 0
       this.die() // :(
@@ -500,10 +501,10 @@ export default function(id, options) {
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
         write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 4,
+          x: this.getCenter().x - 6,
           y: this.y + dmg.y,
-          w: 8
-        }, 'left', false, 4, true, '#F00')
+          w: 12
+        }, 'center', false, 4, true, '#F00')
         return {
           ...dmg,
           y: dmg.y - 1
@@ -513,10 +514,10 @@ export default function(id, options) {
       .filter(heal => heal.y > -24)
       .map(heal => {
         write(constants.charContext, `+${heal.heal}`, {
-          x: this.getCenter().x - 4,
+          x: this.getCenter().x - 6,
           y: this.y + heal.y,
-          w: 8
-        }, 'left', false, 4, true, '#0F0')
+          w: 12
+        }, 'center', false, 4, true, '#0F0')
         return {
           ...heal,
           y: heal.y - 1
@@ -526,10 +527,10 @@ export default function(id, options) {
       .filter(say => say.y > -24)
       .map(say => {
         write(constants.charContext, say.say, {
-          x: this.getCenter().x - 12,
+          x: this.getCenter().x - 24,
           y: this.y + say.y,
-          w: 24
-        }, 'left', false, 4, false, '#FFF')
+          w: 48
+        }, 'center', false, 4, false, '#FFF')
         return {
           ...say,
           y: say.y - 1

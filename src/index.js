@@ -25,7 +25,7 @@ import {
   cleanUpStage,
   showShop, showSettings
 } from './gameUtils'
-import { writeMenu } from './textUtils'
+import { addTextToQueue, writeMenu } from './textUtils'
 import Wizard from './npcs/Wizard'
 import { applyGravity } from './physicsUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
@@ -287,3 +287,4 @@ window.killEnemies = () => CTDLGAME.objects
 window.changeMap = changeMap
 window.CTDLGAME = CTDLGAME
 window.constants = constants
+window.addTextToQueue = addTextToQueue

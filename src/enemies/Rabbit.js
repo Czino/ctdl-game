@@ -246,10 +246,10 @@ export default function(id, options) {
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
         write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 4,
+          x: this.getCenter().x - 6,
           y: this.y + dmg.y,
-          w: 8
-        }, 'left', false, 4, true, '#F00')
+          w: 12
+        }, 'center', false, 4, true, '#F00')
         return {
           ...dmg,
           y: dmg.y - 1
