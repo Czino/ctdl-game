@@ -26,12 +26,12 @@ export const updateViewport = () => {
   if (CTDLGAME.hodlonaut.selected && canTeleport(CTDLGAME.katoshi)) {
     CTDLGAME.katoshi.x = CTDLGAME.hodlonaut.x
     CTDLGAME.katoshi.y = CTDLGAME.hodlonaut.y
-    CTDLGAME.katoshi.teleporting = 16
+    CTDLGAME.katoshi.protection = 16
   }
   if (CTDLGAME.katoshi.selected && canTeleport(CTDLGAME.hodlonaut)) {
     CTDLGAME.hodlonaut.x = CTDLGAME.katoshi.x
     CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
-    CTDLGAME.hodlonaut.teleporting = 16
+    CTDLGAME.hodlonaut.protection = 16
   }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)

@@ -41,7 +41,7 @@ export default function(id, options) {
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || 3
   this.duckSpeed = options.duckSpeed || 2
-  this.teleporting = 0
+  this.protection = 0
 
   this.idle = () => {
     if (/jump|fall|action|hurt|rekt/.test(this.status)) return
@@ -237,7 +237,7 @@ export default function(id, options) {
 
 
   this.hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.teleporting > 0) return
+    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
 
@@ -245,8 +245,9 @@ export default function(id, options) {
 
     this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
     this.status = 'hurt'
-    this.vx = direction === 'left' ? 6 : -6
+    this.vx = direction === 'left' ? 5 : -5
     this.vy = -3
+    this.protection = 8
     playSound('playerHurt')
     if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
@@ -477,9 +478,9 @@ export default function(id, options) {
     this.w = data.w
     this.h = data.h
     constants.charContext.globalAlpha = data.opacity ?? 1
-    if (this.teleporting > 0) {
-      this.teleporting--
-      constants.charContext.globalAlpha = this.teleporting % 2
+    if (this.protection > 0) {
+      this.protection--
+      constants.charContext.globalAlpha = this.protection % 2
     }
 
     constants.charContext.drawImage(
