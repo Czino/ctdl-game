@@ -2,7 +2,6 @@ import constants from '../constants'
 import Block from '../Block'
 import { CTDLGAME, showZoom } from '../gameUtils'
 import { touches, intersects, sharpLine } from '../geometryUtils'
-import { addClass, removeClass } from '../htmlUtils'
 
 /**
  * @description Method to render overlay layer, typically to display block placement and zoom
