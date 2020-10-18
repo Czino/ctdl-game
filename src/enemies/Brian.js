@@ -39,6 +39,7 @@ export default function(id, options) {
   this.attackRange = 1
   this.hadIntro = options.hadIntro || false
   this.canMove = options.canMove || false
+  this.hurtAttackCounter = 0
 
   this.idle = () => {
     this.status = 'idle'
@@ -116,6 +117,7 @@ export default function(id, options) {
     this.dmgs.push({y: -12, dmg})
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
+    this.hurtAttackCounter = 6
     if (this.health <= 0) {
       this.health = 0
       this.die()
@@ -256,9 +258,9 @@ export default function(id, options) {
 
     if (this.status === 'hurtAttack' && Math.random() < .25) this.status = 'idle'
 
-    if (this.status === 'hurt' && Math.random() < .1) {
-      this.hurtAttack()
-    }
+    if (this.status === 'hurt') this.hurtAttackCounter--
+    if (this.status === 'hurt' && this.hurtAttackCounter === 0) this.hurtAttack()
+
     if (this.frame >= spriteData.length) {
       this.frame = 0
       if (/jump/.test(this.status)) this.status = 'idle'
