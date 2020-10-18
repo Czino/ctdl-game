@@ -24,8 +24,7 @@ export default function(options) {
       this.y += (timeOfDay - 5) * constants.HEIGHT
     }
 
-    let newMiddle = CTDLGAME.viewport.x + constants.WIDTH / 2
-    this.x = Math.round(newMiddle - (CTDLGAME.viewport.x * 8 / CTDLGAME.world.w))
+    this.x = Math.round(CTDLGAME.viewport.x + constants.WIDTH / 2)
     let sprite = CTDLGAME.assets.moon
     constants.skyContext.drawImage(
       sprite,
