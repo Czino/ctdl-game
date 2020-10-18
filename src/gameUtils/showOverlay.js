@@ -29,31 +29,28 @@ export const showOverlay = () => {
       },
       block
     )
-    let touchingObject = CTDLGAME.quadTree.query(CTDLGAME.ghostBlock).find(obj =>
-      touches(CTDLGAME.ghostBlock, obj.getBoundingBox()) &&
-      obj.class !== 'Character'
-    )
-    if (!touchingObject) CTDLGAME.ghostBlock.status = 'bad'
+    let touchingObject = CTDLGAME.quadTree.query(CTDLGAME.ghostBlock)
+      .find(obj =>
+        touches(CTDLGAME.ghostBlock, obj.getBoundingBox()) &&
+        obj.class !== 'Character'
+      )
     if (CTDLGAME.ghostBlock.y > CTDLGAME.world.h - constants.MENU.h) CTDLGAME.ghostBlock.status = 'bad'
 
-    let intersectingObject = CTDLGAME.quadTree.query(CTDLGAME.ghostBlock).find(obj => intersects(CTDLGAME.ghostBlock, obj.getBoundingBox()))
+    let intersectingObject = CTDLGAME.quadTree.query(CTDLGAME.ghostBlock)
+      .find(obj => intersects(CTDLGAME.ghostBlock, obj.getBoundingBox()))
 
-    if (!intersectingObject) {
-      constants.overlayContext.fillStyle = '#FFF'
-      sharpLine(
-        constants.overlayContext,
-        Math.round(CTDLGAME.ghostBlock.getCenter().x),
-        Math.round(CTDLGAME.ghostBlock.getCenter().y),
-        Math.round(window.SELECTEDCHARACTER.getCenter().x),
-        Math.round(window.SELECTEDCHARACTER.getCenter().y)
-      )
-      CTDLGAME.ghostBlock.update()
-    }
+    if (!touchingObject || intersectingObject) CTDLGAME.ghostBlock.status = 'bad'
+
+    constants.overlayContext.fillStyle = '#FFF'
+    sharpLine(
+      constants.overlayContext,
+      Math.round(CTDLGAME.ghostBlock.getCenter().x),
+      Math.round(CTDLGAME.ghostBlock.getCenter().y),
+      Math.round(window.SELECTEDCHARACTER.getCenter().x),
+      Math.round(window.SELECTEDCHARACTER.getCenter().y)
+    )
+    CTDLGAME.ghostBlock.update()
 
     if (CTDLGAME.zoom) showZoom(CTDLGAME.zoom)
-
-    if (intersectingObject || !touchingObject) {
-      CTDLGAME.ghostBlock = null
-    }
   }
 }

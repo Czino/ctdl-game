@@ -38,7 +38,6 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
-// TODO should you be able to place blocks anywhere?
 // TODO evil rabbits too hard to beat
 // TODO thinking about toggling blocks (Wish all blocks that are stacked could be toggles together, unless there is value at not doing so)
 // TODO when one char dies make the other cry?
