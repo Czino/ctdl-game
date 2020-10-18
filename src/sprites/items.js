@@ -4,5 +4,6 @@ export default {
     "coldcard": { x: 21, y: 0, w: 6, h: 10},
     "opendime": { x: 27, y: 0, w: 2, h: 8},
     "usd": { x: 0, y: 9, w: 10, h: 5},
-    "honeybadger": { x: 12, y: 11, w: 19, h: 8}
+    "honeybadger": { x: 12, y: 11, w: 19, h: 8},
+    "orangePill": { x: 0, y: 15, w: 8, h: 8}
 }

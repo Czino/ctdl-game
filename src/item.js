@@ -45,10 +45,15 @@ export default function(id, options) {
       })
       playSound('item')
     } else if (this.id === 'honeybadger') {
-      addTextToQueue(`You gained the strength of the honey badger`)
+      addTextToQueue('You gained the strength\nof the honey badger')
       character.strength += Math.round(Math.random() + 1)
       character.maxHealth += Math.round(Math.random() * 3 + 1)
-      character.health = character.maxHealth
+      character.heal(character.maxHealth)
+      playSound('honeyBadger')
+    } else if (this.id === 'orangePill') {
+      addTextToQueue('The orange pill makes\nyou more vital')
+      character.maxHealth += Math.round(Math.random() * 3 + 1)
+      character.heal(Math.round(character.maxHealth / 2))
       playSound('honeyBadger')
     }
   }
