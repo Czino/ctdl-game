@@ -2,6 +2,7 @@ import constants from '../constants'
 import Block from '../Block'
 import { CTDLGAME, showZoom } from '../gameUtils'
 import { touches, intersects, sharpLine } from '../geometryUtils'
+import { addClass, removeClass } from '../htmlUtils'
 
 /**
  * @description Method to render overlay layer, typically to display block placement and zoom
@@ -39,17 +40,20 @@ export const showOverlay = () => {
     let intersectingObject = CTDLGAME.quadTree.query(CTDLGAME.ghostBlock)
       .find(obj => intersects(CTDLGAME.ghostBlock, obj.getBoundingBox()))
 
-    if (!touchingObject || intersectingObject) CTDLGAME.ghostBlock.status = 'bad'
-
-    constants.overlayContext.fillStyle = '#FFF'
-    sharpLine(
-      constants.overlayContext,
-      Math.round(CTDLGAME.ghostBlock.getCenter().x),
-      Math.round(CTDLGAME.ghostBlock.getCenter().y),
-      Math.round(window.SELECTEDCHARACTER.getCenter().x),
-      Math.round(window.SELECTEDCHARACTER.getCenter().y)
-    )
-    CTDLGAME.ghostBlock.update()
+    if (!touchingObject) CTDLGAME.ghostBlock.status = 'bad'
+    if (intersectingObject?.class === 'Block') {
+      CTDLGAME.ghostBlock = null
+    } else {
+      constants.overlayContext.fillStyle = '#FFF'
+      sharpLine(
+        constants.overlayContext,
+        Math.round(CTDLGAME.ghostBlock.getCenter().x),
+        Math.round(CTDLGAME.ghostBlock.getCenter().y),
+        Math.round(window.SELECTEDCHARACTER.getCenter().x),
+        Math.round(window.SELECTEDCHARACTER.getCenter().y)
+      )
+      CTDLGAME.ghostBlock.update()
+    }
 
     if (CTDLGAME.zoom) showZoom(CTDLGAME.zoom)
   }

@@ -2,6 +2,7 @@ import blockSprite from './sprites/block'
 import { CTDLGAME } from './gameUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants';
+import { setButtonClicked } from './events';
 
 export default function(id, options) {
   this.id = id;
@@ -53,6 +54,7 @@ export default function(id, options) {
   })
 
   this.select = () => {
+    setButtonClicked(this)
     addTextToQueue(this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock')
   }
   this.unselect = () => {}

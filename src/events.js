@@ -1,5 +1,5 @@
 import * as db from './db'
-import { contains } from './geometryUtils'
+import { contains, intersects } from './geometryUtils'
 import constants from './constants'
 import { CTDLGAME, loadGame, newGame, saveStateExists, showIntro } from './gameUtils'
 import { setTextQueue, skipText } from './textUtils'
@@ -11,6 +11,12 @@ import { textQueue } from './textUtils/textQueue'
 
 window.KEYS = []
 window.BUTTONS = []
+
+let buttonClicked
+
+export const setButtonClicked = button => buttonClicked = button
+
+// TODO add throttling to events
 
 // TODO refactor into eventUtils
 constants.BUTTONS = constants.BUTTONS.concat([
@@ -385,6 +391,34 @@ function click (e) {
   }
 
   if (CTDLGAME.cursor.y > 215 && CTDLGAME.cursor.y < 232) skipText()
+
+  let click = {
+    x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
+    y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
+    w: 1, h: 1
+  }
+
+  if (!CTDLGAME.quadTree) return
+
+  let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
+
+  if (!object && CTDLGAME.ghostBlock && CTDLGAME.ghostBlock.status !== 'bad') {
+    // TODO refactor into placeBlock method
+    playSound('block')
+    CTDLGAME.ghostBlock.context = constants.gameContext
+    CTDLGAME.ghostBlock.opacity = 1
+    CTDLGAME.ghostBlock.isSolid = true
+    CTDLGAME.inventory.blocks.shift()
+    CTDLGAME.objects.push(CTDLGAME.ghostBlock)
+    window.SELECTEDCHARACTER.action()
+    CTDLGAME.ghostBlock = null
+  }
+  if (window.SELECTED) window.SELECTED.unselect()
+  if (!object) return
+  if (object.select) object.select()
+  if (object.class === 'Block') {
+    object.toggleSolid()
+  }
 }
 
 function clickEnd (e) {
@@ -420,46 +454,33 @@ function clickEnd (e) {
   CTDLGAME.showOverlay = false
   CTDLGAME.zoom = null
 
-  let click = {
-    x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
-    y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
-    w: 1, h: 1
-  }
-
-  if (!CTDLGAME.quadTree) return
-
-  let object = CTDLGAME.quadTree.query(click).find(obj => contains(obj.getBoundingBox(), click))
-
-  if (!object && CTDLGAME.ghostBlock && CTDLGAME.ghostBlock.status !== 'bad') {
-    // TODO refactor into placeBlock method
-    playSound('block')
-    CTDLGAME.ghostBlock.context = constants.gameContext
-    CTDLGAME.ghostBlock.opacity = 1
-    CTDLGAME.ghostBlock.isSolid = true
-    CTDLGAME.inventory.blocks.shift()
-    CTDLGAME.objects.push(CTDLGAME.ghostBlock)
-    window.SELECTEDCHARACTER.action()
-    CTDLGAME.ghostBlock = null
-  }
-  if (window.SELECTED) window.SELECTED.unselect()
-  if (!object) return
-  if (object.select) object.select()
-  if (object.class === 'Block') {
-    object.toggleSolid()
-  }
+  buttonClicked = null
 }
 
 function mouseMove (e) {
   let canvas = e.target
-  CTDLGAME.cursor = {
-    x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
-    y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
-  }
 
   if (e.layerX) {
     CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
-      y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
+      y: e.layerY / canvas.clientHeight * canvas.getAttribute('height'),
+    }
+    let hover = {
+      x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
+      y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
+      w: 1, h: 1
+    }
+    let blockHover = CTDLGAME.quadTree.query(hover)
+      .filter(obj => obj.class === 'Block')
+      .find(block => intersects(hover, block.getBoundingBox()))
+
+    if (blockHover) {
+      addClass(document.body, 'cursor-pointer')
+      if (e.buttons > 0 && buttonClicked) {
+        blockHover.isSolid = buttonClicked.isSolid
+      }
+    } else {
+      removeClass(document.body, 'cursor-pointer')
     }
   } else if (e.touches?.length > 0) {
     CTDLGAME.cursor = {
