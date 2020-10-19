@@ -202,16 +202,14 @@ export default function(id, options) {
   }
 
   this.makeDamage = multiplier => {
-    // TODO make lightningTorch stronger with increasing sats count
-    if (this.id === 'hodlonaut') {
-      playSound('lightningTorch')
-    }
+    if (this.id === 'hodlonaut') playSound('lightningTorch')
     if (this.id === 'katoshi') playSound('sword')
 
     const enemies = this.senseEnemy()
     enemies.forEach((enemy, index) => {
       if (index > 2) return // can only hurt 3 enemies at once
       let dmg = Math.round(this.strength * (1 + Math.random() / 4))
+      if (this.id === 'hodlonaut') dmg *= (1 + CTDLGAME.inventory.sats / 100000000)
       if (this.getCenter().x > enemy.getCenter().x) {
         this.direction = 'left'
       } else {
