@@ -8,6 +8,7 @@ import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
+import follow from '../aiUtils/follow'
 
 const items = [
   { id: 'honeybadger', chance: 1 }
@@ -182,12 +183,9 @@ export default function(id, options) {
             this.direction = 'right'
           }
           this.attack(enemy)
-        } else if (this.getBoundingBox().x > enemy.getBoundingBox().x + enemy.getBoundingBox().w - 1) {
-          this.moveLeft()
-        } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
-          this.moveRight()
         } else {
-          this.idle()
+          let action = follow(this, enemy, -1)
+          this[action]()
         }
       } else {
         this.idle()

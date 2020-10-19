@@ -8,6 +8,7 @@ import constants from './constants'
 import { addTextToQueue } from './textUtils';
 import { playSound } from './sounds';
 import { duckButton, backButton } from './events'
+import follow from './aiUtils/follow'
 
 const sprites = {
   hodlonaut,
@@ -202,7 +203,9 @@ export default function(id, options) {
 
   this.makeDamage = multiplier => {
     // TODO make lightningTorch stronger with increasing sats count
-    if (this.id === 'hodlonaut') playSound('lightningTorch')
+    if (this.id === 'hodlonaut') {
+      playSound('lightningTorch')
+    }
     if (this.id === 'katoshi') playSound('sword')
 
     const enemies = this.senseEnemy()
@@ -357,25 +360,23 @@ export default function(id, options) {
           this.direction = 'right'
         }
         action = 'attack'
-      } else if (this.getBoundingBox().x > enemy.getBoundingBox().x + enemy.getBoundingBox().w - 1) {
-        action = 'moveLeft'
-      } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
-        action = 'moveRight'
-      }
-    } else if (this.follow) {
-      let friends = [window.SELECTEDCHARACTER]
-        .filter(friend => friend.class === 'Character' && friend.status !== 'rekt')
-        .filter(friend => friend.id !== this.id)
-        .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
+      } else {
+        let areaBetween = {
+          x: Math.min(this.getBoundingBox().x, enemy.getBoundingBox().x),
+          y: Math.max(this.getBoundingBox().y, enemy.getBoundingBox().y),
+          w: Math.abs(this.getBoundingBox().x - enemy.getBoundingBox().x),
+          h: this.getBoundingBox().h - 6,
+        }
+        let obstacles = CTDLGAME.quadTree.query(areaBetween)
+          .filter(obj => obj.isSolid)
+          .filter(obstacle => intersects(areaBetween, obstacle))
 
-      let friend = getClosest(this.getCenter(), friends)
-      if (friend) {
-        if (this.getBoundingBox().x > friend.getBoundingBox().x + friend.getBoundingBox().w + 10) {
-          action = 'moveLeft'
-        } else if (friend.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + 10) {
-          action = 'moveRight'
+        if (obstacles.length === 0) {
+          action = follow(this, enemy, -1)
         }
       }
+    } else if (this.follow && window.SELECTEDCHARACTER.status !== 'rekt') {
+      action = follow(this, window.SELECTEDCHARACTER, 10)
     }
 
     if (action === 'idle' && Math.random() < .01) {

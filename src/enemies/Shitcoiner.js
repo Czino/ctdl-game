@@ -7,6 +7,7 @@ import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
+import follow from '../aiUtils/follow'
 
 const sprites = {
   shitcoiner
@@ -53,11 +54,15 @@ export default function(id, options) {
       this.status = 'move'
     } else {
       let climbTo = this.getBoundingBox()
-      climbTo.y -=4
+      climbTo.y -= 6
       climbTo.x -= 3
-      climbTo.w += 3
-      climbTo.h = 24
 
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.globalAlpha = .5
+        constants.overlayContext.fillStyle = 'red'
+        constants.overlayContext.fillRect(climbTo.x, climbTo.y, climbTo.w, climbTo.h)
+        constants.overlayContext.globalAlpha = 1
+      }
       let obstacles = CTDLGAME.quadTree.query(climbTo)
         .filter(obj => obj.isSolid && !obj.enemy)
         .filter(obj => intersects(obj, climbTo))
@@ -80,9 +85,15 @@ export default function(id, options) {
       this.status = 'move'
     } else {
       let climbTo = this.getBoundingBox()
-      climbTo.y -=4
+      climbTo.y -= 6
       climbTo.w += 3
-      climbTo.h = 24
+
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.globalAlpha = .5
+        constants.overlayContext.fillStyle = 'red'
+        constants.overlayContext.fillRect(climbTo.x, climbTo.y, climbTo.w, climbTo.h)
+        constants.overlayContext.globalAlpha = 1
+      }
 
       let obstacles = CTDLGAME.quadTree.query(climbTo)
         .filter(obj => obj.isSolid && !obj.enemy)
@@ -199,10 +210,9 @@ export default function(id, options) {
             this.direction = 'right'
           }
           this.attack(enemy)
-        } else if (this.getBoundingBox().x > enemy.getBoundingBox().x + enemy.getBoundingBox().w - 1) {
-          this.moveLeft()
-        } else if (enemy.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w - 1) {
-          this.moveRight()
+        } else {
+          let action = follow(this, enemy, -1)
+          this[action]()
         }
       } else {
         this.idle()
@@ -254,9 +264,9 @@ export default function(id, options) {
   this.getBoundingBox = () => ({
     id: this.id,
     x: this.x + 5,
-    y: this.y + 3,
+    y: this.y + 6,
     w: this.w - 10,
-    h: this.h - 3
+    h: this.h - 6
   })
 
   this.getAnchor = () => this.status !== 'rekt'
