@@ -1,6 +1,7 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
+import { toCurrency } from '../stringUtils'
 
 const backpack = {
   x: constants.WIDTH / 2 - 10,
@@ -52,9 +53,10 @@ export const showInventory = inventory => {
     true
   )
 
+  
   write(
     constants.menuContext,
-    'ś' + inventory.sats + '\n' + '$' + inventory.usd, {
+    toCurrency(inventory.sats, 'BTC') + '\n' + toCurrency(inventory.usd, 'USD'), {
       x: CTDLGAME.viewport.x + 2,
       y: pos.y + 1,
       w: 40
