@@ -11,6 +11,9 @@
     "test": "jest --coverage --colors --cache --maxWorkers=4",
     "lint": "eslint src/**/*.js --color"
   },
+  "jest": {
+    "setupFiles": ["./tests/setup.js"]
+  },
   "devDependencies": {
     "@babel/core": "^7.11.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
@@ -27,6 +30,7 @@
     "install": "^0.13.0",
     "jest": "^24.8.0",
     "npm": "^6.14.8",
+    "sinon": "^9.2.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"

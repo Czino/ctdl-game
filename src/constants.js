@@ -5,7 +5,6 @@ const MENU = { w: WIDTH, h: 64 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
 
 const skyCanvas = document.getElementById('ctdl-game-sky')
-
 const parallaxCanvas = document.getElementById('ctdl-game-parallax')
 const bgCanvas = document.getElementById('ctdl-game-bg')
 const gameCanvas = document.getElementById('ctdl-game')
@@ -13,9 +12,9 @@ const charCanvas = document.getElementById('ctdl-game-chars')
 const fgCanvas = document.getElementById('ctdl-game-fg')
 const overlayCanvas = document.getElementById('ctdl-game-overlay')
 const menuCanvas = document.getElementById('ctdl-game-menu')
-const helperCanvas = document.getElementById('ctdl-game-helper');
+const helperCanvas = document.getElementById('ctdl-game-helper')
 
-[
+;[
   skyCanvas,
   parallaxCanvas,
   bgCanvas,
@@ -41,9 +40,9 @@ const fgContext = fgCanvas.getContext('2d')
 const charContext = charCanvas.getContext('2d')
 const overlayContext = overlayCanvas.getContext('2d')
 const menuContext = menuCanvas.getContext('2d')
-const helperContext = helperCanvas.getContext('2d');
+const helperContext = helperCanvas.getContext('2d')
 
-[
+;[
   skyContext,
   parallaxContext,
   bgContext,
