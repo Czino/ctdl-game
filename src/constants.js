@@ -60,34 +60,34 @@ const CONTROLS = {
   singlePlayer: {
     q: 'jump',
     ' ': 'jump',
-    e: 'triggerAttack',
-    enter: 'triggerAttack',
-    s: 'triggerDuck',
+    e: 'attack',
+    enter: 'attack',
+    s: 'duck',
     w: 'back',
     a: 'moveLeft',
     d: 'moveRight'
   },
   hodlonaut: {
     q: 'jump',
-    e: 'triggerAttack',
-    s: 'triggerDuck',
+    e: 'attack',
+    s: 'duck',
     w: 'back',
     a: 'moveLeft',
     d: 'moveRight',
   },
   katoshi: {
     o: 'jump',
-    u: 'triggerAttack',
-    k: 'triggerDuck',
+    u: 'attack',
+    k: 'duck',
     i: 'back',
     j: 'moveLeft',
     l: 'moveRight'
   },
   buttons: {
     jump: 'jump',
-    attack: 'triggerAttack',
+    attack: 'attack',
     back: 'back',
-    duck: 'triggerDuck',
+    duck: 'duck',
     switch: 'switch',
     moveLeft: 'moveLeft',
     moveRight: 'moveRight'

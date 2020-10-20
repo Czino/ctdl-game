@@ -7,7 +7,6 @@ import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
-import follow from '../aiUtils/follow'
 
 const sprites = {
   shitcoiner
@@ -41,80 +40,121 @@ export default function(id, options) {
   this.walkingSpeed = options.walkingSpeed || 2
   this.senseRadius = Math.round(Math.random() * 50) + 30
 
-  this.idle = () => {
-    this.status = 'idle'
-  }
-  this.moveLeft = () => {
-    if (/climb|spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
-    this.kneels = false
-    this.direction = 'left'
-    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-    if (hasMoved) {
-      this.status = 'move'
-    } else {
-      let climbTo = this.getBoundingBox()
-      climbTo.y -= 6
-      climbTo.x -= 3
-
-      if (window.DRAWSENSORS) {
-        constants.overlayContext.globalAlpha = .5
-        constants.overlayContext.fillStyle = 'red'
-        constants.overlayContext.fillRect(climbTo.x, climbTo.y, climbTo.w, climbTo.h)
-        constants.overlayContext.globalAlpha = 1
+  this.actions = {
+    idle: {
+      condition: () => true,
+      effect: () => {
+        this.status = 'idle'
+        return true
       }
-      let obstacles = CTDLGAME.quadTree.query(climbTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, climbTo))
+    },
+    moveLeft: {
+      condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+      effect: () => {
+        this.kneels = false
+        this.direction = 'left'
+        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-      let canClimb = obstacles.length === 0
-      if (canClimb) {
-        this.climb()
-      } else {
-        this.idle()
+        if (hasMoved) {
+          this.status = 'move'
+          return true
+        } else {
+          if (this.actions.climb.condition()) {
+            return this.actions.climb.effect()
+          } else if (this.actions.idle.condition()) {
+            return this.actions.idle.effect()
+          }
+        }
+
+        return false
+      }
+    },
+    moveRight: {
+      condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+      effect: () => {
+        this.kneels = false
+        this.direction = 'right'
+
+        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+        if (hasMoved) {
+          this.status = 'move'
+          return true
+        } else {
+          if (this.actions.climb.condition()) {
+            return this.actions.climb.effect()
+          } else if (this.actions.idle.condition()) {
+            return this.actions.idle.effect()
+          }
+        }
+        return false
+      }
+    },
+    climb: {
+      condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canClimb(),
+      effect: () => {
+        this.status = 'climb'
+        if (this.frame !== 10) return true
+        moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
+        this.status = 'idle'
+        return true
+      }
+    },
+    attack: {
+      condition: ({ enemy }) => {
+        if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return false
+
+        if (!enemy || !intersects(this.getBoundingBox(), enemy.getBoundingBox())) return false // not in biting distance
+
+        return true
+      },
+      effect: ({ enemy }) => {
+        this.kneels = enemy.status === 'rekt'
+
+        if (this.status === 'attack' && this.frame === 3) {
+          return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
+        }
+        if (this.status === 'attack') return true
+
+        this.frame = 0
+        this.status = 'attack'
+
+        return true
+      }
+    },
+    moveTo: {
+      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+      effect: ({ other, distance }) => {
+        let action = 'idle'
+
+        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
+          action = 'moveLeft'
+        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
+          action = 'moveRight'
+        }
+        if (this.actions[action].condition) return this.actions[action].effect()
+        return false
       }
     }
   }
-  this.moveRight = () => {
-    if (/climb|spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
-    this.kneels = false
-    this.direction = 'right'
 
-    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-    if (hasMoved) {
-      this.status = 'move'
-    } else {
-      let climbTo = this.getBoundingBox()
-      climbTo.y -= 6
-      climbTo.w += 3
+  this.canClimb = () => {
+    let climbTo = this.getBoundingBox()
+    climbTo.y -= -6
+    climbTo.w += this.direction === 'right' ? 3 : -3
 
-      if (window.DRAWSENSORS) {
-        constants.overlayContext.globalAlpha = .5
-        constants.overlayContext.fillStyle = 'red'
-        constants.overlayContext.fillRect(climbTo.x, climbTo.y, climbTo.w, climbTo.h)
-        constants.overlayContext.globalAlpha = 1
-      }
-
-      let obstacles = CTDLGAME.quadTree.query(climbTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, climbTo))
-
-      let canClimb = obstacles.length === 0
-      if (canClimb) {
-        this.climb()
-      } else {
-        this.idle()
-      }
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.globalAlpha = .5
+      constants.overlayContext.fillStyle = 'red'
+      constants.overlayContext.fillRect(climbTo.x, climbTo.y, climbTo.w, climbTo.h)
+      constants.overlayContext.globalAlpha = 1
     }
-  }
-  this.climb = () => {
-    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
 
-    this.status = 'climb'
+    let obstacles = CTDLGAME.quadTree.query(climbTo)
+      .filter(obj => obj.isSolid && !obj.enemy)
+      .filter(obj => intersects(obj, climbTo))
 
-    if (this.frame !== 10) return
-    moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
-    this.status = 'idle'
+    return obstacles.length === 0
   }
 
   this.hurt = (dmg, direction) => {
@@ -130,6 +170,7 @@ export default function(id, options) {
       this.die()
     }
   }
+
   this.die = () => {
     CTDLGAME.inventory.usd += this.usd
     addTextToQueue(`Shitcoiner got rekt,\nyou found $${this.usd}`)
@@ -148,20 +189,6 @@ export default function(id, options) {
       )
       CTDLGAME.objects.push(item)
     }
-  }
-
-  this.attack = enemy => {
-    if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
-
-    this.kneels = enemy.status === 'rekt'
-
-    if (this.status === 'attack' && this.frame === 3) {
-      return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
-    }
-    if (this.status === 'attack') return
-
-    this.frame = 0
-    this.status = 'attack'
   }
 
   this.update = () => {
@@ -189,8 +216,9 @@ export default function(id, options) {
     }
     if (this.status === 'climb') {
       this.vy = 0
-      this.climb()
+      if (this.actions.climb.condition()) this.actions.climb()
     }
+
     if (this.vy !== 0 && this.inViewport) {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
@@ -200,7 +228,8 @@ export default function(id, options) {
     }
 
     // AI logic
-    if (!/rekt|burning|spawn/.test(this.status)) {
+    let action = { id: 'idle' }
+    if (!/rekt|hurt|burning|spawn/.test(this.status)) {
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
         if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance
@@ -209,15 +238,19 @@ export default function(id, options) {
           } else {
             this.direction = 'right'
           }
-          this.attack(enemy)
+          action.id = 'attack'
+          action.payload = { enemy }
         } else {
-          let action = follow(this, enemy, -1)
-          this[action]()
+          action.id = 'moveTo'
+          action.payload = { other: enemy, distance: -1 }
         }
-      } else {
-        this.idle()
+      } else if (this.actions.idle.condition()) {
+        this.actions.idle.effect()
       }
+
+      if (this.actions[action.id].condition(action.payload)) this.actions[action.id].effect(action.payload)
     }
+
 
     let spriteData = this.spriteData[this.direction][this.status]
 
