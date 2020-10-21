@@ -8,109 +8,103 @@ import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
+import Agent from '../Agent'
 
 const items = [
   { id: 'honeybadger', chance: 1 }
 ]
 
-export default function(id, options) {
-  this.id = id
-  this.class = 'Bear'
-  this.applyGravity = true
-  this.enemy = true
-  this.health = options.health ?? Math.round(Math.random() * 20 + 40)
-  this.item = options.item || items.find(item => item.chance >= Math.random())
-  this.dmgs = []
-  this.w = 27
-  this.h = 28
-  this.x = options.x
-  this.y = options.y
-  this.vx = options.vx || 0
-  this.vy = options.vy || 0
-  this.status = options.status || 'idle'
-  this.direction = options.direction || 'left'
-  this.frame = options.frame || 0
-  this.walkingSpeed = 2
-  this.attackRange = 2
-  this.senseRadius = 160
-  this.hadIntro = options.hadIntro
-  this.canMove = options.canMove
+class Bear extends Agent {
+  constructor(id, options) {
+    super(id, options)
+    this.health = options.health ?? Math.round(Math.random() * 20 + 40)
+    this.item = options.item || items.find(item => item.chance >= Math.random())
+    this.hadIntro = options.hadIntro
+    this.canMove = options.canMove
+  }
 
-  this.actions = {
-    idle: {
-      condition: () => this.status !== 'rekt',
-      effect: () => {
-        this.status = 'idle'
+  class = 'Bear'
+  enemy = true
+  w = 27
+  h = 28
+  walkingSpeed = 2
+  attackRange = 2
+  senseRadius = 160
+
+
+  idle = {
+    condition: () => this.status !== 'rekt',
+    effect: () => {
+      this.status = 'idle'
+      return true
+    }
+  }
+  moveLeft = {
+    condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'left'
+      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'move'
+        if (this.frame % 5 === 0) playSound('drop')
         return true
       }
-    },
-    moveLeft: {
-      condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'left'
-        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      return false
+    }
+  }
+  moveRight = {
+    condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'right'
 
-        if (hasMoved) {
-          this.status = 'move'
-          if (this.frame % 5 === 0) playSound('drop')
-          return true
-        }
-        return false
-      }
-    },
-    moveRight: {
-      condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'right'
-
-        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-        if (hasMoved) {
-          this.status = 'move'
-          if (this.frame % 5 === 0) playSound('drop')
-          return true
-        }
-        return false
-      }
-    },
-    attack: {
-      condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
-      effect: ({ enemy }) => {
-        if (this.status === 'attack' && this.frame === 2) {
-          playSound('bearGrowl')
-        }
-        if (this.status === 'attack' && this.frame === 5) {
-          playSound('woosh')
-          let dmg = Math.round(Math.random() * 2) + 5
-          enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
-          return true
-        }
-        if (this.status === 'attack') return true
-
-        this.frame = 0
-        this.status = 'attack'
+      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'move'
+        if (this.frame % 5 === 0) playSound('drop')
         return true
       }
-    },
-    moveTo: {
-      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
-      effect: ({ other, distance }) => {
-        let action = 'idle'
-
-        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-          action = 'moveLeft'
-        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-          action = 'moveRight'
-        }
-        if (this.actions[action].condition()) return this.actions[action].effect()
-        return false
+      return false
+    }
+  }
+  attack = {
+    condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+    effect: ({ enemy }) => {
+      if (this.status === 'attack' && this.frame === 2) {
+        playSound('bearGrowl')
       }
+      if (this.status === 'attack' && this.frame === 5) {
+        playSound('woosh')
+        let dmg = Math.round(Math.random() * 2) + 5
+        enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+        return true
+      }
+      if (this.status === 'attack') return true
+
+      this.frame = 0
+      this.status = 'attack'
+      return true
+    }
+  }
+  moveTo = {
+    condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+    effect: ({ other, distance }) => {
+      let action = 'idle'
+
+      if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
+        action = 'moveLeft'
+      } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
+        action = 'moveRight'
+      }
+      if (this[action].condition()) return this[action].effect()
+      return false
     }
   }
 
-  this.hurt = (dmg, direction) => {
+  hurt = (dmg, direction) => {
     if (/hurt|block|rekt/.test(this.status)) return
 
-    if (dmg < 2 && Math.random() < .3) {
+    if (dmg < 2 && Math.random() < .9) {
       if (Math.random() < .1) this.status = 'block'
       return
     } else if (dmg >= 2 && Math.random() < .3) {
@@ -132,7 +126,7 @@ export default function(id, options) {
     }
   }
 
-  this.die = () => {
+  die = () => {
     this.frame = 0
     this.status = 'rekt'
 
@@ -156,7 +150,7 @@ export default function(id, options) {
     })
   }
 
-  this.update = () => {
+  update = () => {
     const sprite = CTDLGAME.assets.bear
 
     if (this.vx !== 0) {
@@ -199,8 +193,8 @@ export default function(id, options) {
         const enemy = getClosest(this.getCenter(), this.sensedEnemies)
         const attackBox = this.getCenter()
         attackBox.x -= this.w / 2
-        attackBox.w = this.w
-        attackBox.h = 5
+        attackBox.w = this.w + this.attackRange
+        attackBox.h = 9
 
         if (window.DRAWSENSORS) {
           constants.overlayContext.fillStyle = 'red'
@@ -216,15 +210,15 @@ export default function(id, options) {
           action.payload = { enemy }
         } else {
           action.id = 'moveTo'
-          action.payload = { other: enemy, distance: -1 }
+          action.payload = { other: enemy, distance: -2 }
         }
       }
     }
-    if (this.actions[action.id].condition(action.payload)) {
-      action.success = this.actions[action.id].effect(action.payload)
+    if (this[action.id].condition(action.payload)) {
+      action.success = this[action.id].effect(action.payload)
     }
-    if (!action.success && this.actions.idle.condition()) {
-      this.actions.idle.effect()
+    if (!action.success && this.idle.condition()) {
+      this.idle.effect()
     }
 
     let spriteData = bearSprite[this.direction][this.status]
@@ -262,7 +256,7 @@ export default function(id, options) {
       })
   }
 
-  this.getBoundingBox = () => /idle|move/.test(this.status)
+  getBoundingBox = () => /idle|move/.test(this.status)
     ? ({
       id: this.id,
       x: this.x,
@@ -278,7 +272,7 @@ export default function(id, options) {
       h: this.h - 5
     })
 
-  this.getAnchor = () => /idle|move/.test(this.status)
+  getAnchor = () => /idle|move/.test(this.status)
     ? ({
         x: this.getBoundingBox().x + 7,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
@@ -291,29 +285,6 @@ export default function(id, options) {
       w: this.getBoundingBox().w,
       h: 1
   })
-
-  this.getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  this.select = () => {}
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    vx: this.vx,
-    vy: this.vy,
-    status: this.status,
-    health: this.health,
-    direction: this.direction,
-    hadIntro: this.hadIntro,
-    canMove: this.canMove,
-    frame: this.frame,
-    item: this.item
-  })
 }
+
+export default Bear

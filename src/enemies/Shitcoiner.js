@@ -1,12 +1,11 @@
 import shitcoiner from '../sprites/shitcoiner'
-import Item from '../Item'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
-import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
+import Agent from '../Agent'
 
 const sprites = {
   shitcoiner
@@ -17,125 +16,110 @@ const items = [
   { id: 'opendime', chance: 0.01 }
 ]
 
-export default function(id, options) {
-  this.id = id
-  this.class = 'Shitcoiner'
-  this.applyGravity = true
-  this.enemy = true
-  this.spriteData = sprites.shitcoiner
-  this.health = options.health ?? Math.round(Math.random() * 7 + 1)
-  this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
-  this.item = options.item || items.find(item => item.chance >= Math.random())
-  this.dmgs = []
-  this.w = 16
-  this.h = 30
-  this.x = options.x
-  this.y = options.y
-  this.vx = options.vx || 0
-  this.vy = options.vy || 0
-  this.status = options.status || 'idle'
-  this.direction = options.direction || 'right'
-  this.kneels = false
-  this.frame = options.frame || 0
-  this.walkingSpeed = options.walkingSpeed || 2
-  this.senseRadius = Math.round(Math.random() * 50) + 30
+class Shitcoiner extends Agent {
+  constructor(id, options) {
+    super(id, options)
+    this.health = options.health ?? Math.round(Math.random() * 7 + 1)
+    this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
+    this.item = options.item || items.find(item => item.chance >= Math.random())
+    this.senseRadius = Math.round(Math.random() * 50) + 30
+  }
 
+  class = 'Shitcoiner'
+  enemy = true
+  w = 16
+  h = 30
+  spriteData = sprites.shitcoiner
+  kneels = false
 
-  this.actions = {
-    idle: {
-      condition: () => !/rekt|burning/.test(this.status),
-      effect: () => {
-        this.status = 'idle'
+  idle = {
+    condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.status = 'idle'
+      return true
+    }
+  }
+  moveLeft = {
+    condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.kneels = false
+      this.direction = 'left'
+      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'move'
         return true
+      } else if (this.climb.condition()) {
+        return this.climb.effect()
+      } else if (this.idle.condition()) {
+        return this.idle.effect()
       }
-    },
-    moveLeft: {
-      condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.kneels = false
-        this.direction = 'left'
-        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (this.actions.climb.condition()) {
-          return this.actions.climb.effect()
-        } else if (this.actions.idle.condition()) {
-          return this.actions.idle.effect()
-        }
+      return false
+    }
+  }
+  moveRight = {
+    condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.kneels = false
+      this.direction = 'right'
 
-        return false
-      }
-    },
-    moveRight: {
-      condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.kneels = false
-        this.direction = 'right'
-
-        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (this.actions.climb.condition()) {
-          return this.actions.climb.effect()
-        } else if (this.actions.idle.condition()) {
-          return this.actions.idle.effect()
-        }
-
-        return false
-      }
-    },
-    climb: {
-      condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canClimb(),
-      effect: () => {
-        this.status = 'climb'
-        if (this.frame !== 10) return true
-        moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
-        this.status = 'idle'
+      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'move'
         return true
+      } else if (this.climb.condition()) {
+        return this.climb.effect()
+      } else if (this.idle.condition()) {
+        return this.idle.effect()
       }
+
+      return false
+    }
+  }
+  climb = {
+    condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canClimb(),
+    effect: () => {
+      this.status = 'climb'
+      if (this.frame !== 10) return true
+      moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
+      this.status = 'idle'
+      return true
+    }
+  }
+  attack = {
+    condition: ({ enemy }) => {
+      if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return false
+
+      if (!enemy || !intersects(this.getBoundingBox(), enemy.getBoundingBox())) return false // not in biting distance
+
+      return true
     },
-    attack: {
-      condition: ({ enemy }) => {
-        if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return false
+    effect: ({ enemy }) => {
+      this.kneels = enemy.status === 'rekt'
 
-        if (!enemy || !intersects(this.getBoundingBox(), enemy.getBoundingBox())) return false // not in biting distance
-
-        return true
-      },
-      effect: ({ enemy }) => {
-        this.kneels = enemy.status === 'rekt'
-
-        if (this.status === 'attack' && this.frame === 3) {
-          return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
-        }
-        if (this.status === 'attack') return true
-
-        this.frame = 0
-        this.status = 'attack'
-
-        return true
+      if (this.status === 'attack' && this.frame === 3) {
+        return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
       }
-    },
-    moveTo: {
-      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
-      effect: ({ other, distance }) => {
-        let action = 'idle'
+      if (this.status === 'attack') return true
 
-        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-          action = 'moveLeft'
-        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-          action = 'moveRight'
-        }
-        if (this.actions[action].condition()) return this.actions[action].effect()
-        return false
-      }
+      this.frame = 0
+      this.status = 'attack'
+
+      return true
     }
   }
 
-  this.canClimb = () => {
+  actions = {
+    idle: this.idle,
+    moveLeft: this.moveLeft,
+    moveRight: this.moveRight,
+    climb: this.climb,
+    attack: this.attack,
+    moveTo: this.moveTo
+  }
+
+  canClimb = () => {
     let climbTo = this.getBoundingBox()
     climbTo.y -= -6
     climbTo.w += this.direction === 'right' ? 3 : -3
@@ -154,7 +138,7 @@ export default function(id, options) {
     return obstacles.length === 0
   }
 
-  this.hurt = (dmg, direction) => {
+  hurt = (dmg, direction) => {
     if (/spawn|hurt|rekt|burning/.test(this.status)) return
 
     playSound('shitcoinerHurt')
@@ -168,27 +152,7 @@ export default function(id, options) {
     }
   }
 
-  this.die = () => {
-    CTDLGAME.inventory.usd += this.usd
-    addTextToQueue(`Shitcoiner got rekt,\nyou found $${this.usd}`)
-
-    this.status = 'rekt'
-
-    if (this.item) {
-      let item = new Item(
-        this.item.id,
-        {
-          x: this.x,
-          y: this.y,
-          vy: -8,
-          vx: Math.round((Math.random() - .5) * 10)
-        }
-      )
-      CTDLGAME.objects.push(item)
-    }
-  }
-
-  this.update = () => {
+  update = () => {
     const sprite = CTDLGAME.assets.shitcoiner
 
     if (CTDLGAME.lockCharacters) {
@@ -213,7 +177,7 @@ export default function(id, options) {
     }
     if (this.status === 'climb') {
       this.vy = 0
-      if (this.actions.climb.condition()) this.actions.climb()
+      if (this.climb.condition()) this.climb()
     }
 
     if (this.vy !== 0 && this.inViewport) {
@@ -225,8 +189,8 @@ export default function(id, options) {
     }
 
     // AI logic
-    let action = { id: 'idle' }
     if (!/rekt|hurt|burning|spawn/.test(this.status)) {
+      let action = { id: 'idle' }
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
         if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance
@@ -242,12 +206,12 @@ export default function(id, options) {
           action.payload = { other: enemy, distance: -1 }
         }
       }
-    }
-    if (this.actions[action.id].condition(action.payload)) {
-      action.success = this.actions[action.id].effect(action.payload)
-    }
-    if (!action.success && this.actions.idle.condition()) {
-      this.actions.idle.effect()
+      if (this.actions[action.id].condition(action.payload)) {
+        action.success = this.actions[action.id].effect(action.payload)
+      }
+      if (!action.success && this.idle.condition()) {
+        this.idle.effect()
+      }
     }
 
 
@@ -293,7 +257,7 @@ export default function(id, options) {
       })
   }
 
-  this.getBoundingBox = () => ({
+  getBoundingBox = () => ({
     id: this.id,
     x: this.x + 5,
     y: this.y + 6,
@@ -301,7 +265,7 @@ export default function(id, options) {
     h: this.h - 6
   })
 
-  this.getAnchor = () => this.status !== 'rekt'
+  getAnchor = () => this.status !== 'rekt'
     ? ({
         x: this.getBoundingBox().x + 2,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
@@ -314,29 +278,6 @@ export default function(id, options) {
       w: this.getBoundingBox().w,
       h: 1
   })
-
-  this.getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  this.select = () => {}
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    vx: this.vx,
-    vy: this.vy,
-    status: this.status,
-    direction: this.direction,
-    frame: this.frame,
-    usd: this.usd,
-    item: this.item,
-    walkingSpeed: this.walkingSpeed,
-    senseRadius: this.senseRadius
-  })
 }
+
+export default Shitcoiner

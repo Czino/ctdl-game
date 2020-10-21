@@ -8,6 +8,7 @@ import constants from '../constants'
 import { playSound } from '../sounds'
 import { getSoundtrack, initSoundtrack } from '../soundtrack';
 import { senseCharacters } from './enemyUtils'
+import Agent from '../Agent'
 
 const items = [
   { id: 'pizza', chance: 0.01 },
@@ -16,142 +17,133 @@ const items = [
   { id: 'opendime', chance: 1 },
 ]
 
-export default function(id, options) {
-  this.id = id
-  this.class = 'Brian'
-  this.applyGravity = true
-  this.enemy = true
-  this.health = options.health ?? 25
-  this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
-  this.item = options.item || items.find(item => item.chance >= Math.random())
-  this.dmgs = []
-  this.w = 16
-  this.h = 30
-  this.x = options.x
-  this.y = options.y
-  this.vx = options.vx || 0
-  this.vy = options.vy || 0
-  this.status = options.status || 'idle'
-  this.direction = options.direction || 'left'
-  this.frame = options.frame || 0
-  this.walkingSpeed = 3
-  this.senseRadius = 60
-  this.attackRange = 1
-  this.hadIntro = options.hadIntro || false
-  this.canMove = options.canMove || false
-  this.hurtAttackCounter = 0
+class Brian extends Agent {
+  constructor(id, options) {
+    super(id, options)
+    this.health = options.health ?? 25
+    this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
+    this.item = options.item || items.find(item => item.chance >= Math.random())
+    this.hadIntro = options.hadIntro || false
+    this.canMove = options.canMove || false
+    this.hurtAttackCounter = options.hurtAttackCounter || 0
+  }
 
-  this.actions = {
-    idle: {
-      condition: () => this.status !== 'rekt',
-      effect: () => {
-        this.status = 'idle'
+  class = 'Brian'
+  enemy = true
+  w = 16
+  h = 30
+  walkingSpeed = 3
+  senseRadius = 60
+  attackRange = 1
+
+
+  idle = {
+    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.status = 'idle'
+      return true
+    }
+  }
+  moveLeft = {
+    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'left'
+      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'move'
         return true
+      } else if (this.jump.condition()) {
+        return this.jump.effect()
+      } else if (this.idle.condition()) {
+        return this.idle.effect()
       }
-    },
-    moveLeft: {
-      condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'left'
-        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (this.actions.jump.condition()) {
-          return this.actions.jump.effect()
-        } else if (this.actions.idle.condition()) {
-          return this.actions.idle.effect()
-        }
+      return false
+    }
+  }
+  moveRight = {
+    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'right'
 
-        return false
+      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'move'
+      } else if (this.jump.condition()) {
+        return this.jump.effect()
+      } else if (this.idle.condition()) {
+        return this.idle.effect()
       }
-    },
-    moveRight: {
-      condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'right'
 
-        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-        if (hasMoved) {
-          this.status = 'move'
-        } else if (this.actions.jump.condition()) {
-          return this.actions.jump.effect()
-        } else if (this.actions.idle.condition()) {
-          return this.actions.idle.effect()
-        }
+      return false
+    }
+  }
+  jump = {
+    condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canJump(),
+    effect: () => {
+      console.log('before', this.status)
+      if (this.status !== 'jump') this.frame = 0
+      this.status = 'jump'
+      console.log('ready to jump', this.frame)
+      if (this.frame !== 2) return true
+      console.log('jump')
+      this.vx = this.direction === 'right' ? 6 : -6
+      this.vy = -8
 
-        return false
-      }
-    },
-    jump: {
-      condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canJump(),
-      effect: () => {
-        if (this.status !== 'jump') this.frame = 0
-        this.status = 'jump'
+      return true
+    }
+  }
+  attack = {
+    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
+    effect: ({ enemy }) => {
+      const dmg = Math.round(Math.random()) * 2 + 3
 
-        if (this.frame !== 2) return true
-        this.vx = this.direction === 'right' ? 6 : -6
-        this.vy = -8
-
-        return true
-      }
-    },
-    attack: {
-      condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-      effect: ({ enemy }) => {
-        const dmg = Math.round(Math.random()) * 2 + 3
-
-        if (this.status === 'attack' && this.frame === 3) {
-          playSound('woosh')
-          return enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
-        }
-        if (this.status === 'attack' && this.frame < 4) return true
-
-        this.frame = 0
-        this.status = 'attack'
-        return true
-      }
-    },
-    hurtAttack: {
-      condition: () => !/rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.status = 'hurtAttack'
-
-        const attackBox = this.getBoundingBox()
-        attackBox.x -= this.attackRange
-        attackBox.w += this.attackRange * 2
-
+      if (this.status === 'attack' && this.frame === 3) {
         playSound('woosh')
-
-        this.sensedEnemies
-          .filter(enemy => intersects(attackBox, enemy.getBoundingBox()))
-          .forEach(enemy => {
-            const dmg = Math.round(Math.random()) * 1 + 3
-            const direction = this.getCenter().x > enemy.getCenter().x ? 'right' : 'left'
-            enemy.hurt(dmg, direction)
-          })
-
-        return true
+        return enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
       }
-    },
-    moveTo: {
-      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
-      effect: ({ other, distance }) => {
-        let action = 'idle'
+      if (this.status === 'attack' && this.frame < 4) return true
 
-        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-          action = 'moveLeft'
-        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-          action = 'moveRight'
-        }
-        if (this.actions[action].condition()) return this.actions[action].effect()
-        return false
-      }
+      this.frame = 0
+      this.status = 'attack'
+      return true
+    }
+  }
+  hurtAttack = {
+    condition: () => !/rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.status = 'hurtAttack'
+
+      const attackBox = this.getBoundingBox()
+      attackBox.x -= this.attackRange
+      attackBox.w += this.attackRange * 2
+
+      playSound('woosh')
+
+      this.sensedEnemies
+        .filter(enemy => intersects(attackBox, enemy.getBoundingBox()))
+        .forEach(enemy => {
+          const dmg = Math.round(Math.random()) * 1 + 3
+          const direction = this.getCenter().x > enemy.getCenter().x ? 'right' : 'left'
+          enemy.hurt(dmg, direction)
+        })
+
+      return true
     }
   }
 
-  this.canJump = () => {
+  actions = {
+    idle: this.idle,
+    moveLeft: this.moveLeft,
+    moveRight: this.moveRight,
+    jump: this.jump,
+    attack: this.attack,
+    hurtAttack: this.hurtAttack,
+    moveTo: this.moveTo
+  }
+
+  canJump = () => {
     let jumpTo = this.getBoundingBox()
       jumpTo.y -= 12
       jumpTo.x += this.direction === 'right' ? 4 : -4
@@ -167,7 +159,7 @@ export default function(id, options) {
       return obstacles.length === 0
   }
 
-  this.hurt = dmg => {
+  hurt = dmg => {
     if (/hurt|rekt/.test(this.status)) return
 
     playSound('shitcoinerHurt')
@@ -180,7 +172,8 @@ export default function(id, options) {
       this.die()
     }
   }
-  this.die = () => {
+
+  die = () => {
     CTDLGAME.inventory.usd += this.usd
     this.status = 'rekt'
     this.frame = 0
@@ -205,7 +198,7 @@ export default function(id, options) {
     })
   }
 
-  this.update = () => {
+  update = () => {
     const sprite = CTDLGAME.assets.brian
 
     if (this.vx !== 0) {
@@ -249,8 +242,8 @@ export default function(id, options) {
     }
 
     // AI logic
-    let action = { id: 'idle' }
     if (this.canMove && !/rekt|hurt|jump|fall/.test(this.status)) {
+      let action = { id: 'idle' }
       if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
 
       if (this.sensedEnemies.length > 0) {
@@ -271,12 +264,17 @@ export default function(id, options) {
           action.payload = { other: enemy, distance: -1 }
         }
       }
+      if (this[action.id].condition(action.payload)) {
+        action.success = this[action.id].effect(action.payload)
+      }
+      if (!action.success && this.idle.condition()) {
+        this.idle.effect()
+      }
+    } else if (this.status === 'jump') {
+      this.jump.effect();
     }
-    if (this.actions[action.id].condition(action.payload)) {
-      action.success = this.actions[action.id].effect(action.payload)
-    }
-    if (!action.success && this.actions.idle.condition()) {
-      this.actions.idle.effect()
+    if (!this.canMove) {
+      this.idle.effect()
     }
 
     let spriteData = brianSprite[this.direction][this.status]
@@ -287,7 +285,7 @@ export default function(id, options) {
     if (this.status === 'hurtAttack' && Math.random() < .25) this.status = 'idle'
 
     if (this.status === 'hurt') this.hurtAttackCounter--
-    if (this.status === 'hurt' && this.hurtAttackCounter === 0) this.hurtAttack()
+    if (this.status === 'hurt' && this.hurtAttackCounter === 0 && this.hurtAttack.condition()) this.hurtAttack.effect()
 
     if (this.frame >= spriteData.length) {
       this.frame = 0
@@ -319,7 +317,7 @@ export default function(id, options) {
       })
   }
 
-  this.getBoundingBox = () => ({
+  getBoundingBox = () => ({
     id: this.id,
     x: this.x + 5,
     y: this.y + 3,
@@ -327,7 +325,7 @@ export default function(id, options) {
     h: this.h - 3
   })
 
-  this.getAnchor = () => this.status !== 'rekt'
+  getAnchor = () => this.status !== 'rekt'
     ? ({
         x: this.getBoundingBox().x + 2,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
@@ -341,33 +339,11 @@ export default function(id, options) {
       h: 1
   })
 
-  this.getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  this.select = () => {
+  select = () => {
     if (this.status === 'rekt') return addTextToQueue('Brian:\nLeave me alone...')
     setTextQueue([])
     addTextToQueue('Brian:\nCompliance is key to digital currencies\' success!')
   }
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    vx: this.vx,
-    vy: this.vy,
-    status: this.status,
-    health: this.health,
-    direction: this.direction,
-    frame: this.frame,
-    usd: this.usd,
-    item: this.item,
-    hadIntro: this.hadIntro,
-    canMove: this.canMove
-  })
 }
+
+export default Brian

@@ -24,9 +24,9 @@ export default function(id, options) {
       this.hasAppeared = true
       explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
 
-      CTDLGAME.hodlonaut.idle()
+      CTDLGAME.hodlonaut.idle.effect()
       CTDLGAME.hodlonaut.direction = 'left'
-      CTDLGAME.katoshi.idle()
+      CTDLGAME.katoshi.idle.effect()
       CTDLGAME.katoshi.direction = 'left'
 
       CTDLGAME.wizardCountdown = null

@@ -12,10 +12,13 @@
     "lint": "eslint src/**/*.js --color"
   },
   "jest": {
-    "setupFiles": ["./tests/setup.js"]
+    "setupFiles": [
+      "./tests/setup.js"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
     "@babel/plugin-transform-runtime": "^7.11.0",
     "@babel/plugin-transform-spread": "^7.11.0",

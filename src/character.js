@@ -8,275 +8,269 @@ import constants from './constants'
 import { addTextToQueue } from './textUtils';
 import { playSound } from './sounds';
 import { duckButton, backButton } from './events'
+import Agent from './Agent'
 
 const sprites = {
   hodlonaut,
   katoshi
 }
 
-export default function(id, options) {
-  this.id = id;
-  this.class = 'Character'
-  this.applyGravity = true
-  this.spriteData = sprites[id]
-  this.maxHealth = options.maxHealth ?? 21
-  this.health = options.health ?? 21
-  this.dmgs = []
-  this.heals = []
-  this.says = []
-  this.selected = options.selected
-  this.w = 16
-  this.h = 30
-  this.x = options.x
-  this.y = options.y
-  this.vx = options.vx || 0
-  this.vy = options.vy || 0
-  this.strength = id === 'hodlonaut' ? 1 : 3
-  this.attackRange = id === 'hodlonaut' ? 1 : 5
-  this.senseRadius = 50
-  this.follow = options.follow ?? true
-  this.status = options.status || 'idle'
-  this.direction = options.direction || 'right'
-  this.frame = options.frame || 0
-  this.walkingSpeed = options.walkingSpeed || 3
-  this.duckSpeed = options.duckSpeed || 2
-  this.protection = 0
+class Character extends Agent {
+  constructor(id, options) {
+    super(id, options)
+    this.spriteData = sprites[id]
+    this.maxHealth = options.maxHealth ?? 21
+    this.health = options.health ?? 21
+    this.selected = options.selected
+    this.strength = id === 'hodlonaut' ? 1 : 3
+    this.attackRange = id === 'hodlonaut' ? 1 : 5
+    this.senseRadius = 50
+    this.follow = options.follow ?? true
+    this.walkingSpeed = options.walkingSpeed || 3
+    this.duckSpeed = options.duckSpeed || 2
+    this.protection = 0
+  }
 
-  this.actions = {
-    idle: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status),
-      effect: () => {
-        if (!this.canStandUp() && this.actions.duck.condition()) return this.actions.duck.effect()
-        this.status = 'idle'
+  class = 'Character'
+  says = []
+  w = 16
+  h = 30
+
+  idle = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status),
+    effect: () => {
+      if (!this.canStandUp() && this.duck.condition()) return this.duck.effect()
+      this.status = 'idle'
+      return true
+    }
+  }
+  moveLeft = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      if (!this.canStandUp() && this.duckMoveLeft.condition()) return this.duckMoveLeft.effect()
+
+      this.direction = 'left'
+
+      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'move'
         return true
-      }
-    },
-    moveLeft: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        if (!this.canStandUp() && this.actions.duckMoveLeft.condition()) return this.actions.duckMoveLeft.effect()
+      } else if (!CTDLGAME.multiPlayer && !this.selected) {
+        let duckTo = this.getBoundingBox()
+        duckTo.y += 6
+        duckTo.x -= 3
+        duckTo.h -= 6
 
-        this.direction = 'left'
+        if (window.DRAWSENSORS) {
+          constants.overlayContext.globalAlpha = .5
+          constants.overlayContext.fillStyle = 'blue'
+          constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+          constants.overlayContext.globalAlpha = 1
+        }
+        let obstacles = CTDLGAME.quadTree.query(duckTo)
+          .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+          .filter(obj => intersects(obj, duckTo))
 
-        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
-
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (!CTDLGAME.multiPlayer && !this.selected) {
-          let duckTo = this.getBoundingBox()
-          duckTo.y += 6
-          duckTo.x -= 3
-          duckTo.h -= 6
+        let canDuck = obstacles.length === 0
+        if (canDuck && this.duckMoveLeft.condition()) {
+          return this.duckMoveLeft.effect()
+        } else {
+          let jumpTo = this.getBoundingBox()
+          jumpTo.y -= 6
+          jumpTo.x -= 2
 
           if (window.DRAWSENSORS) {
             constants.overlayContext.globalAlpha = .5
-            constants.overlayContext.fillStyle = 'blue'
-            constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+            constants.overlayContext.fillStyle = 'red'
+            constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
             constants.overlayContext.globalAlpha = 1
           }
-          let obstacles = CTDLGAME.quadTree.query(duckTo)
+          let obstacles = CTDLGAME.quadTree.query(jumpTo)
             .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-            .filter(obj => intersects(obj, duckTo))
+            .filter(obj => intersects(obj, jumpTo))
 
-          let canDuck = obstacles.length === 0
-          if (canDuck && this.actions.duckMoveLeft.condition()) {
-            return this.actions.duckMoveLeft.effect()
-          } else {
-            let jumpTo = this.getBoundingBox()
-            jumpTo.y -= 6
-            jumpTo.x -= 2
-
-            if (window.DRAWSENSORS) {
-              constants.overlayContext.globalAlpha = .5
-              constants.overlayContext.fillStyle = 'red'
-              constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
-              constants.overlayContext.globalAlpha = 1
-            }
-            let obstacles = CTDLGAME.quadTree.query(jumpTo)
-              .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-              .filter(obj => intersects(obj, jumpTo))
-
-            let canJump = obstacles.length === 0 && this.actions.jump.condition()
-            if (canJump) return this.actions.jump.effect()
-          }
-
+          let canJump = obstacles.length === 0 && this.jump.condition()
+          if (canJump) return this.jump.effect()
         }
 
-        return false
       }
-    },
-    moveRight: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        if (!this.canStandUp() && this.actions.duckMoveRight.condition()) return this.actions.duckMoveRight.effect()
 
-        this.direction = 'right'
+      return false
+    }
+  }
+  moveRight = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      if (!this.canStandUp() && this.duckMoveRight.condition()) return this.duckMoveRight.effect()
 
-        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (!CTDLGAME.multiPlayer && !this.selected) {
-          let duckTo = this.getBoundingBox()
-          duckTo.y += 6
-          duckTo.x += 3
-          duckTo.h -= 6
+      this.direction = 'right'
+
+      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'move'
+        return true
+      } else if (!CTDLGAME.multiPlayer && !this.selected) {
+        let duckTo = this.getBoundingBox()
+        duckTo.y += 6
+        duckTo.x += 3
+        duckTo.h -= 6
+
+        if (window.DRAWSENSORS) {
+          constants.overlayContext.globalAlpha = .5
+          constants.overlayContext.fillStyle = 'blue'
+          constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+          constants.overlayContext.globalAlpha = 1
+        }
+        let obstacles = CTDLGAME.quadTree.query(duckTo)
+          .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+          .filter(obj => intersects(obj, duckTo))
+
+        let canDuck = obstacles.length === 0
+        if (canDuck && this.duckMoveRight.condition()) {
+          return this.duckMoveRight.effect()
+        } else {
+          let jumpTo = this.getBoundingBox()
+          jumpTo.y -= 6
+          jumpTo.w += 2
 
           if (window.DRAWSENSORS) {
             constants.overlayContext.globalAlpha = .5
-            constants.overlayContext.fillStyle = 'blue'
-            constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+            constants.overlayContext.fillStyle = 'red'
+            constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
             constants.overlayContext.globalAlpha = 1
           }
-          let obstacles = CTDLGAME.quadTree.query(duckTo)
+          let obstacles = CTDLGAME.quadTree.query(jumpTo)
             .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-            .filter(obj => intersects(obj, duckTo))
+            .filter(obj => intersects(obj, jumpTo))
 
-          let canDuck = obstacles.length === 0
-          if (canDuck && this.actions.duckMoveRight.condition()) {
-            return this.actions.duckMoveRight.effect()
-          } else {
-            let jumpTo = this.getBoundingBox()
-            jumpTo.y -= 6
-            jumpTo.w += 2
-
-            if (window.DRAWSENSORS) {
-              constants.overlayContext.globalAlpha = .5
-              constants.overlayContext.fillStyle = 'red'
-              constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
-              constants.overlayContext.globalAlpha = 1
-            }
-            let obstacles = CTDLGAME.quadTree.query(jumpTo)
-              .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-              .filter(obj => intersects(obj, jumpTo))
-
-            let canJump = obstacles.length === 0 && this.actions.jump.condition()
-            if (canJump) return this.actions.jump.effect()
-          }
+          let canJump = obstacles.length === 0 && this.jump.condition()
+          if (canJump) return this.jump.effect()
         }
-
-        return false
       }
-    },
-    duck: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.status = 'duck'
+
+      return false
+    }
+  }
+  duck = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.status = 'duck'
+      return true
+    }
+  }
+  duckMoveLeft = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'left'
+      this.status = 'duckMove'
+
+      const hasMoved = moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
+      return hasMoved
+    }
+  }
+  duckMoveRight = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'right'
+      this.status = 'duckMove'
+
+      const hasMoved = moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
+      return hasMoved
+    }
+  }
+  attack = {
+    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.canStandUp(),
+    effect: () => {
+      if (!/attack/i.test(this.status)) this.frame = 0
+      this.status = 'attack'
+
+      if (this.id === 'katoshi' && this.frame !== 3) return true
+      this.makeDamage(1)
+      return true
+    }
+  }
+  attackMoveLeft = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
+    effect: () => {
+      this.direction = 'left'
+      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'moveAttack'
+        if (this.id === 'katoshi' && this.frame !== 3) return true
+        this.makeDamage(this.id === 'katoshi' ? .8 : 1)
         return true
       }
-    },
-    duckMoveLeft: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'left'
-        this.status = 'duckMove'
+      return false
+    }
+  }
+  attackMoveRight = {
+    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'right'
 
-        const hasMoved = moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
-        return hasMoved
-      }
-    },
-    duckMoveRight: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'right'
-        this.status = 'duckMove'
-
-        const hasMoved = moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
-        return hasMoved
-      }
-    },
-    attack: {
-      condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.canStandUp(),
-      effect: () => {
-        if (!/attack/i.test(this.status)) this.frame = 0
-        this.status = 'attack'
-
-        if (this.id === 'katoshi' && this.frame !== 3) return
-        this.makeDamage(1)
-      }
-    },
-    attackMoveLeft: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
-      effect: () => {
-        this.direction = 'left'
-        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
-
-        if (hasMoved) {
-          this.status = 'moveAttack'
-          if (this.id === 'katoshi' && this.frame !== 3) return true
-          this.makeDamage(this.id === 'katoshi' ? .8 : 1)
-          return true
-        }
-        return false
-      }
-    },
-    attackMoveRight: {
-      condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'right'
-
-        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-        if (hasMoved) {
-          this.status = 'moveAttack'
-          if (this.id === 'katoshi' && this.frame !== 3) return true
-          this.makeDamage(this.id === 'katoshi' ? .8 : 1)
-          return true
-        }
-        return false
-      }
-    },
-    jump: {
-      condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
-      effect: () => {
-        this.status = 'jump'
-        this.frame = 0
-        this.vx = this.direction === 'right' ? 6 : -6
-        this.vy = -6
+      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'moveAttack'
+        if (this.id === 'katoshi' && this.frame !== 3) return true
+        this.makeDamage(this.id === 'katoshi' ? .8 : 1)
         return true
       }
-    },
-    back: {
-      condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
-      effect: () => {
-        this.status = 'back'
+      return false
+    }
+  }
+  jump = {
+    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
+    effect: () => {
+      this.status = 'jump'
+      this.frame = 0
+      this.vx = this.direction === 'right' ? 6 : -6
+      this.vy = -6
+      return true
+    }
+  }
+  back = {
+    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
+    effect: () => {
+      this.status = 'back'
 
-        const boundingBox = this.getBoundingBox()
-        const eventObject =  CTDLGAME.quadTree.query(boundingBox)
-          .filter(obj => obj.backEvent)
-          .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+      const boundingBox = this.getBoundingBox()
+      const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+        .filter(obj => obj.backEvent)
+        .find(obj => intersects(boundingBox, obj.getBoundingBox()))
 
-        if (!eventObject) return false
+      if (!eventObject) return false
 
-        eventObject.backEvent(this)
-        return true
-      }
-    },
-    action: {
-      condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.canStandUp(),
-      effect: () => {
-        this.frame = 0
-        this.status = 'action'
-        return true
-      }
-    },
-    moveTo: {
-      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
-      effect: ({ other, distance }) => {
-        let action = 'idle'
-
-        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-          action = 'moveLeft'
-        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-          action = 'moveRight'
-        }
-        if (this.actions[action].condition()) return this.actions[action].effect()
-        return false
-      }
+      eventObject.backEvent(this)
+      return true
+    }
+  }
+  action = {
+    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.canStandUp(),
+    effect: () => {
+      this.frame = 0
+      this.status = 'action'
+      return true
     }
   }
 
-  this.canStandUp = () => {
+  actions = {
+    idle: this.idle,
+    moveLeft: this.moveLeft,
+    moveRight: this.moveRight,
+    duck: this.duck,
+    duckMoveLeft: this.duckMoveLeft,
+    duckMoveRight: this.duckMoveRight,
+    attack: this.attack,
+    attackMoveLeft: this.attackMoveLeft,
+    attackMoveRight: this.attackMoveRight,
+    jump: this.jump,
+    back: this.back,
+    action: this.action
+  }
+
+  canStandUp = () => {
     if (!/duck/.test(this.status)) return true
     let standUpTo = this.getBoundingBox()
       standUpTo.y -= 6
@@ -295,7 +289,7 @@ export default function(id, options) {
     return obstacles.length === 0
   }
 
-  this.makeDamage = multiplier => {
+  makeDamage = multiplier => {
     if (this.id === 'hodlonaut') playSound('lightningTorch')
     if (this.id === 'katoshi') playSound('sword')
     const boundingBox = this.getBoundingBox()
@@ -317,7 +311,7 @@ export default function(id, options) {
       })
   }
 
-  this.hurt = (dmg, direction) => {
+  hurt = (dmg, direction) => {
     if (/hurt|rekt/.test(this.status) || this.protection > 0) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
@@ -337,13 +331,7 @@ export default function(id, options) {
     }
   }
 
-  this.heal = heal => {
-    if (/hurt|rekt/.test(this.status)) return
-    this.heals.push({y: -8, heal})
-    this.health = Math.min(this.health + heal, this.maxHealth)
-  }
-
-  this.die = () => {
+  die = () => {
     this.status = 'rekt'
     this.health = 0
 
@@ -357,7 +345,7 @@ export default function(id, options) {
     addTextToQueue(`${capitalize(this.id)} got rekt`)
   }
 
-  this.senseControls = () => {
+  senseControls = () => {
     let id = CTDLGAME.multiPlayer ? this.id : 'singlePlayer'
 
     let controls = []
@@ -385,10 +373,10 @@ export default function(id, options) {
       action = controls.pop()
     }
 
-    if (this.actions[action].condition()) this.actions[action].effect()
+    if (this[action].condition()) this[action].effect()
   }
 
-  this.ai = () => {
+  ai = () => {
     let action = { id: 'idle' }
 
     let enemy = getClosest(this.getCenter(), this.sensedEnemies)
@@ -421,15 +409,15 @@ export default function(id, options) {
       action.id = Math.random() < .5 ? 'moveLeft' : 'moveRight'
     }
 
-    if (this.actions[action.id].condition(action.payload)) {
-      action.success = this.actions[action.id].effect(action.payload)
+    if (this[action.id].condition(action.payload)) {
+      action.success = this[action.id].effect(action.payload)
     }
-    if (!action.success && this.actions.idle.condition()) {
-      this.actions.idle.effect()
+    if (!action.success && this.idle.condition()) {
+      this.idle.effect()
     }
   }
 
-  this.update = () => {
+  update = () => {
     const sprite = CTDLGAME.assets[this.id]
 
     if (CTDLGAME.lockCharacters) {
@@ -443,7 +431,6 @@ export default function(id, options) {
       )
       return
     }
-
 
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
@@ -589,11 +576,11 @@ export default function(id, options) {
       })
   }
 
-  this.say = say => {
+  say = say => {
     this.says = [{y: -8, say}]
   }
 
-  this.select = () => {
+  select = () => {
     if (this.selected || CTDLGAME.multiPlayer || this.status === 'rekt') return
     this.follow = !this.follow
     window.SELECTEDCHARACTER.follow = this.follow
@@ -601,19 +588,19 @@ export default function(id, options) {
     window.SELECTEDCHARACTER.say(this.follow ? 'come' : 'wait')
   }
 
-  this.choose = () => {
+  choose = () => {
     if (this.status === 'rekt') return
     if (window.SELECTEDCHARACTER) window.SELECTEDCHARACTER.unselect()
     this.selected = true
     window.SELECTEDCHARACTER = this
   }
 
-  this.unselect = () => {
+  unselect = () => {
     this.selected = false
     window.SELECTEDCHARACTER = null
   }
 
-  this.getBoundingBox = () => /duck/.test(this.status)
+  getBoundingBox = () => /duck/.test(this.status)
     ? ({ // ducking
       id: this.id,
       x: this.x + 6,
@@ -637,7 +624,7 @@ export default function(id, options) {
       h: this.h - 3
     })
 
-  this.getAnchor = () => this.status !== 'rekt'
+  getAnchor = () => this.status !== 'rekt'
     ? ({
         x: this.getBoundingBox().x + 2,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
@@ -650,27 +637,5 @@ export default function(id, options) {
       w: this.getBoundingBox().w,
       h: 1
   })
-
-  this.getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    health: this.health,
-    selected: this.selected,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    vx: this.vx,
-    vy: this.vy,
-    status: this.status,
-    direction: this.direction,
-    frame: this.frame,
-    walkingSpeed: this.walkingSpeed,
-    follow: this.follow
-  })
 }
+export default Character

@@ -6,126 +6,108 @@ import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
+import Agent from '../Agent'
 
 const sprites = {
   rabbit
 }
 
-export default function(id, options) {
-  this.id = id
-  this.class = 'Rabbit'
-  this.applyGravity = true
-  this.enemy = options.isEvil ?? false
-  this.spriteData = sprites.rabbit
-  this.health = options.health ?? Math.round(Math.random() * 2 + 1)
-  this.item = null
-  this.dmgs = []
-  this.w = 8
-  this.h = 6
-  this.x = options.x
-  this.y = options.y
-  this.vx = options.vx || 0
-  this.vy = options.vy || 0
-  this.status = options.status || 'idle'
-  this.direction = options.direction || 'right'
-  this.turnEvilRate = 0.1 // will be squared, so 0.01
-  this.canTurnEvil = options.canTurnEvil || Math.random() > .5
-  this.isEvil = options.isEvil ?? false
-  this.frame = options.frame || 0
-  this.walkingSpeed = options.walkingSpeed || Math.round(Math.random() * 3 + 4)
-  this.senseRadius = Math.round(Math.random() * 50 + 30)
+class Rabbit extends Agent {
+  constructor(id, options) {
+    super(id, options)
+    this.enemy = options.isEvil ?? false
+    this.health = options.health ?? Math.round(Math.random() * 2 + 1)
+    this.canTurnEvil = options.canTurnEvil || Math.random() > .5
+    this.isEvil = options.isEvil ?? false
+    this.frame = options.frame || 0
+    this.walkingSpeed = options.walkingSpeed || Math.round(Math.random() * 3 + 4)
+    this.senseRadius = Math.round(Math.random() * 50 + 30)
+  }
 
-  this.actions = {
-    idle: {
-      condition: () => this.status !== 'rekt',
-      effect: () => {
-        this.status = 'idle'
+  class = 'Rabbit'
+  spriteData = sprites.rabbit
+  item = null
+  w = 8
+  h = 6
+  turnEvilRate = 0.1 // will be squared, so 0.01
+
+  idle = {
+    condition: () => this.status !== 'rekt',
+    effect: () => {
+      this.status = 'idle'
+      return true
+    }
+  }
+  turnEvil = {
+    condition: () => this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate),
+    effect: () => {
+      this.status = 'turnEvil'
+      return true
+    }
+  }
+  moveLeft = {
+    condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'left'
+      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'move'
+        return true
+      } else if (this.jump.condition()) {
+        return this.jump.effect()
+      } else if (this.idle.condition()) {
+        return this.idle.effect()
+      }
+
+      return false
+    }
+  }
+  moveRight = {
+    condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    effect: () => {
+      this.direction = 'right'
+
+      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'move'
+        return true
+      } else if (this.jump.condition()) {
+        return this.jump.effect()
+      } else if (this.idle.condition()) {
+        return this.idle.effect()
+      }
+
+      return false
+    }
+  }
+  jump = {
+    condition: () => !/turnEvil|spawn|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
+    effect: () => {
+      this.status = 'jump'
+
+      this.vx = this.direction === 'right' ? 3 : -3
+      this.vy = -6
+
+      return true
+    }
+  }
+  attack = {
+    condition: () => !/turnEvil|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    effect: ({ enemy }) => {
+      if (this.status === 'attack' && this.frame === 2) {
+        this.frame = 0
+        enemy.hurt(.5, this.direction === 'left' ? 'right' : 'left')
         return true
       }
-    },
-    turnEvil: {
-      condition: () => this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate),
-      effect: () => {
-        this.status = 'turnEvil'
-        return true
-      }
-    },
-    moveLeft: {
-      condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'left'
-        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
-
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (this.actions.jump.condition()) {
-          return this.actions.jump.effect()
-        } else if (this.actions.idle.condition()) {
-          return this.actions.idle.effect()
-        }
-
-        return false
-      }
-    },
-    moveRight: {
-      condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
-      effect: () => {
-        this.direction = 'right'
-
-        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-        if (hasMoved) {
-          this.status = 'move'
-          return true
-        } else if (this.actions.jump.condition()) {
-          return this.actions.jump.effect()
-        } else if (this.actions.idle.condition()) {
-          return this.actions.idle.effect()
-        }
-
-        return false
-      }
-    },
-    jump: {
-      condition: () => !/turnEvil|spawn|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
-      effect: () => {
-        this.status = 'jump'
-
-        this.vx = this.direction === 'right' ? 3 : -3
-        this.vy = -6
-
-        return true
-      }
-    },
-    attack: {
-      condition: () => !/turnEvil|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
-      effect: ({ enemy }) => {
-        if (this.status === 'attack' && this.frame === 2) {
-          this.frame = 0
-          return enemy.hurt(.5, this.direction === 'left' ? 'right' : 'left')
-        }
-        if (this.status === 'attack') return
-    
-        this.status = 'attack'
-      }
-    },
-    moveTo: {
-      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
-      effect: ({ other, distance }) => {
-        let action = 'idle'
-
-        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-          action = 'moveLeft'
-        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-          action = 'moveRight'
-        }
-        if (this.actions[action].condition()) return this.actions[action].effect()
-        return false
-      }
+      if (this.status === 'attack') return true
+  
+      this.status = 'attack'
+      return true
     }
   }
 
-  this.canJump = () => {
+  canJump = () => {
     let jumpTo = this.getBoundingBox()
     jumpTo.y -= 4
     jumpTo.x -= this.direction === 'right' ? 3 : -3
@@ -141,7 +123,7 @@ export default function(id, options) {
     return obstacles.length === 0
   }
 
-  this.hurt = (dmg, direction) => {
+  hurt = (dmg, direction) => {
     if (!this.isEvil || /turnEvil|spawn|hurt|rekt/.test(this.status)) return
     playSound('rabbitHurt')
     this.dmgs.push({y: -8, dmg})
@@ -153,13 +135,14 @@ export default function(id, options) {
       this.die()
     }
   }
-  this.die = () => {
+
+  die = () => {
     playSound('burn')
     addTextToQueue(`evil rabbit got rekt`)
     this.status = 'rekt'
   }
 
-  this.update = () => {
+  update = () => {
     const sprite = CTDLGAME.assets.rabbit
 
     if (CTDLGAME.lockCharacters) {
@@ -193,7 +176,7 @@ export default function(id, options) {
     // AI logic
     let action = { id: 'idle' }
 
-    if (this.actions.turnEvil.condition()) {
+    if (this.turnEvil.condition()) {
       action.id = 'turnEvil'
     } else if (!/turnEvil|rekt|spawn/.test(this.status)) {
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
@@ -232,11 +215,11 @@ export default function(id, options) {
         }
       }
     }
-    if (this.actions[action.id].condition(action.payload)) {
-      action.success = this.actions[action.id].effect(action.payload)
+    if (this[action.id].condition(action.payload)) {
+      action.success = this[action.id].effect(action.payload)
     }
-    if (!action.success && this.actions.idle.condition()) {
-      this.actions.idle.effect()
+    if (!action.success && this.idle.condition()) {
+      this.idle.effect()
     }
 
     let spriteData = this.spriteData[this.isEvil ? 'evil' : 'good'][this.direction][this.status]
@@ -285,43 +268,11 @@ export default function(id, options) {
       })
   }
 
-  this.getBoundingBox = () => ({
-    id: this.id,
-    x: this.x,
-    y: this.y,
-    w: this.w,
-    h: this.h
-  })
-
-  this.getAnchor = () => ({
+  getAnchor = () => ({
       x: this.getBoundingBox().x,
       y: this.getBoundingBox().y + this.getBoundingBox().h,
       w: this.getBoundingBox().w,
       h: 1
   })
-
-  this.getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  this.select = () => {}
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    vx: this.vx,
-    vy: this.vy,
-    status: this.status,
-    direction: this.direction,
-    frame: this.frame,
-    isEvil: this.isEvil,
-    canTurnEvil: this.canTurnEvil,
-    walkingSpeed: this.walkingSpeed,
-    senseRadius: this.senseRadius
-  })
 }
+export default Rabbit
