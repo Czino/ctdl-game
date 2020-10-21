@@ -43,7 +43,7 @@ export default function(id, options) {
 
   this.actions = {
     idle: {
-      condition: () => true,
+      condition: () => !/rekt|burning/.test(this.status),
       effect: () => {
         this.status = 'idle'
         return true
@@ -59,12 +59,10 @@ export default function(id, options) {
         if (hasMoved) {
           this.status = 'move'
           return true
-        } else {
-          if (this.actions.climb.condition()) {
-            return this.actions.climb.effect()
-          } else if (this.actions.idle.condition()) {
-            return this.actions.idle.effect()
-          }
+        } else if (this.actions.climb.condition()) {
+          return this.actions.climb.effect()
+        } else if (this.actions.idle.condition()) {
+          return this.actions.idle.effect()
         }
 
         return false
@@ -80,13 +78,12 @@ export default function(id, options) {
         if (hasMoved) {
           this.status = 'move'
           return true
-        } else {
-          if (this.actions.climb.condition()) {
-            return this.actions.climb.effect()
-          } else if (this.actions.idle.condition()) {
-            return this.actions.idle.effect()
-          }
+        } else if (this.actions.climb.condition()) {
+          return this.actions.climb.effect()
+        } else if (this.actions.idle.condition()) {
+          return this.actions.idle.effect()
         }
+
         return false
       }
     },
@@ -132,7 +129,7 @@ export default function(id, options) {
         } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
           action = 'moveRight'
         }
-        if (this.actions[action].condition) return this.actions[action].effect()
+        if (this.actions[action].condition()) return this.actions[action].effect()
         return false
       }
     }
@@ -244,11 +241,13 @@ export default function(id, options) {
           action.id = 'moveTo'
           action.payload = { other: enemy, distance: -1 }
         }
-      } else if (this.actions.idle.condition()) {
-        this.actions.idle.effect()
       }
-
-      if (this.actions[action.id].condition(action.payload)) this.actions[action.id].effect(action.payload)
+    }
+    if (this.actions[action.id].condition(action.payload)) {
+      action.success = this.actions[action.id].effect(action.payload)
+    }
+    if (!action.success && this.actions.idle.condition()) {
+      this.actions.idle.effect()
     }
 
 

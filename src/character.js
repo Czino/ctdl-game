@@ -270,7 +270,7 @@ export default function(id, options) {
         } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
           action = 'moveRight'
         }
-        if (this.actions[action].condition) return this.actions[action].effect()
+        if (this.actions[action].condition()) return this.actions[action].effect()
         return false
       }
     }
@@ -421,7 +421,12 @@ export default function(id, options) {
       action.id = Math.random() < .5 ? 'moveLeft' : 'moveRight'
     }
 
-    if (this.actions[action.id].condition(action.payload)) this.actions[action.id].effect(action.payload)
+    if (this.actions[action.id].condition(action.payload)) {
+      action.success = this.actions[action.id].effect(action.payload)
+    }
+    if (!action.success && this.actions.idle.condition()) {
+      this.actions.idle.effect()
+    }
   }
 
   this.update = () => {

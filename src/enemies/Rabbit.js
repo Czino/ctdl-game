@@ -6,7 +6,6 @@ import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
-import follow from '../aiUtils/follow'
 
 const sprites = {
   rabbit
@@ -29,88 +28,117 @@ export default function(id, options) {
   this.vy = options.vy || 0
   this.status = options.status || 'idle'
   this.direction = options.direction || 'right'
-  this.turnEvilRate = 0.01
+  this.turnEvilRate = 0.1 // will be squared, so 0.01
   this.canTurnEvil = options.canTurnEvil || Math.random() > .5
   this.isEvil = options.isEvil ?? false
   this.frame = options.frame || 0
   this.walkingSpeed = options.walkingSpeed || Math.round(Math.random() * 3 + 4)
   this.senseRadius = Math.round(Math.random() * 50 + 30)
 
-  this.idle = () => {
-    this.status = 'idle'
-  }
-  this.moveLeft = () => {
-    if (/turnEvil|jump|spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
-    this.direction = 'left'
-    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+  this.actions = {
+    idle: {
+      condition: () => this.status !== 'rekt',
+      effect: () => {
+        this.status = 'idle'
+        return true
+      }
+    },
+    turnEvil: {
+      condition: () => this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate),
+      effect: () => {
+        this.status = 'turnEvil'
+        return true
+      }
+    },
+    moveLeft: {
+      condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+      effect: () => {
+        this.direction = 'left'
+        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-    if (hasMoved) {
-      this.status = 'move'
-    } else {
-      let jumpTo = this.getBoundingBox()
-      jumpTo.y -=4
-      jumpTo.x -= 3
-      jumpTo.w += 3
-      jumpTo.h = 24
+        if (hasMoved) {
+          this.status = 'move'
+          return true
+        } else if (this.actions.jump.condition()) {
+          return this.actions.jump.effect()
+        } else if (this.actions.idle.condition()) {
+          return this.actions.idle.effect()
+        }
 
-      let obstacles = CTDLGAME.quadTree.query(jumpTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, jumpTo))
+        return false
+      }
+    },
+    moveRight: {
+      condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+      effect: () => {
+        this.direction = 'right'
 
-      let canJump = obstacles.length === 0
-      if (canJump) {
-        this.jump()
-      } else {
-        this.idle()
+        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+        if (hasMoved) {
+          this.status = 'move'
+          return true
+        } else if (this.actions.jump.condition()) {
+          return this.actions.jump.effect()
+        } else if (this.actions.idle.condition()) {
+          return this.actions.idle.effect()
+        }
+
+        return false
+      }
+    },
+    jump: {
+      condition: () => !/turnEvil|spawn|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
+      effect: () => {
+        this.status = 'jump'
+
+        this.vx = this.direction === 'right' ? 3 : -3
+        this.vy = -6
+
+        return true
+      }
+    },
+    attack: {
+      condition: () => !/turnEvil|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+      effect: ({ enemy }) => {
+        if (this.status === 'attack' && this.frame === 2) {
+          this.frame = 0
+          return enemy.hurt(.5, this.direction === 'left' ? 'right' : 'left')
+        }
+        if (this.status === 'attack') return
+    
+        this.status = 'attack'
+      }
+    },
+    moveTo: {
+      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+      effect: ({ other, distance }) => {
+        let action = 'idle'
+
+        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
+          action = 'moveLeft'
+        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
+          action = 'moveRight'
+        }
+        if (this.actions[action].condition()) return this.actions[action].effect()
+        return false
       }
     }
   }
-  this.moveRight = () => {
-    if (/turnEvil|jump|spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
-    this.direction = 'right'
 
-    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-    if (hasMoved) {
-      this.status = 'move'
-    } else {
-      let jumpTo = this.getBoundingBox()
-      jumpTo.y -=4
-      jumpTo.w += 3
-      jumpTo.h = 24
+  this.canJump = () => {
+    let jumpTo = this.getBoundingBox()
+    jumpTo.y -= 4
+    jumpTo.x -= this.direction === 'right' ? 3 : -3
 
-      let obstacles = CTDLGAME.quadTree.query(jumpTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, jumpTo))
-
-      let canJump = obstacles.length === 0
-      if (canJump) {
-        this.jump()
-      } else {
-        this.idle()
-      }
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.fillStyle = 'red'
+      constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
     }
-  }
-  this.jump = () => {
-    // TODO allow rabbits to jump
-    // if (/turnEvil|spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return
+    let obstacles = CTDLGAME.quadTree.query(jumpTo)
+      .filter(obj => obj.isSolid && !obj.enemy)
+      .filter(obj => intersects(obj, jumpTo))
 
-    // this.status = 'jump'
-
-    // if (this.frame !== 10) return
-    // moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
-    this.status = 'idle'
-  }
-
-  this.attack = prey => {
-    if (/turnEvil|spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return
-
-    if (this.status === 'attack' && this.frame === 2) {
-      this.frame = 0
-      return prey.hurt(.5, this.direction === 'left' ? 'right' : 'left')
-    }
-    if (this.status === 'attack') return
-
-    this.status = 'attack'
+    return obstacles.length === 0
   }
 
   this.hurt = (dmg, direction) => {
@@ -154,10 +182,6 @@ export default function(id, options) {
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
     }
-    if (this.status === 'jump') {
-      this.vy = 0
-      this.jump()
-    }
     if (this.vy !== 0 && this.inViewport) {
       if (this.vy > 6) this.vy = 6
       if (this.vy < -6) this.vy = -6
@@ -167,10 +191,11 @@ export default function(id, options) {
     }
 
     // AI logic
-    if (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate) {
-      this.status = 'turnEvil'
-    }
-    if (!/turnEvil|rekt|spawn/.test(this.status)) {
+    let action = { id: 'idle' }
+
+    if (this.actions.turnEvil.condition()) {
+      action.id = 'turnEvil'
+    } else if (!/turnEvil|rekt|spawn/.test(this.status)) {
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
         if (this.isEvil) {
@@ -180,35 +205,38 @@ export default function(id, options) {
             } else {
               this.direction = 'right'
             }
-            this.attack(enemy)
+            action.id = 'attack'
+            action.payload = { enemy }
           } else {
-            let action = follow(this, enemy, -1)
-            this[action]()
+            action.id = 'moveTo'
+            action.payload = { other: enemy, distance: -1 }
           }
         } else if (!this.canTurnEvil) {
           if (this.getCenter().x < enemy.getCenter().x) {
-            this.moveLeft()
+            action.id = 'moveLeft'
           } else if (enemy.getCenter().x <= this.getCenter().x) {
-            this.moveRight()
+            action.id = 'moveRight'
           }
         } else {
           if (Math.random() < .03) {
-            this.moveLeft()
+            action.id = 'moveLeft'
           } else if (Math.random() < .03) {
-            this.moveRight()
-          } else {
-            this.idle()
+            action.id = 'moveRight'
           }
         }
       } else {
         if (Math.random() < .03) {
-          this.moveLeft()
+          action.id = 'moveLeft'
         } else if (Math.random() < .03) {
-          this.moveRight()
-        } else {
-          this.idle()
+          action.id = 'moveRight'
         }
       }
+    }
+    if (this.actions[action.id].condition(action.payload)) {
+      action.success = this.actions[action.id].effect(action.payload)
+    }
+    if (!action.success && this.actions.idle.condition()) {
+      this.actions.idle.effect()
     }
 
     let spriteData = this.spriteData[this.isEvil ? 'evil' : 'good'][this.direction][this.status]

@@ -8,7 +8,6 @@ import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
-import follow from '../aiUtils/follow'
 
 const items = [
   { id: 'honeybadger', chance: 1 }
@@ -37,32 +36,74 @@ export default function(id, options) {
   this.hadIntro = options.hadIntro
   this.canMove = options.canMove
 
-  this.idle = () => {
-    this.status = 'idle'
-  }
-  this.moveLeft = () => {
-    if (/hurt|block|rekt/.test(this.status) || this.vy !== 0) return
-    this.direction = 'left'
-    const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+  this.actions = {
+    idle: {
+      condition: () => this.status !== 'rekt',
+      effect: () => {
+        this.status = 'idle'
+        return true
+      }
+    },
+    moveLeft: {
+      condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+      effect: () => {
+        this.direction = 'left'
+        const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-    if (hasMoved) {
-      this.status = 'move'
-      if (this.frame % 5 === 0) playSound('drop')
-    } else {
-      this.idle()
-    }
-  }
-  this.moveRight = () => {
-    if (/hurt|block|rekt/.test(this.status) || this.vy !== 0) return
-    this.kneels = false
-    this.direction = 'right'
+        if (hasMoved) {
+          this.status = 'move'
+          if (this.frame % 5 === 0) playSound('drop')
+          return true
+        }
+        return false
+      }
+    },
+    moveRight: {
+      condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+      effect: () => {
+        this.direction = 'right'
 
-    const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-    if (hasMoved) {
-      this.status = 'move'
-      if (this.frame % 5 === 0) playSound('drop')
-    } else {
-      this.idle()
+        const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+        if (hasMoved) {
+          this.status = 'move'
+          if (this.frame % 5 === 0) playSound('drop')
+          return true
+        }
+        return false
+      }
+    },
+    attack: {
+      condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+      effect: ({ enemy }) => {
+        if (this.status === 'attack' && this.frame === 2) {
+          playSound('bearGrowl')
+        }
+        if (this.status === 'attack' && this.frame === 5) {
+          playSound('woosh')
+          let dmg = Math.round(Math.random() * 2) + 5
+          enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+          return true
+        }
+        if (this.status === 'attack') return true
+
+        this.frame = 0
+        this.status = 'attack'
+        return true
+      }
+    },
+    moveTo: {
+      condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+      effect: ({ other, distance }) => {
+        let action = 'idle'
+
+        if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
+          action = 'moveLeft'
+        } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
+          action = 'moveRight'
+        }
+        if (this.actions[action].condition()) return this.actions[action].effect()
+        return false
+      }
     }
   }
 
@@ -90,6 +131,7 @@ export default function(id, options) {
       this.die()
     }
   }
+
   this.die = () => {
     this.frame = 0
     this.status = 'rekt'
@@ -114,23 +156,6 @@ export default function(id, options) {
     })
   }
 
-  this.attack = enemy => {
-    if (/hurt|block|rekt/.test(this.status) || this.vy !== 0) return
-
-    if (this.status === 'attack' && this.frame === 2) {
-      playSound('bearGrowl')
-    }
-    if (this.status === 'attack' && this.frame === 5) {
-      playSound('woosh')
-      let dmg = Math.round(Math.random() * 2) + 5
-      return enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
-    }
-    if (this.status === 'attack') return
-
-    this.frame = 0
-    this.status = 'attack'
-  }
-
   this.update = () => {
     const sprite = CTDLGAME.assets.bear
 
@@ -150,7 +175,9 @@ export default function(id, options) {
       if (hasCollided) this.vy = 0
     }
 
-    if (!this.hadIntro && senseCharacters(this).length > 0) {
+    this.sensedEnemies = senseCharacters(this)
+
+    if (!this.hadIntro && this.sensedEnemies.length > 0) {
       CTDLGAME.lockCharacters = true
       constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
 
@@ -164,32 +191,40 @@ export default function(id, options) {
     }
 
     // AI logic
+    let action = { id: 'idle' }
     if (this.canMove && !/rekt|spawn/.test(this.status)) {
       if (getSoundtrack() !== 'bear') initSoundtrack('bear')
 
-      const enemies = senseCharacters(this)
-
-      if (enemies.length > 0) {
-        const enemy = getClosest(this.getCenter(), enemies)
+      if (this.sensedEnemies.length > 0) {
+        const enemy = getClosest(this.getCenter(), this.sensedEnemies)
         const attackBox = this.getCenter()
         attackBox.x -= this.w / 2
         attackBox.w = this.w
-        attackBox.h = 1
+        attackBox.h = 5
 
+        if (window.DRAWSENSORS) {
+          constants.overlayContext.fillStyle = 'red'
+          constants.overlayContext.fillRect(attackBox.x, attackBox.y, attackBox.w, attackBox.h)
+        }
         if (intersects(attackBox, enemy.getBoundingBox())) { // attack distance
           if (this.getCenter().x > enemy.getCenter().x) {
             this.direction = 'left'
           } else {
             this.direction = 'right'
           }
-          this.attack(enemy)
+          action.id = 'attack'
+          action.payload = { enemy }
         } else {
-          let action = follow(this, enemy, -1)
-          this[action]()
+          action.id = 'moveTo'
+          action.payload = { other: enemy, distance: -1 }
         }
-      } else {
-        this.idle()
       }
+    }
+    if (this.actions[action.id].condition(action.payload)) {
+      action.success = this.actions[action.id].effect(action.payload)
+    }
+    if (!action.success && this.actions.idle.condition()) {
+      this.actions.idle.effect()
     }
 
     let spriteData = bearSprite[this.direction][this.status]
