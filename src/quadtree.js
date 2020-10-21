@@ -113,9 +113,11 @@ export const QuadTree = function (boundary, capacity, level) {
     context.lineWidth = 1
     context.strokeRect(this.boundary.x - .5, this.boundary.y - .5, this.boundary.w, this.boundary.h)
     this.subs.forEach(sub => sub.show(context))
-    this.objects.forEach(object => {
-      context.strokeRect(object.x - .5, object.y - .5, object.w, object.h)
-    })
+    this.objects
+      .map(obj => obj.getBoundingBox ? obj.getBoundingBox() : obj)
+      .forEach(box => {
+        context.strokeRect(box.x - .5, box.y - .5, box.w, box.h)
+      })
   }
   this.clear = () => {
     this.objects = []
