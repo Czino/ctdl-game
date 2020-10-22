@@ -33,14 +33,14 @@ class Bear extends Agent {
 
 
   idle = {
-    condition: () => this.status !== 'rekt',
+    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
     effect: () => {
       this.status = 'idle'
       return true
     }
   }
   moveLeft = {
-    condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
     effect: () => {
       this.direction = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
@@ -54,7 +54,7 @@ class Bear extends Agent {
     }
   }
   moveRight = {
-    condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
     effect: () => {
       this.direction = 'right'
 
@@ -68,7 +68,7 @@ class Bear extends Agent {
     }
   }
   attack = {
-    condition: () => !/hurt|block|rekt/.test(this.status) && this.vy === 0,
+    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
     effect: ({ enemy }) => {
       if (this.status === 'attack' && this.frame === 2) {
         playSound('bearGrowl')
@@ -101,6 +101,8 @@ class Bear extends Agent {
     }
   }
 
+  onHurt = () => playSound('bearHurt')
+
   hurt = (dmg, direction) => {
     if (/hurt|block|rekt/.test(this.status)) return
 
@@ -110,7 +112,7 @@ class Bear extends Agent {
     } else if (dmg >= 2 && Math.random() < .3) {
       return
     }
-    playSound('bearHurt')
+    
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
 
@@ -122,13 +124,14 @@ class Bear extends Agent {
 
     if (this.health <= 0) {
       this.health = 0
-      this.die()
+      return this.die()
     }
+
+    return this.onHurt()
   }
 
-  die = () => {
+  onDie = () => {
     this.frame = 0
-    this.status = 'rekt'
 
     setTextQueue([])
     addTextToQueue('Big Bear:\n*growl*', () => this.frame++)
@@ -148,6 +151,12 @@ class Bear extends Agent {
         CTDLGAME.objects.push(item)
       }
     })
+  }
+
+  die = () => {
+    this.status = 'rekt'
+
+    return this.onDie()
   }
 
   update = () => {

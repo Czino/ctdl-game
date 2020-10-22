@@ -82,12 +82,9 @@ class Brian extends Agent {
   jump = {
     condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canJump(),
     effect: () => {
-      console.log('before', this.status)
       if (this.status !== 'jump') this.frame = 0
       this.status = 'jump'
-      console.log('ready to jump', this.frame)
       if (this.frame !== 2) return true
-      console.log('jump')
       this.vx = this.direction === 'right' ? 6 : -6
       this.vy = -8
 
@@ -159,23 +156,24 @@ class Brian extends Agent {
       return obstacles.length === 0
   }
 
+  onHurt = () => playSound('shitcoinerHurt')
+
   hurt = dmg => {
     if (/hurt|rekt/.test(this.status)) return
 
-    playSound('shitcoinerHurt')
     this.dmgs.push({y: -12, dmg})
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
     this.hurtAttackCounter = 6
     if (this.health <= 0) {
       this.health = 0
-      this.die()
+      return this.die()
     }
+
+    return this.onHurt()
   }
 
-  die = () => {
-    CTDLGAME.inventory.usd += this.usd
-    this.status = 'rekt'
+  onDie = () => {
     this.frame = 0
     setTextQueue([])
     addTextToQueue('Brian:\nHow could this happen?', () => this.frame++)
@@ -198,29 +196,17 @@ class Brian extends Agent {
     })
   }
 
+  die = () => {
+    this.status = 'rekt'
+    CTDLGAME.inventory.usd += this.usd
+
+    return this.onDie()
+  }
+
   update = () => {
     const sprite = CTDLGAME.assets.brian
 
-    if (this.vx !== 0) {
-      if (this.vx > 12) this.vx = 12
-      if (this.vx < -12) this.vx = -12
-
-      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
-      if (this.vx < 0) this.vx += 1
-      if (this.vx > 0) this.vx -= 1
-    }
-
-    if (this.vy !== 0 && this.inViewport) {
-      if (this.vy > 12) this.vy = 12
-      if (this.vy < -12) this.vy = -12
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
-
-      if (hasCollided) {
-        this.vy = 0
-      } else if (!/jump|rekt|hurt/.test(this.status) && Math.abs(this.vy) > 4) {
-        this.status = 'fall'
-      }
-    }
+    this.applyPhysics()
 
     this.sensedEnemies = senseCharacters(this)
 

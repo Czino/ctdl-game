@@ -142,8 +142,19 @@ class Agent {
     return obstacles.length === 0
   }
 
+  hurtCondition = () => {}
+  onHurt = () => {}
+  onDie = () => {
+    if (this.usd) {
+      addTextToQueue(`${this.class} got rekt,\nyou found $${this.usd}`)
+    } else {
+      addTextToQueue(`${this.class} got rekt`)
+    }
+  }
+
   hurt = (dmg, direction) => {
     if (/spawn|hurt|rekt/.test(this.status)) return
+    if (!this.hurtCondition()) return
 
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
@@ -151,8 +162,10 @@ class Agent {
     this.vx = direction === 'left' ? 2 : -2
     if (this.health <= 0) {
       this.health = 0
-      this.die()
+      return this.die()
     }
+
+    return this.onHurt()
   }
 
   heal = heal => {
@@ -162,15 +175,9 @@ class Agent {
   }
 
   die = () => {
-    if (this.usd) {
-      CTDLGAME.inventory.usd += this.usd
-      addTextToQueue(`${this.class} got rekt,\nyou found $${this.usd}`)
-    } else {
-      addTextToQueue(`${this.class} got rekt`)
-    }
-
     this.status = 'rekt'
 
+    if (this.usd) CTDLGAME.inventory.usd += this.usd
     if (this.item) {
       let item = new Item(
         this.item.id,
@@ -182,6 +189,48 @@ class Agent {
         }
       )
       CTDLGAME.objects.push(item)
+    }
+
+    return this.onDie()
+  }
+
+  onHurt = () => {}
+  onDie = () => {}
+
+  hurt = (dmg, direction) => {
+    if (/spawn|hurt|rekt|burning/.test(this.status)) return
+
+    this.dmgs.push({y: -8, dmg})
+    this.health = Math.max(this.health - dmg, 0)
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 2 : -2
+    if (this.health <= 0) {
+      this.health = 0
+      return this.die()
+    }
+    return this.onHurt()
+  }
+
+  applyPhysics = () => {
+    if (this.vx !== 0) {
+      if (this.vx > 12) this.vx = 12
+      if (this.vx < -12) this.vx = -12
+
+      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
+      if (this.vx < 0) this.vx += 1
+      if (this.vx > 0) this.vx -= 1
+    }
+
+    if (this.vy !== 0 && this.inViewport) {
+      if (this.vy > 12) this.vy = 12
+      if (this.vy < -12) this.vy = -12
+      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
+
+      if (hasCollided) {
+        this.vy = 0
+      } else if (!/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 4) {
+        this.status = 'fall'
+      }
     }
   }
 

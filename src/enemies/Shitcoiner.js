@@ -33,14 +33,14 @@ class Shitcoiner extends Agent {
   kneels = false
 
   idle = {
-    condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    condition: () => !/climb|spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0,
     effect: () => {
       this.status = 'idle'
       return true
     }
   }
   moveLeft = {
-    condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    condition: () => !/climb|spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0,
     effect: () => {
       this.kneels = false
       this.direction = 'left'
@@ -59,7 +59,7 @@ class Shitcoiner extends Agent {
     }
   }
   moveRight = {
-    condition: () => !/climb|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    condition: () => !/climb|spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0,
     effect: () => {
       this.kneels = false
       this.direction = 'right'
@@ -78,7 +78,7 @@ class Shitcoiner extends Agent {
     }
   }
   climb = {
-    condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canClimb(),
+    condition: () => !/spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0 && this.canClimb(),
     effect: () => {
       this.status = 'climb'
       if (this.frame !== 10) return true
@@ -89,7 +89,7 @@ class Shitcoiner extends Agent {
   }
   attack = {
     condition: ({ enemy }) => {
-      if (/spawn|hurt|rekt|burning/.test(this.status) || this.vy !== 0) return false
+      if (/spawn|hurt|fall|rekt|burning/.test(this.status) || this.vy !== 0) return false
 
       if (!enemy || !intersects(this.getBoundingBox(), enemy.getBoundingBox())) return false // not in biting distance
 
@@ -138,19 +138,8 @@ class Shitcoiner extends Agent {
     return obstacles.length === 0
   }
 
-  hurt = (dmg, direction) => {
-    if (/spawn|hurt|rekt|burning/.test(this.status)) return
-
-    playSound('shitcoinerHurt')
-    this.dmgs.push({y: -8, dmg})
-    this.health = Math.max(this.health - dmg, 0)
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 2 : -2
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
-  }
+  onHurt = () => playSound('shitcoinerHurt')
+  onDie = () => playSound('shitcoinerHurt')
 
   update = () => {
     const sprite = CTDLGAME.assets.shitcoiner
@@ -167,29 +156,15 @@ class Shitcoiner extends Agent {
       return
     }
 
-    if (this.vx !== 0) {
-      if (this.vx > 6) this.vx = 6
-      if (this.vx < -6) this.vx = -6
+    this.applyPhysics()
 
-      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
-      if (this.vx < 0) this.vx += 1
-      if (this.vx > 0) this.vx -= 1
-    }
     if (this.status === 'climb') {
       this.vy = 0
       if (this.climb.condition()) this.climb()
     }
 
-    if (this.vy !== 0 && this.inViewport) {
-      if (this.vy > 12) this.vy = 12
-      if (this.vy < -12) this.vy = -12
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
-
-      if (hasCollided) this.vy = 0
-    }
-
     // AI logic
-    if (!/rekt|hurt|burning|spawn/.test(this.status)) {
+    if (!/fall|rekt|hurt|burning|spawn/.test(this.status)) {
       let action = { id: 'idle' }
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
@@ -220,7 +195,7 @@ class Shitcoiner extends Agent {
     if (this.status !== 'rekt' && this.kneels) {
       spriteData = this.spriteData[this.direction][this.status + '-kneels']
     }
-    
+
     this.frame++
     if (this.status === 'hurt' && this.frame === 3) {
       this.status = 'idle'

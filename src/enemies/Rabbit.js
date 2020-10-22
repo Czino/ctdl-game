@@ -24,7 +24,7 @@ class Rabbit extends Agent {
     this.senseRadius = Math.round(Math.random() * 50 + 30)
   }
 
-  class = 'Rabbit'
+  class = 'Evil Rabbit'
   spriteData = sprites.rabbit
   item = null
   w = 8
@@ -32,7 +32,7 @@ class Rabbit extends Agent {
   turnEvilRate = 0.1 // will be squared, so 0.01
 
   idle = {
-    condition: () => this.status !== 'rekt',
+    condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
     effect: () => {
       this.status = 'idle'
       return true
@@ -82,7 +82,7 @@ class Rabbit extends Agent {
     }
   }
   jump = {
-    condition: () => !/turnEvil|spawn|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
+    condition: () => !/turnEvil|spawn|fall|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
     effect: () => {
       this.status = 'jump'
 
@@ -93,7 +93,7 @@ class Rabbit extends Agent {
     }
   }
   attack = {
-    condition: () => !/turnEvil|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0,
+    condition: () => !/turnEvil|spawn|fall|hurt|rekt|burning/.test(this.status) && this.vy === 0,
     effect: ({ enemy }) => {
       if (this.status === 'attack' && this.frame === 2) {
         this.frame = 0
@@ -123,24 +123,9 @@ class Rabbit extends Agent {
     return obstacles.length === 0
   }
 
-  hurt = (dmg, direction) => {
-    if (!this.isEvil || /turnEvil|spawn|hurt|rekt/.test(this.status)) return
-    playSound('rabbitHurt')
-    this.dmgs.push({y: -8, dmg})
-    this.health = Math.max(this.health - dmg, 0)
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 2 : -2
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
-  }
-
-  die = () => {
-    playSound('burn')
-    addTextToQueue(`evil rabbit got rekt`)
-    this.status = 'rekt'
-  }
+  hurtCondition = () => this.isEvil && !/turnEvil|spawn|hurt|rekt/.test(this.status)
+  onHurt = () => playSound('rabbitHurt')
+  onDie = () => playSound('burn')
 
   update = () => {
     const sprite = CTDLGAME.assets.rabbit
@@ -157,28 +142,14 @@ class Rabbit extends Agent {
       return
     }
 
-    if (this.vx !== 0) {
-      if (this.vx > 6) this.vx = 6
-      if (this.vx < -6) this.vx = -6
-
-      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
-      if (this.vx < 0) this.vx += 1
-      if (this.vx > 0) this.vx -= 1
-    }
-    if (this.vy !== 0 && this.inViewport) {
-      if (this.vy > 6) this.vy = 6
-      if (this.vy < -6) this.vy = -6
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
-
-      if (hasCollided) this.vy = 0
-    }
+    this.applyPhysics()
 
     // AI logic
     let action = { id: 'idle' }
 
     if (this.turnEvil.condition()) {
       action.id = 'turnEvil'
-    } else if (!/turnEvil|rekt|spawn/.test(this.status)) {
+    } else if (!/turnEvil|spawn|fall|rekt/.test(this.status)) {
       const enemy = getClosest(this.getCenter(), senseCharacters(this))
       if (enemy) {
         if (this.isEvil) {
