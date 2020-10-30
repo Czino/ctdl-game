@@ -63,27 +63,35 @@ const runAwayFromEnemy = new Sequence({
     runAway
  ]
 })
-const evilActions = new Selector({
+const evilSequence = new Sequence({
  nodes: [
-   isGood,
-   attackEnemy,
-   goToEnemy,
-   'moveRandom',
-   'idle'
+    isEvil,
+    new Selector({
+      nodes: [
+        attackEnemy,
+        goToEnemy,
+        'moveRandom',
+        'idle'
+      ]
+    })
  ]
 })
-const goodActions = new Selector({
+const goodSequence = new Sequence({
  nodes: [
-   isEvil,
-   runAwayFromEnemy,
-   'moveRandom',
-   'idle'
+    isGood,
+    new Selector({
+      nodes: [
+        runAwayFromEnemy,
+        'moveRandom',
+        'idle'
+      ]
+    })
  ]
 })
 const tree = new Selector({
  nodes: [
-   evilActions,
-   goodActions
+   evilSequence,
+   goodSequence
  ]
 })
 
