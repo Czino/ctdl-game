@@ -187,10 +187,10 @@ class Character extends Agent {
     }
   }
   attack = {
-    condition: () => this.canStandUp(),
+    condition: () => true,
     effect: () => {
       if (!/attack/i.test(this.status)) this.frame = 0
-      this.status = 'attack'
+      this.status = /duck/.test(this.status) ? 'duckAttack': 'attack'
 
       if (this.id === 'katoshi' && this.frame !== 3) return SUCCESS
       this.makeDamage(1)
@@ -198,13 +198,13 @@ class Character extends Agent {
     }
   }
   attackMoveLeft = {
-    condition: () => this.canStandUp(),
+    condition: () => true,
     effect: () => {
       this.direction = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
-        this.status = 'moveAttack'
+        this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
         return SUCCESS
@@ -213,13 +213,13 @@ class Character extends Agent {
     }
   }
   attackMoveRight = {
-    condition: () => this.canStandUp(),
+    condition: () => true,
     effect: () => {
       this.direction = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
-        this.status = 'moveAttack'
+        this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
         return SUCCESS
@@ -377,6 +377,8 @@ class Character extends Agent {
       action = 'attackMoveLeft'
     } else if (controls.indexOf('attack') !== -1 && controls.indexOf('moveRight') !== -1) {
       action = 'attackMoveRight'
+    } else if (controls.indexOf('duck') !== -1 && controls.indexOf('attack') !== -1) {
+      action = 'attack'
     } else if (controls.indexOf('duck') !== -1 && controls.indexOf('moveLeft') !== -1) {
       action = 'duckMoveLeft'
     } else if (controls.indexOf('duck') !== -1 && controls.indexOf('moveRight') !== -1) {
