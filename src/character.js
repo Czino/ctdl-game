@@ -1,3 +1,5 @@
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
+
 import hodlonaut from './sprites/hodlonaut'
 import katoshi from './sprites/katoshi'
 import { CTDLGAME } from './gameUtils'
@@ -14,6 +16,81 @@ const sprites = {
   hodlonaut,
   katoshi
 }
+
+const follows = new Task({
+  run: agent => agent.follow ? SUCCESS : FAILURE
+})
+const seesFriend = new Task({
+  run: agent => agent.sensedFriends.length > 0 ? SUCCESS : FAILURE
+})
+const doesNotTouchEnemy = new Task({
+  run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+})
+const touchesEnemy = new Task({
+  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+})
+const lookAtEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
+})
+const duck = new Task({
+  run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
+})
+const moveToClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+})
+const moveToFriend = new Task({
+  run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
+})
+
+// Sequence: runs each node until fail
+const attackEnemy = new Sequence({
+  nodes: [
+    lookAtEnemy,
+    touchesEnemy,
+    'attack'
+  ]
+})
+
+// Selector: runs until one node calls success
+const goToEnemy = new Sequence({
+  nodes: [
+    'seesEnemy',
+    doesNotTouchEnemy,
+    new Selector({
+      nodes: [
+        moveToClosestEnemy,
+        'jump',
+        duck
+      ]
+    })
+  ]
+})
+
+
+// Selector: runs until one node calls success
+const goToFriend = new Sequence({
+  nodes: [
+    follows,
+    seesFriend,
+    new Selector({
+      nodes: [
+        moveToFriend,
+        'jump',
+        duck
+      ]
+    })
+  ]
+})
+
+const tree = new Selector({
+  nodes: [
+    attackEnemy,
+    goToEnemy,
+    goToFriend,
+    'moveRandom',
+    'idle'
+  ]
+})
 
 class Character extends Agent {
   constructor(id, options) {
@@ -36,16 +113,21 @@ class Character extends Agent {
   w = 16
   h = 30
 
+  bTree = new BehaviorTree({
+    tree,
+    blackboard: this
+  })
+
   idle = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status),
+    condition: () => true,
     effect: () => {
       if (!this.canStandUp() && this.duck.condition()) return this.duck.effect()
       this.status = 'idle'
-      return true
+      return SUCCESS
     }
   }
   moveLeft = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       if (!this.canStandUp() && this.duckMoveLeft.condition()) return this.duckMoveLeft.effect()
 
@@ -55,52 +137,14 @@ class Character extends Agent {
 
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (!CTDLGAME.multiPlayer && !this.selected) {
-        let duckTo = this.getBoundingBox()
-        duckTo.y += 6
-        duckTo.x -= 3
-        duckTo.h -= 6
-
-        if (window.DRAWSENSORS) {
-          constants.overlayContext.globalAlpha = .5
-          constants.overlayContext.fillStyle = 'blue'
-          constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
-          constants.overlayContext.globalAlpha = 1
-        }
-        let obstacles = CTDLGAME.quadTree.query(duckTo)
-          .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-          .filter(obj => intersects(obj, duckTo))
-
-        let canDuck = obstacles.length === 0
-        if (canDuck && this.duckMoveLeft.condition()) {
-          return this.duckMoveLeft.effect()
-        } else {
-          let jumpTo = this.getBoundingBox()
-          jumpTo.y -= 6
-          jumpTo.x -= 2
-
-          if (window.DRAWSENSORS) {
-            constants.overlayContext.globalAlpha = .5
-            constants.overlayContext.fillStyle = 'red'
-            constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
-            constants.overlayContext.globalAlpha = 1
-          }
-          let obstacles = CTDLGAME.quadTree.query(jumpTo)
-            .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-            .filter(obj => intersects(obj, jumpTo))
-
-          let canJump = obstacles.length === 0 && this.jump.condition()
-          if (canJump) return this.jump.effect()
-        }
-
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
   moveRight = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       if (!this.canStandUp() && this.duckMoveRight.condition()) return this.duckMoveRight.effect()
 
@@ -109,58 +153,21 @@ class Character extends Agent {
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (!CTDLGAME.multiPlayer && !this.selected) {
-        let duckTo = this.getBoundingBox()
-        duckTo.y += 6
-        duckTo.x += 3
-        duckTo.h -= 6
-
-        if (window.DRAWSENSORS) {
-          constants.overlayContext.globalAlpha = .5
-          constants.overlayContext.fillStyle = 'blue'
-          constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
-          constants.overlayContext.globalAlpha = 1
-        }
-        let obstacles = CTDLGAME.quadTree.query(duckTo)
-          .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-          .filter(obj => intersects(obj, duckTo))
-
-        let canDuck = obstacles.length === 0
-        if (canDuck && this.duckMoveRight.condition()) {
-          return this.duckMoveRight.effect()
-        } else {
-          let jumpTo = this.getBoundingBox()
-          jumpTo.y -= 6
-          jumpTo.w += 2
-
-          if (window.DRAWSENSORS) {
-            constants.overlayContext.globalAlpha = .5
-            constants.overlayContext.fillStyle = 'red'
-            constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
-            constants.overlayContext.globalAlpha = 1
-          }
-          let obstacles = CTDLGAME.quadTree.query(jumpTo)
-            .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
-            .filter(obj => intersects(obj, jumpTo))
-
-          let canJump = obstacles.length === 0 && this.jump.condition()
-          if (canJump) return this.jump.effect()
-        }
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
   duck = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.status = 'duck'
-      return true
+      return SUCCESS
     }
   }
   duckMoveLeft = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => this.canDuck(),
     effect: () => {
       this.direction = 'left'
       this.status = 'duckMove'
@@ -170,7 +177,7 @@ class Character extends Agent {
     }
   }
   duckMoveRight = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => this.canDuck(),
     effect: () => {
       this.direction = 'right'
       this.status = 'duckMove'
@@ -180,58 +187,59 @@ class Character extends Agent {
     }
   }
   attack = {
-    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.canStandUp(),
+    condition: () => this.canStandUp(),
     effect: () => {
       if (!/attack/i.test(this.status)) this.frame = 0
       this.status = 'attack'
 
-      if (this.id === 'katoshi' && this.frame !== 3) return true
+      if (this.id === 'katoshi' && this.frame !== 3) return SUCCESS
       this.makeDamage(1)
-      return true
+      return SUCCESS
     }
   }
   attackMoveLeft = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
+    condition: () => this.canStandUp(),
     effect: () => {
       this.direction = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'moveAttack'
-        if (this.id === 'katoshi' && this.frame !== 3) return true
+        if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
-        return true
+        return SUCCESS
       }
-      return false
+      return FAILURE
     }
   }
   attackMoveRight = {
-    condition: () => !/jump|fall|action|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => this.canStandUp(),
     effect: () => {
       this.direction = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'moveAttack'
-        if (this.id === 'katoshi' && this.frame !== 3) return true
+        if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
-        return true
+        return SUCCESS
       }
-      return false
+      return FAILURE
     }
   }
   jump = {
-    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
+    condition: () => this.canJump() && this.canStandUp(),
     effect: () => {
+      if (this.status !== 'jump') this.frame = 0
       this.status = 'jump'
-      this.frame = 0
       this.vx = this.direction === 'right' ? 6 : -6
       this.vy = -6
-      return true
+
+      return SUCCESS
     }
   }
   back = {
-    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.vy === 0 && this.canStandUp(),
+    condition: () => this.canStandUp(),
     effect: () => {
       this.status = 'back'
 
@@ -240,38 +248,42 @@ class Character extends Agent {
         .filter(obj => obj.backEvent)
         .find(obj => intersects(boundingBox, obj.getBoundingBox()))
 
-      if (!eventObject) return false
+      if (!eventObject) return FAILURE
 
       eventObject.backEvent(this)
-      return true
+      return SUCCESS
     }
   }
   action = {
-    condition: () => !/jump|duck|fall|action|hurt|rekt/.test(this.status) && this.canStandUp(),
+    condition: () => this.canStandUp(),
     effect: () => {
       this.frame = 0
       this.status = 'action'
-      return true
+      return SUCCESS
     }
   }
 
-  actions = {
-    idle: this.idle,
-    moveLeft: this.moveLeft,
-    moveRight: this.moveRight,
-    duck: this.duck,
-    duckMoveLeft: this.duckMoveLeft,
-    duckMoveRight: this.duckMoveRight,
-    attack: this.attack,
-    attackMoveLeft: this.attackMoveLeft,
-    attackMoveRight: this.attackMoveRight,
-    jump: this.jump,
-    back: this.back,
-    action: this.action
+  canDuck = () => {
+    let duckTo = this.getBoundingBox()
+    duckTo.y += 6
+    duckTo.x += this.direction === 'right' ? 3 : -3
+    duckTo.h -= 6
+
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.globalAlpha = .5
+      constants.overlayContext.fillStyle = 'blue'
+      constants.overlayContext.fillRect(duckTo.x, duckTo.y, duckTo.w, duckTo.h)
+      constants.overlayContext.globalAlpha = 1
+    }
+    let obstacles = CTDLGAME.quadTree.query(duckTo)
+      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+      .filter(obj => intersects(obj, duckTo))
+
+    return obstacles.length === 0
   }
 
   canStandUp = () => {
-    if (!/duck/.test(this.status)) return true
+    if (!/duck/.test(this.status)) return SUCCESS
     let standUpTo = this.getBoundingBox()
       standUpTo.y -= 6
       standUpTo.h = 6
@@ -376,47 +388,6 @@ class Character extends Agent {
     if (this[action].condition()) this[action].effect()
   }
 
-  ai = () => {
-    let action = { id: 'idle' }
-
-    let enemy = getClosest(this.getCenter(), this.sensedEnemies)
-    if (enemy) {
-      let attackRadius = this.getBoundingBox()
-      attackRadius = {
-        x: attackRadius.x - this.attackRange,
-        y: attackRadius.y - this.attackRange,
-        w: attackRadius.w + this.attackRange * 2,
-        h: attackRadius.y + this.attackRange * 2,
-      }
-      if (intersects(attackRadius, enemy.getBoundingBox())) {
-        if (this.getCenter().x > enemy.getCenter().x) {
-          this.direction = 'left'
-        } else {
-          this.direction = 'right'
-        }
-        action.id = 'attack'
-        action.payload = { enemy }
-      } else {
-        action.id = 'moveTo'
-        action.payload = { other: enemy, distance: -1 }
-      }
-    } else if (this.follow && window.SELECTEDCHARACTER.status !== 'rekt') {
-      action.id = 'moveTo'
-      action.payload = { other: window.SELECTEDCHARACTER, distance: 10 }
-    }
-
-    if (action.id === 'idle' && Math.random() < .01) {
-      action.id = Math.random() < .5 ? 'moveLeft' : 'moveRight'
-    }
-
-    if (this[action.id].condition(action.payload)) {
-      action.success = this[action.id].effect(action.payload)
-    }
-    if (!action.success && this.idle.condition()) {
-      this.idle.effect()
-    }
-  }
-
   update = () => {
     const sprite = CTDLGAME.assets[this.id]
 
@@ -432,25 +403,7 @@ class Character extends Agent {
       return
     }
 
-    if (this.vx !== 0) {
-      if (this.vx > 6) this.vx = 6
-      if (this.vx < -6) this.vx = -6
-      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
-      if (this.vx < 0) this.vx += 1
-      if (this.vx > 0) this.vx -= 1
-    }
-
-    if (this.vy !== 0 && this.inViewport) {
-      if (this.vy > 12) this.vy = 12
-      if (this.vy < -12) this.vy = -12
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
-
-      if (hasCollided) {
-        this.vy = 0
-      } else if (!/jump|rekt|hurt/.test(this.status) && Math.abs(this.vy) > 4) {
-        this.status = 'fall'
-      }
-    }
+    this.applyPhysics()
 
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
@@ -459,16 +412,30 @@ class Character extends Agent {
     }
 
     const boundingBox = this.getBoundingBox()
-    this.sensedEnemies = CTDLGAME.quadTree
-      .query({
-        x: this.x - this.senseRadius,
-        y: this.y - this.senseRadius,
-        w: this.w + this.senseRadius,
-        h: this.h + this.senseRadius
-      })
+    const senseBox = {
+      x: this.x - this.senseRadius,
+      y: this.y - this.senseRadius,
+      w: this.w + this.senseRadius * 2,
+      h: this.h + this.senseRadius * 2
+    }
+    this.sensedObjects = CTDLGAME.quadTree
+      .query(senseBox)
+
+    if (window.DRAWSENSORS) {
+      constants.charContext.beginPath()
+      constants.charContext.rect(senseBox.x, senseBox.y, senseBox.w, senseBox.h)
+      constants.charContext.stroke()
+    }
+
+    this.sensedEnemies = this.sensedObjects
       .filter(enemy => enemy.enemy && enemy.status !== 'rekt' && enemy.status !== 'burning')
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
+    this.sensedFriends = this.sensedObjects
+      .filter(friend => friend.class === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
+
+    // if (this.id === 'hodlonaut') console.log(this.senseRadius, this.sensedFriends)
     this.touchedObjects = CTDLGAME.quadTree
       .query(boundingBox)
       .filter(obj => intersects(boundingBox, obj.getBoundingBox()))
@@ -491,10 +458,14 @@ class Character extends Agent {
       }
     }
 
-    if (CTDLGAME.multiPlayer || this.selected) {
-      this.senseControls()
-    } else if (this.status !== 'rekt') {
-      this.ai()
+    if (this.vy === 0 && !/jump|fall|rekt|hurt/.test(this.status)) {
+      if (CTDLGAME.multiPlayer || this.selected) {
+        this.senseControls()
+      } else {
+        this.closestEnemy = getClosest(this, this.sensedEnemies)
+        this.closestFriend = getClosest(this, this.sensedFriends)
+        this.bTree.step()
+      }
     }
 
     // find out if touched objects have touch event

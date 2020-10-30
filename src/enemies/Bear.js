@@ -1,3 +1,5 @@
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+
 import bearSprite from '../sprites/bear'
 import Item from '../Item'
 import { CTDLGAME } from '../gameUtils'
@@ -14,6 +16,35 @@ const items = [
   { id: 'honeybadger', chance: 1 }
 ]
 
+const moveToClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+})
+
+// Sequence: runs each node until fail
+const attackEnemy = new Sequence({
+  nodes: [
+    'touchesEnemy',
+    'attack'
+  ]
+})
+
+// Selector: runs until one node calls success
+const goToEnemy = new Sequence({
+  nodes: [
+    'seesEnemy',
+    'doesNotTouchEnemy',
+    moveToClosestEnemy
+  ]
+})
+ const tree = new Selector({
+  nodes: [
+    attackEnemy,
+    goToEnemy,
+    'moveRandom',
+    'idle'
+  ]
+ })
+
 class Bear extends Agent {
   constructor(id, options) {
     super(id, options)
@@ -28,19 +59,18 @@ class Bear extends Agent {
   w = 27
   h = 28
   walkingSpeed = 2
-  attackRange = 2
+  attackRange = 5
   senseRadius = 160
 
-
   idle = {
-    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.status = 'idle'
-      return true
+      return SUCCESS
     }
   }
   moveLeft = {
-    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.direction = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
@@ -48,13 +78,13 @@ class Bear extends Agent {
       if (hasMoved) {
         this.status = 'move'
         if (this.frame % 5 === 0) playSound('drop')
-        return true
+        return SUCCESS
       }
       return false
     }
   }
   moveRight = {
-    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.direction = 'right'
 
@@ -62,44 +92,57 @@ class Bear extends Agent {
       if (hasMoved) {
         this.status = 'move'
         if (this.frame % 5 === 0) playSound('drop')
-        return true
+        return SUCCESS
       }
       return false
     }
   }
   attack = {
-    condition: () => !/hurt|block|fall|rekt/.test(this.status) && this.vy === 0,
-    effect: ({ enemy }) => {
+    condition: () => {
+      if (!this.closestEnemy) return
+      const attackBox = {
+        x: this.getBoundingBox('attack').x - this.attackRange,
+        y: this.getBoundingBox('attack').y + 7,
+        w: this.getBoundingBox('attack').w + this.attackRange * 2,
+        h: 9
+      }
+
+      if (window.DRAWSENSORS) {
+        constants.overlayContext.globalAlpha = .5
+        constants.overlayContext.fillStyle = 'red'
+        constants.overlayContext.fillRect(attackBox.x, attackBox.y, attackBox.w, attackBox.h)
+      }
+
+      // attack distance
+      return intersects(attackBox, this.closestEnemy.getBoundingBox())
+    },
+    effect: () => {
+      if (this.getCenter().x > this.closestEnemy.getCenter().x) {
+        this.direction = 'left'
+      } else {
+        this.direction = 'right'
+      }
       if (this.status === 'attack' && this.frame === 2) {
         playSound('bearGrowl')
       }
       if (this.status === 'attack' && this.frame === 5) {
         playSound('woosh')
         let dmg = Math.round(Math.random() * 2) + 5
-        enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
-        return true
+        this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+        return SUCCESS
       }
-      if (this.status === 'attack') return true
+      if (this.status === 'attack') return SUCCESS
 
       this.frame = 0
       this.status = 'attack'
-      return true
+      return SUCCESS
     }
   }
-  moveTo = {
-    condition: ({ other }) => Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
-    effect: ({ other, distance }) => {
-      let action = 'idle'
 
-      if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-        action = 'moveLeft'
-      } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-        action = 'moveRight'
-      }
-      if (this[action].condition()) return this[action].effect()
-      return false
-    }
-  }
+  bTree = new BehaviorTree({
+    tree,
+    blackboard: this
+  })
 
   onHurt = () => playSound('bearHurt')
 
@@ -155,7 +198,6 @@ class Bear extends Agent {
 
   die = () => {
     this.status = 'rekt'
-
     return this.onDie()
   }
 
@@ -194,40 +236,11 @@ class Bear extends Agent {
     }
 
     // AI logic
-    let action = { id: 'idle' }
     if (this.canMove && !/rekt|spawn/.test(this.status)) {
       if (getSoundtrack() !== 'bear') initSoundtrack('bear')
 
-      if (this.sensedEnemies.length > 0) {
-        const enemy = getClosest(this.getCenter(), this.sensedEnemies)
-        const attackBox = this.getCenter()
-        attackBox.x -= this.w / 2
-        attackBox.w = this.w + this.attackRange
-        attackBox.h = 9
-
-        if (window.DRAWSENSORS) {
-          constants.overlayContext.fillStyle = 'red'
-          constants.overlayContext.fillRect(attackBox.x, attackBox.y, attackBox.w, attackBox.h)
-        }
-        if (intersects(attackBox, enemy.getBoundingBox())) { // attack distance
-          if (this.getCenter().x > enemy.getCenter().x) {
-            this.direction = 'left'
-          } else {
-            this.direction = 'right'
-          }
-          action.id = 'attack'
-          action.payload = { enemy }
-        } else {
-          action.id = 'moveTo'
-          action.payload = { other: enemy, distance: -2 }
-        }
-      }
-    }
-    if (this[action.id].condition(action.payload)) {
-      action.success = this[action.id].effect(action.payload)
-    }
-    if (!action.success && this.idle.condition()) {
-      this.idle.effect()
+      this.closestEnemy = getClosest(this, this.sensedEnemies)
+      this.bTree.step()
     }
 
     let spriteData = bearSprite[this.direction][this.status]
@@ -265,7 +278,7 @@ class Bear extends Agent {
       })
   }
 
-  getBoundingBox = () => /idle|move/.test(this.status)
+  getBoundingBox = status => /idle|move/.test(status || this.status)
     ? ({
       id: this.id,
       x: this.x,

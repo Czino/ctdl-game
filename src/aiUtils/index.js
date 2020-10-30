@@ -1,1 +1,1 @@
-export { follow } from './follow'
+export { createPlan } from './GOAP'

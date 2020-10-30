@@ -1,16 +1,91 @@
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+
 import rabbit from '../sprites/rabbit'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
-import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
+import { addTextToQueue } from '../textUtils'
 
 const sprites = {
   rabbit
 }
+
+const isEvil = new Task({
+  run: agent => agent.isEvil ? SUCCESS : FAILURE
+})
+const isGood = new Task({
+  run: agent => !agent.isEvil ? SUCCESS : FAILURE
+})
+
+const touchesEnemy = new Task({
+  // in biting distance
+  run: agent => agent.attack.condition() ? SUCCESS : FAILURE
+})
+const moveToClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+})
+
+const runAwayFromClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.runAwayFrom.condition({ other: agent.closestEnemy })
+    ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
+    : FAILURE
+})
+
+// Sequence: runs each node until fail
+const attackEnemy = new Sequence({
+ nodes: [
+   touchesEnemy,
+   'attack'
+ ]
+})
+
+// Selector: runs until one node calls success
+const goToEnemy = new Selector({
+ nodes: [
+   touchesEnemy,
+   moveToClosestEnemy,
+   'jump'
+ ]
+})
+const runAway = new Selector({
+ nodes: [
+    runAwayFromClosestEnemy,
+   'jump'
+ ]
+})
+const runAwayFromEnemy = new Sequence({
+ nodes: [
+    'seesEnemy',
+    runAway
+ ]
+})
+const evilActions = new Selector({
+ nodes: [
+   isGood,
+   attackEnemy,
+   goToEnemy,
+   'moveRandom',
+   'idle'
+ ]
+})
+const goodActions = new Selector({
+ nodes: [
+   isEvil,
+   runAwayFromEnemy,
+   'moveRandom',
+   'idle'
+ ]
+})
+const tree = new Selector({
+ nodes: [
+   evilActions,
+   goodActions
+ ]
+})
 
 class Rabbit extends Agent {
   constructor(id, options) {
@@ -24,86 +99,85 @@ class Rabbit extends Agent {
     this.senseRadius = Math.round(Math.random() * 50 + 30)
   }
 
-  class = 'Evil Rabbit'
+  class = 'Rabbit'
   spriteData = sprites.rabbit
   item = null
   w = 8
   h = 6
   turnEvilRate = 0.1 // will be squared, so 0.01
 
+
+  bTree = new BehaviorTree({
+    tree,
+    blackboard: this
+  })
+
   idle = {
-    condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.status = 'idle'
-      return true
+      return SUCCESS
     }
   }
   turnEvil = {
     condition: () => this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate),
     effect: () => {
       this.status = 'turnEvil'
-      return true
+      return SUCCESS
     }
   }
   moveLeft = {
-    condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.direction = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (this.jump.condition()) {
-        return this.jump.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
   moveRight = {
-    condition: () => !/turnEvil|jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.direction = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (this.jump.condition()) {
-        return this.jump.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
   jump = {
-    condition: () => !/turnEvil|spawn|fall|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
+    condition: () => this.canJump(),
     effect: () => {
       this.status = 'jump'
 
       this.vx = this.direction === 'right' ? 3 : -3
       this.vy = -6
 
-      return true
+      return SUCCESS
     }
   }
   attack = {
-    condition: () => !/turnEvil|spawn|fall|hurt|rekt|burning/.test(this.status) && this.vy === 0,
-    effect: ({ enemy }) => {
+    condition: () => this.closestEnemy && intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox()),
+    effect: () => {
       if (this.status === 'attack' && this.frame === 2) {
         this.frame = 0
-        enemy.hurt(.5, this.direction === 'left' ? 'right' : 'left')
-        return true
+        this.closestEnemy.hurt(.5, this.direction === 'left' ? 'right' : 'left')
+        return SUCCESS
       }
-      if (this.status === 'attack') return true
+      if (this.status === 'attack') return RUNNING
   
       this.status = 'attack'
-      return true
+      return SUCCESS
     }
   }
 
@@ -125,7 +199,10 @@ class Rabbit extends Agent {
 
   hurtCondition = () => this.isEvil && !/turnEvil|spawn|hurt|rekt/.test(this.status)
   onHurt = () => playSound('rabbitHurt')
-  onDie = () => playSound('burn')
+  onDie = () => {
+    playSound('burn')
+    addTextToQueue(`Evil Rabbit got rekt`)
+  }
 
   update = () => {
     const sprite = CTDLGAME.assets.rabbit
@@ -145,52 +222,12 @@ class Rabbit extends Agent {
     this.applyPhysics()
 
     // AI logic
-    let action = { id: 'idle' }
-
     if (this.turnEvil.condition()) {
-      action.id = 'turnEvil'
-    } else if (!/turnEvil|spawn|fall|rekt/.test(this.status)) {
-      const enemy = getClosest(this.getCenter(), senseCharacters(this))
-      if (enemy) {
-        if (this.isEvil) {
-          if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance
-            if (this.getCenter().x > enemy.getCenter().x) {
-              this.direction = 'left'
-            } else {
-              this.direction = 'right'
-            }
-            action.id = 'attack'
-            action.payload = { enemy }
-          } else {
-            action.id = 'moveTo'
-            action.payload = { other: enemy, distance: -1 }
-          }
-        } else if (!this.canTurnEvil) {
-          if (this.getCenter().x < enemy.getCenter().x) {
-            action.id = 'moveLeft'
-          } else if (enemy.getCenter().x <= this.getCenter().x) {
-            action.id = 'moveRight'
-          }
-        } else {
-          if (Math.random() < .03) {
-            action.id = 'moveLeft'
-          } else if (Math.random() < .03) {
-            action.id = 'moveRight'
-          }
-        }
-      } else {
-        if (Math.random() < .03) {
-          action.id = 'moveLeft'
-        } else if (Math.random() < .03) {
-          action.id = 'moveRight'
-        }
-      }
-    }
-    if (this[action.id].condition(action.payload)) {
-      action.success = this[action.id].effect(action.payload)
-    }
-    if (!action.success && this.idle.condition()) {
-      this.idle.effect()
+      this.turnEvil.effect()
+    } else if (!/turnEvil|spawn|hurt|fall|rekt/.test(this.status) && this.vy === 0) {
+      this.sensedEnemies = senseCharacters(this)
+      this.closestEnemy = getClosest(this, this.sensedEnemies)
+      this.bTree.step()
     }
 
     let spriteData = this.spriteData[this.isEvil ? 'evil' : 'good'][this.direction][this.status]

@@ -38,6 +38,10 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
+// TODO game freezes when climbing on trees?
+// TODO character on map multiple times
+// TODO make the monk's riddle easier?
+// TODO I think it would be handy if characters could go down and slash at the same time as opposed to only being able to crawl but not use your weapon. Thats it! Great game
 // TODO evil rabbits too hard to beat
 // TODO thinking about toggling blocks (Wish all blocks that are stacked could be toggles together, unless there is value at not doing so)
 // TODO when one char dies make the other cry?
@@ -211,9 +215,8 @@ function tick() {
 
     // update objects that shall update and are in viewport
     CTDLGAME.objects
-      .filter(object => object.update)
-      .filter(obj => obj.inViewport)
-      .forEach(object => object.update())
+      .filter(obj => obj.update && obj.inViewport)
+      .forEach(obj => obj.update())
 
     updateViewport()
 

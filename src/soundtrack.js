@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Transport, AutoFilter,  Part, Gain, Reverb } from 'tone'
+import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb } from 'tone'
 
 import mariamMatremVirginem from './tracks/mariam-matrem-virginem'
 import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
@@ -10,6 +10,9 @@ import bear from './tracks/bear'
 import bullsVsBears from './tracks/bulls-vs-bears'
 import aNewHope from './tracks/a-new-hope'
 
+
+// TODO add "Nomen a solempnibus II" ?
+// TODO add "Procurans odium II" ?
 const gain = new Gain(1).toDestination()
 const reverb = new Reverb({
   decay: 17,

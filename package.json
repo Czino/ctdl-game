@@ -39,6 +39,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "behaviortree": "^2.0.3",
     "tone": "^14.7.39"
   }
 }

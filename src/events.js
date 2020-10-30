@@ -410,7 +410,7 @@ function click (e) {
     CTDLGAME.ghostBlock.isSolid = true
     CTDLGAME.inventory.blocks.shift()
     CTDLGAME.objects.push(CTDLGAME.ghostBlock)
-    window.SELECTEDCHARACTER.action()
+    if (window.SELECTEDCHARACTER.action.condition()) window.SELECTEDCHARACTER.action.effect()
     CTDLGAME.ghostBlock = null
   }
   if (window.SELECTED) window.SELECTED.unselect()

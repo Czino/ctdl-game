@@ -1,7 +1,9 @@
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+
 import brianSprite from '../sprites/brian'
 import Item from '../Item'
 import { CTDLGAME } from '../gameUtils'
-import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
@@ -16,6 +18,40 @@ const items = [
   { id: 'coldcard', chance: 0.05 },
   { id: 'opendime', chance: 1 },
 ]
+
+const moveToClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+})
+
+// Sequence: runs each node until fail
+const attackEnemy = new Sequence({
+  nodes: [
+    'touchesEnemy',
+    'attack'
+  ]
+})
+
+// Selector: runs until one node calls success
+const goToEnemy = new Sequence({
+  nodes: [
+    'seesEnemy',
+    'doesNotTouchEnemy',
+    new Selector({
+      nodes: [
+        moveToClosestEnemy,
+        'jump'
+      ]
+    })
+  ]
+})
+const tree = new Selector({
+  nodes: [
+    attackEnemy,
+    goToEnemy,
+    'moveRandom',
+    'idle'
+  ]
+})
 
 class Brian extends Agent {
   constructor(id, options) {
@@ -36,79 +72,62 @@ class Brian extends Agent {
   senseRadius = 60
   attackRange = 1
 
+  bTree = new BehaviorTree({
+    tree,
+    blackboard: this
+  })
 
-  idle = {
-    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-    effect: () => {
-      this.status = 'idle'
-      return true
-    }
-  }
-  moveLeft = {
-    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-    effect: () => {
-      this.direction = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
-
-      if (hasMoved) {
-        this.status = 'move'
-        return true
-      } else if (this.jump.condition()) {
-        return this.jump.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
-      }
-
-      return false
-    }
-  }
-  moveRight = {
-    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-    effect: () => {
-      this.direction = 'right'
-
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-      if (hasMoved) {
-        this.status = 'move'
-      } else if (this.jump.condition()) {
-        return this.jump.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
-      }
-
-      return false
-    }
-  }
   jump = {
-    condition: () => !/spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && this.canJump(),
+    condition: () => this.canJump(),
     effect: () => {
       if (this.status !== 'jump') this.frame = 0
       this.status = 'jump'
-      if (this.frame !== 2) return true
+      if (this.frame !== 2) return RUNNING
       this.vx = this.direction === 'right' ? 6 : -6
       this.vy = -8
 
-      return true
+      return SUCCESS
     }
   }
   attack = {
-    condition: () => !/hurt|jump|fall|rekt/.test(this.status) && this.vy === 0,
-    effect: ({ enemy }) => {
+    condition: () => {
+        if (!this.closestEnemy) return
+
+        const attackBox = this.getBoundingBox()
+        attackBox.x -= this.attackRange
+        attackBox.w += this.attackRange * 2
+
+
+        if (window.DRAWSENSORS) {
+          constants.overlayContext.fillStyle = 'red'
+          constants.overlayContext.fillRect(attackBox.x, attackBox.y, attackBox.w, attackBox.h)
+        }
+
+        // attack distance
+        return intersects(attackBox, this.closestEnemy.getBoundingBox())
+    },
+    effect: () => {
       const dmg = Math.round(Math.random()) * 2 + 3
+
+      if (this.getCenter().x > this.closestEnemy.getCenter().x) {
+        this.direction = 'left'
+      } else {
+        this.direction = 'right'
+      }
 
       if (this.status === 'attack' && this.frame === 3) {
         playSound('woosh')
-        return enemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+        return this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
       }
-      if (this.status === 'attack' && this.frame < 4) return true
+      if (this.status === 'attack' && this.frame < 4) return SUCCESS
 
       this.frame = 0
       this.status = 'attack'
-      return true
+      return SUCCESS
     }
   }
   hurtAttack = {
-    condition: () => !/rekt/.test(this.status) && this.vy === 0,
+    condition: () => this.status === 'hurt' && this.hurtAttackCounter === 0,
     effect: () => {
       this.status = 'hurtAttack'
 
@@ -126,34 +145,24 @@ class Brian extends Agent {
           enemy.hurt(dmg, direction)
         })
 
-      return true
+      return SUCCESS
     }
-  }
-
-  actions = {
-    idle: this.idle,
-    moveLeft: this.moveLeft,
-    moveRight: this.moveRight,
-    jump: this.jump,
-    attack: this.attack,
-    hurtAttack: this.hurtAttack,
-    moveTo: this.moveTo
   }
 
   canJump = () => {
     let jumpTo = this.getBoundingBox()
-      jumpTo.y -= 12
-      jumpTo.x += this.direction === 'right' ? 4 : -4
+    jumpTo.y -= 12
+    jumpTo.x += this.direction === 'right' ? 4 : -4
 
-      if (window.DRAWSENSORS) {
-        constants.overlayContext.fillStyle = 'red'
-        constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
-      }
-      let obstacles = CTDLGAME.quadTree.query(jumpTo)
-        .filter(obj => obj.isSolid && !obj.enemy)
-        .filter(obj => intersects(obj, jumpTo))
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.fillStyle = 'red'
+      constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
+    }
+    let obstacles = CTDLGAME.quadTree.query(jumpTo)
+      .filter(obj => obj.isSolid && !obj.enemy)
+      .filter(obj => intersects(obj, jumpTo))
 
-      return obstacles.length === 0
+    return obstacles.length === 0
   }
 
   onHurt = () => playSound('shitcoinerHurt')
@@ -227,41 +236,17 @@ class Brian extends Agent {
       this.hadIntro = true
     }
 
-    // AI logic
-    if (this.canMove && !/rekt|hurt|jump|fall/.test(this.status)) {
-      let action = { id: 'idle' }
+    if (this.canMove && !/fall|rekt|hurt/.test(this.status) && this.vy === 0) {
       if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
 
-      if (this.sensedEnemies.length > 0) {
-        const enemy = getClosest(this.getCenter(), this.sensedEnemies)
-        const attackBox = this.getBoundingBox()
-        attackBox.x -= this.attackRange
-        attackBox.w += this.attackRange * 2
-        if (intersects(attackBox, enemy.getBoundingBox())) { // attack distance
-          if (this.getCenter().x > enemy.getCenter().x) {
-            this.direction = 'left'
-          } else {
-            this.direction = 'right'
-          }
-          action.id = 'attack'
-          action.payload = { enemy }
-        } else {
-          action.id = 'moveTo'
-          action.payload = { other: enemy, distance: -1 }
-        }
-      }
-      if (this[action.id].condition(action.payload)) {
-        action.success = this[action.id].effect(action.payload)
-      }
-      if (!action.success && this.idle.condition()) {
-        this.idle.effect()
-      }
-    } else if (this.status === 'jump') {
-      this.jump.effect();
+      this.closestEnemy = getClosest(this, this.sensedEnemies)
+      this.bTree.step()
+    } else if (this.hurtAttack.condition()) {
+      this.hurtAttack.effect()
     }
-    if (!this.canMove) {
-      this.idle.effect()
-    }
+
+    if (this.status === 'hurt') this.hurtAttackCounter--
+
 
     let spriteData = brianSprite[this.direction][this.status]
 
@@ -269,9 +254,6 @@ class Brian extends Agent {
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurtAttack' && Math.random() < .25) this.status = 'idle'
-
-    if (this.status === 'hurt') this.hurtAttackCounter--
-    if (this.status === 'hurt' && this.hurtAttackCounter === 0 && this.hurtAttack.condition()) this.hurtAttack.effect()
 
     if (this.frame >= spriteData.length) {
       this.frame = 0

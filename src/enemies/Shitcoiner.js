@@ -1,3 +1,5 @@
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+
 import shitcoiner from '../sprites/shitcoiner'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
@@ -16,6 +18,43 @@ const items = [
   { id: 'opendime', chance: 0.01 }
 ]
 
+const climb = new Task({
+  run: agent => agent.climb.condition() ? agent.climb.effect() : FAILURE
+})
+
+const touchesEnemy = new Task({
+   // in biting distance
+  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+})
+const moveToClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+})
+
+// Sequence: runs each node until fail
+const attackEnemy = new Sequence({
+  nodes: [
+    touchesEnemy,
+    'attack'
+  ]
+})
+
+// Selector: runs until one node calls success
+const goToEnemy = new Selector({
+  nodes: [
+    touchesEnemy,
+    moveToClosestEnemy,
+    climb
+  ]
+})
+const tree = new Selector({
+  nodes: [
+    attackEnemy,
+    goToEnemy,
+    'moveRandom',
+    'idle'
+  ]
+})
+
 class Shitcoiner extends Agent {
   constructor(id, options) {
     super(id, options)
@@ -32,34 +71,27 @@ class Shitcoiner extends Agent {
   spriteData = sprites.shitcoiner
   kneels = false
 
-  idle = {
-    condition: () => !/climb|spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0,
-    effect: () => {
-      this.status = 'idle'
-      return true
-    }
-  }
+  bTree = new BehaviorTree({
+    tree,
+    blackboard: this
+  })
+
   moveLeft = {
-    condition: () => !/climb|spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.kneels = false
       this.direction = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (this.climb.condition()) {
-        return this.climb.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
+        return SUCCESS
       }
-
-      return false
+      return FAILURE
     }
   }
   moveRight = {
-    condition: () => !/climb|spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.kneels = false
       this.direction = 'right'
@@ -67,75 +99,82 @@ class Shitcoiner extends Agent {
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (this.climb.condition()) {
-        return this.climb.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
   climb = {
-    condition: () => !/spawn|hurt|fall|rekt|burning/.test(this.status) && this.vy === 0 && this.canClimb(),
+    condition: () => this.canClimb(),
     effect: () => {
       this.status = 'climb'
-      if (this.frame !== 10) return true
+      if (this.frame !== 10) return RUNNING
       moveObject(this, { x: this.direction === 'left' ? -3 : 3 , y: -6}, CTDLGAME.quadTree)
       this.status = 'idle'
-      return true
+      return SUCCESS
     }
   }
   attack = {
-    condition: ({ enemy }) => {
-      if (/spawn|hurt|fall|rekt|burning/.test(this.status) || this.vy !== 0) return false
-
-      if (!enemy || !intersects(this.getBoundingBox(), enemy.getBoundingBox())) return false // not in biting distance
-
-      return true
-    },
-    effect: ({ enemy }) => {
-      this.kneels = enemy.status === 'rekt'
+     // in biting distance
+    condition: () => this.closestEnemy && intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox()),
+    effect: () => {
+      if (this.getCenter().x > this.closestEnemy.getCenter().x) {
+        this.direction = 'left'
+      } else {
+        this.direction = 'right'
+      }
+      this.kneels = this.closestEnemy.status === 'rekt'
 
       if (this.status === 'attack' && this.frame === 3) {
-        return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
+        return this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
       }
-      if (this.status === 'attack') return true
+      if (this.status === 'attack') return SUCCESS
 
       this.frame = 0
       this.status = 'attack'
 
-      return true
+      return SUCCESS
     }
   }
 
-  actions = {
-    idle: this.idle,
-    moveLeft: this.moveLeft,
-    moveRight: this.moveRight,
-    climb: this.climb,
-    attack: this.attack,
-    moveTo: this.moveTo
-  }
-
   canClimb = () => {
-    let climbTo = this.getBoundingBox()
-    climbTo.y -= -6
-    climbTo.w += this.direction === 'right' ? 3 : -3
+    const boundingBox = this.getBoundingBox()
+    let climbOn = {
+      x: boundingBox.x + (this.direction === 'right' ? boundingBox.w : -3),
+      y: boundingBox.y + boundingBox.h - 6,
+      w: 3,
+      h: 6
+    }
+
+    let climbTo = {
+      x: boundingBox.x + (this.direction === 'right' ? 3 : -3),
+      y: boundingBox.y -6,
+      w: boundingBox.w,
+      h: boundingBox.h
+    }
 
     if (window.DRAWSENSORS) {
       constants.overlayContext.globalAlpha = .5
       constants.overlayContext.fillStyle = 'red'
+      constants.overlayContext.fillRect(climbOn.x, climbOn.y, climbOn.w, climbOn.h)
+      constants.overlayContext.globalAlpha = 1
+    }
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.globalAlpha = .5
+      constants.overlayContext.fillStyle = 'green'
       constants.overlayContext.fillRect(climbTo.x, climbTo.y, climbTo.w, climbTo.h)
       constants.overlayContext.globalAlpha = 1
     }
 
+    let ground = CTDLGAME.quadTree.query(climbOn)
+      .filter(obj => obj.isSolid)
+      .filter(obj => intersects(obj, climbOn))
     let obstacles = CTDLGAME.quadTree.query(climbTo)
-      .filter(obj => obj.isSolid && !obj.enemy)
+      .filter(obj => obj.isSolid)
       .filter(obj => intersects(obj, climbTo))
 
-    return obstacles.length === 0
+    return ground.length > 0 && obstacles.length === 0
   }
 
   onHurt = () => playSound('shitcoinerHurt')
@@ -158,38 +197,11 @@ class Shitcoiner extends Agent {
 
     this.applyPhysics()
 
-    if (this.status === 'climb') {
-      this.vy = 0
-      if (this.climb.condition()) this.climb()
+    if (!/fall|rekt|hurt|burning|spawn/.test(this.status) && this.vy === 0) {
+      this.sensedEnemies = senseCharacters(this)
+      this.closestEnemy = getClosest(this, this.sensedEnemies)
+      this.bTree.step()
     }
-
-    // AI logic
-    if (!/fall|rekt|hurt|burning|spawn/.test(this.status)) {
-      let action = { id: 'idle' }
-      const enemy = getClosest(this.getCenter(), senseCharacters(this))
-      if (enemy) {
-        if (intersects(this.getBoundingBox(), enemy.getBoundingBox())) { // biting distance
-          if (this.getCenter().x > enemy.getCenter().x) {
-            this.direction = 'left'
-          } else {
-            this.direction = 'right'
-          }
-          action.id = 'attack'
-          action.payload = { enemy }
-        } else {
-          action.id = 'moveTo'
-          action.payload = { other: enemy, distance: -1 }
-        }
-      }
-      if (this.actions[action.id].condition(action.payload)) {
-        action.success = this.actions[action.id].effect(action.payload)
-      }
-      if (!action.success && this.idle.condition()) {
-        this.idle.effect()
-      }
-    }
-
-
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.status !== 'rekt' && this.kneels) {

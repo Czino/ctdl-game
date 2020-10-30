@@ -1,8 +1,51 @@
+import { BehaviorTree, Selector, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
 import Item from './Item'
 import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects } from './geometryUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants'
+
+BehaviorTree.register('seesEnemy', new Task({
+  run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('touchesEnemy', new Task({
+  run: agent => agent.attack.condition() ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('doesNotTouchEnemy', new Task({
+  run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('idle', new Task({
+  run: agent => agent.idle.condition() ? agent.idle.effect() : FAILURE
+}))
+BehaviorTree.register('moveLeft', new Task({
+  run: agent => agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+}))
+BehaviorTree.register('moveRight', new Task({
+  run: agent => agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+}))
+BehaviorTree.register('moveRandom', new Task({
+  run: agent => agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
+}))
+BehaviorTree.register('jump', new Task({
+  run: agent => agent.jump.condition() ? agent.jump.effect() : FAILURE
+}))
+BehaviorTree.register('attack', new Task({
+  run: agent => agent.attack.condition() ? agent.attack.effect() : FAILURE
+}))
+BehaviorTree.register('moveTo', new Task({
+  run: agent => agent.moveTo.condition() ? agent.moveTo.effect() : FAILURE
+}))
+
+// Selector: runs until one node calls success
+// Sequence: runs each node until fail
+// Random: calls randomly, if running, will keep running
+const tree = new Selector({
+  nodes: [
+    'moveRandom',
+    'jump',
+    'idle'
+  ]
+})
 
 class Agent {
   constructor(id, options) {
@@ -27,83 +70,85 @@ class Agent {
   dmgs = []
   heals = []
 
+  bTree = new BehaviorTree({
+    tree,
+    blackboard: this
+  })
+
   idle = {
-    condition: () => !/jump|spawn|hurt|rekt/.test(this.status),
+    condition: () => true,
     effect: () => {
       this.status = 'idle'
-      return true
+      return SUCCESS
     }
   }
   moveLeft = {
-    condition: () => !/jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.direction = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (this.jump.condition()) {
-        return this.jump.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
   moveRight = {
-    condition: () => !/jump|spawn|hurt|rekt/.test(this.status) && this.vy === 0,
+    condition: () => true,
     effect: () => {
       this.direction = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
-        return true
-      } else if (this.jump.condition()) {
-        return this.jump.effect()
-      } else if (this.idle.condition()) {
-        return this.idle.effect()
+        return SUCCESS
       }
 
-      return false
+      return FAILURE
     }
   }
+  moveRandom = {
+    condition: () => Math.random() < .01,
+    effect: () => Math.random() < .5 ? this.moveLeft.effect() : this.moveRight.effect()
+  }
   jump = {
-    condition: () => !/spawn|hurt|rekt/.test(this.status) && this.vy === 0 && this.canJump(),
+    condition: () => this.canJump(),
     effect: () => {
+      if (this.status !== 'jump') this.frame = 0
       this.status = 'jump'
-
+      if (this.frame !== 1) return RUNNING
       this.vx = this.direction === 'right' ? 3 : -3
       this.vy = -6
 
-      return true
+      return SUCCESS
     }
   }
   attack = {
-    condition: ({ enemy }) => {
-      if (/spawn|hurt|rekt/.test(this.status) || this.vy !== 0) return false
+    condition: () => {
+      if (!this.closestEnemy) return FAILURE
 
-      if (!enemy || !intersects(this.getBoundingBox(), enemy.getBoundingBox())) return false // not in biting distance
+      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return FAILURE // not in biting distance
 
-      return true
+      return SUCCESS
     },
-    effect: ({ enemy }) => {
-
+    effect: () => {
       if (this.status === 'attack' && this.frame === 3) {
-        return enemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
+        this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
+        return SUCCESS
       }
-      if (this.status === 'attack') return true
+      if (this.status === 'attack') return SUCCESS
 
       this.frame = 0
       this.status = 'attack'
 
-      return true
+      return SUCCESS
     }
   }
   moveTo = {
-    condition: ({ other }) => !/jump|spawn|hurt|rekt|burning/.test(this.status) && this.vy === 0 && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+    condition: ({ other }) => other && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
     effect: ({ other, distance }) => {
       let action = 'idle'
 
@@ -113,30 +158,42 @@ class Agent {
         action = 'moveRight'
       }
       if (this[action].condition()) return this[action].effect()
-      return false
+      return FAILURE
     }
   }
+  lookAt = {
+    condition: object => object,
+    effect: object => {
+      this.direction = this.getCenter().x > object.getCenter().x ? 'left' : 'right'
+      return SUCCESS
+    }
+  }
+  runAwayFrom = {
+    condition: ({ other }) => other && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+    effect: ({ other }) => {
+      let action = 'idle'
 
-  actions = {
-    idle: this.idle,
-    moveLeft: this.moveLeft,
-    moveRight: this.moveRight,
-    jump: this.jump,
-    attack: this.attack,
-    moveTo: this.moveTo
+      if (this.getBoundingBox().x > other.getBoundingBox().x) {
+        action = 'moveRight'
+      } else if (other.getBoundingBox().x > this.getBoundingBox().x) {
+        action = 'moveLeft'
+      }
+      if (this[action].condition()) return this[action].effect()
+      return FAILURE
+    }
   }
 
   canJump = () => {
     let jumpTo = this.getBoundingBox()
-    jumpTo.y -= 4
-    jumpTo.x -= this.direction === 'right' ? 3 : -3
+    jumpTo.y -= 6
+    jumpTo.x += this.direction === 'right' ? 3 : -3
 
     if (window.DRAWSENSORS) {
       constants.overlayContext.fillStyle = 'red'
       constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
     }
     let obstacles = CTDLGAME.quadTree.query(jumpTo)
-      .filter(obj => obj.isSolid && !obj.enemy)
+      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
       .filter(obj => intersects(obj, jumpTo))
 
     return obstacles.length === 0
@@ -228,7 +285,7 @@ class Agent {
 
       if (hasCollided) {
         this.vy = 0
-      } else if (!/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 4) {
+      } else if (!/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
         this.status = 'fall'
       }
     }
