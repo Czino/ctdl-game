@@ -37,34 +37,34 @@ const runAwayFromClosestEnemy = new Task({
 
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
- nodes: [
-   touchesEnemy,
-   'attack'
- ]
+  nodes: [
+    touchesEnemy,
+    'attack'
+  ]
 })
 
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
- nodes: [
-   touchesEnemy,
-   moveToClosestEnemy,
-   'jump'
- ]
+  nodes: [
+    touchesEnemy,
+    moveToClosestEnemy,
+    'jump'
+  ]
 })
 const runAway = new Selector({
- nodes: [
+  nodes: [
     runAwayFromClosestEnemy,
-   'jump'
+    'jump'
  ]
 })
 const runAwayFromEnemy = new Sequence({
- nodes: [
+  nodes: [
     'seesEnemy',
     runAway
- ]
+  ]
 })
 const evilSequence = new Sequence({
- nodes: [
+  nodes: [
     isEvil,
     new Selector({
       nodes: [
@@ -74,10 +74,10 @@ const evilSequence = new Sequence({
         'idle'
       ]
     })
- ]
+  ]
 })
 const goodSequence = new Sequence({
- nodes: [
+  nodes: [
     isGood,
     new Selector({
       nodes: [
@@ -86,13 +86,13 @@ const goodSequence = new Sequence({
         'idle'
       ]
     })
- ]
+  ]
 })
 const tree = new Selector({
- nodes: [
-   evilSequence,
-   goodSequence
- ]
+  nodes: [
+    evilSequence,
+    goodSequence
+  ]
 })
 
 class Rabbit extends Agent {

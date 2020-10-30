@@ -18,6 +18,7 @@ export default function (id) {
       w: CTDLGAME.viewport.w,
       h: CTDLGAME.viewport.h
     }
+
     this.map.parallax
       .filter(tile => intersects(tile, parallaxViewport))
       .map(tile => {
@@ -26,7 +27,17 @@ export default function (id) {
           tile.tile[0], tile.tile[1], tile.w, tile.h,
           tile.x, tile.y, tile.w, tile.h
         )
+        constants.parallaxContext.globalCompositeOperation = 'multiply'
+        constants.parallaxContext.globalAlpha = .3
+        constants.parallaxContext.drawImage(
+          sprite,
+          tile.tile[0], tile.tile[1], tile.w, tile.h,
+          tile.x, tile.y, tile.w, tile.h
+          )
+        constants.parallaxContext.globalAlpha = 1
+        constants.parallaxContext.globalCompositeOperation = 'source-over'
       })
+
     this.map.bg
       .filter(tile => intersects(tile, CTDLGAME.viewport))
       .map(tile => {
