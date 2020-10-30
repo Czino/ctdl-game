@@ -1,7 +1,7 @@
 const WIDTH = 128 // viewport
 const HEIGHT = 256 // viewport
 const START = { x: 512, y: 1024 - HEIGHT, w: WIDTH, h: HEIGHT }
-const MENU = { w: WIDTH, h: 64 }
+const MENU = { x: 0, y: HEIGHT - 64, w: WIDTH, h: 64 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
 
 const skyCanvas = document.getElementById('ctdl-game-sky')

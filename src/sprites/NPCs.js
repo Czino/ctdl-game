@@ -1,5 +1,9 @@
+import { CTDLGAME } from '../gameUtils'
 import { random } from '../arrayUtils'
 import { addTextToQueue } from '../textUtils'
+import constants from '../constants'
+import Explosion from '../Explosion'
+import { playSound } from '../sounds'
 
 export default {
   'monk': {
@@ -120,20 +124,35 @@ export default {
     }
   },
   'mirco': {
-    //Vielleicht so ein Wahrsagertyp wie vom Jahrmarkt ( mit Nasenring?) der sowas sagt wie "Gib mir 10 Bitcoins und ich erzähle dir die Wahrheit" und wenn man mich bezahlt sage ich "Die Wahrheit ist, du hast 10 ausgegeben" oder so. 😅
     frames: [
-      { x: 0, y: 30, w: 11, h: 25 }
+      { x: 0, y: 55, w: 17, h: 32 }
     ],
     select: npc => {
-      addTextToQueue('Mirco:\nFor only ₿1\nI will tell you the truth', () => {
-        npc.isSelected = false
-      })
+      CTDLGAME.prompt = {
+        text: 'Mirco:\nGive me one Bitcoin and\nI will tell you the truth',
+        payload: npc,
+        ok: npc => {
+          if (CTDLGAME.inventory.sats >= 100000000) {
+            CTDLGAME.inventory.sats -= 100000000
+            addTextToQueue('Mirco:\nThe truth is, you just lost\none Bitcoin', () => {
+              npc.isSelected = false
+              npc.remove = true
+              playSound('magic')
+              CTDLGAME.objects.push(new Explosion(constants.gameContext, { x: npc.getCenter().x, y: npc.getCenter().y }))
+            })
+          } else {
+            addTextToQueue('Mirco:\nCome back when\nyou have the money', () => {
+              npc.isSelected = false
+            })
+          }
+        },
+        cancel: npc => {
+          addTextToQueue('Mirco:\nCome back when\nyou have the money', () => {
+            npc.isSelected = false
+          })
+        }
+      }
     },
-    ok: npc => {
-      addTextToQueue('Mirco:\nThe truth is, you lost ₿1', () => {
-        npc.isSelected = false
-      })
-    }
   },
   'wizardWithNoMoney': {
     frames: [

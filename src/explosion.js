@@ -27,4 +27,12 @@ export default function(context, { x, y }) {
       this.remove = true
     }
   }
+
+  this.getBoundingBox = () => ({
+    id: this.id,
+    x: this.x,
+    y: this.y,
+    w: this.w,
+    h: this.h
+  })
 }

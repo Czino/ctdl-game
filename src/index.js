@@ -25,7 +25,7 @@ import {
   cleanUpStage,
   showShop, showSettings
 } from './gameUtils'
-import { addTextToQueue, writeMenu } from './textUtils'
+import { addTextToQueue, prompt, writeMenu } from './textUtils'
 import Wizard from './npcs/Wizard'
 import { applyGravity } from './physicsUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
@@ -38,19 +38,17 @@ import Item from './Item'
 // playSound('honeyBadger')
 // setInterval(() => playSound('honeyBadger'), 3000)
 
+// TODO add forest enemies
 // TODO game freezes when climbing on trees?
 // TODO character on map multiple times
 // TODO make the monk's riddle easier?
-// TODO I think it would be handy if characters could go down and slash at the same time as opposed to only being able to crawl but not use your weapon. Thats it! Great game
 // TODO evil rabbits too hard to beat
-// TODO thinking about toggling blocks (Wish all blocks that are stacked could be toggles together, unless there is value at not doing so)
 // TODO when one char dies make the other cry?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
 // TODO add game tutorial of some sorts
 // TODO katoshi rekt, set block > freeze
 // TODO rekt characters should stay in the map they got rekt
 // TODO add option to buy Schiff's gold
-// TODO add forest enemies
 // TODO add exchange
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
 // TODO add a way to revive rekt characters
@@ -155,6 +153,7 @@ function tick() {
     CTDLGAME.frame++
     return window.requestAnimationFrame(tick)
   }
+
   if (!CTDLGAME.hodlonaut) {
     return window.requestAnimationFrame(tick)
   }
@@ -182,6 +181,15 @@ function tick() {
       showShop()
       showMenu(CTDLGAME.inventory)
       writeMenu()
+
+      if (window.SHOWBUTTONS) showButtons()
+
+      CTDLGAME.frame++
+      return window.requestAnimationFrame(tick)
+    }
+
+    if (CTDLGAME.prompt) {
+      prompt(CTDLGAME.prompt)
 
       if (window.SHOWBUTTONS) showButtons()
 

@@ -163,6 +163,32 @@ constants.BUTTONS = constants.BUTTONS.concat([
     }
   },
   {
+    action: 'yes',
+    x: 10,
+    y: constants.HEIGHT - 12,
+    w: 30,
+    h: 10,
+    active: false,
+    disable: () => {
+      constants.BUTTONS
+        .filter(button => /yes/.test(button.action))
+        .forEach(button => button.active = false)
+    }
+  },
+  {
+    action: 'nah',
+    x: constants.WIDTH - 40,
+    y: constants.HEIGHT - 12,
+    w: 30,
+    h: 10,
+    active: false,
+    disable: () => {
+      constants.BUTTONS
+        .filter(button => /nah/.test(button.action))
+        .forEach(button => button.active = false)
+    }
+  },
+  {
     action: 'music',
     x: constants.WIDTH - 3 - 9 - 11,
     y: 3,
@@ -202,6 +228,8 @@ export const loadGameButton = constants.BUTTONS.find(btn => btn.action === 'load
 export const singlePlayerButton = constants.BUTTONS.find(btn => btn.action === 'singlePlayer')
 export const multiPlayerButton = constants.BUTTONS.find(btn => btn.action === 'multiPlayer')
 export const skipCutSceneButton = constants.BUTTONS.find(btn => btn.action === 'skipCutScene')
+export const yesButton = constants.BUTTONS.find(btn => btn.action === 'yes')
+export const nahButton = constants.BUTTONS.find(btn => btn.action === 'nah')
 export const musicButton = constants.BUTTONS.find(button => button.action === 'music')
 export const soundButton = constants.BUTTONS.find(button => button.action === 'sound')
 export const duckButton = constants.BUTTONS.find(button => button.action === 'duck')
@@ -329,18 +357,35 @@ function mouseMoveHandler (e) {
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height')
     }
   }
-  let buttonHover = constants.BUTTONS.concat(CTDLGAME.eventButtons).find(button =>
-    button.active &&
-    CTDLGAME.cursor.x > button.x &&
-    CTDLGAME.cursor.x < button.x + button.w &&
-    CTDLGAME.cursor.y > button.y &&
-    CTDLGAME.cursor.y < button.y + button.h
-  )
+  let hover = {
+    x: CTDLGAME.cursor.x,
+    y: CTDLGAME.cursor.y,
+    w: 1, h: 1
+  }
+  let buttonHover = constants.BUTTONS.concat(CTDLGAME.eventButtons)
+    .find(button => button.active && intersects(hover, button))
 
-  if (buttonHover) {
+  hover = {
+    x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
+    y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
+    w: 1, h: 1
+  }
+  let blockHover = CTDLGAME.quadTree
+    ? CTDLGAME.quadTree.query(hover)
+      .filter(obj => obj.class === 'Block')
+      .find(block => intersects(hover, block.getBoundingBox()))
+    : null
+
+  if (buttonHover || blockHover) {
     addClass(document.body, 'cursor-pointer')
   } else {
     removeClass(document.body, 'cursor-pointer')
+  }
+
+  if (blockHover) {
+    if (e.buttons > 0 && buttonClicked) {
+      blockHover.isSolid = buttonClicked.isSolid
+    }
   }
 }
 
@@ -464,23 +509,6 @@ function mouseMove (e) {
     CTDLGAME.cursor = {
       x: e.layerX / canvas.clientWidth * canvas.getAttribute('width'),
       y: e.layerY / canvas.clientHeight * canvas.getAttribute('height'),
-    }
-    let hover = {
-      x: CTDLGAME.cursor.x + CTDLGAME.viewport.x,
-      y: CTDLGAME.cursor.y + CTDLGAME.viewport.y,
-      w: 1, h: 1
-    }
-    let blockHover = CTDLGAME.quadTree.query(hover)
-      .filter(obj => obj.class === 'Block')
-      .find(block => intersects(hover, block.getBoundingBox()))
-
-    if (blockHover) {
-      addClass(document.body, 'cursor-pointer')
-      if (e.buttons > 0 && buttonClicked) {
-        blockHover.isSolid = buttonClicked.isSolid
-      }
-    } else {
-      removeClass(document.body, 'cursor-pointer')
     }
   } else if (e.touches?.length > 0) {
     CTDLGAME.cursor = {
