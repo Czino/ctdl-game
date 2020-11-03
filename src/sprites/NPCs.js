@@ -230,7 +230,7 @@ export default {
           'Leprikon:\nWhere\'s the craic lad?'
         ],
         [
-          `Leprikon:\nIt's ${time}.sd`
+          `Leprikon:\nIt's ${time}.`
         ],
         [
           'Leprikon:\nDuck, if ye want to\nappreciate the shamrocks.'
