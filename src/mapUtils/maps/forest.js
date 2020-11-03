@@ -449,6 +449,13 @@ export default {
         y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 17 - tileSize
       }
     ),
+    new NPC(
+      'leprikon',
+      {
+        x: 815,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 16
+      }
+    ),
     new Bear(
       'bigBear',
       {

@@ -1,4 +1,4 @@
-import { CTDLGAME } from '../gameUtils'
+import { CTDLGAME, getTimeOfDay } from '../gameUtils'
 import { random } from '../arrayUtils'
 import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
@@ -202,26 +202,58 @@ export default {
       if (CTDLGAME.isNight) {
         npc.frame = 1
         addTextToQueue('Elon:\nMoOOooOOon', () => {
-          npc.isSelected = false
+          npc.isTouched = false
           npc.frame = 0
         })
       } else {
         addTextToQueue('Elon:\nMoon?', () => {
-          npc.isSelected = false
+          npc.isTouched = false
         })
       }
     }
   },
   'leprikon': {
     frames: [
-      // TODO add sprite of leprikon
-      { x: 0, y: 30, w: 11, h: 25 }
+      { x: 40, y: 0, w: 11, h: 16 }
     ],
+    touch: npc => {
+      let time = Math.round(getTimeOfDay() * 2) / 2
+
+      if (time % 1 === 0.5) {
+        time = `half ${Math.floor(time)}`
+      } else {
+        time = `${time} o'clock`
+      }
+
+      const thingsToSay = [
+        [
+          'Leprikon:\nWhere\'s the craic lad?'
+        ],
+        [
+          `Leprikon:\nIt's ${time}.sd`
+        ],
+        [
+          'Leprikon:\nDuck, if ye want to\nappreciate the shamrocks.'
+        ]
+      ]
+
+      let whatToSay = random(thingsToSay)
+      whatToSay.map((text, index) => {
+        if (index === whatToSay.length - 1) {
+          addTextToQueue(text, () => {
+            npc.isTouched = false
+          })
+        } else {
+          addTextToQueue(text)
+        }
+      })
+      
+    },
     select: npc => {
-      addTextToQueue('Leprikon:\nAre you looking for my pot of gold?\nWell bad luck, I don\'t need a\npot to store my wealth anymore.', () => {
+      addTextToQueue('Leprikon:\nAre ye looking for me\npot of gold?')
+      addTextToQueue('Leprikon:\nWell bad luck, oi don\'t need a\npot to store me wealth\nanymore.', () => {
         npc.isSelected = false
       })
     }
-
   }
 }

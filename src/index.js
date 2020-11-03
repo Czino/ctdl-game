@@ -299,3 +299,4 @@ window.changeMap = changeMap
 window.CTDLGAME = CTDLGAME
 window.constants = constants
 window.addTextToQueue = addTextToQueue
+window.getTimeOfDay = getTimeOfDay
