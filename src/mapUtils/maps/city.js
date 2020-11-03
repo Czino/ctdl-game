@@ -287,6 +287,13 @@ export default {
       }
     ),
     new NPC(
+      'wizardWithNoMoney',
+      {
+        x: 247,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 28
+      }
+    ),
+    new NPC(
       'mirco',
       {
         x: 287,
