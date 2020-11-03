@@ -442,6 +442,13 @@ export default {
   fg: fg.map(tile => mapTile(tile, tileSize)),
   objects,
   npcs: () => [
+    new NPC(
+      'monk',
+      {
+        x: 427,
+        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 17 - tileSize
+      }
+    ),
     new Bear(
       'bigBear',
       {
@@ -450,10 +457,10 @@ export default {
       }
     ),
     new NPC(
-      'monk',
+      'elon',
       {
-        x: 427,
-        y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 17 - tileSize
+        x: 1692,
+        y: 795
       }
     )
   ],

@@ -181,13 +181,35 @@ export default {
   },
   'elon': {
     frames: [
-      // TODO add sprite of (Elon the bull)
-      { x: 0, y: 30, w: 11, h: 25 }
+      { x: 20, y: 32, w: 28, h: 54 },
+      { x: 48, y: 32, w: 28, h: 54 }
     ],
+    static: true,
     select: npc => {
-      addTextToQueue('Elon:\nMoOOooOOon', () => {
-        npc.isSelected = false
-      })
+      if (CTDLGAME.isNight) {
+        npc.frame = 1
+        addTextToQueue('Elon:\nMoOOooOOon', () => {
+          npc.isSelected = false
+          npc.frame = 0
+        })
+      } else {
+        addTextToQueue('Elon:\nMoon?', () => {
+          npc.isSelected = false
+        })
+      }
+    },
+    touch: npc => {
+      if (CTDLGAME.isNight) {
+        npc.frame = 1
+        addTextToQueue('Elon:\nMoOOooOOon', () => {
+          npc.isSelected = false
+          npc.frame = 0
+        })
+      } else {
+        addTextToQueue('Elon:\nMoon?', () => {
+          npc.isSelected = false
+        })
+      }
     }
   },
   'leprikon': {

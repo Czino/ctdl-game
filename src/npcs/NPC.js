@@ -19,7 +19,7 @@ export default function(id, options) {
   this.update = () => {
     const data = this.spriteData.frames[this.frame]
 
-    this.frame++
+    if (!this.spriteData.static) this.frame++
     if (this.frame >= this.spriteData.frames.length) {
       this.frame = 0
     }
