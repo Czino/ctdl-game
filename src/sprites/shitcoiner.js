@@ -177,7 +177,7 @@ export default {
         h: 30
       }
     ],
-    attack-kneels: [
+    'attack-kneels': [
       {
         x: 0,
         y: 60,
@@ -449,7 +449,7 @@ export default {
         h: 30
       }
     ],
-    attack-kneels: [
+    'attack-kneels': [
       {
         x: 120 + 0,
         y: 60,
