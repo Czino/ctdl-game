@@ -43,11 +43,18 @@ import Item from './Item'
 // TODO character on map multiple times
 // TODO make the monk's riddle easier?
 // TODO evil rabbits too hard to beat
+// TODO add rabbit hole stage
+// TODO add Mt. Gox stage
+// TODO add Doge mine stage
+// TODO add moon stage
+// TODO add a citadel stage
+// TODO add "mempool" stage
 // TODO when one char dies make the other cry?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
 // TODO add game tutorial of some sorts
 // TODO katoshi rekt, set block > freeze
 // TODO rekt characters should stay in the map they got rekt
+// TODO add inventory UI
 // TODO add option to buy Schiff's gold
 // TODO add exchange
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
@@ -59,7 +66,6 @@ import Item from './Item'
 // TODO consider Chef Nomi #SushiSwap
 // TODO add more enemies and bosses
 // TODO add moon ending scene
-// TODO add "mempool"
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null

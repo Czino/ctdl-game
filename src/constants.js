@@ -142,6 +142,9 @@ export default {
     },
     rabbit: {
       forest: .005
+    },
+    goldbugs: {
+      forest: .005
     }
   }
 }

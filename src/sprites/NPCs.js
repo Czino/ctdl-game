@@ -6,7 +6,7 @@ import Explosion from '../Explosion'
 import { playSound } from '../sounds'
 
 export default {
-  'monk': {
+  monk: {
     frames: [
       { x: 0, y: 0, w: 11, h: 15 }
     ],
@@ -57,7 +57,7 @@ export default {
       })
     }
   },
-  'dave': {
+  dave: {
     frames: [
       { x: 0, y: 15, w: 11, h: 15 },
       { x: 11, y: 15, w: 11, h: 15 }
@@ -95,7 +95,7 @@ export default {
       })
     }
   },
-  'peter': {
+  peter: {
     frames: [
       { x: 0, y: 30, w: 11, h: 25 }
     ],
@@ -123,7 +123,7 @@ export default {
       })
     }
   },
-  'mirco': {
+  mirco: {
     frames: [
       { x: 0, y: 55, w: 17, h: 32 }
     ],
@@ -154,7 +154,7 @@ export default {
       }
     },
   },
-  'wizardWithNoMoney': {
+  wizardWithNoMoney: {
     frames: [
       { x: 52, y: 0, w: 13, h: 28 },
       { x: 66, y: 0, w: 13, h: 28 }
@@ -168,7 +168,7 @@ export default {
       })
     }
   },
-  'wyd_idk': {
+  wyd_idk: {
     frames: [
       { x: 20, y: 0, w: 19, h: 27 }
     ],
@@ -181,7 +181,7 @@ export default {
       })
     }
   },
-  'elon': {
+  elon: {
     frames: [
       { x: 20, y: 32, w: 28, h: 54 },
       { x: 48, y: 32, w: 28, h: 54 }
@@ -214,7 +214,7 @@ export default {
       }
     }
   },
-  'leprikon': {
+  leprikon: {
     frames: [
       { x: 40, y: 0, w: 11, h: 16 }
     ],

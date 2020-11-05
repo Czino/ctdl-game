@@ -1,6 +1,7 @@
 import constants from '../constants'
 import Shitcoiner from '../enemies/Shitcoiner'
 import Rabbit from '../enemies/Rabbit'
+import Goldbugs from '../enemies/Goldbugs'
 import { CTDLGAME } from './CTDLGAME'
 import { intersects } from '../geometryUtils'
 
@@ -36,7 +37,7 @@ export const spawnEnemies = () => {
       }
     )
 
-    // spawn extra high and test down until ground is found
+    // spawn low and test down until void is found
     let spawned = false
     do {
       let hasCollided = CTDLGAME.quadTree.query(rabbit.getBoundingBox())
@@ -50,5 +51,30 @@ export const spawnEnemies = () => {
         rabbit.y -= 1
       }
     } while (!spawned && rabbit.y > 0)
+  }
+  if (Math.random() < constants.SPAWNRATES.goldbugs[CTDLGAME.world.id]) {
+    let goldbugs = new Goldbugs(
+      'goldbugs-' + Math.random(),
+      {
+        x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
+        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
+        status: 'idle'
+      }
+    )
+
+    // spawn low and test down until void is found
+    let spawned = false
+    do {
+      let hasCollided = CTDLGAME.quadTree.query(goldbugs.getBoundingBox())
+        .filter(point => point.isSolid && point.id !== goldbugs.id)
+        .some(point => intersects(goldbugs.getBoundingBox(), point.getBoundingBox()))
+
+      if (!hasCollided) {
+        spawned = true
+        CTDLGAME.objects.push(goldbugs)
+      } else {
+        goldbugs.y -= 1
+      }
+    } while (!spawned && goldbugs.y > 0)
   }
 }
