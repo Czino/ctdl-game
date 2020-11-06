@@ -20,8 +20,10 @@ import stairs from '../sprites/stairs.png'
 import city from '../sprites/city.png'
 import forest from '../sprites/forest.png'
 import rabbitHole from '../sprites/rabbitHole.png'
+import endOfTheRabbitHole from '../sprites/endOfTheRabbitHole.png'
 import inventoryBlock from '../sprites/inventory-block.png'
 import NPCs from '../sprites/NPCs.png'
+import dancers from '../sprites/dancers.png'
 
 // TODO can I somehow dynamically load assets when needed?
 export const assets = {
@@ -46,6 +48,8 @@ export const assets = {
   city,
   forest,
   rabbitHole,
+  endOfTheRabbitHole,
   inventoryBlock,
-  NPCs
+  NPCs,
+  dancers
 }

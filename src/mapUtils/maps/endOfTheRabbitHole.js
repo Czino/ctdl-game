@@ -59,12 +59,9 @@ const fillArea = (tiles, w, h) => {
   return area
 }
 
-const groundUp = [
-  [ ],
-  [ t00, t00, t00, t00, t00, t00, t00, t01, t03, t12, t03, t13 ],
-  [ t00, t00, t01, t03, t12, t03, t13, t05, t04, t04, t04, t04 ],
-  [ t03, t13, t05, t04, t04, t04, t04, t06, t10, t10, t10, t10 ],
-  [ t04, t04, t06, t10, t10, t10, t10, t10, t10, t10, t10, t10 ]
+const ground = [
+  [ t01, t21, t31, t11, t21, t31, t01, t21, t31, t11, t01, t01 ],
+  [ t14, t14, t14, t14, t14, t14, t14, t14, t14, t14, t14, t14 ]
 ]
 
 const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
@@ -80,7 +77,8 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-fg = fg.concat(parsePattern(groundUp, 68, 8))
+fg = fg.concat(parsePattern(ground, 64, 10))
+fg = fg.concat(parsePattern(ground, 76, 10))
 
 fg.forEach(tile => {
   if (ramps.indexOf(tile.tile.toString()) !== -1) {
@@ -108,32 +106,55 @@ fg.forEach(tile => {
   }
 })
 
-
-const gotToCity = new GameObject('gotToCity', {
-  x: 1 * tileSize,
-  y: 116 * tileSize,
-  w: tileSize,
-  h: 3 * tileSize,
-})
-
-gotToCity.touchEvent = () => {
-  changeMap('city', 'forest')
-}
-events.push(gotToCity)
-
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    forest: { x: 552, y: 0},
-    endOfTheRabbitHole: { x: 552, y: 0}
+    rabbitHole: { x: 552, y: 0}
   },
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),
   objects,
-  npcs: () => [],
+  npcs: () => [
+    new NPC(
+      'dancer1',
+      {
+        x: 71 * tileSize,
+        y: 8 * tileSize
+      }
+    ),
+    new NPC(
+      'dancer2',
+      {
+        x: 67 * tileSize,
+        y: 8 * tileSize
+      }
+    ),
+    new NPC(
+      'dancer3',
+      {
+        x: 72 * tileSize,
+        y: 8 * tileSize
+      }
+    ),
+    new NPC(
+      'dancer4',
+      {
+        x: 69 * tileSize,
+        y: 8 * tileSize
+      }
+    ),
+    new NPC(
+      'dancer5',
+      {
+        x: 75 * tileSize,
+        y: 8 * tileSize
+      }
+    )
+  ],
   events,
-  track: 'darkIsBetter',
+  track: 'endOfTheRabbitHole',
   bgColor: () => '#270b08',
+  haze: () => CTDLGAME.frame % 32 >= 16 ? '#c8006e' : '#cd8812',
   spawnRates: {}
 }

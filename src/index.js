@@ -225,8 +225,14 @@ function tick() {
       sun.update()
       moon.update()
     } else if (CTDLGAME.world.map.bgColor) {
-      constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor
+      constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor()
       constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    }
+    if (CTDLGAME.world.map.haze) {
+      constants.menuContext.globalAlpha = .2
+      constants.menuContext.fillStyle = CTDLGAME.world.map.haze()
+      constants.menuContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+      constants.menuContext.globalAlpha = 1
     }
     CTDLGAME.world.update()
 

@@ -10,6 +10,7 @@ import bear from './tracks/bear'
 import bullsVsBears from './tracks/bulls-vs-bears'
 import aNewHope from './tracks/a-new-hope'
 import darkIsBetter from './tracks/dark-is-better'
+import endOfTheRabbitHole from './tracks/end-of-the-rabbit-hole'
 
 
 // TODO add "Nomen a solempnibus II" ?
@@ -65,8 +66,10 @@ const pulse2Synth = new Synth(pulseOptions)
 const squareSynth = new Synth(squareOptions)
 const triangleSynth = new Synth(triangleOptions)
 const sineSynth = new Synth(sineOptions)
+const drumSynth = new Synth(sineOptions)
 const noiseSynth = new NoiseSynth()
 const brownNoiseSynth = new NoiseSynth()
+drumSynth.portamento = .1
 
 const synths = [
   pulseSynth,
@@ -74,6 +77,7 @@ const synths = [
   squareSynth,
   triangleSynth,
   sineSynth,
+  drumSynth,
   noiseSynth,
   brownNoiseSynth
 ]
@@ -190,6 +194,7 @@ const songs = {
       reverbs: [ sineSynth, pulseSynth, pulse2Synth ],
       loop: true
     },
+    // Vlad Costea - Darker is Better (Czino 8-bit remix)
     darkIsBetter: {
       id: 'darkIsBetter',
       length: 104,
@@ -201,6 +206,20 @@ const songs = {
       pulse2: darkIsBetter.pulse2,
       sine: darkIsBetter.sine,
       delays: [ sineSynth, squareSynth, pulseSynth, pulse2Synth ],
+      loop: true
+    },
+    endOfTheRabbitHole: {
+      id: 'endOfTheRabbitHole',
+      length: 7.559,
+      bpm: 127,
+      delay: 0.25,
+      drum: endOfTheRabbitHole.drum,
+      brownNoise: endOfTheRabbitHole.noise,
+      triangle: endOfTheRabbitHole.pulse1,
+      square: endOfTheRabbitHole.square,
+      pulse: endOfTheRabbitHole.triangle,
+      sine: endOfTheRabbitHole.sine,
+      delays: [ sineSynth ],
       loop: true
     },
     // Czino - I'm sad
@@ -223,6 +242,7 @@ let trianglePart = new Part()
 let sinePart = new Part()
 let noisePart = new Part()
 let brownNoisePart = new Part()
+let drumPart = new Part()
 
 export const initSoundtrack = id => {
   if (song?.deinit) song.deinit()
@@ -300,6 +320,13 @@ export const initSoundtrack = id => {
       brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
     }, parseNotes(song.brownNoise))
   }
+  if (song.drum) {
+    drumPart = new Part((time, note) => {
+      drumSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+      drumSynth.triggerAttackRelease('D1', note.duration, time + 0.01, note.velocity)
+      brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
+    }, parseNotes(song.drum))
+  }
 
   if (enabled) startMusic()
 }
@@ -326,6 +353,7 @@ export const startMusic = async () => {
   if (song.sine) sinePart.start(0)
   if (song.noise) noisePart.start(0)
   if (song.brownNoise) brownNoisePart.start(0)
+  if (song.drum) drumPart.start(0)
 }
 
 export const stopMusic = () => {
@@ -339,6 +367,7 @@ export const stopMusic = () => {
   if (sinePart) sinePart.stop(0)
   if (noisePart) noisePart.stop(0)
   if (brownNoisePart) brownNoisePart.stop(0)
+  if (drumPart) drumPart.stop(0)
 }
 
 export const changeVolume = value => {

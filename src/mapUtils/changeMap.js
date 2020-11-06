@@ -1,7 +1,5 @@
-import constants from '../constants'
 import { loadWorldObjects, saveGame, updateViewport, gameObjects } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
-import { makeBoundary } from '../geometryUtils'
 import World from '../World'
 import { initSoundtrack } from '../soundtrack'
 
@@ -26,7 +24,7 @@ export const changeMap = async (id, from) => {
 
   setWorld(newWorld)
 
-  if (objects) {
+  if (objects && objects.length > 0) {
     objects
       .filter(object => gameObjects[object.class])
       .map(object => new gameObjects[object.class](object.id, object))
