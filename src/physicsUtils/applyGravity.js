@@ -9,10 +9,10 @@ import { intersects } from '../geometryUtils'
 export const applyGravity = () => {
     if (CTDLGAME.lockCharacters) return
     const extendedViewport = {
-      x: CTDLGAME.viewportx - 8,
-      y: CTDLGAME.viewport.y,
-      w: CTDLGAME.viewport.w + 16,
-      h: CTDLGAME.viewport.h
+      x: CTDLGAME.viewport.x - 16,
+      y: CTDLGAME.viewport.y - 128,
+      w: CTDLGAME.viewport.w + 32,
+      h: CTDLGAME.viewport.h + 256
     }
     CTDLGAME.objects
       .map(obj => {
@@ -24,6 +24,6 @@ export const applyGravity = () => {
       .map(obj => obj.vy += constants.GRAVITY)
 
     // workaround for worst case
-    if (CTDLGAME.hodlonaut.y > 1024) CTDLGAME.hodlonaut.y = 800
-    if (CTDLGAME.katoshi.y > 1024) CTDLGAME.katoshi.y = 800
+    if (CTDLGAME.hodlonaut.y > 1150) CTDLGAME.hodlonaut.y = 800
+    if (CTDLGAME.katoshi.y > 1150) CTDLGAME.katoshi.y = 800
 }

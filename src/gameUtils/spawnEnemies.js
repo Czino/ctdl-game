@@ -10,7 +10,7 @@ import { intersects } from '../geometryUtils'
  * @returns {void}
  */
 export const spawnEnemies = () => {
-  if (CTDLGAME.isNight && Math.random() < constants.SPAWNRATES.shitcoiner[CTDLGAME.world.id]) {
+  if (CTDLGAME.isNight && Math.random() < CTDLGAME.world.map.spawnRates.shitcoiner) {
     // TODO maybe spawn shitcoiners like rabbits
     // TODO maybe consider iterating through worldObects
     let shitcoiner = new Shitcoiner(
@@ -27,7 +27,7 @@ export const spawnEnemies = () => {
       .some(point => intersects(shitcoiner.getBoundingBox(), point.getBoundingBox()))
     if (!hasCollided) CTDLGAME.objects.push(shitcoiner)
   }
-  if (Math.random() < constants.SPAWNRATES.rabbit[CTDLGAME.world.id]) {
+  if (Math.random() < CTDLGAME.world.map.spawnRates.rabbit) {
     let rabbit = new Rabbit(
       'rabbit-' + Math.random(),
       {
@@ -52,7 +52,7 @@ export const spawnEnemies = () => {
       }
     } while (!spawned && rabbit.y > 0)
   }
-  if (Math.random() < constants.SPAWNRATES.goldbugs[CTDLGAME.world.id]) {
+  if (Math.random() < CTDLGAME.world.map.spawnRates.goldbugs) {
     let goldbugs = new Goldbugs(
       'goldbugs-' + Math.random(),
       {

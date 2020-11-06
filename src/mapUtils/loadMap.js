@@ -1,9 +1,11 @@
 import city from './maps/city'
 import forest from './maps/forest'
+import rabbitHole from './maps/rabbitHole'
 
 export const maps = {
   city,
-  forest
+  forest,
+  rabbitHole
 }
 
 /**

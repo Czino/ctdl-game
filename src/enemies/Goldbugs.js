@@ -119,7 +119,6 @@ class Goldbugs extends Agent {
   }
 
   onHurt = () => playSound('goldbugsHurt')
-  onDie = () => playSound('goldbugsHurt')
 
   update = () => {
     const sprite = CTDLGAME.assets.goldbugs
@@ -144,6 +143,7 @@ class Goldbugs extends Agent {
       this.bTree.step()
     }
 
+    if (this.status === 'fall') this.status = 'idle'
     let spriteData = this.spriteData[this.direction][this.status]
 
     this.frame++

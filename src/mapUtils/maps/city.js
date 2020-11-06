@@ -11,6 +11,9 @@ import { addTextToQueue, setTextQueue } from '../../textUtils'
 import { makeBoundary } from '../../geometryUtils'
 import Ramp from '../../Ramp'
 
+const worldWidth = 125
+const worldHeight = 128
+
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
   t10 = [1, 0], t11 = [1, 1], t12 = [1, 2], t13 = [1, 3], t14 = [1, 4], t15 = [1, 5], t16 = [1, 6], t17 = [1, 7], t18 = [1, 8], t19 = [1, 9], t110 = [1, 10],
@@ -165,6 +168,21 @@ const stairsDown = [
   [ t00, t51, t42 ]
 ]
 
+
+const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
+  objects.push(makeBoundary({
+    x: x * tileSize,
+    y: y * tileSize,
+    w: w * tileSize,
+    h: h * tileSize,
+  }))
+}
+
+makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
+makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
+makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
+makeConsolidatedBoundary(0, worldHeight - 8.75, worldWidth, 1, tileSize)
+
 // create random underground texture
 const undergroundTiles = [
   t62, t71, t72, t72, t72, t72, t72, t72, t72
@@ -269,7 +287,7 @@ fg.forEach(tile => {
 })
 
 export default {
-  world: { w: 1000, h: 1024 },
+  world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     newGame: { x: 60, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32 },
     forest: { x: 940, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 32 }
@@ -310,5 +328,9 @@ export default {
   ],
   events,
   track: 'imperayritzDeLaCiutatIoyosa',
-  canSetBlocks: true
+  canSetBlocks: true,
+  overworld: true,
+  spawnRates: {
+    shitcoiner: .01
+  }
 }

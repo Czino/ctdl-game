@@ -8,7 +8,10 @@ import Ramp from '../../Ramp'
 import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../enemies/Bear'
 import NPC from '../../npcs/NPC'
+import { CTDLGAME } from '../../gameUtils'
 
+const worldWidth = 217
+const worldHeight = 128
 const tileSize = 8
 const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 = [0, 5], t06 = [0, 6], t07 = [0, 7], t08 = [0, 8], t09 = [0, 9], t010 = [0, 10],
   t10 = [1, 0], t11 = [1, 1], t12 = [1, 2], t13 = [1, 3], t14 = [1, 4], t15 = [1, 5], t16 = [1, 6], t17 = [1, 7], t18 = [1, 8], t19 = [1, 9], t110 = [1, 10],
@@ -65,24 +68,6 @@ const bgStart = [
 
 const bgTopTiles = [ t01, t11, t12 ]
 const bgTiles = [ t20, t21, t22, t23, t24, t44, t45, t64, t65 ]
-const randomBg = () => {
-  let rand = []
-
-  let topRow = []
-  for (let j = 32; j > 0; j--) {
-    topRow.push(random(bgTopTiles))
-  }
-  rand.push(topRow)
-
-  for (let i = bgStart.length - 1; i > 0; i--) {
-    let row = []
-    for (let j = 32; j > 0; j--) {
-      row.push(random(bgTiles))
-    }
-    rand.push(row)
-  }
-  return rand
-}
 
 const fillArea = (tiles, w, h) => {
   let area = []
@@ -131,11 +116,27 @@ const groundDownTwistBg = [
 
 const groundDownTwist = [
   [ t01, t12 ],
-  [ t15, t20, t02, t01, t03, t12, t00, t00, t00, t00, t00, t03, t12, t01 ],
-  [ t00, t20, t21, t21, t23, t24, t02, t00, t00, t03, t13, t05, t04, t04 ],
-  [ t00, t37, t37, t27, t37, t28, t38, t03, t13, t05, t04, t06, t10, t10 ],
-  [ t00, t00, t00, t03, t13, t05, t04, t04, t04, t06, t10, t10, t10, t10 ],
-  [ t00, t03, t13, t05, t04, t06, t10, t10, t10, t10, t10, t10, t10, t10 ]
+  [ t15, t20, t02, t01, t03, t12, t00, t00, t00, t00, t00 ],
+  [ t00, t20, t21, t21, t23, t24, t02, t00, t00, t03, t13 ],
+  [ t00, t37, t37, t27, t37, t28, t38, t03, t13, t05, t04 ],
+  [ t00, t00, t00, t03, t13, t05, t04, t04, t04, t06, t10 ],
+  [ t00, t03, t13, t05, t04, t06, t10, t10, t10, t10, t10 ]
+]
+const groundDownTwistAppend = [
+  [ ],
+  [ t03, t12, t01 ],
+  [ t05, t04, t04 ],
+  [ t06, t10, t10 ],
+  [ t10, t10, t10 ],
+  [ t10, t10, t10 ]
+]
+
+const rabbitHole = [
+  [ t05 ],
+  [ t58 ],
+  [ t68 ],
+  [ t68 ],
+  [ t58 ]
 ]
 
 const log = [
@@ -256,12 +257,18 @@ const twig = [
 ]
 
 // create random underground texture
-for (let i = -30; i < 128; i++) {
+for (let i = -30; i < 68; i++) {
+  bg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
+}
+for (let i = 72; i < 128; i++) {
   bg.unshift({ x: i, y: 119, tile: random(undergroundTiles) })
 }
 
 // create random grass
-for (let i = 0; i < 128; i++) {
+for (let i = 0; i < 68; i++) {
+  fg.unshift({ x: i, y: 118, tile: random(grassTiles) })
+}
+for (let i = 72; i < 128; i++) {
   fg.unshift({ x: i, y: 118, tile: random(grassTiles) })
 }
 
@@ -277,6 +284,10 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
     h: h * tileSize,
   }))
 }
+
+makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
+makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
+makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
 parallax = parallax.concat(parsePattern(bigTree1, 2, 106))
 parallax = parallax.concat(parsePattern(bigTree2, 14, 106))
@@ -302,9 +313,11 @@ fg = fg.concat(parsePattern(fillArea([t06], 1, 1), 51, 115))
 fg = fg.concat(parsePattern(fillArea([t06], 1, 1), 51, 115))
 fg = fg.concat(parsePattern(fillArea(undergroundTiles, 6, 1), 52, 114))
 bg = bg.concat(parsePattern(fillArea([t10], 13, 5), 51, 115))
-fg = fg.concat(parsePattern(fillArea([t10], 11, 1), 61, 119))
+fg = fg.concat(parsePattern(fillArea([t10], 6, 1), 61, 119))
+bg = bg.concat(parsePattern(fillArea([t10], 6, 1), 66, 119))
 bg = bg.concat(parsePattern(groundDownTwistBg, 58, 113))
 fg = fg.concat(parsePattern(groundDownTwist, 58, 113))
+bg = bg.concat(parsePattern(groundDownTwistAppend, 69, 113))
 fg = fg.concat(parsePattern(groundDown, 72, 113))
 
 fg = fg.concat(parsePattern(groundUp, 128, 115))
@@ -432,8 +445,38 @@ gotToCity.touchEvent = () => {
 }
 events.push(gotToCity)
 
+const rabbitHoleStart = new GameObject('rabbitHoleStart', {
+  x: 69 * tileSize,
+  y: 115 * tileSize,
+  w: tileSize,
+  h: tileSize,
+})
+
+let rabbitHoleStarted = false
+rabbitHoleStart.touchEvent = () => {
+  if (rabbitHoleStarted) return
+
+  rabbitHoleStarted = true
+  CTDLGAME.world.map.bg = CTDLGAME.world.map.bg.concat(
+    parsePattern(rabbitHole, 69, 115).map(tile => mapTile(tile, tileSize))
+  )
+}
+events.push(rabbitHoleStart)
+
+const goToRabbitHole = new GameObject('goToRabbitHole', {
+  x: 69 * tileSize,
+  y: 126 * tileSize,
+  w: 3 * tileSize,
+  h: 2 * tileSize,
+})
+
+goToRabbitHole.touchEvent = () => {
+  changeMap('rabbitHole', 'forest')
+}
+events.push(goToRabbitHole)
+
 export default {
-  world: { w: 1736, h: 1024 },
+  world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     city: { x: 30, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 34}
   },
@@ -472,5 +515,10 @@ export default {
     )
   ],
   events,
-  track: 'santaMaria'
+  track: 'santaMaria',
+  overworld: true,
+  spawnRates: {
+    rabbit: .005,
+    goldbugs: .005
+  }
 }

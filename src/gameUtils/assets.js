@@ -19,6 +19,7 @@ import block from '../sprites/block.png'
 import stairs from '../sprites/stairs.png'
 import city from '../sprites/city.png'
 import forest from '../sprites/forest.png'
+import rabbitHole from '../sprites/rabbitHole.png'
 import inventoryBlock from '../sprites/inventory-block.png'
 import NPCs from '../sprites/NPCs.png'
 
@@ -44,6 +45,7 @@ export const assets = {
   stairs,
   city,
   forest,
+  rabbitHole,
   inventoryBlock,
   NPCs
 }

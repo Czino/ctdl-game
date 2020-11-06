@@ -221,8 +221,13 @@ function tick() {
       CTDLGAME.wizardCountdown--
     }
 
-    sun.update()
-    moon.update()
+    if (CTDLGAME.world.map.overworld) {
+      sun.update()
+      moon.update()
+    } else if (CTDLGAME.world.map.bgColor) {
+      constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor
+      constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    }
     CTDLGAME.world.update()
 
     applyGravity()
