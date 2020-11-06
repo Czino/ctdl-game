@@ -55,7 +55,7 @@ noise2Synth.chain(crusher, gain)
 let enabled = true
 
 const sounds = {
-  'select': () => {
+  select: () => {
     const present = now()
     const dur = .1
 
@@ -69,7 +69,7 @@ const sounds = {
     sineSynth.setNote('A#4', present + dur / 3, .4)
     sineSynth.triggerRelease(present + dur)
   },
-  'playerHurt': () => {
+  playerHurt: () => {
     const present = now()
     const dur = .1
 
@@ -97,7 +97,7 @@ const sounds = {
     squareSynth.setNote('G3', present + dur / 2 + dur / 3, .2)
     squareSynth.triggerRelease(present + dur / 2 + dur)
   },
-  'item': () => {
+  item: () => {
     const present = now()
     const dur = .05
 
@@ -111,7 +111,7 @@ const sounds = {
     sineSynth.setNote('G5', present + dur / 2, .2)
     sineSynth.triggerRelease(present + dur)
   },
-  'honeyBadger': () => {
+  honeyBadger: () => {
     const dur = .08
     const notes = ['A4', 'C5', 'E5', 'A5', 'G6']
     let time = now()
@@ -130,7 +130,7 @@ const sounds = {
     sineSynth.triggerRelease(time)
 
   },
-  'blockFound': () => {
+  blockFound: () => {
     const present = now()
     const dur = .05
 
@@ -143,7 +143,7 @@ const sounds = {
     sineSynth.triggerAttack('A#5', present, .2)
     sineSynth.triggerRelease(present + dur)
   },
-  'block': () => {
+  block: () => {
     const present = now()
     const dur = .05
 
@@ -168,7 +168,7 @@ const sounds = {
     squareSynth.triggerAttack('B3', present + dur / 2, .02)
     squareSynth.triggerRelease(present + dur / 2 + dur)
   },
-  'lightningTorch': () => {
+  lightningTorch: () => {
     const present = now()
     const dur = .4
 
@@ -182,7 +182,7 @@ const sounds = {
     noiseSynth.triggerAttack(present, .02)
     noiseSynth.triggerRelease(present + dur)
   },
-  'sword': () => {
+  sword: () => {
     const present = now()
     const dur = .05
 
@@ -199,7 +199,7 @@ const sounds = {
     noiseSynth.triggerAttack(present, .1)
     noiseSynth.triggerRelease(present + dur)
   },
-  'woosh': () => {
+  woosh: () => {
     const present = now()
     const dur = .05
 
@@ -217,7 +217,7 @@ const sounds = {
     noise2Synth.triggerAttack(present + 0.001, .1)
     noise2Synth.triggerRelease(present + dur)
   },
-  'shitcoinerHurt': () => {
+  shitcoinerHurt: () => {
     const present = now()
     const dur = .05
 
@@ -245,7 +245,7 @@ const sounds = {
     pulseSynth.setNote('G1', present + dur / 2, .05)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
-  'rabbitHurt': () => {
+  rabbitHurt: () => {
     const present = now()
     const dur = .05
 
@@ -273,7 +273,35 @@ const sounds = {
     pulseSynth.setNote('G6', present + dur / 2 * 1.5, .05)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
-  'bearGrowl': () => {
+  goldbugsHurt: () => {
+    const present = now()
+    const dur = .12
+
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+    noise2Synth.noise.type = 'white'
+
+    noise2Synth.envelope.attack = .005
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .001)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    squareSynth.portamento = dur / 3
+    pulseSynth.envelope.attack = dur
+    pulseSynth.envelope.decay = .1
+    pulseSynth.envelope.sustain = .3
+    pulseSynth.envelope.release = .07
+
+    pulseSynth.triggerAttack('A#8', present, .001)
+    pulseSynth.setNote('G7', present + dur / 2 * 1.5, .005)
+    pulseSynth.triggerRelease(present + dur / 2 + dur)
+  },
+  bearGrowl: () => {
     const present = now()
     const dur = .3
 
@@ -314,7 +342,7 @@ const sounds = {
     triangleSynth.triggerAttack('F#0', present + dur * 0.75, .8)
     triangleSynth.triggerRelease(present + dur)
   },
-  'bearHurt': () => {
+  bearHurt: () => {
     const present = now()
     const dur = .3
 
@@ -339,7 +367,7 @@ const sounds = {
     triangleSynth.triggerAttack('F1', present, .3)
     triangleSynth.triggerRelease(present + dur)
   },
-  'drop': () => {
+  drop: () => {
     const present = now()
     const dur = .05
 
@@ -364,7 +392,7 @@ const sounds = {
     triangleSynth.triggerAttack('A#0', present + dur / 2, .6)
     triangleSynth.triggerRelease(present + dur / 2 + dur)
   },
-  'magic': () => {
+  magic: () => {
     const noises = ['brown', 'brown', 'pink', 'white', 'brown', 'brown']
     const dur = .15
     let time = now()
@@ -389,7 +417,7 @@ const sounds = {
     noiseSynth.triggerRelease(time + dur)
     triangleSynth.triggerRelease(time + dur)
   },
-  'burn': () => {
+  burn: () => {
     const present = now()
     const dur = .3
 

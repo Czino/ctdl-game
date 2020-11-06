@@ -35,8 +35,8 @@ import { showButtons } from './debugUtils'
 import Item from './Item'
 
 // import { playSound } from './sounds'
-// playSound('honeyBadger')
-// setInterval(() => playSound('honeyBadger'), 3000)
+// playSound('goldbugsHurt')
+// setInterval(() => playSound('goldbugsHurt'), 1000)
 
 // TODO add forest enemies
 // TODO game freezes when climbing on trees?
