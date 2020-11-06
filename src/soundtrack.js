@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb } from 'tone'
+import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb, PingPongDelay } from 'tone'
 
 import mariamMatremVirginem from './tracks/mariam-matrem-virginem'
 import imperayritzDeLaCiutatIoyosa from './tracks/imperayritz-de-la-ciutat-ioyosa'
@@ -9,6 +9,7 @@ import santaMaria from './tracks/santa-maria'
 import bear from './tracks/bear'
 import bullsVsBears from './tracks/bulls-vs-bears'
 import aNewHope from './tracks/a-new-hope'
+import darkIsBetter from './tracks/dark-is-better'
 
 
 // TODO add "Nomen a solempnibus II" ?
@@ -18,6 +19,8 @@ const reverb = new Reverb({
   decay: 17,
   wet: .5,
 })
+let delay
+
 let autoFilter
 
 const pulseOptions = {
@@ -187,6 +190,19 @@ const songs = {
       reverbs: [ sineSynth, pulseSynth, pulse2Synth ],
       loop: true
     },
+    darkIsBetter: {
+      id: 'darkIsBetter',
+      length: 104,
+      bpm: 120,
+      delay: 0.255,
+      delayFeedback: .8,
+      square: darkIsBetter.pulse1,
+      pulse: darkIsBetter.pulse1,
+      pulse2: darkIsBetter.pulse2,
+      sine: darkIsBetter.sine,
+      delays: [ sineSynth, squareSynth, pulseSynth, pulse2Synth ],
+      loop: true
+    },
     // Czino - I'm sad
     gameOver: {
       id: 'gameOver',
@@ -227,6 +243,15 @@ export const initSoundtrack = id => {
     song.reverbs.map(synth => {
       synth.disconnect()
       synth.chain(reverb, gain)
+    })
+  }
+  if (song.delays) {
+    delay = new PingPongDelay(
+      60 / song.bpm * song.delay,
+      song.delayFeedback
+    )
+    song.delays.map(synth => {
+      synth.chain(delay, gain)
     })
   }
 

@@ -133,7 +133,7 @@ export default {
   npcs: () => [
   ],
   events,
-  track: 'santaMaria',
+  track: 'darkIsBetter',
   bgColor: '#270b08',
   spawnRates: {}
 }
