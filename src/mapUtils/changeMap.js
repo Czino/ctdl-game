@@ -42,10 +42,10 @@ export const changeMap = async (id, from) => {
     .filter(obj => obj.applyGravity)
     .map(obj => obj.vy = -2)
 
-  CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 5
+  CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 3
   CTDLGAME.hodlonaut.y = newWorld.map.start[from].y
   CTDLGAME.hodlonaut.protection = 24
-  CTDLGAME.katoshi.x = newWorld.map.start[from].x + 5
+  CTDLGAME.katoshi.x = newWorld.map.start[from].x + 3
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
   CTDLGAME.katoshi.protection = 24
 

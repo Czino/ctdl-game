@@ -15,6 +15,7 @@ const collidesWithHeightMap = (anchor, point) => {
       ...anchor,
       x: anchor.x + Math.round(anchor.w / i)
     }
+
     if (intersects(anchorPoint, point.getBoundingBox())) {
       const touchPoint = {
         x: anchorPoint.x - point.x,

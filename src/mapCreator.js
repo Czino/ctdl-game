@@ -7,6 +7,7 @@ const $menu = document.getElementById('ctdl-game-menu')
 const $parallax = document.getElementById('ctdl-game-parallax')
 const $bg = document.getElementById('ctdl-game-bg')
 const $fg = document.getElementById('ctdl-game-fg')
+const $info = document.getElementById('ctdl-game-info')
 const $tileSet = document.getElementById('ctdl-game-tileset')
 const $layer = document.querySelectorAll('input[name=layer]')
 const $map = document.getElementById('ctdl-game-map')
@@ -226,6 +227,7 @@ function mouseMoveHandler (e) {
     cursor.x = Math.floor(cursor.x / 8) * 8
     cursor.y = Math.floor(cursor.y / 8) * 8
   }
+  $info.innerText = `${cursor.x / 8}/${cursor.y / 8} // ${cursor.x}/${cursor.y}`
 }
 
 
