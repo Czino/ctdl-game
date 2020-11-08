@@ -6,6 +6,10 @@ module.exports = {
     https: true,
     host: '0.0.0.0'
   },
+  entry: {
+    game: './src/game.js',
+    mapCreator: './src/mapCreator.js'
+  },
   module: {
     rules: [
       {
@@ -19,17 +23,28 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: ['babel-loader']
-      }
+      },
+      // {
+      //   test: /\.html$/,
+      //   exclude: /node_modules/,
+      //   use: ['html-loader']
+      // }
     ]
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
-  },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'all',
+  //   },
+  // },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'index.html')
-    })
+      chunks: ['game'],
+      template: './src/game.html'
+    }),
+    // new HtmlWebpackPlugin({
+    //   chunks: ['mapCreator'],
+    //   excludeChunks: ['game'],
+    //   template: './src/mapCreator.html'
+    // })
   ]
 };

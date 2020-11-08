@@ -1,6 +1,6 @@
 import constants from '../constants'
 import { QuadTree, Boundary } from '../Quadtree'
-import { assets} from './assets'
+import { assets } from './assets'
 
 export const CTDLGAME = {
   cursor: {x: 0, y: 0},

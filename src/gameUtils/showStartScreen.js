@@ -30,8 +30,8 @@ export const showStartScreen = () => {
   if (logoOffsetBottom > 0) logoOffsetBottom -= 4
   if (logoOffsetBottom === 4) {
     if (CTDLGAME.options.sound) playSound('drop')
-    // setTimeout(() => initSoundtrack('mariamMatremVirginem'), 1000)
-    setTimeout(() => constants.BUTTONS.find(btn => btn.action === 'loadGame').onclick(), 100)
+    setTimeout(() => initSoundtrack('mariamMatremVirginem'), 1000)
+    // setTimeout(() => constants.BUTTONS.find(btn => btn.action === 'loadGame').onclick(), 100)
   }
   constants.overlayContext.drawImage(
     CTDLGAME.assets.logo,

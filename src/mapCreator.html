@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CTDLGAME</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'/>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      background-color: #212121;
+      color: #AAA;
+      overflow: hidden;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    .cursor-crosshair {
+      cursor: crosshair;
+    }
+    .cursor-pointer {
+      cursor: pointer;
+    }
+    .pos-rel {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+    #ctdl-game-sky {
+      background-color: #212121;
+      position: absolute;
+    }
+    #ctdl-game-sky {
+      background-color: #212121;
+      position: absolute;
+    }
+    #ctdl-game-parallax, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay {
+      position: absolute;
+      z-index: 1;
+      border: 1px solid #AAA;
+    }
+    #ctdl-game-sky, #ctdl-game-parallax, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -o-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: pixelated;
+      image-rendering: optimize-contrast;
+    }
+    #ctdl-game-helper {
+      /* opacity: 0; */
+    }
+    #ctdl-game-menu {
+      width: 100%;
+      border: 1px solid #AAA;
+      border-right-width: 0;
+    }
+    #ctdl-game-tileset {
+      appearance: none;
+      width: 100%;
+      background-color: #212121;
+      color: #AAA;
+      border: 1px solid #AAA;
+      padding: 5px 10px;
+      border-right-width: 0;
+    }
+    #ctdl-game-map {
+      width: 256px;
+      height: 256px;
+      border: none;
+      resize: none;
+      background-color: #212121;
+      color: #AAA;
+      border: 1px solid #AAA;
+      border-top-width: 0;
+      border-right-width: 0;
+    }
+    input[type="radio"] {
+      appearance: none;
+      display: block;
+      width: 100%;
+      height: 20px;
+      border: 1px solid #AAA;
+      outline: none;
+    }
+    input[type="radio"]:checked {
+      background-color: #AAA;
+      color: #212121;
+      border-color: #212121;
+    }
+  </style>
+</head>
+<body class="cursor-crosshair">
+  <div style="width: 256px;">
+    <canvas id="ctdl-game-menu"></canvas>
+    <select id="ctdl-game-tileset">
+      <option value='{"tileSet": "city", "width": 1024, "height": 1024}'>city</option>
+      <option value='{"tileSet": "forest", "width": 1024, "height": 1024}'>forest</option>
+      <option value='{"tileSet": "rabbitHole", "width": 1024, "height": 1024}'>rabbitHole</option>
+      <option value='{"tileSet": "endOfTheRabbitHole", "width": 1024, "height": 1024}'>endOfTheRabbitHole</option>
+      <option value='{"tileSet": "dogeCoinMine", "width": 1024, "height": 1024}'>dogeCoinMine</option>
+      <option value='{"tileSet": "mtGox", "width": 1024, "height": 1024}'>mtGox</option>
+      <option value='{"tileSet": "moon", "width": 1024, "height": 1024}'>moon</option>
+    </select>
+    <div style="position: relative;">
+      <div style="display: flex;">
+        <input type="radio" name="layer" value="parallax"/>
+        <input type="radio" name="layer" value="bg"/>
+        <input type="radio" name="layer" value="fg" checked="checked"/>
+      </div>
+      <div style="color: #888; display: flex; text-align: center; position: absolute; top: 3px; width: 100%; z-index: 1; pointer-events: none">
+        <div style="width: 100%;">parallax</div>
+        <div style="width: 100%;">bg</div>
+        <div style="width: 100%;">fg</div>
+      </div>
+    </div>
+    <textarea id="ctdl-game-map">Map as JSON</textarea>
+    <button id="ctdl-game-getJSON" style="width: 100%; appearance: none; padding: 5px 10px; border: 1px solid #AAA;">GET JSON</button>
+    <button id="ctdl-game-loadJSON" style="width: 100%; appearance: none; padding: 5px 10px; border: 1px solid #AAA;">LOAD JSON</button>
+  </div>
+  <div class="pos-rel" style="width: 100%;">
+    <canvas id="ctdl-game-parallax"></canvas>
+    <canvas id="ctdl-game-bg"></canvas>
+    <canvas id="ctdl-game-fg"></canvas>
+    <canvas id="ctdl-game-helper"></canvas>
+  </div>
+</body>
+</html>
