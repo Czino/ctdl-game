@@ -1,4 +1,3 @@
-import constants from '../constants'
 import * as db from '../db'
 import { CTDLGAME, setWorld } from './CTDLGAME'
 import World from '../World'
@@ -6,7 +5,6 @@ import Character from '../Character'
 import { getTimeOfDay } from './getTimeOfDay'
 import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
-import { makeBoundary } from '../geometryUtils'
 import { gameObjects } from './gameObjects'
 
 /**
