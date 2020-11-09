@@ -31,6 +31,7 @@ export const changeMap = async (id, from) => {
       .map(object => CTDLGAME.objects.push(object))
   } else {
     CTDLGAME.world.map.npcs().map(object => CTDLGAME.objects.push(object))
+    CTDLGAME.world.map.items().map(object => CTDLGAME.objects.push(object))
   }
 
   CTDLGAME.world.map.objects
