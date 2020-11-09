@@ -387,6 +387,21 @@ class Character extends Agent {
       action = controls.pop()
     }
 
+    if (this.id === 'hodlonaut') {
+      if (/attack/.test(action)) {
+        let boundingBox = this.getBoundingBox()
+        CTDLGAME.lightningTorch = {
+          id: 'lightningTorch',
+          x: this.direction === 'left' ? boundingBox.x - 3: boundingBox.x + boundingBox.w + 3,
+          y: boundingBox.y + 5,
+          color: 'rgba(252, 249, 97, .2)',//'#fcf99a',
+          radius: 86,
+          brightness: .4
+        }
+      } else {
+        CTDLGAME.lightningTorch = null
+      }
+    }
     if (this[action].condition()) this[action].effect()
   }
 
@@ -406,7 +421,7 @@ class Character extends Agent {
     }
 
     this.applyPhysics()
-
+    if (this.status === 'fall' && this.id === 'hodlonaut') CTDLGAME.lightningTorch = null
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {

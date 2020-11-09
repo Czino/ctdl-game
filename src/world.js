@@ -10,6 +10,7 @@ export default function (id) {
   this.h = this.map.world.h
 
   CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
+  CTDLGAME.lightSources = this.map.lightSources
   this.update = () => {
     let sprite = CTDLGAME.assets[this.id]
     let parallaxViewport = {
