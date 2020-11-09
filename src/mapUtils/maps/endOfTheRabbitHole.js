@@ -155,6 +155,11 @@ export default {
   events,
   track: 'endOfTheRabbitHole',
   bgColor: () => '#270b08',
-  haze: () => CTDLGAME.frame % 32 >= 16 ? '#c8006e' : '#cd8812',
+  update: () => {
+    constants.menuContext.globalAlpha = .2
+    constants.menuContext.fillStyle = CTDLGAME.frame % 32 >= 16 ? '#c8006e' : '#cd8812'
+    constants.menuContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    constants.menuContext.globalAlpha = 1
+  },
   spawnRates: {}
 }

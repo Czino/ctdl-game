@@ -225,16 +225,13 @@ function tick() {
       sun.update()
       moon.update()
     } else if (CTDLGAME.world.map.bgColor) {
+      constants.skyContext.globalAlpha = 1
       constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor()
       constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
     }
-    if (CTDLGAME.world.map.haze) {
-      constants.menuContext.globalAlpha = .2
-      constants.menuContext.fillStyle = CTDLGAME.world.map.haze()
-      constants.menuContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-      constants.menuContext.globalAlpha = 1
-    }
+
     CTDLGAME.world.update()
+
 
     applyGravity()
 
@@ -243,7 +240,10 @@ function tick() {
       .filter(obj => obj.update && obj.inViewport)
       .forEach(obj => obj.update())
 
+    if (CTDLGAME.world.map.update) CTDLGAME.world.map.update()
+
     updateViewport()
+
 
     if (CTDLGAME.showOverlay) showOverlay()
 
