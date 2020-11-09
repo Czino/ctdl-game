@@ -538,10 +538,10 @@ class Character extends Agent {
       .filter(say => say.y > -24)
       .map(say => {
         write(constants.charContext, say.say, {
-          x: this.getCenter().x - 24,
+          x: this.getCenter().x - 26,
           y: this.y + say.y,
-          w: 48
-        }, 'center', false, 4, false, '#FFF')
+          w: 52
+        }, 'center', false, 5, false, '#FFF')
         return {
           ...say,
           y: say.y - 1
@@ -601,7 +601,7 @@ class Character extends Agent {
     ? ({
         x: this.getBoundingBox().x + 2,
         y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-        w: this.getBoundingBox().w - 5,
+        w: this.getBoundingBox().w - 4,
         h: 1
     })
     : ({
