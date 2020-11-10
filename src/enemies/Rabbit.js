@@ -229,6 +229,11 @@ class Rabbit extends Agent {
 
     this.applyPhysics()
 
+    if (CTDLGAME.world.map.removeEnemy) {
+      const touchesRemoveBlock = CTDLGAME.world.map.removeEnemy.some(block => intersects(block, this.getBoundingBox()))
+      if (touchesRemoveBlock) this.remove = true
+    }
+
     // AI logic
     if (this.turnEvil.condition()) {
       this.turnEvil.effect()

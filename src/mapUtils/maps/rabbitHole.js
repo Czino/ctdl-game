@@ -453,6 +453,9 @@ export default {
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
+  removeEnemy: stage.fg
+    .filter(tile => tile.tile.toString() === '1,0')
+    .map(tile => mapTile(tile, tileSize)),
   lightSources,
   objects,
   npcs: () => [
@@ -477,17 +480,17 @@ export default {
   track: 'darkIsBetter',
   bgColor: () => '#170705',
   update: () => {
-    constants.skyContext.globalAlpha = .93
+    constants.skyContext.globalAlpha = .90
     constants.skyContext.globalCompositeOperation = 'source-over'
     constants.skyContext.fillStyle = '#170705'
     constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
-    constants.bgContext.globalAlpha = .93
+    constants.bgContext.globalAlpha = .90
     constants.bgContext.globalCompositeOperation = 'source-atop'
     constants.bgContext.fillStyle = '#170705'
     constants.bgContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
-    constants.fgContext.globalAlpha = .93
+    constants.fgContext.globalAlpha = .90
     constants.fgContext.globalCompositeOperation = 'source-atop'
     constants.fgContext.fillStyle = '#170705'
     constants.fgContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
@@ -508,7 +511,7 @@ export default {
     constants.bgContext.globalAlpha = .025
     constants.bgContext.globalCompositeOperation = 'source-atop'
 
-    constants.fgContext.globalAlpha = .035
+    constants.fgContext.globalAlpha = .025
     constants.fgContext.globalCompositeOperation = 'source-atop'
 
     constants.charContext.globalAlpha = .025
@@ -569,6 +572,6 @@ export default {
     })
   },
   spawnRates: {
-    // rabbit: 0.05
+    rabbit: 0.025
   }
 }

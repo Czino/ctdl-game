@@ -32,7 +32,7 @@ export const spawnEnemies = () => {
       'rabbit-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
-        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
+        y: CTDLGAME.viewport.y + constants.HEIGHT - constants.MENU.h,
         status: 'spawn'
       }
     )
@@ -57,7 +57,7 @@ export const spawnEnemies = () => {
       'goldbugs-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
-        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h,
+        y: CTDLGAME.viewport.y + constants.HEIGHT - constants.MENU.h,
         status: 'idle'
       }
     )
