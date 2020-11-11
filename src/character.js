@@ -96,6 +96,7 @@ class Character extends Agent {
   constructor(id, options) {
     super(id, options)
     this.spriteData = sprites[id]
+    this.sprite = CTDLGAME.assets[this.id]
     this.maxHealth = options.maxHealth ?? 21
     this.health = options.health ?? 21
     this.selected = options.selected
@@ -387,41 +388,44 @@ class Character extends Agent {
       action = controls.pop()
     }
 
-    if (this.id === 'hodlonaut') {
-      if (/attack/.test(action)) {
-        let boundingBox = this.getBoundingBox()
-        CTDLGAME.lightningTorch = {
-          id: 'lightningTorch',
-          x: this.direction === 'left' ? boundingBox.x - 3: boundingBox.x + boundingBox.w + 3,
-          y: boundingBox.y + 5,
-          color: 'rgba(252, 249, 97, .2)',//'#fcf99a',
-          radius: 86,
-          brightness: .4
-        }
-      } else {
-        CTDLGAME.lightningTorch = null
-      }
-    }
     if (this[action].condition()) this[action].effect()
   }
 
+  draw = () => {
+    let spriteData = this.spriteData[this.direction][this.status]
+
+    if (this.frame >= spriteData.length) {
+      this.frame = 0
+    }
+
+    let data = spriteData[this.frame]
+    this.w = data.w
+    this.h = data.h
+
+    constants.charContext.globalAlpha = data.opacity ?? 1
+    if (this.protection > 0) {
+      this.protection--
+      constants.charContext.globalAlpha = this.protection % 2
+    }
+    constants.gameContext.drawImage(
+      this.sprite,
+      data.x, data.y, this.w, this.h,
+      this.x, this.y, this.w, this.h
+    )
+    constants.charContext.globalAlpha = 1
+  }
+
   update = () => {
-    const sprite = CTDLGAME.assets[this.id]
 
     if (CTDLGAME.lockCharacters) {
-      let data = this.spriteData[this.direction][this.status][0]
-      constants.charContext.globalAlpha = data.opacity ?? 1
+      this.frame = 0
 
-      constants.charContext.drawImage(
-        sprite,
-        data.x, data.y, this.w, this.h,
-        this.x, this.y, this.w, this.h
-      )
+      this.draw()
       return
     }
 
     this.applyPhysics()
-    if (this.status === 'fall' && this.id === 'hodlonaut') CTDLGAME.lightningTorch = null
+    if (this.status === 'fall' && this.id === 'hodlonaut') this.glows = false
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
@@ -485,6 +489,14 @@ class Character extends Agent {
       }
     }
 
+    if (this.id === 'hodlonaut') {
+      if (/attack/i.test(this.status)) {
+        this.glows = true
+      } else {
+        this.glows = false
+      }
+    }
+
     // find out if touched objects have touch event
     this.touchedObjects
       .filter(obj => obj.touchEvent)
@@ -499,22 +511,7 @@ class Character extends Agent {
       if (/jump|action/.test(this.status)) this.status = 'idle'
     }
 
-    let data = this.spriteData[this.direction][this.status][this.frame]
-    this.w = data.w
-    this.h = data.h
-    constants.charContext.globalAlpha = data.opacity ?? 1
-    if (this.protection > 0) {
-      this.protection--
-      constants.charContext.globalAlpha = this.protection % 2
-    }
-
-    constants.charContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    constants.charContext.globalAlpha = 1
+    this.draw()
 
     if (this.selected) {
       constants.charContext.fillStyle = '#0F0'
@@ -624,6 +621,14 @@ class Character extends Agent {
       y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
       w: this.getBoundingBox().w,
       h: 1
+  })
+
+  getLightSource = () => ({
+    x: this.direction === 'left' ? this.getBoundingBox().x - 3: this.getBoundingBox().x + this.getBoundingBox().w + 3,
+    y: this.getBoundingBox().y + 5,
+    color: 'rgba(252, 249, 97, .2)',
+    radius: 86,
+    brightness: .4
   })
 }
 export default Character

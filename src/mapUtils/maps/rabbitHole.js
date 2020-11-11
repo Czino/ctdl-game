@@ -4,10 +4,12 @@ import { parsePattern } from '../parsePattern'
 import GameObject from '../../gameObject'
 import constants from '../../constants'
 import Ramp from '../../Ramp'
-import { makeBoundary } from '../../geometryUtils'
+import { intersects, makeBoundary } from '../../geometryUtils'
 import NPC from '../../npcs/NPC'
 import { CTDLGAME } from '../../gameUtils'
 import Item from '../../Item'
+import Andreas from '../../enemies/Andreas'
+import { random } from '../../arrayUtils'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -349,7 +351,17 @@ const mushrooms = {
     brightness: .2
   }
 }
-
+const andreasTeleports = [
+  { x: 551, y: 35, w: 1, h: 1 },
+  { x: 662, y: 122, w: 1, h: 1 },
+  { x: 841, y: 155, w: 1, h: 1 },
+  { x: 906, y: 426, w: 1, h: 1 },
+  { x: 437, y: 412, w: 1, h: 1 },
+  { x: 511, y: 463, w: 1, h: 1 },
+  { x: 164, y: 507, w: 1, h: 1 },
+  { x: 327, y: 667, w: 1, h: 1 },
+  { x: 518, y: 637, w: 1, h: 1 }
+]
 
 let lightSources = []
 stage.bg
@@ -357,8 +369,10 @@ stage.bg
   .map(tile => {
     let mushroom = mushrooms[tile.tile.join('_')]
     mushroom.tile = tile.tile
-    mushroom.x = tile.x
-    mushroom.y = tile.y
+    mushroom.x = tile.x * tileSize
+    mushroom.y = tile.y * tileSize
+    mushroom.w = tileSize
+    mushroom.h = tileSize
     lightSources.push(JSON.parse(JSON.stringify(mushroom)))
   })
 
@@ -372,6 +386,102 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
     w: w * tileSize,
     h: h * tileSize,
   }))
+}
+
+const drawLightSources = () => {
+  constants.skyContext.globalAlpha = .90
+  constants.skyContext.globalCompositeOperation = 'source-over'
+
+  constants.bgContext.globalAlpha = .90
+  constants.bgContext.globalCompositeOperation = 'source-atop'
+
+  constants.fgContext.globalAlpha = .90
+  constants.fgContext.globalCompositeOperation = 'source-atop'
+
+  constants.charContext.globalAlpha = .81
+  constants.charContext.globalCompositeOperation = 'source-atop'
+
+  constants.gameContext.globalAlpha = .81
+  constants.gameContext.globalCompositeOperation = 'source-atop'
+
+  ;[
+    constants.skyContext,
+    constants.bgContext,
+    constants.fgContext,
+    constants.charContext,
+    constants.gameContext
+  ].map(context => {
+    context.fillStyle = '#170705'
+    context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  })
+
+  constants.skyContext.globalAlpha = .0125
+  constants.skyContext.globalCompositeOperation = 'source-atop'
+
+  constants.bgContext.globalAlpha = .025
+  constants.bgContext.globalCompositeOperation = 'source-atop'
+
+  constants.fgContext.globalAlpha = .025
+  constants.fgContext.globalCompositeOperation = 'source-atop'
+
+  constants.charContext.globalAlpha = .025
+  constants.charContext.globalCompositeOperation = 'source-atop'
+
+  constants.gameContext.globalAlpha = .025
+  constants.gameContext.globalCompositeOperation = 'source-atop'
+
+  const objectLightSources = CTDLGAME.objects
+    .filter(obj => obj.glows)
+    .map((obj => obj.getLightSource()))
+
+  CTDLGAME.lightSources.concat(objectLightSources)
+    .filter(lightSource => lightSource)
+    .map(lightSource => {
+      let x = lightSource.id ? lightSource.x : lightSource.x + .5 * tileSize
+      let y = lightSource.id ? lightSource.y : lightSource.y + .5 * tileSize
+      let radius = lightSource.radius || 64
+      constants.skyContext.fillStyle = lightSource.color
+      constants.bgContext.fillStyle = lightSource.color
+      constants.fgContext.fillStyle = lightSource.color
+      constants.charContext.fillStyle = lightSource.color
+      constants.gameContext.fillStyle = lightSource.color
+
+      for (let b = lightSource.brightness; b > 0; b -= .025) {
+        [
+          constants.skyContext,
+          constants.bgContext,
+          constants.fgContext,
+          constants.charContext,
+          constants.gameContext
+        ].map(context => {
+          context.beginPath()
+          context.arc(x, y, radius * b, 0, 2 * Math.PI)
+          context.fill()
+        })
+      }
+    })
+
+  ;[
+    constants.skyContext,
+    constants.bgContext,
+    constants.fgContext,
+    constants.charContext,
+    constants.gameContext
+  ].map(context => {
+    context.globalAlpha = 1
+    context.globalCompositeOperation = 'source-over'
+  })
+
+  lightSources.map(lightSource => {
+    constants.bgContext.drawImage(
+      CTDLGAME.assets.rabbitHole,
+      lightSource.tile[0] * tileSize, lightSource.tile[1] * tileSize, tileSize, tileSize,
+      lightSource.x, lightSource.y + 2, tileSize, tileSize
+    )
+  })
+  CTDLGAME.objects
+    .filter(object => object.glows)
+    .map(object => object.draw())
 }
 
 makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
@@ -459,6 +569,13 @@ export default {
   lightSources,
   objects,
   npcs: () => [
+    new Andreas(
+      'andreas',
+      {
+        x: 545,
+        y: 0
+      }
+    ),
     new NPC(
       'honeybadger',
       {
@@ -480,96 +597,16 @@ export default {
   track: 'darkIsBetter',
   bgColor: () => '#170705',
   update: () => {
-    constants.skyContext.globalAlpha = .90
-    constants.skyContext.globalCompositeOperation = 'source-over'
-    constants.skyContext.fillStyle = '#170705'
-    constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    const andreas = CTDLGAME.objects.find(obj => obj.class === 'Andreas')
+    if (!andreas.inViewport && Math.random() < .01) {
+      let teleportTo = random(andreasTeleports)
+      if (!intersects(teleportTo, CTDLGAME.viewport)) {
+        andreas.x = teleportTo.x
+        andreas.y = teleportTo.y
+      }
+    }
 
-    constants.bgContext.globalAlpha = .90
-    constants.bgContext.globalCompositeOperation = 'source-atop'
-    constants.bgContext.fillStyle = '#170705'
-    constants.bgContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-
-    constants.fgContext.globalAlpha = .90
-    constants.fgContext.globalCompositeOperation = 'source-atop'
-    constants.fgContext.fillStyle = '#170705'
-    constants.fgContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-
-    constants.charContext.globalAlpha = .81
-    constants.charContext.globalCompositeOperation = 'source-atop'
-    constants.charContext.fillStyle = '#170705'
-    constants.charContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-
-    constants.gameContext.globalAlpha = .81
-    constants.gameContext.globalCompositeOperation = 'source-atop'
-    constants.gameContext.fillStyle = '#170705'
-    constants.gameContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-
-    constants.skyContext.globalAlpha = .0125
-    constants.skyContext.globalCompositeOperation = 'source-atop'
-
-    constants.bgContext.globalAlpha = .025
-    constants.bgContext.globalCompositeOperation = 'source-atop'
-
-    constants.fgContext.globalAlpha = .025
-    constants.fgContext.globalCompositeOperation = 'source-atop'
-
-    constants.charContext.globalAlpha = .025
-    constants.charContext.globalCompositeOperation = 'source-atop'
-
-    constants.gameContext.globalAlpha = .025
-    constants.gameContext.globalCompositeOperation = 'source-atop'
-
-    CTDLGAME.lightSources.concat(CTDLGAME.lightningTorch)
-      .filter(lightSource => lightSource)
-      .map(lightSource => {
-        let x = lightSource.id ? lightSource.x : (lightSource.x + .5) * tileSize
-        let y = lightSource.id ? lightSource.y : (lightSource.y + .5) * tileSize
-        let radius = lightSource.radius || 64
-        constants.skyContext.fillStyle = lightSource.color
-        constants.bgContext.fillStyle = lightSource.color
-        constants.fgContext.fillStyle = lightSource.color
-        constants.charContext.fillStyle = lightSource.color
-        constants.gameContext.fillStyle = lightSource.color
-
-        for (let b = lightSource.brightness; b > 0; b -= .025) {
-          constants.skyContext.beginPath()
-          constants.bgContext.beginPath()
-          constants.fgContext.beginPath()
-          constants.charContext.beginPath()
-          constants.gameContext.beginPath()
-          constants.skyContext.arc(x, y, radius * b, 0, 2 * Math.PI)
-          constants.bgContext.arc(x, y, radius * b, 0, 2 * Math.PI)
-          constants.fgContext.arc(x, y, radius * b, 0, 2 * Math.PI)
-          constants.charContext.arc(x, y, radius * b, 0, 2 * Math.PI)
-          constants.gameContext.arc(x, y, radius * b, 0, 2 * Math.PI)
-
-          constants.skyContext.fill()
-          constants.bgContext.fill()
-          constants.fgContext.fill()
-          constants.charContext.fill()
-          constants.gameContext.fill()
-        }
-      })
-
-    constants.skyContext.globalAlpha = 1
-    constants.skyContext.globalCompositeOperation = 'source-over'
-    constants.bgContext.globalAlpha = 1
-    constants.bgContext.globalCompositeOperation = 'source-over'
-    constants.fgContext.globalAlpha = 1
-    constants.fgContext.globalCompositeOperation = 'source-over'
-    constants.charContext.globalAlpha = 1
-    constants.charContext.globalCompositeOperation = 'source-over'
-    constants.gameContext.globalAlpha = 1
-    constants.gameContext.globalCompositeOperation = 'source-over'
-
-    lightSources.map(lightSource => {
-      constants.bgContext.drawImage(
-        CTDLGAME.assets.rabbitHole,
-        lightSource.tile[0] * tileSize, lightSource.tile[1] * tileSize, tileSize, tileSize,
-        lightSource.x * tileSize, lightSource.y * tileSize + 2, tileSize, tileSize
-      )
-    })
+    drawLightSources()
   },
   spawnRates: {
     rabbit: 0.025

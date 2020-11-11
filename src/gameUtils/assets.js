@@ -11,6 +11,7 @@ import items from '../sprites/items.png'
 import shitcoiner from '../sprites/shitcoiner.png'
 import rabbit from '../sprites/rabbit.png'
 import goldbugs from '../sprites/goldbugs.png'
+import andreas from '../sprites/andreas.png'
 import bear from '../sprites/bear.png'
 import brian from '../sprites/brian.png'
 import moon from '../sprites/moon.png'
@@ -39,6 +40,7 @@ export const assets = {
   shitcoiner,
   rabbit,
   goldbugs,
+  andreas,
   bear,
   brian,
   moon,
