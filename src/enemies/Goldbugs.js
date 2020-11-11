@@ -66,35 +66,6 @@ class Goldbugs extends Agent {
     blackboard: this
   })
 
-  moveLeft = {
-    condition: () => true,
-    effect: () => {
-      this.kneels = false
-      this.direction = 'left'
-      const hasMoved = moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
-
-      if (hasMoved) {
-        this.status = 'move'
-        return SUCCESS
-      }
-      return FAILURE
-    }
-  }
-  moveRight = {
-    condition: () => true,
-    effect: () => {
-      this.kneels = false
-      this.direction = 'right'
-
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-      if (hasMoved) {
-        this.status = 'move'
-        return SUCCESS
-      }
-
-      return FAILURE
-    }
-  }
   attack = {
      // in biting distance
     condition: () => this.closestEnemy && intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox()),

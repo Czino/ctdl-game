@@ -81,6 +81,7 @@ class Shitcoiner extends Agent {
     effect: () => {
       this.kneels = false
       this.direction = 'left'
+      this.isMoving = 'left'
       const hasMoved = moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
@@ -95,6 +96,7 @@ class Shitcoiner extends Agent {
     effect: () => {
       this.kneels = false
       this.direction = 'right'
+      this.isMoving = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {

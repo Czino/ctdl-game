@@ -24,7 +24,12 @@ BehaviorTree.register('moveRight', new Task({
   run: agent => agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
 }))
 BehaviorTree.register('moveRandom', new Task({
-  run: agent => agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
+  run: agent => {
+    // if already moving, continue journey
+    if (agent.isMoving === 'left' && Math.random() < .8) agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    if (agent.isMoving === 'right' && Math.random() < .8) agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    return agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
+  }
 }))
 BehaviorTree.register('jump', new Task({
   run: agent => agent.jump.condition() ? agent.jump.effect() : FAILURE
@@ -86,6 +91,7 @@ class Agent {
     condition: () => true,
     effect: () => {
       this.direction = 'left'
+      this.isMoving = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
@@ -100,6 +106,7 @@ class Agent {
     condition: () => true,
     effect: () => {
       this.direction = 'right'
+      this.isMoving = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {

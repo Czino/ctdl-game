@@ -17,6 +17,9 @@ const sprites = {
 const isEvil = new Task({
   run: agent => agent.isEvil ? SUCCESS : FAILURE
 })
+const isSpecial = new Task({
+  run: agent => agent.isSpecial ? SUCCESS : FAILURE
+})
 const isGood = new Task({
   run: agent => !agent.isEvil ? SUCCESS : FAILURE
 })
@@ -88,9 +91,21 @@ const goodSequence = new Sequence({
     })
   ]
 })
+const specialSequence = new Sequence({
+  nodes: [
+    isSpecial,
+    new Selector({
+      nodes: [
+        'moveRandom',
+        'idle'
+      ]
+    })
+  ]
+})
 const tree = new Selector({
   nodes: [
     evilSequence,
+    specialSequence,
     goodSequence
   ]
 })
@@ -102,6 +117,8 @@ class Rabbit extends Agent {
     this.health = options.health ?? Math.round(Math.random() * 2 + 1)
     this.canTurnEvil = options.canTurnEvil || Math.random() > .5
     this.isEvil = options.isEvil ?? false
+    this.isSpecial = options.isSpecial ?? false
+    this.glows = options.glows ?? false
     this.frame = options.frame || 0
     this.walkingSpeed = options.walkingSpeed || Math.round(Math.random() * 3 + 4)
     this.senseRadius = Math.round(Math.random() * 50 + 30)
@@ -120,47 +137,11 @@ class Rabbit extends Agent {
     blackboard: this
   })
 
-  idle = {
-    condition: () => true,
-    effect: () => {
-      this.status = 'idle'
-      return SUCCESS
-    }
-  }
   turnEvil = {
     condition: () => this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate),
     effect: () => {
       this.status = 'turnEvil'
       return SUCCESS
-    }
-  }
-  moveLeft = {
-    condition: () => true,
-    effect: () => {
-      this.direction = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
-
-      if (hasMoved) {
-        this.status = 'move'
-        return SUCCESS
-      }
-
-      return FAILURE
-    }
-  }
-  moveRight = {
-    condition: () => true,
-    effect: () => {
-      this.direction = 'right'
-
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
-
-      if (hasMoved) {
-        this.status = 'move'
-        return SUCCESS
-      }
-
-      return FAILURE
     }
   }
   jump = {
@@ -212,26 +193,48 @@ class Rabbit extends Agent {
     addTextToQueue(`Evil Rabbit got rekt`)
   }
 
-  update = () => {
-    const sprite = CTDLGAME.assets.rabbit
+  draw = () => {
+    if (this.isSpecial && this.status === 'turnEvil') this.status = 'idle'
+    let spriteData = this.spriteData[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good'][this.direction][this.status]
 
+    if (this.frame >= spriteData.length) {
+      this.frame = 0
+    }
+
+    let data = spriteData[this.frame]
+    this.w = data.w
+    this.h = data.h
+
+    constants.gameContext.drawImage(
+      CTDLGAME.assets.rabbit,
+      data.x, data.y, this.w, this.h,
+      this.x, this.y, this.w, this.h
+    )
+  }
+
+  update = () => {
     if (CTDLGAME.lockCharacters) {
-      let data = this.spriteData[this.isEvil ? 'evil' : 'good'][this.direction][this.status][0]
       constants.charContext.globalAlpha = 1
 
-      constants.charContext.drawImage(
-        sprite,
-        data.x, data.y, this.w, this.h,
-        this.x, this.y, this.w, this.h
-      )
+      this.draw()
       return
     }
 
     this.applyPhysics()
 
-    if (CTDLGAME.world.map.removeEnemy) {
+    if (CTDLGAME.world.map.removeEnemy && Math.random() < .01) {
       const touchesRemoveBlock = CTDLGAME.world.map.removeEnemy.some(block => intersects(block, this.getBoundingBox()))
       if (touchesRemoveBlock) this.remove = true
+    }
+    if (!this.isSpecial && CTDLGAME.lightSources) {
+      const touchesLightSource = CTDLGAME.lightSources.some(source => intersects(source, this.getBoundingBox()))
+      if (touchesLightSource) {
+        this.canTurnEvil = false
+        this.isEvil = false
+        this.enemy = false
+        this.isSpecial = true
+        this.glows = true
+      }
     }
 
     // AI logic
@@ -242,8 +245,6 @@ class Rabbit extends Agent {
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
     }
-
-    let spriteData = this.spriteData[this.isEvil ? 'evil' : 'good'][this.direction][this.status]
 
     if (this.status !== 'idle' || Math.random() < .1) this.frame++
     if (this.status === 'hurt' && this.frame === 3) {
@@ -260,19 +261,8 @@ class Rabbit extends Agent {
     if (this.status === 'rekt' && this.frame === 3) {
       this.remove = true
     }
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-    }
 
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
+    this.draw()
 
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)
@@ -290,10 +280,17 @@ class Rabbit extends Agent {
   }
 
   getAnchor = () => ({
-      x: this.getBoundingBox().x,
-      y: this.getBoundingBox().y + this.getBoundingBox().h,
-      w: this.getBoundingBox().w,
-      h: 1
+    x: this.getBoundingBox().x,
+    y: this.getBoundingBox().y + this.getBoundingBox().h,
+    w: this.getBoundingBox().w,
+    h: 1
+  })
+
+  getLightSource = () => ({
+    x: this.getBoundingBox().x + Math.round(this.getBoundingBox().w / 2),
+    y: this.getBoundingBox().y + Math.round(this.getBoundingBox().h / 2),
+    color: '#8b0a89',
+    brightness: .3
   })
 }
 export default Rabbit

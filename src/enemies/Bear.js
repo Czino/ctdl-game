@@ -73,6 +73,7 @@ class Bear extends Agent {
     condition: () => true,
     effect: () => {
       this.direction = 'left'
+      this.isMoving = 'left'
       const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
@@ -87,6 +88,7 @@ class Bear extends Agent {
     condition: () => true,
     effect: () => {
       this.direction = 'right'
+      this.isMoving = 'right'
 
       const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
