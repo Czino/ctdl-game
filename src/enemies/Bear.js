@@ -238,7 +238,7 @@ class Bear extends Agent {
     }
 
     // AI logic
-    if (this.canMove && !/rekt|spawn/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && this.canMove && !/rekt|spawn/.test(this.status)) {
       if (getSoundtrack() !== 'bear') initSoundtrack('bear')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)

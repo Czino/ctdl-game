@@ -240,7 +240,7 @@ class Rabbit extends Agent {
     // AI logic
     if (this.turnEvil.condition()) {
       this.turnEvil.effect()
-    } else if (!/turnEvil|spawn|hurt|fall|rekt/.test(this.status) && this.vy === 0) {
+    } else if (Math.abs(this.vy) < 3 && !/turnEvil|spawn|hurt|fall|rekt/.test(this.status)) {
       this.sensedEnemies = senseCharacters(this)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()

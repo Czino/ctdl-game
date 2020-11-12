@@ -92,7 +92,7 @@ class Agent {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved =  !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -108,7 +108,7 @@ class Agent {
       this.direction = 'right'
       this.isMoving = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
         return SUCCESS
@@ -276,25 +276,21 @@ class Agent {
   }
 
   applyPhysics = () => {
-    if (this.vx !== 0) {
+    if ((this.vx !== 0 || this.vy !== 0) && this.inViewport) {
       if (this.vx > 12) this.vx = 12
       if (this.vx < -12) this.vx = -12
-
-      moveObject(this, { x: this.vx , y: 0 }, CTDLGAME.quadTree)
-      if (this.vx < 0) this.vx += 1
-      if (this.vx > 0) this.vx -= 1
-    }
-
-    if (this.vy !== 0 && this.inViewport) {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
+
+      const hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
 
       if (hasCollided) {
         this.vy = 0
       } else if (!/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
         this.status = 'fall'
       }
+      if (this.vx < 0) this.vx += 1
+      if (this.vx > 0) this.vx -= 1
     }
   }
 

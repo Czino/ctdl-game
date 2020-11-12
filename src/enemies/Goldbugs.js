@@ -108,7 +108,7 @@ class Goldbugs extends Agent {
 
     this.applyPhysics()
 
-    if (!/rekt|hurt|spawn/.test(this.status) && this.vy === 0) {
+    if (!/rekt|hurt|spawn/.test(this.status)) {
       this.sensedEnemies = senseCharacters(this)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()

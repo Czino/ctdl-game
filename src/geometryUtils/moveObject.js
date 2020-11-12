@@ -22,6 +22,11 @@ const collidesWithHeightMap = (anchor, point) => {
         y: anchorPoint.y - point.y
       }
 
+      if (window.DRAWSENSORS) {
+        constants.menuContext.globalAlpha = 1
+        constants.menuContext.fillStyle = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`
+        constants.menuContext.fillRect(anchorPoint.x, anchorPoint.y, 1, 1)
+      }
       const isSolid = !heightMap[touchPoint.y] || heightMap[touchPoint.y][touchPoint.x] > 0
       if (isSolid) return true
     }
@@ -34,53 +39,77 @@ const collidesWithHeightMap = (anchor, point) => {
  * @param {Object} object object to be moved
  * @param {Object} vector vector with x, y
  * @param {QuadTree} tree the quad tree
- * @returns {Boolean} if true object has not collided
+ * @returns {Boolean} if true object has collided
  */
 export const moveObject = (object, vector, tree) => {
   let hasCollided = true
+  let originalVector = JSON.parse(JSON.stringify(vector))
+  let possibleVectors = []
 
-  while (hasCollided && (vector.x !== 0 || vector.y !== 0)) {
-    object.x += vector.x
-    object.y += vector.y
+  // we allow object to go up by 3 pixel in case the obstacle is now steep
+  // we are going up
+  for (let i = 0; i < 3; i++) {
+    hasCollided = true
+    object.y -= i
 
-    hasCollided = tree.query(object.getBoundingBox())
-      .filter(point => point.isSolid && point.id !== object.id)
-      .some(point => {
-        if (intersects(object.getBoundingBox(), point.getBoundingBox())) {
-          if (point.getHeightMap) {
-            const anchor = object.getAnchor()
+    while (hasCollided && (vector.x !== 0 || vector.y !== 0)) {
+      object.x += vector.x
+      object.y += vector.y
 
-            for (let i = 0; i < 3; i++) {
-              if (collidesWithHeightMap(anchor, point)) {
-                anchor.y--
-              } else {
-                object.y -= i
-                object.vy = 0
-                i = 0
-                return false
-              }
-            }
+      hasCollided = tree.query(object.getBoundingBox())
+        .filter(point => point.isSolid && point.id !== object.id)
+        .filter(point => intersects(object.getBoundingBox(), point.getBoundingBox()))
+        .some(point => {
+          if (!point.getHeightMap) return true
 
-            if (window.DRAWSENSORS) {
-              constants.overlayContext.fillStyle = 'red'
-              constants.overlayContext.fillRect(anchor.x, anchor.y, anchor.w, 1)
-            }
-          }
-          // would collide, roll back change
-          object.x -= vector.x
-          object.y -= vector.y
+          // check if heightmap reveils more information
+          const anchor = object.getAnchor()
 
-          // reduce vector to find max distance object can move
-          if (vector.x > 0) vector.x--
-          if (vector.x < 0) vector.x++
-          if (vector.y > 0) vector.y--
-          if (vector.y < 0) vector.y++
+          return collidesWithHeightMap(anchor, point)
+        })
 
-          return true
-        }
-        return false
+      if (hasCollided) {
+        // would collide, roll back change
+        object.x -= vector.x
+        object.y -= vector.y
+
+        // reduce vector to find max distance object can move
+        if (vector.x > 0) vector.x--
+        if (vector.x < 0) vector.x++
+        if (vector.y > 0) vector.y--
+        if (vector.y < 0) vector.y++
+      }
+    }
+
+    // store valid vector for later and reset object and vector
+    if (!hasCollided) {
+      possibleVectors.push({
+        y: i,
+        vector: JSON.parse(JSON.stringify(vector))
       })
-    if (!hasCollided) return !hasCollided
+    }
+
+    object.x -= vector.x
+    object.y -= vector.y
+    object.y += i
+    vector = JSON.parse(JSON.stringify(originalVector))
   }
-  return !hasCollided
+
+  possibleVectors = possibleVectors.sort((a, b) => {
+    let sumA = Math.abs(a.vector.x) + Math.abs(a.vector.y)
+    let sumB = Math.abs(b.vector.x) + Math.abs(b.vector.y)
+    return sumA > sumB ? -1 : 1
+  })
+
+  let bestVector = possibleVectors[0]
+
+  if (bestVector) {
+    object.x += bestVector.vector.x
+    object.y += bestVector.vector.y
+    object.y -= bestVector.y
+
+    if (bestVector.y > 0) object.vy = 0
+  }
+
+  return possibleVectors.length === 0
 }

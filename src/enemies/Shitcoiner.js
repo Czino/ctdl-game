@@ -82,7 +82,7 @@ class Shitcoiner extends Agent {
       this.kneels = false
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved = moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -98,7 +98,7 @@ class Shitcoiner extends Agent {
       this.direction = 'right'
       this.isMoving = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
         return SUCCESS
@@ -199,7 +199,7 @@ class Shitcoiner extends Agent {
 
     this.applyPhysics()
 
-    if (!/fall|rekt|hurt|burning|spawn/.test(this.status) && this.vy === 0) {
+    if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt|burning|spawn/.test(this.status)) {
       this.sensedEnemies = senseCharacters(this)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()

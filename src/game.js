@@ -232,7 +232,6 @@ function tick() {
 
     CTDLGAME.world.update()
 
-
     applyGravity()
 
     // update objects that shall update and are in viewport

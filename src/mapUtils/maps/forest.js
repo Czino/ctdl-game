@@ -22,9 +22,10 @@ const t00 = [0, 0], t01 = [0, 1], t02 = [0, 2], t03 = [0, 3], t04 = [0, 4], t05 
   t60 = [6, 0], t61 = [6, 1], t62 = [6, 2], t63 = [6, 3], t64 = [6, 4], t65 = [6, 5], t66 = [6, 6], t67 = [6, 7], t68 = [6, 8], t69 = [6, 9], t610 = [6, 10],
   t70 = [7, 0], t71 = [7, 1], t72 = [7, 2], t73 = [7, 3], t74 = [7, 4], t75 = [7, 5], t76 = [7, 6], t77 = [7, 7], t78 = [7, 8], t79 = [7, 9], t710 = [7, 10],
   t80 = [8, 0], t81 = [8, 1], t82 = [8, 2], t83 = [8, 3], t84 = [8, 4], t85 = [8, 5], t86 = [8, 6], t87 = [8, 7], t88 = [8, 8], t89 = [8, 9], t810 = [8, 10]
+  t34
 
 const ramps = [
-  t20, t34, t40, t50, t51, t60, t70, t71,
+  t20, t34, t40, t41, t50, t51, t60, t61, t70, t71,
   t01, t11,
   t02, t12,
   t03, t13,
@@ -288,6 +289,9 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
 makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
+makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
+makeConsolidatedBoundary(0, worldHeight - 8.75, 68, 1, tileSize)
+makeConsolidatedBoundary(70, worldHeight - 8.75, worldWidth - 70, 1, tileSize)
 
 parallax = parallax.concat(parsePattern(bigTree1, 2, 106))
 parallax = parallax.concat(parsePattern(bigTree2, 14, 106))

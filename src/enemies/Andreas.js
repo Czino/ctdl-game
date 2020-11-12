@@ -107,7 +107,7 @@ class Andreas extends Agent {
 
       this.direction = 'left'
 
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -124,7 +124,7 @@ class Andreas extends Agent {
 
       this.direction = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
         return SUCCESS
@@ -146,7 +146,7 @@ class Andreas extends Agent {
       this.direction = 'left'
       this.status = 'duckMove'
 
-      const hasMoved = moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
       return hasMoved
     }
   }
@@ -156,7 +156,7 @@ class Andreas extends Agent {
       this.direction = 'right'
       this.status = 'duckMove'
 
-      const hasMoved = moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
       return hasMoved
     }
   }
@@ -173,7 +173,7 @@ class Andreas extends Agent {
     condition: () => true,
     effect: () => {
       this.direction = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
@@ -187,7 +187,7 @@ class Andreas extends Agent {
     effect: () => {
       this.direction = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         return SUCCESS
@@ -334,7 +334,7 @@ class Andreas extends Agent {
       .filter(friend => friend.class === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
-    if (this.vy === 0 && !/jump|fall|rekt|hurt/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt/.test(this.status)) {
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)
       this.bTree.step()

@@ -134,7 +134,7 @@ class Character extends Agent {
 
       this.direction = 'left'
 
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -151,7 +151,8 @@ class Character extends Agent {
 
       this.direction = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+
       if (hasMoved) {
         this.status = 'move'
         return SUCCESS
@@ -183,7 +184,7 @@ class Character extends Agent {
       this.direction = 'right'
       this.status = 'duckMove'
 
-      const hasMoved = moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
       return hasMoved
     }
   }
@@ -202,7 +203,7 @@ class Character extends Agent {
     condition: () => true,
     effect: () => {
       this.direction = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
@@ -218,7 +219,7 @@ class Character extends Agent {
     effect: () => {
       this.direction = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
@@ -416,7 +417,6 @@ class Character extends Agent {
   }
 
   update = () => {
-
     if (CTDLGAME.lockCharacters) {
       this.frame = 0
 
@@ -425,6 +425,7 @@ class Character extends Agent {
     }
 
     this.applyPhysics()
+
     if (this.status === 'fall' && this.id === 'hodlonaut') this.glows = false
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
@@ -479,7 +480,7 @@ class Character extends Agent {
       }
     }
 
-    if (this.vy === 0 && !/jump|fall|rekt|hurt/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt/.test(this.status)) {
       if (CTDLGAME.multiPlayer || this.selected) {
         this.senseControls()
       } else {

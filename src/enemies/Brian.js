@@ -236,7 +236,7 @@ class Brian extends Agent {
       this.hadIntro = true
     }
 
-    if (this.canMove && !/fall|rekt|hurt/.test(this.status) && this.vy === 0) {
+    if (Math.abs(this.vy) < 3 && this.canMove && !/fall|rekt|hurt/.test(this.status)) {
       if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)

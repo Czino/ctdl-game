@@ -69,7 +69,7 @@ export default function(id, options) {
     if (this.vy !== 0) {
       if (this.vy > 6) this.vy = 6
       if (this.vy < -6) this.vy = -6
-      const hasCollided = !moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
+      const hasCollided = moveObject(this, { x: 0 , y: this.vy }, CTDLGAME.quadTree)
 
       if (hasCollided) {
         this.vy = 0
