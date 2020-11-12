@@ -2,7 +2,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } fro
 
 import rabbit from '../sprites/rabbit'
 import { CTDLGAME } from '../gameUtils'
-import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
 import constants from '../constants'
 import { playSound } from '../sounds'
@@ -30,6 +30,21 @@ const touchesEnemy = new Task({
 })
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+})
+const disappear = new Task({
+  run: agent => {
+    if (!agent.disappearing && Math.random() > .01) return FAILURE
+    let action = 'moveRandom'
+    // if already moving, continue journey
+    agent.disappearing = agent.disappearing || 1
+    agent.y += 1
+    agent.disappearing++
+    agent.brightness -= 0.03
+    if (agent.disappearing > agent.getBoundingBox().h) agent.remove = true
+    if (agent.isMoving === 'left')  action = 'moveLeft'
+    if (agent.isMoving === 'right')  action = 'moveRight'
+    return agent[action].condition() ? agent[action].effect() : FAILURE
+  }
 })
 
 const runAwayFromClosestEnemy = new Task({
@@ -85,7 +100,9 @@ const goodSequence = new Sequence({
     new Selector({
       nodes: [
         runAwayFromEnemy,
+        disappear,
         'moveRandom',
+        'jump',
         'idle'
       ]
     })
@@ -96,7 +113,9 @@ const specialSequence = new Sequence({
     isSpecial,
     new Selector({
       nodes: [
+        disappear,
         'moveRandom',
+        'jump',
         'idle'
       ]
     })
@@ -124,6 +143,7 @@ class Rabbit extends Agent {
     this.senseRadius = Math.round(Math.random() * 50 + 30)
   }
 
+  activity = .05
   class = 'Rabbit'
   spriteData = sprites.rabbit
   item = null
@@ -138,7 +158,7 @@ class Rabbit extends Agent {
   })
 
   turnEvil = {
-    condition: () => this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate),
+    condition: () => !this.isSpecial && (this.status === 'turnEvil' || (!this.isEvil && this.canTurnEvil && Math.random() < this.turnEvilRate)),
     effect: () => {
       this.status = 'turnEvil'
       return SUCCESS
@@ -183,7 +203,7 @@ class Rabbit extends Agent {
       .filter(obj => obj.isSolid && !obj.enemy)
       .filter(obj => intersects(obj, jumpTo))
 
-    return obstacles.length === 0
+      return obstacles.length === 0
   }
 
   hurtCondition = () => this.isEvil && !/turnEvil|spawn|hurt|rekt/.test(this.status)
@@ -199,6 +219,7 @@ class Rabbit extends Agent {
 
     if (this.frame >= spriteData.length) {
       this.frame = 0
+      if (/jump/.test(this.status)) this.status = 'idle'
     }
 
     let data = spriteData[this.frame]
@@ -222,7 +243,8 @@ class Rabbit extends Agent {
 
     this.applyPhysics()
 
-    if (CTDLGAME.world.map.removeEnemy && Math.random() < .01) {
+    // cleanup out of world
+    if (CTDLGAME.world.map.removeEnemy && Math.random() < .025) {
       const touchesRemoveBlock = CTDLGAME.world.map.removeEnemy.some(block => intersects(block, this.getBoundingBox()))
       if (touchesRemoveBlock) this.remove = true
     }
@@ -240,7 +262,7 @@ class Rabbit extends Agent {
     // AI logic
     if (this.turnEvil.condition()) {
       this.turnEvil.effect()
-    } else if (Math.abs(this.vy) < 3 && !/turnEvil|spawn|hurt|fall|rekt/.test(this.status)) {
+    } else if (Math.abs(this.vy) < 3 && !/turnEvil|jump|spawn|hurt|fall|rekt/.test(this.status)) {
       this.sensedEnemies = senseCharacters(this)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
@@ -253,6 +275,7 @@ class Rabbit extends Agent {
     if (this.status === 'spawn' && this.frame === 6) {
       this.status = 'idle'
     }
+    if (this.isSpecial && this.status === 'spawn') this.status = 'idle'
     if (this.status === 'turnEvil' && this.frame === 3 && Math.random() < .5) {
       this.isEvil = true
       this.enemy = true
@@ -281,7 +304,7 @@ class Rabbit extends Agent {
 
   getAnchor = () => ({
     x: this.getBoundingBox().x,
-    y: this.getBoundingBox().y + this.getBoundingBox().h,
+    y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
     w: this.getBoundingBox().w,
     h: 1
   })

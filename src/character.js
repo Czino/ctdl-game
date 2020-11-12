@@ -408,7 +408,7 @@ class Character extends Agent {
       this.protection--
       constants.charContext.globalAlpha = this.protection % 2
     }
-    constants.gameContext.drawImage(
+    constants.charContext.drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h

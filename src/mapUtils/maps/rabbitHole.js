@@ -297,9 +297,6 @@ const ramps = [
   t_0_2, t_1_2,
   t_0_3, t_1_3,
   t_2_5,
-  t_0_6, t_3_6,
-  t_1_7, t_2_7,
-  t_1_8, t_2_8,
   t_1_9, t_2_9
 ].map(tile => tile.toString())
 const solids = [
@@ -307,6 +304,9 @@ const solids = [
   t_0_7, t_3_7,
   t_0_8, t_3_8,
   t_0_9, t_3_9,
+  t_1_7, t_2_7,
+  t_1_8, t_2_8,
+  t_1_9, t_2_9,
   t_0_10, t_1_10, t_2_10, t_3_10
 ].map(tile => tile.toString())
 const mushrooms = {

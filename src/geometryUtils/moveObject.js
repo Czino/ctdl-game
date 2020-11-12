@@ -48,7 +48,7 @@ export const moveObject = (object, vector, tree) => {
 
   // we allow object to go up by 3 pixel in case the obstacle is now steep
   // we are going up
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     hasCollided = true
     object.y -= i
 
@@ -108,7 +108,7 @@ export const moveObject = (object, vector, tree) => {
     object.y += bestVector.vector.y
     object.y -= bestVector.y
 
-    if (bestVector.y > 0) object.vy = 0
+    if (bestVector.y > 0 && originalVector.x === 0) object.vy = 0
   }
 
   return possibleVectors.length === 0

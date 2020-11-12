@@ -26,8 +26,8 @@ BehaviorTree.register('moveRight', new Task({
 BehaviorTree.register('moveRandom', new Task({
   run: agent => {
     // if already moving, continue journey
-    if (agent.isMoving === 'left' && Math.random() < .8) agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
-    if (agent.isMoving === 'right' && Math.random() < .8) agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    if (agent.isMoving === 'left' && Math.random() < .8) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    if (agent.isMoving === 'right' && Math.random() < .8) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
     return agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
   }
 }))
@@ -118,7 +118,7 @@ class Agent {
     }
   }
   moveRandom = {
-    condition: () => Math.random() < .01,
+    condition: () => Math.random() < (this.activity || .01),
     effect: () => Math.random() < .5 ? this.moveLeft.effect() : this.moveRight.effect()
   }
   jump = {
@@ -291,6 +291,10 @@ class Agent {
       }
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
+    }
+
+    if (this.status === 'fall' && Math.abs(this.vy) < 6) {
+      this.status = 'idle'
     }
   }
 

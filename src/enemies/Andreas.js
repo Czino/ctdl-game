@@ -319,6 +319,7 @@ class Andreas extends Agent {
     }
     this.sensedObjects = CTDLGAME.quadTree
       .query(senseBox)
+      .filter(obj => obj.id !== this.id)
 
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
