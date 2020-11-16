@@ -95,11 +95,14 @@ export const moveObject = (object, vector, tree) => {
     vector = JSON.parse(JSON.stringify(originalVector))
   }
 
-  possibleVectors = possibleVectors.sort((a, b) => {
-    let sumA = Math.abs(a.vector.x) + Math.abs(a.vector.y)
-    let sumB = Math.abs(b.vector.x) + Math.abs(b.vector.y)
-    return sumA > sumB ? -1 : 1
-  })
+  possibleVectors = possibleVectors
+    .sort((a, b) => {
+      let sumA = Math.abs(a.vector.x) + Math.abs(a.vector.y)
+      let sumB = Math.abs(b.vector.x) + Math.abs(b.vector.y)
+
+      if (sumA === sumB) return a.y < b.y ? -1 : 1
+      return sumA > sumB ? -1 : 1
+    })
 
   let bestVector = possibleVectors[0]
 

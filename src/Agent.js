@@ -289,6 +289,7 @@ class Agent {
       } else if (!/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
         this.status = 'fall'
       }
+
       if (this.vx < 0) this.vx += 1
       if (this.vx > 0) this.vx -= 1
     }
