@@ -388,6 +388,11 @@ export default {
       { x: 79, y: 28, w: 8, h: 8 },
       { x: 87, y: 28, w: 8, h: 8 },
       { x: 87, y: 28, w: 8, h: 8 },
-    ]
+    ],
+    select: npc => {
+      addTextToQueue('RD_btc:\nHODL!', () => {
+        npc.isSelected = false
+      })
+    }
   }
 }
