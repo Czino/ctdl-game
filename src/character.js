@@ -512,6 +512,7 @@ class Character extends Agent {
       if (/jump|action/.test(this.status)) this.status = 'idle'
     }
 
+    if (this.id === 'hodlonaut') console.log(this.frame, this.vy, this.status)
     this.draw()
 
     if (this.selected) {

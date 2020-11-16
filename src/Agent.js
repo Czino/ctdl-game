@@ -293,7 +293,7 @@ class Agent {
       if (this.vx > 0) this.vx -= 1
     }
 
-    if (this.status === 'fall' && Math.abs(this.vy) < 6) {
+    if (this.status === 'fall' && Math.abs(this.vy) <= 6) {
       this.status = 'idle'
     }
   }
