@@ -44,8 +44,6 @@ import Item from './Item'
 // TODO game freezes when climbing on trees?
 // TODO character on map multiple times
 // TODO make the monk's riddle easier?
-// TODO evil rabbits too hard to beat
-// TODO add rabbit hole stage
 // TODO add Mt. Gox stage
 // TODO add Doge mine stage
 // TODO add moon stage
@@ -135,8 +133,10 @@ async function init() {
  * It also takes care of rendering a frame at specified framerate
  */
 function tick() {
+
   if (!CTDLGAME.isSoundLoaded) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+
     showStartGameScreen()
 
     if (window.SHOWBUTTONS) showButtons()

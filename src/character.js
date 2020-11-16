@@ -457,7 +457,6 @@ class Character extends Agent {
       .filter(friend => friend.class === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
-    // if (this.id === 'hodlonaut') console.log(this.senseRadius, this.sensedFriends)
     this.touchedObjects = CTDLGAME.quadTree
       .query(boundingBox)
       .filter(obj => intersects(boundingBox, obj.getBoundingBox()))
@@ -512,7 +511,6 @@ class Character extends Agent {
       if (/jump|action/.test(this.status)) this.status = 'idle'
     }
 
-    if (this.id === 'hodlonaut') console.log(this.frame, this.vy, this.status)
     this.draw()
 
     if (this.selected) {

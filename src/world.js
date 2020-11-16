@@ -48,6 +48,18 @@ export default function (id) {
           tile.x, tile.y, tile.w, tile.h
         )
       })
+
+    if (this.map.base) {
+      this.map.base
+        .filter(tile => intersects(tile, CTDLGAME.viewport))
+        .map(tile => {
+          constants.gameContext.drawImage(
+            sprite,
+            tile.tile[0], tile.tile[1], tile.w, tile.h,
+            tile.x, tile.y, tile.w, tile.h
+          )
+        })
+    }
     this.map.fg
       .filter(tile => intersects(tile, CTDLGAME.viewport))
       .map(tile => {

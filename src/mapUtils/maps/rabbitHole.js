@@ -524,7 +524,7 @@ const goToMempool = new GameObject('goToMempool', {
 })
 
 goToMempool.touchEvent = () => {
-  changeMap('city', 'rabbitRole')
+  changeMap('city', 'rabbitHole')
 }
 events.push(goToMempool)
 
@@ -536,7 +536,7 @@ const goToEndOfTheRabbitHole = new GameObject('goToEndOfTheRabbitHole', {
 })
 
 goToEndOfTheRabbitHole.touchEvent = () => {
-  changeMap('endOfTheRabbitHole', 'rabbitRole')
+  changeMap('endOfTheRabbitHole', 'rabbitHole')
 }
 events.push(goToEndOfTheRabbitHole)
 
@@ -548,7 +548,7 @@ const goToDogeMine = new GameObject('goToDogeMine', {
 })
 
 goToDogeMine.touchEvent = () => {
-  changeMap('dogeMine', 'rabbitRole')
+  changeMap('dogeMine', 'rabbitHole')
 }
 events.push(goToDogeMine)
 
