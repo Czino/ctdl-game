@@ -518,6 +518,7 @@ export default {
       }
     )
   ],
+  items: () => [],
   events,
   track: 'santaMaria',
   overworld: true,

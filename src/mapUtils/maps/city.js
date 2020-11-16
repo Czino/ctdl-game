@@ -326,6 +326,7 @@ export default {
       }
     )
   ],
+  items: () => [],
   events,
   track: 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: true,
