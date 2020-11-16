@@ -15,6 +15,7 @@ import endOfTheRabbitHole from './tracks/end-of-the-rabbit-hole'
 
 // TODO add "Nomen a solempnibus II" ?
 // TODO add "Procurans odium II" ?
+// TODO add "Guillaume de Machaut - Douce Dame Jolie" ?
 const gain = new Gain(1).toDestination()
 const reverb = new Reverb({
   decay: 17,

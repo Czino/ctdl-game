@@ -38,7 +38,9 @@ import Item from './Item'
 // playSound('goldbugsHurt')
 // setInterval(() => playSound('goldbugsHurt'), 1000)
 
+// TODO improve stair walking (press up key)
 // TODO add forest enemies
+// TODO add enemy that forks into two and you have to fight them before they fork again
 // TODO game freezes when climbing on trees?
 // TODO character on map multiple times
 // TODO make the monk's riddle easier?
