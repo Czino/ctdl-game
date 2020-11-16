@@ -4,8 +4,8 @@ import constants from './mapCreator/constants'
 
 let frame = 0
 const $menu = document.getElementById('ctdl-game-menu')
-const $parallax = document.getElementById('ctdl-game-parallax')
 const $bg = document.getElementById('ctdl-game-bg')
+const $base = document.getElementById('ctdl-game-base')
 const $fg = document.getElementById('ctdl-game-fg')
 const $info = document.getElementById('ctdl-game-info')
 const $tileSet = document.getElementById('ctdl-game-tileset')
@@ -15,7 +15,7 @@ const $getJSON = document.getElementById('ctdl-game-getJSON')
 const $loadJSON = document.getElementById('ctdl-game-loadJSON')
 
 let tiles
-let layer = 'fg'
+let layer = 'base'
 let currentTile = {
   x: 0,
   y: 0,
@@ -24,8 +24,8 @@ let currentTile = {
 }
 let cursor
 let stage = {
-  parallax: [],
   bg: [],
+  base: [],
   fg: []
 }
 
@@ -87,8 +87,8 @@ const highlightCurrentTile = () => {
 const renderMap = updateTiles => {
   if (updateTiles) {
     [
-      'parallaxContext',
       'bgContext',
+      'baseContext',
       'fgContext'
     ].map(name => {
       const canvas = constants[name.replace('Context', 'Canvas')]
@@ -109,7 +109,7 @@ const renderMap = updateTiles => {
   }
   if (cursor) {
     let imageData = constants.menuContext.getImageData(currentTile.x, currentTile.y, 8, 8)
-    constants.fgContext.putImageData(
+    constants[`${layer}Context`].putImageData(
       imageData,
       cursor.x, cursor.y
     )
@@ -151,17 +151,16 @@ function changeMap (map) {
   loadTileSet(map.tileSet)
   ;[
     constants.bgCanvas,
+    constants.baseCanvas,
     constants.fgCanvas
   ].map(canvas => {
     canvas.width = map.width
     canvas.height = map.height
   })
-  constants.parallaxCanvas.width = map.width * 2
-  constants.parallaxCanvas.height = map.height
 
   stage = {
-    parallax: createEmpty(map.width * 2 / 8, map.height / 8),
     bg: createEmpty(map.width / 8, map.height / 8),
+    base: createEmpty(map.width * 2 / 8, map.height / 8),
     fg: createEmpty(map.width / 8, map.height / 8)
   }
 }
@@ -191,8 +190,8 @@ Array.from($layer).map($l => $l.addEventListener('change', e => {
 }))
 window.addEventListener('mousemove', mouseMoveHandler)
 $menu.addEventListener('mousedown', menuMouseDownHandler)
-$parallax.addEventListener('mousedown', mapMouseDownHandler)
 $bg.addEventListener('mousedown', mapMouseDownHandler)
+$base.addEventListener('mousedown', mapMouseDownHandler)
 $fg.addEventListener('mousedown', mapMouseDownHandler)
 window.addEventListener('keydown', e => {
   if (e.metaKey) return

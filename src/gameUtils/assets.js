@@ -19,6 +19,7 @@ import genesisBlock from '../sprites/genesis-block.png'
 import block from '../sprites/block.png'
 import stairs from '../sprites/stairs.png'
 import city from '../sprites/city.png'
+import building from '../sprites/building.png'
 import forest from '../sprites/forest.png'
 import rabbitHole from '../sprites/rabbitHole.png'
 import endOfTheRabbitHole from '../sprites/endOfTheRabbitHole.png'
@@ -48,6 +49,7 @@ export const assets = {
   block,
   stairs,
   city,
+  building,
   forest,
   rabbitHole,
   endOfTheRabbitHole,
