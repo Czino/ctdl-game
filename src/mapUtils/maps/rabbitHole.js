@@ -10,6 +10,7 @@ import { CTDLGAME } from '../../gameUtils'
 import Item from '../../Item'
 import Andreas from '../../enemies/Andreas'
 import { random } from '../../arrayUtils'
+import { addTextToQueue } from '../../textUtils'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -524,7 +525,8 @@ const goToMempool = new GameObject('goToMempool', {
 })
 
 goToMempool.touchEvent = () => {
-  changeMap('city', 'rabbitHole')
+  addTextToQueue('Here you would get to the mempool')
+  // changeMap('mempool', 'rabbitHole')
 }
 events.push(goToMempool)
 
@@ -548,7 +550,8 @@ const goToDogeMine = new GameObject('goToDogeMine', {
 })
 
 goToDogeMine.touchEvent = () => {
-  changeMap('dogeMine', 'rabbitHole')
+  addTextToQueue('Here you would get to the\ndoge mine')
+  // changeMap('dogeMine', 'rabbitHole')
 }
 events.push(goToDogeMine)
 
