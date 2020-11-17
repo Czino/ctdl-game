@@ -21,7 +21,16 @@ const doesNotTouchEnemy = new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
 const touchesEnemy = new Task({
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+  run: agent => {
+    if (!agent.closestEnemy) return FAILURE
+    const attackBox = {
+      x: agent.getBoundingBox().x - agent.attackRange,
+      y: agent.getBoundingBox().y,
+      w: agent.getBoundingBox().w + agent.attackRange * 2,
+      h: agent.getBoundingBox().h
+    }
+    return intersects(attackBox, agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+  }
 })
 const lookAtEnemy = new Task({
   run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
@@ -30,7 +39,7 @@ const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
 })
 const moveToClosestEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: 9 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: 9 }) : FAILURE
 })
 
 // Sequence: runs each node until fail
@@ -73,8 +82,8 @@ class Andreas extends Agent {
     this.spriteData = sprites[id]
     this.maxHealth = options.maxHealth ?? 5
     this.health = options.health ?? 5
-    this.strength = id === 'andreas' ? 1 : 3
-    this.attackRange = id === 'andreas' ? 1 : 5
+    this.strength = 1
+    this.attackRange = 9
     this.senseRadius = 50
     this.walkingSpeed = options.walkingSpeed || 3
     this.duckSpeed = options.duckSpeed || 2
