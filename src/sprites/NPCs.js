@@ -387,12 +387,23 @@ export default {
       { x: 79, y: 28, w: 8, h: 8 },
       { x: 79, y: 28, w: 8, h: 8 },
       { x: 87, y: 28, w: 8, h: 8 },
-      { x: 87, y: 28, w: 8, h: 8 },
+      { x: 87, y: 28, w: 8, h: 8 }
     ],
     select: npc => {
       addTextToQueue('RD_btc:\nHODL!', () => {
         npc.isSelected = false
       })
     }
-  }
+  },
+  vlad: {
+    // make him play a red Gibson ES 335 or a Fender Telecaster
+    frames: [
+      { x: 79, y: 28, w: 8, h: 8 }
+    ],
+    select: npc => {
+      addTextToQueue('Vlad:\Don’t forget that you were born free. This is a powerful thought that will one day break all chains!', () => {
+        npc.isSelected = false
+      })
+    }
+  },
 }

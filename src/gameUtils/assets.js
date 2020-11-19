@@ -23,6 +23,8 @@ import building from '../sprites/building.png'
 import forest from '../sprites/forest.png'
 import rabbitHole from '../sprites/rabbitHole.png'
 import endOfTheRabbitHole from '../sprites/endOfTheRabbitHole.png'
+import dogeCoinMine from '../sprites/dogeCoinMine.png'
+import doge from '../sprites/doge.png'
 import inventoryBlock from '../sprites/inventory-block.png'
 import NPCs from '../sprites/NPCs.png'
 import dancers from '../sprites/dancers.png'
@@ -53,6 +55,8 @@ export const assets = {
   forest,
   rabbitHole,
   endOfTheRabbitHole,
+  dogeCoinMine,
+  doge,
   inventoryBlock,
   NPCs,
   dancers
