@@ -16,10 +16,10 @@ const canTeleport = character => character.status !== 'rekt' && character.follow
 export const updateViewport = () => {
   if (CTDLGAME.multiPlayer) {
     CTDLGAME.viewport.x = Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2)
-    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
+    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
   } else {
     CTDLGAME.viewport.x = Math.round(window.SELECTEDCHARACTER.x + window.SELECTEDCHARACTER.w / 2 - constants.WIDTH / 2)
-    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h - constants.HEIGHT / 2))
+    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h, Math.round(window.SELECTEDCHARACTER.y + window.SELECTEDCHARACTER.h - constants.HEIGHT / 2))
   }
 
   if (CTDLGAME.hodlonaut.selected && canTeleport(CTDLGAME.katoshi)) {
@@ -35,6 +35,8 @@ export const updateViewport = () => {
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)
   CTDLGAME.viewport.x = Math.min(CTDLGAME.world.w - constants.WIDTH, CTDLGAME.viewport.x)
+  CTDLGAME.viewport.y = Math.max(0, CTDLGAME.viewport.y)
+  CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT + constants.MENU.h, CTDLGAME.viewport.y)
 
   constants.parallaxContext.setTransform(1, 0, 0, 1, -(CTDLGAME.viewport.x - Math.round(CTDLGAME.viewport.x / 2)), -CTDLGAME.viewport.y)
 

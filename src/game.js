@@ -38,6 +38,9 @@ import Item from './Item'
 // playSound('goldbugsHurt')
 // setInterval(() => playSound('goldbugsHurt'), 1000)
 
+// TODO accomodate forest and city for new update viewport
+// TODO add sounds for elevator and doge miner
+// TODO adjust position of doges
 // TODO improve stair walking (press up key)
 // TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again

@@ -7,6 +7,7 @@ import Bear from '../enemies/Bear'
 import Brian from '../enemies/Brian'
 import NPC from '../npcs/NPC'
 import Doge from '../npcs/Doge'
+import Elevator from '../objects/Elevator'
 import Item from '../Item'
 import Wizard from '../npcs/Wizard'
 
@@ -21,5 +22,6 @@ export const gameObjects = {
     Item,
     NPC,
     Doge,
+    Elevator,
     Wizard
 }
