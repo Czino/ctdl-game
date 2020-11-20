@@ -479,7 +479,7 @@ class Character extends Agent {
       }
     }
 
-    if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt|action/.test(this.status)) {
       if (CTDLGAME.multiPlayer || this.selected) {
         this.senseControls()
       } else {

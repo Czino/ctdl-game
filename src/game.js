@@ -69,6 +69,8 @@ import Item from './Item'
 // TODO consider Chef Nomi #SushiSwap
 // TODO add more enemies and bosses
 // TODO add moon ending scene
+// TODO add Zeus
+// TODO add Thor
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
