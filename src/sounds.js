@@ -168,6 +168,31 @@ const sounds = {
     squareSynth.triggerAttack('B3', present + dur / 2, .02)
     squareSynth.triggerRelease(present + dur / 2 + dur)
   },
+  clunk: () => {
+    const present = now()
+    const dur = .025
+
+    noiseSynth.dispose()
+    noiseSynth = new NoiseSynth()
+    noiseSynth.connect(gain)
+    noiseSynth.noise.type = 'white'
+    noiseSynth.envelope.attack = .005
+    noiseSynth.envelope.decay = .1
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = .07
+
+    squareSynth.portamento = 0
+    squareSynth.envelope.attack = .005
+    squareSynth.envelope.decay = .1
+    squareSynth.envelope.sustain = .3
+    squareSynth.envelope.release = .07
+
+    noiseSynth.triggerAttack(present, .1)
+    noiseSynth.triggerRelease(present + dur)
+
+    squareSynth.triggerAttack('B7', present + dur / 2, .02)
+    squareSynth.triggerRelease(present + dur / 2 + dur)
+  },
   lightningTorch: () => {
     const present = now()
     const dur = .4
@@ -181,6 +206,43 @@ const sounds = {
 
     noiseSynth.triggerAttack(present, .02)
     noiseSynth.triggerRelease(present + dur)
+  },
+  elevator: () => {
+    const present = now()
+    const dur = .5
+
+    noiseSynth.noise.type = 'brown'
+
+    noiseSynth.envelope.attack = .0005
+    noiseSynth.envelope.decay = .0005
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = .0005
+
+    noiseSynth.triggerAttack(present, .02)
+    noiseSynth.triggerRelease(present + dur)
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .05
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .07
+
+    triangleSynth.triggerAttack('A1', present, .2)
+    triangleSynth.triggerRelease(present + dur)
+  },
+  elevatorStop: () => {
+    const present = now()
+    const dur = .3
+
+    noise2Synth.noise.type = 'pink'
+
+    noise2Synth.envelope.attack = .0005
+    noise2Synth.envelope.decay = .0005
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = 2.3
+
+    noise2Synth.triggerAttack(present, .4)
+    noise2Synth.triggerRelease(present + dur)
   },
   sword: () => {
     const present = now()

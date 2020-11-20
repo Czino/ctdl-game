@@ -35,8 +35,8 @@ import { showButtons } from './debugUtils'
 import Item from './Item'
 
 // import { playSound } from './sounds'
-// playSound('goldbugsHurt')
-// setInterval(() => playSound('goldbugsHurt'), 1000)
+// playSound('elevatorStop')
+// setInterval(() => playSound('elevatorStop'), 1000)
 
 // TODO accomodate forest and city for new update viewport
 // TODO add sounds for elevator and doge miner

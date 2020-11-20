@@ -1,6 +1,7 @@
 import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import { intersects, moveObject } from '../geometryUtils'
+import { playSound } from '../sounds'
 
 class Elevator {
   constructor(id, options) {
@@ -112,15 +113,21 @@ class Elevator {
   update = () => {
     let move = 0
     if (intersects(this.getBoundingBox('whole'), window.SELECTEDCHARACTER.getBoundingBox())) {
-      this.senseControls()
+      let action = this.senseControls()
+      if (action === 'stop') playSound('elevatorStop')
     }
 
     if (this.action === 'up' && this.offsetY > this.minOffset) {
       move = -3
+      playSound('elevator')
     } else if (this.action === 'down' && this.offsetY < this.maxOffset) {
       move = 3
+      playSound('elevator')
     }
-    if (move === 0) this.action = 'stop'
+    if (move === 0 && this.action !== 'stop') {
+      playSound('elevatorStop')
+      this.action = 'stop'
+    }
 
     this.offsetY += move
 
@@ -144,6 +151,7 @@ class Elevator {
       window.SELECTEDCHARACTER.action.effect()
     }
     this.action = action || this.action
+    return action
   }
 
   getBoundingBox = type => type === 'whole'

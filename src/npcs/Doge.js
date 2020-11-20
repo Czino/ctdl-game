@@ -4,16 +4,19 @@ import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import { random } from '../arrayUtils'
 import { addTextToQueue } from '../textUtils'
+import { playSound } from '../sounds'
 
 class Doge extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.color = options.color
+    this.color = options.color || 'red'
     this.solving = random(this.puzzles)
+    this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
   }
   class = 'Doge'
   w = 13
   h = 12
+
   puzzles = [
     {
       text: '1+2=?',
@@ -63,10 +66,12 @@ class Doge extends Agent {
 
   draw = () => {
     let spriteData = dogeSprite[this.direction][this.color]
-
-    if (CTDLGAME.frame % 32 === 0) this.frame++
-    if (CTDLGAME.frame % 64 === 0) {
+    if ((CTDLGAME.frame + this.delay) % 32 === 0) this.frame++
+    if ((CTDLGAME.frame + this.delay) % 64 === 0) {
       this.solving = random(this.puzzles)
+    }
+    if ((CTDLGAME.frame + this.delay - 32) % 64 === 0) {
+      playSound('clunk')
     }
     if (this.frame >= spriteData.length) {
       this.frame = 0
@@ -88,7 +93,7 @@ class Doge extends Agent {
         constants.gameContext.fillStyle = this.solving.color
         constants.gameContext.globalAlpha = Math.random()
         constants.gameContext.fillRect(
-          this.direction === 'left' ? this.x + 4 - offset + i : this.x + this.w - 4 + offset + i,
+          this.direction === 'left' ? this.x - 2 + offset + i : this.x + this.w - 4 + offset + i,
           this.y + 8,
           1, 1
         )
