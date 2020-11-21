@@ -12,6 +12,7 @@ class Doge extends Agent {
     this.color = options.color || 'red'
     this.solving = random(this.puzzles)
     this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
+    this.speed = (Math.round(Math.random() * 3) + 4) * constants.FRAMERATE
   }
   class = 'Doge'
   w = 13
@@ -66,12 +67,24 @@ class Doge extends Agent {
 
   draw = () => {
     let spriteData = dogeSprite[this.direction][this.color]
-    if ((CTDLGAME.frame + this.delay) % 32 === 0) this.frame++
-    if ((CTDLGAME.frame + this.delay) % 64 === 0) {
-      this.solving = random(this.puzzles)
+    if ((CTDLGAME.frame + this.delay) % this.speed === 0) {
+      this.frame++
+      if (this.frame === 1) {
+        playSound('clunk')
+        this.reward = 4
+        this.coins = []
+        for (let c = 0; c < 5; c++) {
+          this.coins.push({
+            x: this.direction === 'left' ? this.x : this.x + this.w - 2,
+            y: this.y + 8,
+            vx: (Math.random() - .5) * 6,
+            vy: (Math.random() - .5) * 6
+          })
+        }
+      }
     }
-    if ((CTDLGAME.frame + this.delay - 32) % 64 === 0) {
-      playSound('clunk')
+    if ((CTDLGAME.frame + this.delay) % (this.speed * 2) === 0) {
+      this.solving = random(this.puzzles)
     }
     if (this.frame >= spriteData.length) {
       this.frame = 0
@@ -98,6 +111,19 @@ class Doge extends Agent {
           1, 1
         )
       }
+      constants.gameContext.globalAlpha = 1
+    }
+
+    if (this.reward > 0) {
+      this.coins = this.coins.map(coin => {
+        constants.gameContext.fillStyle = '#eecc43'
+        constants.gameContext.globalAlpha = Math.random()
+        constants.gameContext.fillRect(Math.round(coin.x), Math.round(coin.y), 1, 1)
+        coin.x += coin.vx
+        coin.y += coin.vy
+        return coin
+      })
+      this.reward--
       constants.gameContext.globalAlpha = 1
     }
   }
