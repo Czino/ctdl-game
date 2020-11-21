@@ -10,6 +10,7 @@ import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 import { makeBoundary } from '../../geometryUtils'
 import Ramp from '../../Ramp'
+import getHitBoxes from '../getHitBoxes'
 
 const worldWidth = 125
 const worldHeight = 128
@@ -260,31 +261,7 @@ events.push(goToShop)
 events.push(goToBuilding)
 events.push(goToForest)
 
-fg.forEach(tile => {
-  if (ramps.indexOf(tile.tile.toString()) !== -1) {
-    objects.push(new Ramp(
-      'ramp',
-      constants.bgContext,
-      {
-        x: tile.x * tileSize,
-        y: tile.y * tileSize + 3,
-        w: tileSize,
-        h: tileSize,
-        sprite: 'city',
-        spriteData: { x: tile.tile[0] * tileSize, y: tile.tile[1] * tileSize, w: tileSize, h: tileSize},
-        direction: 'right',
-        isSolid: true,
-      },
-    ))
-  } else if (solids.indexOf(tile.tile.toString()) !== -1) {
-    objects.push(makeBoundary({
-      x: tile.x * tileSize,
-      y: tile.y * tileSize + 3,
-      w: tileSize,
-      h: tileSize
-    }))
-  }
-})
+objects = objects.concat(getHitBoxes(fg, ramps, solids, 'city', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },

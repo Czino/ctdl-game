@@ -1,12 +1,15 @@
 import { changeMap } from '../changeMap'
+import { darken } from '../darken'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../gameObject'
 import constants from '../../constants'
-import Ramp from '../../Ramp'
 import { makeBoundary } from '../../geometryUtils'
 import NPC from '../../npcs/NPC'
 import { CTDLGAME } from '../../gameUtils'
+import drawLightSources from '../drawLightSources'
+import parseLightSources from '../parseLightSources'
+import getHitBoxes from '../getHitBoxes'
 
 const worldWidth = 32
 const worldHeight = 32
@@ -148,7 +151,7 @@ const solids = [
   t_1_9, t_2_9,
   t_0_10, t_1_10, t_2_10, t_3_10
 ].map(tile => tile.toString())
-const mushrooms = {
+const lights = {
   '4_0': {
     color: '#f8c11f',
     brightness: .4
@@ -194,18 +197,7 @@ const mushrooms = {
     brightness: .2
   }
 }
-let lightSources = []
-stage.bg
-  .filter(tile => Object.keys(mushrooms).indexOf(tile.tile.join('_')) !== -1)
-  .map(tile => {
-    let mushroom = mushrooms[tile.tile.join('_')]
-    mushroom.tile = tile.tile
-    mushroom.x = tile.x * tileSize
-    mushroom.y = tile.y * tileSize
-    mushroom.w = tileSize
-    mushroom.h = tileSize
-    lightSources.push(JSON.parse(JSON.stringify(mushroom)))
-  })
+let lightSources = parseLightSources(lights, stage.bg, tileSize)
 
 let events = []
 let objects = []
@@ -219,131 +211,11 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
   }))
 }
 
-const drawLightSources = () => {
-  constants.skyContext.globalAlpha = .90
-  constants.skyContext.globalCompositeOperation = 'source-over'
-
-  constants.bgContext.globalAlpha = .90
-  constants.bgContext.globalCompositeOperation = 'source-atop'
-
-  constants.fgContext.globalAlpha = .90
-  constants.fgContext.globalCompositeOperation = 'source-atop'
-
-  constants.charContext.globalAlpha = .81
-  constants.charContext.globalCompositeOperation = 'source-atop'
-
-  constants.gameContext.globalAlpha = .81
-  constants.gameContext.globalCompositeOperation = 'source-atop'
-
-  ;[
-    constants.skyContext,
-    constants.bgContext,
-    constants.fgContext,
-    constants.charContext,
-    constants.gameContext
-  ].map(context => {
-    context.fillStyle = '#170705'
-    context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-  })
-
-  constants.skyContext.globalAlpha = .0125
-  constants.skyContext.globalCompositeOperation = 'source-atop'
-
-  constants.bgContext.globalAlpha = .025
-  constants.bgContext.globalCompositeOperation = 'source-atop'
-
-  constants.fgContext.globalAlpha = .025
-  constants.fgContext.globalCompositeOperation = 'source-atop'
-
-  constants.charContext.globalAlpha = .025
-  constants.charContext.globalCompositeOperation = 'source-atop'
-
-  constants.gameContext.globalAlpha = .025
-  constants.gameContext.globalCompositeOperation = 'source-atop'
-
-  const objectLightSources = CTDLGAME.objects
-    .filter(obj => obj.glows)
-    .map((obj => obj.getLightSource()))
-
-  CTDLGAME.lightSources.concat(objectLightSources)
-    .filter(lightSource => lightSource)
-    .map(lightSource => {
-      let x = lightSource.id ? lightSource.x : lightSource.x + .5 * tileSize
-      let y = lightSource.id ? lightSource.y : lightSource.y + .5 * tileSize
-      let radius = lightSource.radius || 64
-      constants.skyContext.fillStyle = lightSource.color
-      constants.bgContext.fillStyle = lightSource.color
-      constants.fgContext.fillStyle = lightSource.color
-      constants.charContext.fillStyle = lightSource.color
-      constants.gameContext.fillStyle = lightSource.color
-
-      for (let b = lightSource.brightness; b > 0; b -= .025) {
-        [
-          constants.skyContext,
-          constants.bgContext,
-          constants.fgContext,
-          constants.charContext,
-          constants.gameContext
-        ].map(context => {
-          context.beginPath()
-          context.arc(x, y, radius * b, 0, 2 * Math.PI)
-          context.fill()
-        })
-      }
-    })
-
-  ;[
-    constants.skyContext,
-    constants.bgContext,
-    constants.fgContext,
-    constants.charContext,
-    constants.gameContext
-  ].map(context => {
-    context.globalAlpha = 1
-    context.globalCompositeOperation = 'source-over'
-  })
-
-  lightSources.map(lightSource => {
-    constants.bgContext.drawImage(
-      CTDLGAME.assets.rabbitHole,
-      lightSource.tile[0] * tileSize, lightSource.tile[1] * tileSize, tileSize, tileSize,
-      lightSource.x, lightSource.y + 2, tileSize, tileSize
-    )
-  })
-  CTDLGAME.objects
-    .filter(object => object.glows)
-    .map(object => object.draw())
-}
-
 makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-stage.base.forEach(tile => {
-  if (ramps.indexOf(tile.tile.toString()) !== -1) {
-    objects.push(new Ramp(
-      'ramp-' + tile.tile.toString(),
-      constants.bgContext,
-      {
-        x: tile.x * tileSize,
-        y: tile.y * tileSize + 3,
-        w: tileSize,
-        h: tileSize,
-        sprite: 'rabbitHole',
-        spriteData: { x: tile.tile[0] * tileSize, y: tile.tile[1] * tileSize, w: tileSize, h: tileSize},
-        direction: 'right',
-        isSolid: true,
-      },
-    ))
-  } else if (solids.indexOf(tile.tile.toString()) !== -1) {
-    objects.push(makeBoundary({
-      x: tile.x * tileSize,
-      y: tile.y * tileSize + 3,
-      w: tileSize,
-      h: tileSize
-    }))
-  }
-})
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'endOfTheRabbitHole', tileSize))
 
 const goToRabbitHole = new GameObject('goToRabbitHole', {
   x: 30 * tileSize,
@@ -417,7 +289,8 @@ export default {
   track: 'endOfTheRabbitHole',
   bgColor: () => '#270b08',
   update: () => {
-    drawLightSources()
+    darken(.9, .81, '#170705')
+    drawLightSources(lightSources, 'endOfTheRabbitHole', tileSize)
     constants.menuContext.globalAlpha = .2
     constants.menuContext.fillStyle = CTDLGAME.frame % 32 >= 16 ? '#c8006e' : '#cd8812'
     constants.menuContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)

@@ -9,6 +9,7 @@ import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../enemies/Bear'
 import NPC from '../../npcs/NPC'
 import { CTDLGAME } from '../../gameUtils'
+import getHitBoxes from '../getHitBoxes'
 
 const worldWidth = 217
 const worldHeight = 128
@@ -410,32 +411,7 @@ bg = bg.concat(parsePattern(bigTree2, 101, 107))
 bg = bg.concat(parsePattern(bigTree1, 107, 106))
 bg = bg.concat(parsePattern(bush, 111, 115))
 
-fg.forEach(tile => {
-  if (ramps.indexOf(tile.tile.toString()) !== -1) {
-    objects.push(new Ramp(
-      'ramp',
-      constants.bgContext,
-      {
-        x: tile.x * tileSize,
-        y: tile.y * tileSize + 3,
-        w: tileSize,
-        h: tileSize,
-        sprite: 'forest',
-        spriteData: { x: tile.tile[0] * tileSize, y: tile.tile[1] * tileSize, w: tileSize, h: tileSize},
-        direction: 'right',
-        isSolid: true,
-      },
-    ))
-  } else if (solids.indexOf(tile.tile.toString()) !== -1) {
-    objects.push(makeBoundary({
-      x: tile.x * tileSize,
-      y: tile.y * tileSize + 3,
-      w: tileSize,
-      h: tileSize
-    }))
-  }
-})
-
+objects = objects.concat(getHitBoxes(fg, ramps, solids, 'forest', tileSize))
 
 const gotToCity = new GameObject('gotToCity', {
   x: 1 * tileSize,

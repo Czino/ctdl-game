@@ -39,8 +39,6 @@ import Item from './Item'
 // setInterval(() => playSound('elevatorStop'), 1000)
 
 // TODO accomodate forest and city for new update viewport
-// TODO add sounds for elevator and doge miner
-// TODO adjust position of doges
 // TODO improve stair walking (press up key)
 // TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again
@@ -48,7 +46,8 @@ import Item from './Item'
 // TODO character on map multiple times
 // TODO make the monk's riddle easier?
 // TODO add Mt. Gox stage
-// TODO add Doge mine stage
+// TODO add endbosses for Rabbit Hole stage
+// TODO add endboss for Doge Mine stage
 // TODO add moon stage
 // TODO add a citadel stage
 // TODO add "mempool" stage
