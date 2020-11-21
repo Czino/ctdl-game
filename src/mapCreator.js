@@ -24,6 +24,7 @@ let currentTile = {
 }
 let cursor
 let stage = {
+  parallax: [],
   bg: [],
   base: [],
   fg: []
@@ -187,7 +188,13 @@ $loadJSON.addEventListener('click', () => {
 
 Array.from($layer).map($l => $l.addEventListener('change', e => {
   layer = e.target.value
+  ;[
+    constants.bgCanvas,
+    constants.baseCanvas,
+    constants.fgCanvas
+  ].map(canvas => canvas.style.opacity = (canvas.id.indexOf(layer) !== -1 ? 1 : .5))
 }))
+
 window.addEventListener('mousemove', mouseMoveHandler)
 $menu.addEventListener('mousedown', menuMouseDownHandler)
 $bg.addEventListener('mousedown', mapMouseDownHandler)
@@ -203,6 +210,9 @@ window.addEventListener('keydown', e => {
   if (key === 'arrowdown' || key === 's') vy = 8
   if (key === 'arrowleft' || key === 'a') vx = -8
   if (key === 'arrowright' || key === 'd') vx = 8
+  if (key === '1') document.querySelector('[value="bg"]').click()
+  if (key === '2') document.querySelector('[value="base"]').click()
+  if (key === '3') document.querySelector('[value="fg"]').click()
 
   if (vx !== 0 || vy !== 0) e.preventDefault()
   currentTile.x += vx
