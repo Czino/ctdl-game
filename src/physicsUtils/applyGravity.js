@@ -16,7 +16,7 @@ export const applyGravity = () => {
     }
     CTDLGAME.objects
       .map(obj => {
-        obj.inViewport = intersects(extendedViewport, obj.getBoundingBox())
+        obj.inViewport = intersects(extendedViewport, obj.getBoundingBox('whole'))
         return obj
       })
       .filter(obj => obj.applyGravity)

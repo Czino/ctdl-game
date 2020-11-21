@@ -142,6 +142,7 @@ class Elevator {
   }
 
   senseControls = () => {
+    // TODO add controls for mobile
     const action = Object.keys(this.controls)
       .filter(key => window.KEYS.indexOf(key) !== -1)
       .map(key => this.controls[key])
