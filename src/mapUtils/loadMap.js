@@ -4,6 +4,7 @@ import forest from './maps/forest'
 import rabbitHole from './maps/rabbitHole'
 import endOfTheRabbitHole from './maps/endOfTheRabbitHole'
 import dogeCoinMine from './maps/dogeCoinMine'
+import miningFarm from './maps/miningFarm'
 
 export const maps = {
   city,
@@ -11,7 +12,8 @@ export const maps = {
   forest,
   rabbitHole,
   endOfTheRabbitHole,
-  dogeCoinMine
+  dogeCoinMine,
+  miningFarm
 }
 
 /**

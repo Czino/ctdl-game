@@ -11,6 +11,7 @@ import bullsVsBears from './tracks/bulls-vs-bears'
 import aNewHope from './tracks/a-new-hope'
 import darkIsBetter from './tracks/dark-is-better'
 import endOfTheRabbitHole from './tracks/end-of-the-rabbit-hole'
+import miningFarm from './tracks/mining-farm'
 
 
 // TODO add "Nomen a solempnibus II" ?
@@ -24,6 +25,7 @@ const reverb = new Reverb({
 let delay
 
 let autoFilter
+let autoFilter2
 
 const pulseOptions = {
   oscillator: {
@@ -222,6 +224,51 @@ const songs = {
       sine: endOfTheRabbitHole.sine,
       delays: [ sineSynth ],
       loop: true
+    },
+    miningFarm: {
+      id: 'miningFarm',
+      length: 1,
+      bpm: 127,
+      noise: miningFarm.noise,
+      triangle: miningFarm.triangle,
+      pulse: miningFarm.pulse1,
+      sine: miningFarm.sine,
+      reverbs: [ sineSynth ],
+      loop: true,
+      init: () => {
+        autoFilter = new AutoFilter(.01)
+        autoFilter2 = new AutoFilter(.015)
+        noiseSynth.envelope.attack = 0
+        noiseSynth.envelope.sustain = 1
+
+        pulseSynth.envelope.attack = 0
+        pulseSynth.envelope.sustain = 1
+        pulseSynth.envelope.release = 0
+
+        triangleSynth.envelope.attack = 0
+        triangleSynth.envelope.sustain = 1
+        triangleSynth.envelope.release = 0
+
+        sineSynth.envelope.attack = .5
+        sineSynth.envelope.release = .5
+
+        pulseSynth.disconnect()
+        pulseSynth.chain(autoFilter, gain)
+        autoFilter.start()
+
+        triangleSynth.disconnect()
+        triangleSynth.chain(autoFilter2, gain)
+        autoFilter2.start()
+      },
+      deinit: () => {
+        pulseSynth.envelope.attack = 0.005
+        pulseSynth.envelope.release = 0.8
+        sineSynth.envelope.attack = 0.005
+        sineSynth.envelope.release = 0.8
+        autoFilter.stop()
+
+        noiseSynth.noise.type = 'white'
+      },
     },
     // Czino - I'm sad
     gameOver: {
