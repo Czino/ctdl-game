@@ -28,6 +28,8 @@ import doge from '../sprites/doge.png'
 import miningFarm from '../sprites/miningFarm.png'
 import inventoryBlock from '../sprites/inventory-block.png'
 import NPCs from '../sprites/NPCs.png'
+import policeForce from '../sprites/policeForce.png'
+import policeForceWithShield from '../sprites/policeForceWithShield.png'
 import dancers from '../sprites/dancers.png'
 
 // TODO can I somehow dynamically load assets when needed?
@@ -61,5 +63,7 @@ export const assets = {
   miningFarm,
   inventoryBlock,
   NPCs,
+  policeForce,
+  policeForceWithShield,
   dancers
 }

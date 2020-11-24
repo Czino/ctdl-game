@@ -275,6 +275,30 @@ class Agent {
     return this.onHurt()
   }
 
+  draw = () => {
+    let spriteData = this.spriteData[this.direction][this.status]
+
+    if (this.frame >= spriteData.length) {
+      this.frame = 0
+    }
+
+    let data = spriteData[this.frame]
+    this.w = data.w
+    this.h = data.h
+
+    constants.gameContext.globalAlpha = data.opacity ?? 1
+    if (this.protection > 0) {
+      this.protection--
+      constants.gameContext.globalAlpha = this.protection % 2
+    }
+    constants.gameContext.drawImage(
+      this.sprite,
+      data.x, data.y, this.w, this.h,
+      this.x, this.y, this.w, this.h
+    )
+    constants.gameContext.globalAlpha = 1
+  }
+
   applyPhysics = () => {
     if ((this.vx !== 0 || this.vy !== 0) && this.inViewport) {
       if (this.vx > 12) this.vx = 12

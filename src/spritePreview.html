@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CTDLGAME</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'/>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      background-color: #000;
+      color: #AAA;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    .cursor-crosshair {
+      cursor: crosshair;
+    }
+    .cursor-pointer {
+      cursor: pointer;
+    }
+    .pos-rel {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+    #ctdl-game-base {
+      position: absolute;
+      z-index: 1;
+      border: 1px solid #AAA;
+      height: 100vh;
+    }
+    #ctdl-game-base {
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -o-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: pixelated;
+      image-rendering: optimize-contrast;
+    }
+    #ctdl-game-sprites, #ctdl-game-direction, #ctdl-game-status {
+      appearance: none;
+      width: 100%;
+      background-color: #212121;
+      color: #AAA;
+      border: 1px solid #AAA;
+      padding: 5px 10px;
+      border-right-width: 0;
+    }
+  </style>
+</head>
+<body class="cursor-crosshair">
+  <div style="width: 256px;">
+    <select id="ctdl-game-sprites">
+      <option>policeForceWithShield</option>
+      <option>policeForce</option>
+      <option>hodlonaut</option>
+      <option>katoshi</option>
+      <option>shitcoiner</option>
+      <option>brian</option>
+      <option>bear</option>
+      <option>goldbugs</option>
+      <option>rabbit</option>
+      <option>andreas</option>
+      <option>doge</option>
+    </select>
+    <select id="ctdl-game-direction">
+      <option>right</option>
+      <option>left</option>
+    </select>
+    <select id="ctdl-game-status">
+      <option>idle</option>
+      <option>move</option>
+      <option>jump</option>
+      <option>fall</option>
+      <option>spawn</option>
+      <option>hurt</option>
+      <option>rekt</option>
+      <option>burning</option>
+      <option>attack</option>
+      <option>moveAttack</option>
+      <option>duck</option>
+      <option>duckMove</option>
+      <option>duckAttack</option>
+      <option>throw</option>
+    </select>
+  </div>
+  <div class="pos-rel" style="width: 100%;">
+    <canvas id="ctdl-game-base"></canvas>
+  </div>
+</body>
+</html>
