@@ -69,6 +69,19 @@ const blinkingLights = [
   [60, 38], [53, 30],
   [60, 43], [53, 33], [53, 36], [53, 39]
 ]
+const blinkingLightsBg = [
+  [14, 13], [18, 15], [45, 15], [49, 13],
+  [14, 15], [18, 18], [45, 18], [49, 15],
+  [14, 17], [18, 22], [45, 22], [49, 17],
+  [14, 21], [18, 24], [45, 24], [49, 21],
+  [14, 23], [18, 26], [45, 26], [49, 23],
+  [14, 25], [18, 28], [45, 28], [49, 25],
+  [14, 27], [18, 30], [45, 30], [49, 27],
+  [14, 30], [18, 32], [45, 32], [49, 30],
+  [14, 33], [18, 35], [45, 35], [49, 33],
+  [14, 36], [18, 37], [45, 37], [49, 36],
+  [14, 39], [18, 39], [45, 39], [49, 39]
+]
 let events = []
 let objects = []
 
@@ -135,6 +148,12 @@ export default {
         .filter(() => Math.random() > .9)
         .map(light => {
           constants.bgContext.fillStyle = '#010124'
+          constants.bgContext.fillRect(light[0] + i * 64, light[1] + 74, 1, 1)
+        })
+      blinkingLightsBg
+        .filter(() => Math.random() > .1)
+        .map(light => {
+          constants.bgContext.fillStyle = '#525baa'
           constants.bgContext.fillRect(light[0] + i * 64, light[1] + 74, 1, 1)
         })
     }
