@@ -6,6 +6,7 @@ import constants from '../../constants'
 import { makeBoundary } from '../../geometryUtils'
 import { CTDLGAME } from '../../gameUtils'
 import getHitBoxes from '../getHitBoxes'
+import { initSoundtrack } from '../../soundtrack'
 
 const worldWidth = 128
 const worldHeight = 16
@@ -112,11 +113,28 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'dogeCoinMine', 
 //   changeMap('rabbitHole', 'dogeCoinMine')
 // }
 // events.push(goToRabbitHole)
+const underAttack = new GameObject('underAttack', {
+  x: 1 * tileSize,
+  y: 12 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+underAttack.touchEvent = () => {
+  if (CTDLGAME.world.map.state.underAttack) return
+  CTDLGAME.world.map.state.underAttack = true
+  initSoundtrack(CTDLGAME.world.map.track())
+}
+
+events.push(underAttack)
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     citadel: { x: 20, y: 96 }
+  },
+  state: {
+    underAttack: false
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -129,7 +147,7 @@ export default {
   npcs: () => [],
   items: () => [],
   events,
-  track: 'miningFarm',
+  track: () => CTDLGAME.world.map.state.underAttack ? 'citadelUnderAttack' : 'miningFarm',
   bgColor: () => '#020105',
   update: () => {
     [
@@ -141,6 +159,7 @@ export default {
       context.fillStyle = '#0915b8'
       context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
       context.globalCompositeOperation = 'source-over'
+      context.globalAlpha = '1'
     })
 
     for (let i = 0; i < 16; i++) {
@@ -156,6 +175,25 @@ export default {
           constants.bgContext.fillStyle = '#525baa'
           constants.bgContext.fillRect(light[0] + i * 64, light[1] + 74, 1, 1)
         })
+    }
+
+    if (CTDLGAME.world.map.state.underAttack) {
+      constants.skyContext.globalAlpha = '.4'
+      constants.skyContext.fillStyle = '#b80909'
+      constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+      constants.skyContext.globalAlpha = '1'
+      ;[
+        constants.bgContext,
+        constants.gameContext,
+        constants.charContext
+      ].map(context => {
+        context.globalCompositeOperation = 'source-atop'
+        context.globalAlpha = '.4'
+        context.fillStyle = '#b80909'
+        context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+        context.globalCompositeOperation = 'source-over'
+        context.globalAlpha = '1'
+      })
     }
   },
   spawnRates: {}

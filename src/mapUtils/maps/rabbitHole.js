@@ -431,6 +431,7 @@ export default {
     mempool: { x: 48, y: 454 },
     dogeCoinMine: { x: 964, y: 553 }
   },
+  state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
@@ -465,7 +466,7 @@ export default {
     )
   ],
   events,
-  track: 'darkIsBetter',
+  track: () => 'darkIsBetter',
   bgColor: () => '#170705',
   update: () => {
     const andreas = CTDLGAME.objects.find(obj => obj.class === 'Andreas')

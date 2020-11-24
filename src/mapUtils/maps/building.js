@@ -461,6 +461,7 @@ export default {
   start: {
     city: { x: 5 * tileSize, y: 48 * tileSize - 2 }
   },
+  state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   base: stage.base.map(tile => mapTile(tile, tileSize)),
@@ -472,7 +473,7 @@ export default {
   npcs: () => [],
   items: () => [],
   events,
-  track: 'imperayritzDeLaCiutatIoyosa',
+  track: () => 'imperayritzDeLaCiutatIoyosa',
   bgColor: () => '#212121',
   update: () => {},
   spawnRates: {}

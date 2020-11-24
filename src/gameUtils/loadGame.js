@@ -18,6 +18,7 @@ export const loadGame = async () => {
   let hodlonaut = await db.get('hodlonaut')
   let katoshi = await db.get('katoshi')
   let objects = await db.get(`objects-${worldId}`)
+  let worldState = await db.get(`worldState-${worldId}`)
   let blockHeight = await db.get('blockHeight')
   let inventory = await db.get('inventory')
   let options = await db.get('options')
@@ -36,9 +37,10 @@ export const loadGame = async () => {
     CTDLGAME.objects = CTDLGAME.world.map.objects
   } else {
     CTDLGAME.world.map.objects
-      .filter(object => !object.class || object.class === 'Ramp')
-      .map(object => CTDLGAME.objects.push(object))
+    .filter(object => !object.class || object.class === 'Ramp')
+    .map(object => CTDLGAME.objects.push(object))
   }
+  if (worldState) CTDLGAME.world.map.state = worldState;
 
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
@@ -72,5 +74,5 @@ export const loadGame = async () => {
     CTDLGAME.isNight = false
   }
 
-  initSoundtrack(CTDLGAME.world.map.track)
+  initSoundtrack(CTDLGAME.world.map.track())
 }

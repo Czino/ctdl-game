@@ -192,7 +192,7 @@ class Brian extends Agent {
     })
     addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
     addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
-      initSoundtrack(CTDLGAME.world.map.track)
+      initSoundtrack(CTDLGAME.world.map.track())
       CTDLGAME.objects.push(new Item(
         this.item.id,
         {

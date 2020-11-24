@@ -485,6 +485,7 @@ export default {
   start: {
     rabbitHole: { x: 30, y: 531 }
   },
+  state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   base: stage.base.map(tile => mapTile(tile, tileSize)),
@@ -665,7 +666,7 @@ export default {
   ],
   items: () => [],
   events,
-  track: 'bullsVsBears',
+  track: () => 'bullsVsBears',
   bgColor: () => '#1d0905',
   update: () => {
     darken(.2, .2, '#170705')

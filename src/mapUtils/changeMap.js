@@ -1,4 +1,4 @@
-import { loadWorldObjects, saveGame, updateViewport, gameObjects } from '../gameUtils'
+import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
 import World from '../World'
 import { initSoundtrack } from '../soundtrack'
@@ -19,10 +19,12 @@ export const changeMap = async (id, from) => {
   // create new world
   const newWorld = new World(id)
   const objects = from !== 'newGame' ? await loadWorldObjects(id) : null
+  const worldState = from !== 'newGame' ? await loadWorldState(id) : null
+
   // Save state of old world
 
-
   setWorld(newWorld)
+  if (worldState) CTDLGAME.world.map.state = worldState;
 
   if (objects && objects.length > 0) {
     objects
@@ -51,7 +53,7 @@ export const changeMap = async (id, from) => {
   CTDLGAME.katoshi.protection = 24
 
   updateViewport()
-  initSoundtrack(newWorld.map.track)
+  initSoundtrack(newWorld.map.track())
   // save again the new map
   if (from !== 'newGame') await saveGame()
 }

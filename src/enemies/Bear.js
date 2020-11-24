@@ -181,7 +181,7 @@ class Bear extends Agent {
     setTextQueue([])
     addTextToQueue('Big Bear:\n*growl*', () => this.frame++)
     addTextToQueue(`The Big Bear got rekt\nthe bull run begins!`, () => {
-      initSoundtrack(CTDLGAME.world.map.track)
+      initSoundtrack(CTDLGAME.world.map.track())
 
       if (this.item) {
         let item = new Item(

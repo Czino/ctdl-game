@@ -234,6 +234,7 @@ export default {
   start: {
     rabbitHole: { x: 216, y: 158 },
   },
+  state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   base: stage.base.map(tile => mapTile(tile, tileSize)),
@@ -286,7 +287,7 @@ export default {
   ],
   items: () => [],
   events,
-  track: 'endOfTheRabbitHole',
+  track: () => 'endOfTheRabbitHole',
   bgColor: () => '#270b08',
   update: () => {
     darken(.9, .81, '#170705')

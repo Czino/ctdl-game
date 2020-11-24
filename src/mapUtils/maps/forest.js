@@ -460,6 +460,7 @@ export default {
   start: {
     city: { x: 30, y: 1024 - constants.GROUNDHEIGHT - constants.MENU.h - 34}
   },
+  state: {},
   parallax: parallax.map(tile => mapTile(tile, tileSize)),
   bg: bg.map(tile => mapTile(tile, tileSize)),
   fg: fg.map(tile => mapTile(tile, tileSize)),
@@ -496,7 +497,7 @@ export default {
   ],
   items: () => [],
   events,
-  track: 'santaMaria',
+  track: () => 'santaMaria',
   overworld: true,
   spawnRates: {
     rabbit: .005,

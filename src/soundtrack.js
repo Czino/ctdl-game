@@ -12,7 +12,7 @@ import aNewHope from './tracks/a-new-hope'
 import darkIsBetter from './tracks/dark-is-better'
 import endOfTheRabbitHole from './tracks/end-of-the-rabbit-hole'
 import miningFarm from './tracks/mining-farm'
-
+import citadelUnderAttack from './tracks/citadel-under-attack'
 
 // TODO add "Nomen a solempnibus II" ?
 // TODO add "Procurans odium II" ?
@@ -225,6 +225,7 @@ const songs = {
       delays: [ sineSynth ],
       loop: true
     },
+    // Czino - Mining Farm
     miningFarm: {
       id: 'miningFarm',
       length: 1,
@@ -263,9 +264,70 @@ const songs = {
       deinit: () => {
         pulseSynth.envelope.attack = 0.005
         pulseSynth.envelope.release = 0.8
+        triangleSynth.envelope.attack = 0.005
+        triangleSynth.envelope.release = 0.8
         sineSynth.envelope.attack = 0.005
         sineSynth.envelope.release = 0.8
         autoFilter.stop()
+        autoFilter2.stop()
+
+        noiseSynth.noise.type = 'white'
+      },
+    },
+    // Czino - Citadel Under Attack
+    citadelUnderAttack: {
+      id: 'citadelUnderAttack',
+      length: 37.333,
+      bpm: 127,
+      noise: citadelUnderAttack.noise,
+      triangle: citadelUnderAttack.triangle,
+      square: citadelUnderAttack.square,
+      pulse: citadelUnderAttack.pulse1,
+      pulse2: citadelUnderAttack.pulse2,
+      sine: citadelUnderAttack.sine,
+      reverbs: [ sineSynth ],
+      loop: true,
+      init: () => {
+        autoFilter = new AutoFilter(.01)
+        autoFilter2 = new AutoFilter(.015)
+        noiseSynth.envelope.attack = 0
+        noiseSynth.envelope.sustain = 1
+
+        pulseSynth.envelope.attack = 0
+        pulseSynth.envelope.sustain = 1
+        pulseSynth.envelope.release = 0
+        pulse2Synth.envelope.attack = 0
+        pulse2Synth.envelope.sustain = 1
+        pulse2Synth.envelope.release = 0
+
+        triangleSynth.envelope.attack = 0
+        triangleSynth.envelope.sustain = 1
+        triangleSynth.envelope.release = 0
+
+        sineSynth.envelope.attack = .5
+        sineSynth.envelope.release = .5
+
+        pulseSynth.disconnect()
+        pulseSynth.chain(autoFilter, gain)
+        pulse2Synth.disconnect()
+        pulse2Synth.chain(autoFilter, gain)
+        autoFilter.start()
+
+        triangleSynth.disconnect()
+        triangleSynth.chain(autoFilter2, gain)
+        squareSynth.disconnect()
+        squareSynth.chain(autoFilter2, gain)
+        autoFilter2.start()
+      },
+      deinit: () => {
+        pulseSynth.envelope.attack = 0.005
+        pulseSynth.envelope.release = 0.8
+        triangleSynth.envelope.attack = 0.005
+        triangleSynth.envelope.release = 0.8
+        sineSynth.envelope.attack = 0.005
+        sineSynth.envelope.release = 0.8
+        autoFilter.stop()
+        autoFilter2.stop()
 
         noiseSynth.noise.type = 'white'
       },

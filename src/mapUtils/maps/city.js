@@ -305,7 +305,7 @@ export default {
   ],
   items: () => [],
   events,
-  track: 'imperayritzDeLaCiutatIoyosa',
+  track: () => 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: true,
   overworld: true,
   spawnRates: {

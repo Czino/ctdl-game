@@ -70,6 +70,7 @@ import Item from './Item'
 // TODO add moon ending scene
 // TODO add Zeus
 // TODO add Thor
+// TODO turn miningfarm stage red and change music, when there's an attack on the citadel
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
