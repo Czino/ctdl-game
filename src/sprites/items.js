@@ -5,5 +5,11 @@ export default {
   opendime: { x: 27, y: 0, w: 2, h: 8},
   usd: { x: 0, y: 9, w: 10, h: 5},
   honeybadger: { x: 12, y: 11, w: 19, h: 8},
-  orangePill: { x: 0, y: 15, w: 8, h: 8}
+  orangePill: { x: 0, y: 15, w: 8, h: 8},
+  flashbang: [
+    { x: 0, y: 24, w: 4, h: 4},
+    { x: 4, y: 24, w: 4, h: 4},
+    { x: 8, y: 24, w: 4, h: 4},
+    { x: 12, y: 24, w: 4, h: 4}
+  ]
 }

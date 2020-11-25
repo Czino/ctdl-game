@@ -1,15 +1,18 @@
 import explosion from './sprites/explosion'
 import { CTDLGAME } from './gameUtils'
 
-export default function(context, { x, y }) {
-  this.context = context
-  this.w = 48
-  this.h = 48
-  this.x = x
-  this.y = y
-  this.frame = 0
+class Explosion {
+  constructor(context, options) {
+    this.context = context
+    this.x = options.x
+    this.y = options.y
+  }
 
-  this.update = () => {
+  w = 48
+  h = 48
+  frame = 0
+
+  update = () => {
     if (this.remove) return
 
     const sprite = CTDLGAME.assets.explosion
@@ -28,7 +31,7 @@ export default function(context, { x, y }) {
     }
   }
 
-  this.getBoundingBox = () => ({
+  getBoundingBox = () => ({
     id: this.id,
     x: this.x,
     y: this.y,
@@ -36,3 +39,5 @@ export default function(context, { x, y }) {
     h: this.h
   })
 }
+
+export default Explosion

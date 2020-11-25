@@ -6,6 +6,7 @@ import constants from '../../constants'
 import { makeBoundary } from '../../geometryUtils'
 import { CTDLGAME } from '../../gameUtils'
 import getHitBoxes from '../getHitBoxes'
+import PoliceForce from '../../enemies/PoliceForce'
 import { initSoundtrack } from '../../soundtrack'
 
 const worldWidth = 128
@@ -95,7 +96,7 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
   }))
 }
 
-makeConsolidatedBoundary(0, worldHeight - 0.25, worldWidth, 1, tileSize)
+makeConsolidatedBoundary(0, worldHeight - 0.25, worldWidth, 3, tileSize)
 makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
@@ -124,6 +125,14 @@ underAttack.touchEvent = () => {
   if (CTDLGAME.world.map.state.underAttack) return
   CTDLGAME.world.map.state.underAttack = true
   initSoundtrack(CTDLGAME.world.map.track())
+  // CTDLGAME.objects.push(new PoliceForce(
+  //   'test-force',
+  //   {
+  //     x: 90,
+  //     y: 96,
+  //     widthShield: Math.random() > .5
+  //   }
+  // ))
 }
 
 events.push(underAttack)

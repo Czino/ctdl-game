@@ -68,6 +68,7 @@ class Agent {
     this.frame = options.frame || 0
     this.walkingSpeed = options.walkingSpeed || 2
     this.senseRadius = 30
+    this.protection = 0
   }
 
   class = 'Agent'
@@ -191,6 +192,7 @@ class Agent {
   }
 
   canJump = () => {
+    if (this.hasShield) return false
     let jumpTo = this.getBoundingBox()
     jumpTo.y -= 6
     jumpTo.x += this.direction === 'right' ? 3 : -3
@@ -206,7 +208,7 @@ class Agent {
     return obstacles.length === 0
   }
 
-  hurtCondition = () => {}
+  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|burning/.test(this.status) && this.protection === 0
   onHurt = () => {}
   onDie = () => {
     if (this.usd) {
@@ -217,13 +219,13 @@ class Agent {
   }
 
   hurt = (dmg, direction) => {
-    if (/spawn|hurt|rekt/.test(this.status)) return
-    if (!this.hurtCondition()) return
+    if (!this.hurtCondition(dmg, direction)) return
 
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
     this.vx = direction === 'left' ? 2 : -2
+    this.protection = 4
     if (this.health <= 0) {
       this.health = 0
       return this.die()
@@ -256,23 +258,6 @@ class Agent {
     }
 
     return this.onDie()
-  }
-
-  onHurt = () => {}
-  onDie = () => {}
-
-  hurt = (dmg, direction) => {
-    if (/spawn|hurt|rekt|burning/.test(this.status)) return
-
-    this.dmgs.push({y: -8, dmg})
-    this.health = Math.max(this.health - dmg, 0)
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 2 : -2
-    if (this.health <= 0) {
-      this.health = 0
-      return this.die()
-    }
-    return this.onHurt()
   }
 
   draw = () => {

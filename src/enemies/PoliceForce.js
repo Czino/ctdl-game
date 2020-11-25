@@ -1,6 +1,7 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from 'behaviortree'
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
-import spritePoliceForce from '../sprites/spritePoliceForce'
+import spritePoliceForce from '../sprites/policeForce'
+import spritePoliceForceWithShield from '../sprites/policeForceWithShield'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
@@ -8,6 +9,8 @@ import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
+import Flashbang from '../objects/Flashbang'
+import { addTextToQueue } from '../textUtils'
 
 const items = [
   { id: 'pizza', chance: 0.05 },
@@ -15,8 +18,10 @@ const items = [
 ]
 
 const touchesEnemy = new Task({
-   // in biting distance
   run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+})
+const hasShield = new Task({
+  run: agent => agent.hasShield ? SUCCESS : FAILURE
 })
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
@@ -24,8 +29,9 @@ const moveToClosestEnemy = new Task({
 const throwFlashbang = new Task({
   run: agent => agent.closestEnemy && agent.throwFlashbang.condition() ? agent.throwFlashbang.effect() : FAILURE
 })
-const block = new Task({
-  run: agent => agent.closestEnemy && agent.block.condition() ? agent.block.effect() : FAILURE
+
+const push = new Task({
+  run: agent => agent.closestEnemy && agent.push.condition() ? agent.push.effect() : FAILURE
 })
 
 // Sequence: runs each node until fail
@@ -33,6 +39,15 @@ const attackEnemy = new Sequence({
   nodes: [
     touchesEnemy,
     'attack'
+  ]
+})
+
+// Sequence: runs each node until fail
+const pushEnemy = new Sequence({
+  nodes: [
+    hasShield,
+    touchesEnemy,
+    push
   ]
 })
 
@@ -46,8 +61,8 @@ const goToEnemy = new Selector({
 })
 const tree = new Selector({
   nodes: [
+    pushEnemy,
     attackEnemy,
-    block,
     throwFlashbang,
     goToEnemy,
     'moveRandom',
@@ -58,20 +73,21 @@ const tree = new Selector({
 class PoliceForce extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.health = options.health ?? Math.round(Math.random() * 7 + 1)
-    this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
+    this.health = options.health ?? Math.round(Math.random() * 7 + 10)
+    this.usd = options.usd ?? Math.round(Math.random() * 400 + 1)
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = Math.round(Math.random() * 50) + 30
     this.flashbangs = options.flashbangs || (Math.random() > .8 ? 1 : 0)
     this.hasShield = options.hasShield || (Math.random() > .8)
+    this.spriteData = this.hasShield ? spritePoliceForceWithShield : spritePoliceForce
+    this.sprite = CTDLGAME.assets[this.hasShield ? 'policeForceWithShield' : 'policeForce']
+    this.protection = 0
   }
 
   class = 'PoliceForce'
   enemy = true
   w = 16
   h = 30
-  spriteData = spritePoliceForce
-  kneels = false
 
   bTree = new BehaviorTree({
     tree,
@@ -88,7 +104,8 @@ class PoliceForce extends Agent {
       }
 
       if (this.status === 'attack' && this.frame === 3) {
-        return this.closestEnemy.hurt(3, this.direction === 'left' ? 'right' : 'left')
+        playSound('woosh')
+        return this.closestEnemy.hurt(Math.round(Math.random() * 2) + 1, this.direction === 'left' ? 'right' : 'left')
       }
       if (this.status === 'attack') return SUCCESS
 
@@ -110,7 +127,15 @@ class PoliceForce extends Agent {
 
       if (this.status === 'throw' && this.frame === 3) {
         this.flashbangs--
-        // TODO add flashbang logic
+        CTDLGAME.objects.push(new Flashbang(
+          'flashbang-' + CTDLGAME.frame,
+            {
+              x: this.getBoundingBox().x + 10,
+              y: this.getBoundingBox().y,
+              vx: this.direction === 'right' ? 10 : -10,
+              vy: -6
+            }
+          ))
       }
       if (this.status === 'throw') return SUCCESS
 
@@ -121,32 +146,33 @@ class PoliceForce extends Agent {
     }
   }
 
-  block = {
-    condition: () => this.hasShield && this.closestEnemy?.status === 'attack',
+  push = {
+    condition: () => this.hasShield && !/attack/.test(this.status) && this.closestEnemy && Math.random() > .8,
     effect: () => {
-      if (this.getCenter().x > this.closestEnemy.getCenter().x) {
-        this.direction = 'left'
-      } else {
-        this.direction = 'right'
-      }
-      this.status = 'block'
+      this.closestEnemy.stun(this.getCenter().x > this.closestEnemy.getCenter().x ? 'right' : 'left')
 
       return SUCCESS
     }
   }
 
+  hurtCondition = (dmg, direction) => this.hasShield && direction === this.direction
+    ? !/hurt|rekt/.test(this.status) && this.protection === 0 && /attack/.test(this.status) && Math.random() > .5
+    :  !/hurt|rekt/.test(this.status) && this.protection === 0
+
   onHurt = () => playSound('policeForceHurt') // TODO add sound
-  onDie = () => playSound('policeForceHurt')
+  onDie = () => {
+    this.removeTimer = 64
+    playSound('policeForceHurt')
+    addTextToQueue(`Police Force got rekt,\nyou found $${this.usd}`)
+  }
 
   update = () => {
-    const sprite = CTDLGAME.assets.policeForce
-
     if (CTDLGAME.lockCharacters) {
       let data = this.spriteData[this.direction][this.status][0]
       constants.charContext.globalAlpha = 1
 
       constants.charContext.drawImage(
-        sprite,
+        this.sprite,
         data.x, data.y, this.w, this.h,
         this.x, this.y, this.w, this.h
       )
@@ -160,25 +186,16 @@ class PoliceForce extends Agent {
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
     }
-    let spriteData = this.spriteData[this.direction][this.status]
 
     this.frame++
-    if (this.status === 'hurt' && this.frame === 3) {
+    if (this.status === 'hurt' && this.protection === 0) {
       this.status = 'idle'
     }
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-    }
 
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
+    if (this.removeTimer) this.removeTimer--
+    if (this.removeTimer === 0) this.remove = true
 
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
+    this.draw()
 
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)

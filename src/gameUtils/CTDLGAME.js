@@ -26,8 +26,9 @@ export const CTDLGAME = {
 export const setWorld = world => {
   CTDLGAME.world = world
   CTDLGAME.quadTree = new QuadTree(new Boundary({
-    x: 0,
-    y: 0,
-    ...world
+    x: -16,
+    y: -16,
+    w: world.w + 32,
+    h: world.h + 32
   }))
 }

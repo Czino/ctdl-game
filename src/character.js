@@ -326,7 +326,7 @@ class Character extends Agent {
   }
 
   hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
+    if (/rekt/.test(this.status) || this.protection > 0) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
 
@@ -343,6 +343,12 @@ class Character extends Agent {
       this.health = 0
       this.die() // :(
     }
+  }
+
+  stun = direction => {
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
   }
 
   die = () => {

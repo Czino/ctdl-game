@@ -48,10 +48,10 @@ module.exports = {
     //   excludeChunks: ['game', 'spritePreview'],
     //   template: './src/mapCreator.html'
     // }),
-    new HtmlWebpackPlugin({
-        chunks: ['spritePreview'],
-        excludeChunks: ['game', 'mapCreator'],
-        template: './src/spritePreview.html'
-      })
+    // new HtmlWebpackPlugin({
+    //     chunks: ['spritePreview'],
+    //     excludeChunks: ['game', 'mapCreator'],
+    //     template: './src/spritePreview.html'
+    //   })
   ]
 };

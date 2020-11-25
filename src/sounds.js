@@ -172,14 +172,14 @@ const sounds = {
     const present = now()
     const dur = .025
 
-    noiseSynth.dispose()
-    noiseSynth = new NoiseSynth()
-    noiseSynth.connect(gain)
-    noiseSynth.noise.type = 'white'
-    noiseSynth.envelope.attack = .005
-    noiseSynth.envelope.decay = .1
-    noiseSynth.envelope.sustain = .3
-    noiseSynth.envelope.release = .07
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+    noise2Synth.noise.type = 'white'
+    noise2Synth.envelope.attack = .005
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
 
     squareSynth.portamento = 0
     squareSynth.envelope.attack = .005
@@ -187,8 +187,8 @@ const sounds = {
     squareSynth.envelope.sustain = .3
     squareSynth.envelope.release = .07
 
-    noiseSynth.triggerAttack(present, .1)
-    noiseSynth.triggerRelease(present + dur)
+    noise2Synth.triggerAttack(present, .1)
+    noise2Synth.triggerRelease(present + dur)
 
     squareSynth.triggerAttack('B7', present + dur / 2, .02)
     squareSynth.triggerRelease(present + dur / 2 + dur)
@@ -306,6 +306,33 @@ const sounds = {
     pulseSynth.triggerAttack('A#2', present + dur / 2, .05)
     pulseSynth.setNote('G1', present + dur / 2, .05)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
+  },
+  policeForceHurt: () => {
+    const present = now()
+    const dur = .1
+
+    noiseSynth.dispose()
+    noiseSynth = new NoiseSynth()
+    noiseSynth.connect(gain)
+    noiseSynth.noise.type = 'brown'
+
+    noiseSynth.envelope.attack = .005
+    noiseSynth.envelope.decay = .1
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = .07
+
+    noiseSynth.triggerAttack(present, .05)
+    noiseSynth.triggerRelease(present + dur)
+
+    triangleSynth.portamento = dur / 3
+    triangleSynth.envelope.attack = .005
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .07
+
+    triangleSynth.triggerAttack('A#2', present + dur / 2, .1)
+    triangleSynth.setNote('A2', present + dur / 2 + dur / 3, .05)
+    triangleSynth.triggerRelease(present + dur / 2 + dur)
   },
   rabbitHurt: () => {
     const present = now()
@@ -497,6 +524,31 @@ const sounds = {
     noise2Synth.triggerRelease(present)
     noise2Synth.triggerAttack(present + 0.001, .03)
     noise2Synth.triggerRelease(present + dur)
+  },
+  explode: () => {
+    const present = now()
+    const dur = .05
+
+    crusher.bits = 8
+    noise2Synth.noise.type = 'brown'
+
+    noise2Synth.envelope.attack = .005
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = 1.3
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .2)
+    noise2Synth.triggerRelease(present + dur)
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .005
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = 1.2
+
+    triangleSynth.triggerAttack('A#0', present + dur / 2, .6)
+    triangleSynth.triggerRelease(present + dur / 2 + dur)
   }
 }
 

@@ -131,12 +131,12 @@ class Elevator {
 
     this.offsetY += move
 
-    if (intersects(this.getBoundingBox('real'), CTDLGAME.hodlonaut.getBoundingBox())) {
-      moveObject(CTDLGAME.hodlonaut, { x: 0, y: move }, CTDLGAME.quadTree)
-    }
-    if (intersects(this.getBoundingBox('real'), CTDLGAME.katoshi.getBoundingBox())) {
-      moveObject(CTDLGAME.katoshi, { x: 0, y: move }, CTDLGAME.quadTree)
-    }
+    CTDLGAME.objects
+      .filter(obj => obj.applyGravity)
+      .filter(obj => intersects(this.getBoundingBox('real'), obj.getBoundingBox()))
+      .map(obj => {
+        moveObject(obj, { x: 0, y: move }, CTDLGAME.quadTree)
+      })
 
     this.draw()
   }

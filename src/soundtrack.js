@@ -329,6 +329,8 @@ const songs = {
         autoFilter.stop()
         autoFilter2.stop()
 
+        noiseSynth.envelope.attack = 0.005
+        noiseSynth.envelope.release = 0.8
         noiseSynth.noise.type = 'white'
       },
     },

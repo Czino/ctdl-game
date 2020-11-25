@@ -35,8 +35,8 @@ import { showButtons } from './debugUtils'
 import Item from './Item'
 
 // import { playSound } from './sounds'
-// playSound('elevatorStop')
-// setInterval(() => playSound('elevatorStop'), 1000)
+// playSound('policeForceHurt')
+// setInterval(() => playSound('policeForceHurt'), 1000)
 
 // TODO accomodate forest and city for new update viewport
 // TODO improve stair walking (press up key)
@@ -323,3 +323,9 @@ window.CTDLGAME = CTDLGAME
 window.constants = constants
 window.addTextToQueue = addTextToQueue
 window.getTimeOfDay = getTimeOfDay
+
+import PoliceForce from './enemies/PoliceForce'
+window.PoliceForce = PoliceForce
+
+import Flashbang from './objects/Flashbang'
+window.Flashbang = Flashbang
