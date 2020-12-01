@@ -1,5 +1,6 @@
-import constants from "./constants";
-import { CTDLGAME, getTimeOfDay } from "./gameUtils";
+import constants from './constants'
+import { CTDLGAME, getTimeOfDay } from './gameUtils'
+import { canDrawOn } from './performanceUtils'
 
 export default function(options) {
   this.id = 'moon';
@@ -12,6 +13,8 @@ export default function(options) {
   this.isSolid = false
 
   this.update = () => {
+    if (!canDrawOn('skyContext')) return
+
     let timeOfDay = getTimeOfDay()
     this.y = Math.round(CTDLGAME.viewport.y + 10)
     this.w = this.h = Math.max(14, (1 - (CTDLGAME.viewport.y + constants.HEIGHT) / CTDLGAME.world.h) * 110)

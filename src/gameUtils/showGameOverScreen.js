@@ -1,12 +1,15 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
+import { canDrawOn } from '../performanceUtils'
 
 /**
  * @description Method to display progress bar
  * @param {Number} progress current progress between 0 - 1
  */
 export const showGameOverScreen = () => {
+  if (!canDrawOn('overlayContext')) return
+
     constants.overlayContext.fillStyle = '#212121'
   
     constants.overlayContext.fillRect(

@@ -8,6 +8,8 @@ import { setTextQueue } from '../textUtils'
  * @returns {void}
  */
 export const newGame = async () => {
+  CTDLGAME.frame = 0
+
   CTDLGAME.inventory = { // TODO refactor into factory
     usd: 0,
     sats: 0,

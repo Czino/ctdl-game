@@ -1,7 +1,7 @@
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
-import GameObject from '../../gameObject'
+import GameObject from '../../GameObject'
 import { intersects, makeBoundary } from '../../geometryUtils'
 import NPC from '../../npcs/NPC'
 import { CTDLGAME } from '../../gameUtils'

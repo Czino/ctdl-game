@@ -2,6 +2,7 @@ import constants from './constants'
 import { CTDLGAME } from './gameUtils'
 import { intersects } from './geometryUtils'
 import { loadMap } from './mapUtils'
+import { canDrawOn } from './performanceUtils'
 
 export default function (id) {
   this.id = id
@@ -13,43 +14,47 @@ export default function (id) {
   CTDLGAME.lightSources = this.map.lightSources
   this.update = () => {
     let sprite = CTDLGAME.assets[this.id]
-    let parallaxViewport = {
-      x: CTDLGAME.viewport.x / 2,
-      y: CTDLGAME.viewport.y,
-      w: CTDLGAME.viewport.w,
-      h: CTDLGAME.viewport.h
+
+    if (canDrawOn('parallaxContext')) {
+      let parallaxViewport = {
+        x: CTDLGAME.viewport.x / 2,
+        y: CTDLGAME.viewport.y,
+        w: CTDLGAME.viewport.w,
+        h: CTDLGAME.viewport.h
+      }
+      this.map.parallax
+        .filter(tile => intersects(tile, parallaxViewport))
+        .map(tile => {
+          constants.parallaxContext.drawImage(
+            sprite,
+            tile.tile[0], tile.tile[1], tile.w, tile.h,
+            tile.x, tile.y, tile.w, tile.h
+          )
+          constants.parallaxContext.globalCompositeOperation = 'multiply'
+          constants.parallaxContext.globalAlpha = .3
+          constants.parallaxContext.drawImage(
+            sprite,
+            tile.tile[0], tile.tile[1], tile.w, tile.h,
+            tile.x, tile.y, tile.w, tile.h
+            )
+          constants.parallaxContext.globalAlpha = 1
+          constants.parallaxContext.globalCompositeOperation = 'source-over'
+        })
     }
 
-    this.map.parallax
-      .filter(tile => intersects(tile, parallaxViewport))
-      .map(tile => {
-        constants.parallaxContext.drawImage(
-          sprite,
-          tile.tile[0], tile.tile[1], tile.w, tile.h,
-          tile.x, tile.y, tile.w, tile.h
-        )
-        constants.parallaxContext.globalCompositeOperation = 'multiply'
-        constants.parallaxContext.globalAlpha = .3
-        constants.parallaxContext.drawImage(
-          sprite,
-          tile.tile[0], tile.tile[1], tile.w, tile.h,
-          tile.x, tile.y, tile.w, tile.h
+    if (canDrawOn('bgContext')) {
+      this.map.bg
+        .filter(tile => intersects(tile, CTDLGAME.viewport))
+        .map(tile => {
+          constants.bgContext.drawImage(
+            sprite,
+            tile.tile[0], tile.tile[1], tile.w, tile.h,
+            tile.x, tile.y, tile.w, tile.h
           )
-        constants.parallaxContext.globalAlpha = 1
-        constants.parallaxContext.globalCompositeOperation = 'source-over'
-      })
+        })
+    }
 
-    this.map.bg
-      .filter(tile => intersects(tile, CTDLGAME.viewport))
-      .map(tile => {
-        constants.bgContext.drawImage(
-          sprite,
-          tile.tile[0], tile.tile[1], tile.w, tile.h,
-          tile.x, tile.y, tile.w, tile.h
-        )
-      })
-
-    if (this.map.base) {
+    if (this.map.base && canDrawOn('gameContext')) {
       this.map.base
         .filter(tile => intersects(tile, CTDLGAME.viewport))
         .map(tile => {
@@ -60,14 +65,17 @@ export default function (id) {
           )
         })
     }
-    this.map.fg
-      .filter(tile => intersects(tile, CTDLGAME.viewport))
-      .map(tile => {
-        constants.fgContext.drawImage(
-          sprite,
-          tile.tile[0], tile.tile[1], tile.w, tile.h,
-          tile.x, tile.y, tile.w, tile.h
-        )
-      })
+
+    if (canDrawOn('fgContext')) {
+      this.map.fg
+        .filter(tile => intersects(tile, CTDLGAME.viewport))
+        .map(tile => {
+          constants.fgContext.drawImage(
+            sprite,
+            tile.tile[0], tile.tile[1], tile.w, tile.h,
+            tile.x, tile.y, tile.w, tile.h
+          )
+        })
+    }
   }
 }

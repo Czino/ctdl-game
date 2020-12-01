@@ -210,6 +210,9 @@ class Shitcoiner extends Agent {
       spriteData = this.spriteData[this.direction][this.status + '-kneels']
     }
 
+    if (this.protection > 0) {
+      this.protection--
+    }
     this.frame++
     if (this.status === 'hurt' && this.frame === 3) {
       this.status = 'idle'

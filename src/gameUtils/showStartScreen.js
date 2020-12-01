@@ -1,6 +1,7 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
+import { canDrawOn } from '../performanceUtils'
 import { showSettings } from './showSettings'
 import { playSound } from '../sounds'
 import { initSoundtrack } from '../soundtrack'
@@ -8,39 +9,37 @@ import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } 
 
 let logoOffsetTop = 100
 let logoOffsetBottom = 200
+let musicStart = 264
+const originalFramerate = constants.FRAMERATE
 
 /**
  * @description Method to display progress bar
  * @returns {void}
  */
 export const showStartScreen = () => {
-  constants.overlayContext.fillStyle = '#212121'
-
-  constants.overlayContext.fillRect(
-    CTDLGAME.viewport.x,
-    CTDLGAME.viewport.y,
-    constants.WIDTH,
-    constants.HEIGHT
-  )
+  if (logoOffsetBottom > 0) {
+    constants.FRAMERATE = 1 // start screen needs fast animation
+    constants.FRAMERATES.gameContext = 1
+  } else {
+    constants.FRAMERATE = originalFramerate
+    constants.FRAMERATES.gameContext = originalFramerate
+  }
 
   if (logoOffsetTop > 0) logoOffsetTop -= 4
-  if (logoOffsetTop === 4) {
-    if (CTDLGAME.options.sound) playSound('drop')
-  }
+  if (logoOffsetTop === 4 && CTDLGAME.options.sound) playSound('drop')
   if (logoOffsetBottom > 0) logoOffsetBottom -= 4
-  if (logoOffsetBottom === 4) {
-    if (CTDLGAME.options.sound) playSound('drop')
-    setTimeout(() => initSoundtrack('mariamMatremVirginem'), 1000)
-    // setTimeout(() => constants.BUTTONS.find(btn => btn.action === 'loadGame').onclick(), 100)
-  }
-  constants.overlayContext.drawImage(
+  if (logoOffsetBottom === 4 && CTDLGAME.options.sound) playSound('drop')
+  if (musicStart > 0) musicStart -= 4
+  if (musicStart === 4) initSoundtrack('mariamMatremVirginem')
+
+  constants.gameContext.drawImage(
     CTDLGAME.assets.logo,
     0, 0, 41, 10,
     CTDLGAME.viewport.x + constants.WIDTH / 2 - 20 - logoOffsetTop,
     CTDLGAME.viewport.y + constants.HEIGHT / 3,
     41, 10
   )
-  constants.overlayContext.drawImage(
+  constants.gameContext.drawImage(
     CTDLGAME.assets.logo,
     0, 10, 41, 10,
     CTDLGAME.viewport.x + constants.WIDTH / 2 - 20 + logoOffsetBottom,
@@ -50,9 +49,10 @@ export const showStartScreen = () => {
 
   showSettings()
 
+  if (!canDrawOn('menuContext')) return // do net render menu yet
   write(
-    constants.overlayContext,
-    CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ new game' : 'new game',
+    constants.menuContext,
+    CTDLGAME.frame % (constants.FRAMERATES.menuContext * 2) === 0 ? '~ new game' : 'new game',
     {
       x: CTDLGAME.viewport.x + newGameButton.x - 10,
       y: CTDLGAME.viewport.y + newGameButton.y,
@@ -63,8 +63,8 @@ export const showStartScreen = () => {
 
   if (!CTDLGAME.newGame) {
     write(
-      constants.overlayContext,
-      CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '~ resume game' : 'resume game',
+      constants.menuContext,
+      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 2) === 0 ? '~ resume game' : 'resume game',
       {
         x: CTDLGAME.viewport.x + loadGameButton.x - 10,
         y: CTDLGAME.viewport.y + loadGameButton.y,
@@ -76,7 +76,7 @@ export const showStartScreen = () => {
 
   if (!CTDLGAME.touchScreen) {
     write(
-      constants.overlayContext,
+      constants.menuContext,
       CTDLGAME.multiPlayer ? '1P' : '> 1P',
       {
         x: CTDLGAME.viewport.x + singlePlayerButton.x - 10,
@@ -86,7 +86,7 @@ export const showStartScreen = () => {
       'right'
     )
     write(
-      constants.overlayContext,
+      constants.menuContext,
       CTDLGAME.multiPlayer ? '> 2P' : '2P',
       {
         x: CTDLGAME.viewport.x + multiPlayerButton.x - 10,
@@ -97,7 +97,7 @@ export const showStartScreen = () => {
     )
 
     write(
-      constants.overlayContext,
+      constants.menuContext,
       [
         '',
         'move:',
@@ -112,7 +112,7 @@ export const showStartScreen = () => {
       'left'
     )
     write(
-      constants.overlayContext,
+      constants.menuContext,
       [
         'P1:',
         'WASD',
@@ -128,7 +128,7 @@ export const showStartScreen = () => {
     )
     if (CTDLGAME.multiPlayer) {
       write(
-        constants.overlayContext,
+        constants.menuContext,
         [
           'P2:',
           'IJKL',

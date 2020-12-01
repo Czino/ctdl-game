@@ -4,6 +4,7 @@ import { write } from '../font'
 import itemSpriteData from '../sprites/items'
 import { addTextToQueue } from '../textUtils'
 import Item from '../Item'
+import { canDrawOn } from '../performanceUtils'
 
 // TODO prize items (add inflation, lol)
 const priceList = {
@@ -17,12 +18,14 @@ const stock = ['pizza', 'taco']
  * @param {Number} progress current progress between 0 - 1
  */
 export const showShop = () => {
+  if (!canDrawOn('menuContext')) return
+
   const eventsAdded = CTDLGAME.eventButtons.length > 0
   const shopFor = CTDLGAME.showShop
-  constants.overlayContext.globalAlpha = 1
-  constants.overlayContext.fillStyle = '#212121'
+  constants.menuContext.globalAlpha = 1
+  constants.menuContext.fillStyle = '#212121'
 
-  constants.overlayContext.fillRect(
+  constants.menuContext.fillRect(
     CTDLGAME.viewport.x,
     CTDLGAME.viewport.y,
     constants.WIDTH,
@@ -30,7 +33,7 @@ export const showShop = () => {
   )
 
   write(
-    constants.overlayContext,
+    constants.menuContext,
     'Spaeti',
     {
       x: CTDLGAME.viewport.x + 30,
@@ -43,8 +46,8 @@ export const showShop = () => {
   stock.map((item, i) => {
     let spriteData = itemSpriteData[item]
 
-    if (CTDLGAME.inventory.usd - priceList[item] < 0) constants.overlayContext.globalAlpha = .5
-    constants.overlayContext.drawImage(
+    if (CTDLGAME.inventory.usd - priceList[item] < 0) constants.menuContext.globalAlpha = .5
+    constants.menuContext.drawImage(
       CTDLGAME.assets.items,
       spriteData.x, spriteData.y, spriteData.w, spriteData.h,
       CTDLGAME.viewport.x + 30 - Math.round(spriteData.w / 2),
@@ -53,7 +56,7 @@ export const showShop = () => {
     )
 
     write(
-      constants.overlayContext,
+      constants.menuContext,
       `- $${priceList[item]}`, {
         x: CTDLGAME.viewport.x + 40,
         y: CTDLGAME.viewport.y + 80 + i * 15,
@@ -61,7 +64,7 @@ export const showShop = () => {
       },
       'left'
     )
-    constants.overlayContext.globalAlpha = 1
+    constants.menuContext.globalAlpha = 1
 
     if (!eventsAdded) {
       CTDLGAME.eventButtons.push({
@@ -86,7 +89,7 @@ export const showShop = () => {
 
 
   write(
-    constants.overlayContext,
+    constants.menuContext,
     'Exit shop',
     {
       x: CTDLGAME.viewport.x + 20,

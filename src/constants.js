@@ -106,8 +106,18 @@ export default {
   FRAMESINADAY: Math.pow(2, 14),
   FRAMERESET: Math.pow(2, 64),
   CHECKBLOCKTIME: Math.pow(2, 12), // check every X frame
-  GROUNDHEIGHT: 6,
+  GROUNDHEIGHT: 6, // TODO can we remove it somehow?
   FRAMERATE: 8, // render every X frame
+  FRAMERATES: {
+    skyContext: 8,
+    parallaxContext: 16,
+    bgContext: 8,
+    charContext: 8,
+    gameContext: 8,
+    fgContext: 8,
+    overlayContext: 16,
+    menuContext: 32
+  },
   SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
   canvases: [
@@ -120,7 +130,7 @@ export default {
     overlayCanvas,
     menuCanvas
   ],
-  skyContext,
+  skyContext, // TODO use .canvases and .contexts ?
   parallaxContext,
   bgCanvas,
   bgContext,

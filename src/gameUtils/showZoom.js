@@ -1,5 +1,6 @@
 import { CTDLGAME } from './CTDLGAME'
 import constants from '../constants'
+import { canDrawOn } from '../performanceUtils'
 
 const zoom = {
   r: 10,
@@ -21,6 +22,8 @@ const zoomCanvasses = [
  * @returns {void}
  */
 export const showZoom = ({ x, y }) => {
+  if (!canDrawOn('overlayContext')) return
+
   constants.overlayContext.globalAlpha = 1
 
   zoomCanvasses.map(canvas => {

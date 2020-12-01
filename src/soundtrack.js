@@ -90,259 +90,259 @@ synths.map(synth => synth.volume.value = -19)
 brownNoiseSynth.noise.type = 'brown'
 
 const songs = {
-    // Llibre Vermell de Montserrat: Anonymous - Mariam Matrem Virginem
-    mariamMatremVirginem: {
-      id: 'mariamMatremVirginem',
-      length: 200.97,
-      pulse: mariamMatremVirginem.strings,
-      pulse2: mariamMatremVirginem.viola,
-      triangle: mariamMatremVirginem.cello,
-      sine: mariamMatremVirginem.pipe,
-      square: mariamMatremVirginem.harp,
-      loop: false
+  // Llibre Vermell de Montserrat: Anonymous - Mariam Matrem Virginem
+  mariamMatremVirginem: {
+    id: 'mariamMatremVirginem',
+    length: 200.97,
+    pulse: mariamMatremVirginem.strings,
+    pulse2: mariamMatremVirginem.viola,
+    triangle: mariamMatremVirginem.cello,
+    sine: mariamMatremVirginem.pipe,
+    square: mariamMatremVirginem.harp,
+    loop: false
+  },
+  // Czino - Brian's theme
+  briansTheme: {
+    id: 'briansTheme',
+    length: 31.8333 + 0.1667,
+    noise: briansTheme.noise,
+    pulse: briansTheme.pulse1,
+    triangle: briansTheme.triangle,
+    loop: true
+  },
+  // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
+  stellaSplendence: {
+    id: 'stellaSplendence',
+    length: 136.575,
+    noise: stellaSplendence.bass1,
+    pulse: stellaSplendence.bass1,
+    pulse2: stellaSplendence.bass2,
+    triangle: stellaSplendence.flute1,
+    sine: stellaSplendence.flute2,
+    square: stellaSplendence.sine,
+    loop: true
+  },
+  // Llibre Vermell de Montserrat: Anonymous - Imperayritz De La Ciutat Ioyosa
+  imperayritzDeLaCiutatIoyosa: {
+    id: 'imperayritzDeLaCiutatIoyosa',
+    length: 190.7624,
+    brownNoise: imperayritzDeLaCiutatIoyosa.drum,
+    noise: imperayritzDeLaCiutatIoyosa.noise,
+    triangle: imperayritzDeLaCiutatIoyosa.pulse1,
+    square: imperayritzDeLaCiutatIoyosa.square,
+    pulse: imperayritzDeLaCiutatIoyosa.triangle,
+    sine: imperayritzDeLaCiutatIoyosa.sine,
+    loop: true
+  },
+  // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
+  santaMaria: {
+    id: 'santaMaria',
+    length: 79.7342,
+    noise: santaMaria.noise,
+    triangle: santaMaria.pulse,
+    sine: santaMaria.sine,
+    reverbs: [sineSynth],
+    loop: true
+  },
+  // Czino - Bear
+  bear: {
+    id: 'bear',
+    length: 24.8182 + 1.3636,
+    brownNoise: bear.triangle,
+    pulse: bear.pulse1,
+    triangle: bear.triangle,
+    sine: bear.sine,
+    noise: bear.noise,
+    init: () => {
+      autoFilter = new AutoFilter(1 / 1.3636)
+      sineSynth.envelope.attack = 0.0
+      sineSynth.envelope.release = 1.36
+      sineSynth.disconnect()
+      sineSynth.chain(autoFilter, reverb, gain)
+      autoFilter.start()
+
+      noiseSynth.noise.type = 'pink'
     },
-    // Czino - Brian's theme
-    briansTheme: {
-      id: 'briansTheme',
-      length: 31.8333 + 0.1667,
-      noise: briansTheme.noise,
-      pulse: briansTheme.pulse1,
-      triangle: briansTheme.triangle,
-      loop: true
+    deinit: () => {
+      sineSynth.envelope.attack = 0.005
+      sineSynth.envelope.release = 0.8
+      autoFilter.stop()
+
+      noiseSynth.noise.type = 'white'
     },
-    // Llibre Vermell de Montserrat: Anonymous - Stella Splendece
-    stellaSplendence: {
-      id: 'stellaSplendence',
-      length: 136.575,
-      noise: stellaSplendence.bass1,
-      pulse: stellaSplendence.bass1,
-      pulse2: stellaSplendence.bass2,
-      triangle: stellaSplendence.flute1,
-      sine: stellaSplendence.flute2,
-      square: stellaSplendence.sine,
-      loop: true
+    loop: true
+  },
+  // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
+  bullsVsBears: {
+    id: 'bullsVsBears',
+    length: 26.182,
+    noise: bullsVsBears.triangle,
+    triangle: bullsVsBears.triangle,
+    pulse: bullsVsBears.pulse1,
+    pulse2: bullsVsBears.pulse2,
+    sine: bullsVsBears.sine,
+    reverbs: [sineSynth, pulseSynth, pulse2Synth],
+    loop: true
+  },
+  // Vlad Costea - A New Hope (Czino 8-bit remix)
+  aNewHope: {
+    id: 'aNewHope',
+    length: 54.2608,
+    noise: aNewHope.triangle,
+    triangle: aNewHope.triangle,
+    pulse: aNewHope.pulse1,
+    pulse2: aNewHope.pulse2,
+    sine: aNewHope.sine,
+    square: aNewHope.sine,
+    reverbs: [sineSynth, pulseSynth, pulse2Synth],
+    loop: true
+  },
+  // Vlad Costea - Darker is Better (Czino 8-bit remix)
+  darkIsBetter: {
+    id: 'darkIsBetter',
+    length: 104,
+    bpm: 120,
+    delay: 0.255,
+    delayFeedback: .8,
+    square: darkIsBetter.pulse1,
+    pulse: darkIsBetter.pulse1,
+    pulse2: darkIsBetter.pulse2,
+    sine: darkIsBetter.sine,
+    delays: [sineSynth, squareSynth, pulseSynth, pulse2Synth],
+    loop: true
+  },
+  endOfTheRabbitHole: {
+    id: 'endOfTheRabbitHole',
+    length: 7.559,
+    bpm: 127,
+    delay: 0.25,
+    drum: endOfTheRabbitHole.drum,
+    brownNoise: endOfTheRabbitHole.noise,
+    triangle: endOfTheRabbitHole.pulse1,
+    square: endOfTheRabbitHole.square,
+    pulse: endOfTheRabbitHole.triangle,
+    sine: endOfTheRabbitHole.sine,
+    delays: [sineSynth],
+    loop: true
+  },
+  // Czino - Mining Farm
+  miningFarm: {
+    id: 'miningFarm',
+    length: 1,
+    bpm: 127,
+    noise: miningFarm.noise,
+    triangle: miningFarm.triangle,
+    pulse: miningFarm.pulse1,
+    sine: miningFarm.sine,
+    reverbs: [sineSynth],
+    loop: true,
+    init: () => {
+      autoFilter = new AutoFilter(.01)
+      autoFilter2 = new AutoFilter(.015)
+      noiseSynth.envelope.attack = 0
+      noiseSynth.envelope.sustain = 1
+
+      pulseSynth.envelope.attack = 0
+      pulseSynth.envelope.sustain = 1
+      pulseSynth.envelope.release = 0
+
+      triangleSynth.envelope.attack = 0
+      triangleSynth.envelope.sustain = 1
+      triangleSynth.envelope.release = 0
+
+      sineSynth.envelope.attack = .5
+      sineSynth.envelope.release = .5
+
+      pulseSynth.disconnect()
+      pulseSynth.chain(autoFilter, gain)
+      autoFilter.start()
+
+      triangleSynth.disconnect()
+      triangleSynth.chain(autoFilter2, gain)
+      autoFilter2.start()
     },
-    // Llibre Vermell de Montserrat: Anonymous - Imperayritz De La Ciutat Ioyosa
-    imperayritzDeLaCiutatIoyosa: {
-      id: 'imperayritzDeLaCiutatIoyosa',
-      length: 190.7624,
-      brownNoise: imperayritzDeLaCiutatIoyosa.drum,
-      noise: imperayritzDeLaCiutatIoyosa.noise,
-      triangle: imperayritzDeLaCiutatIoyosa.pulse1,
-      square: imperayritzDeLaCiutatIoyosa.square,
-      pulse: imperayritzDeLaCiutatIoyosa.triangle,
-      sine: imperayritzDeLaCiutatIoyosa.sine,
-      loop: true
+    deinit: () => {
+      pulseSynth.envelope.attack = 0.005
+      pulseSynth.envelope.release = 0.8
+      triangleSynth.envelope.attack = 0.005
+      triangleSynth.envelope.release = 0.8
+      sineSynth.envelope.attack = 0.005
+      sineSynth.envelope.release = 0.8
+      autoFilter.stop()
+      autoFilter2.stop()
+
+      noiseSynth.noise.type = 'white'
     },
-    // Alfonso X, el Sabio (1221-1284) Spanish: Santa Maria Strela do dia
-    santaMaria: {
-      id: 'santaMaria',
-      length: 79.7342,
-      noise: santaMaria.noise,
-      triangle: santaMaria.pulse,
-      sine: santaMaria.sine,
-      reverbs: [ sineSynth ],
-      loop: true
+  },
+  // Czino - Citadel Under Attack
+  citadelUnderAttack: {
+    id: 'citadelUnderAttack',
+    length: 37.333,
+    bpm: 127,
+    noise: citadelUnderAttack.noise,
+    triangle: citadelUnderAttack.triangle,
+    square: citadelUnderAttack.square,
+    pulse: citadelUnderAttack.pulse1,
+    pulse2: citadelUnderAttack.pulse2,
+    sine: citadelUnderAttack.sine,
+    reverbs: [sineSynth],
+    loop: true,
+    init: () => {
+      autoFilter = new AutoFilter(.01)
+      autoFilter2 = new AutoFilter(.015)
+      noiseSynth.envelope.attack = 0
+      noiseSynth.envelope.sustain = 1
+
+      pulseSynth.envelope.attack = 0
+      pulseSynth.envelope.sustain = 1
+      pulseSynth.envelope.release = 0
+      pulse2Synth.envelope.attack = 0
+      pulse2Synth.envelope.sustain = 1
+      pulse2Synth.envelope.release = 0
+
+      triangleSynth.envelope.attack = 0
+      triangleSynth.envelope.sustain = 1
+      triangleSynth.envelope.release = 0
+
+      sineSynth.envelope.attack = .5
+      sineSynth.envelope.release = .5
+
+      pulseSynth.disconnect()
+      pulseSynth.chain(autoFilter, gain)
+      pulse2Synth.disconnect()
+      pulse2Synth.chain(autoFilter, gain)
+      autoFilter.start()
+
+      triangleSynth.disconnect()
+      triangleSynth.chain(autoFilter2, gain)
+      squareSynth.disconnect()
+      squareSynth.chain(autoFilter2, gain)
+      autoFilter2.start()
     },
-    // Czino - Bear
-    bear: {
-      id: 'bear',
-      length: 24.8182 + 1.3636,
-      brownNoise: bear.triangle,
-      pulse: bear.pulse1,
-      triangle: bear.triangle,
-      sine: bear.sine,
-      noise: bear.noise,
-      init: () => {
-        autoFilter = new AutoFilter(1 / 1.3636)
-        sineSynth.envelope.attack = 0.0
-        sineSynth.envelope.release = 1.36
-        sineSynth.disconnect()
-        sineSynth.chain(autoFilter, reverb, gain)
-        autoFilter.start()
+    deinit: () => {
+      pulseSynth.envelope.attack = 0.005
+      pulseSynth.envelope.release = 0.8
+      triangleSynth.envelope.attack = 0.005
+      triangleSynth.envelope.release = 0.8
+      sineSynth.envelope.attack = 0.005
+      sineSynth.envelope.release = 0.8
+      autoFilter.stop()
+      autoFilter2.stop()
 
-        noiseSynth.noise.type = 'pink'
-      },
-      deinit: () => {
-        sineSynth.envelope.attack = 0.005
-        sineSynth.envelope.release = 0.8
-        autoFilter.stop()
-
-        noiseSynth.noise.type = 'white'
-      },
-      loop: true
+      noiseSynth.envelope.attack = 0.005
+      noiseSynth.envelope.release = 0.8
+      noiseSynth.noise.type = 'white'
     },
-    // Vlad Costea - Bulls vs Bears (Czino 8-bit remix)
-    bullsVsBears: {
-      id: 'bullsVsBears',
-      length: 26.182,
-      noise: bullsVsBears.triangle,
-      triangle: bullsVsBears.triangle,
-      pulse: bullsVsBears.pulse1,
-      pulse2: bullsVsBears.pulse2,
-      sine: bullsVsBears.sine,
-      reverbs: [ sineSynth, pulseSynth, pulse2Synth ],
-      loop: true
-    },
-    // Vlad Costea - A New Hope (Czino 8-bit remix)
-    aNewHope: {
-      id: 'aNewHope',
-      length: 54.2608,
-      noise: aNewHope.triangle,
-      triangle: aNewHope.triangle,
-      pulse: aNewHope.pulse1,
-      pulse2: aNewHope.pulse2,
-      sine: aNewHope.sine,
-      square: aNewHope.sine,
-      reverbs: [ sineSynth, pulseSynth, pulse2Synth ],
-      loop: true
-    },
-    // Vlad Costea - Darker is Better (Czino 8-bit remix)
-    darkIsBetter: {
-      id: 'darkIsBetter',
-      length: 104,
-      bpm: 120,
-      delay: 0.255,
-      delayFeedback: .8,
-      square: darkIsBetter.pulse1,
-      pulse: darkIsBetter.pulse1,
-      pulse2: darkIsBetter.pulse2,
-      sine: darkIsBetter.sine,
-      delays: [ sineSynth, squareSynth, pulseSynth, pulse2Synth ],
-      loop: true
-    },
-    endOfTheRabbitHole: {
-      id: 'endOfTheRabbitHole',
-      length: 7.559,
-      bpm: 127,
-      delay: 0.25,
-      drum: endOfTheRabbitHole.drum,
-      brownNoise: endOfTheRabbitHole.noise,
-      triangle: endOfTheRabbitHole.pulse1,
-      square: endOfTheRabbitHole.square,
-      pulse: endOfTheRabbitHole.triangle,
-      sine: endOfTheRabbitHole.sine,
-      delays: [ sineSynth ],
-      loop: true
-    },
-    // Czino - Mining Farm
-    miningFarm: {
-      id: 'miningFarm',
-      length: 1,
-      bpm: 127,
-      noise: miningFarm.noise,
-      triangle: miningFarm.triangle,
-      pulse: miningFarm.pulse1,
-      sine: miningFarm.sine,
-      reverbs: [ sineSynth ],
-      loop: true,
-      init: () => {
-        autoFilter = new AutoFilter(.01)
-        autoFilter2 = new AutoFilter(.015)
-        noiseSynth.envelope.attack = 0
-        noiseSynth.envelope.sustain = 1
-
-        pulseSynth.envelope.attack = 0
-        pulseSynth.envelope.sustain = 1
-        pulseSynth.envelope.release = 0
-
-        triangleSynth.envelope.attack = 0
-        triangleSynth.envelope.sustain = 1
-        triangleSynth.envelope.release = 0
-
-        sineSynth.envelope.attack = .5
-        sineSynth.envelope.release = .5
-
-        pulseSynth.disconnect()
-        pulseSynth.chain(autoFilter, gain)
-        autoFilter.start()
-
-        triangleSynth.disconnect()
-        triangleSynth.chain(autoFilter2, gain)
-        autoFilter2.start()
-      },
-      deinit: () => {
-        pulseSynth.envelope.attack = 0.005
-        pulseSynth.envelope.release = 0.8
-        triangleSynth.envelope.attack = 0.005
-        triangleSynth.envelope.release = 0.8
-        sineSynth.envelope.attack = 0.005
-        sineSynth.envelope.release = 0.8
-        autoFilter.stop()
-        autoFilter2.stop()
-
-        noiseSynth.noise.type = 'white'
-      },
-    },
-    // Czino - Citadel Under Attack
-    citadelUnderAttack: {
-      id: 'citadelUnderAttack',
-      length: 37.333,
-      bpm: 127,
-      noise: citadelUnderAttack.noise,
-      triangle: citadelUnderAttack.triangle,
-      square: citadelUnderAttack.square,
-      pulse: citadelUnderAttack.pulse1,
-      pulse2: citadelUnderAttack.pulse2,
-      sine: citadelUnderAttack.sine,
-      reverbs: [ sineSynth ],
-      loop: true,
-      init: () => {
-        autoFilter = new AutoFilter(.01)
-        autoFilter2 = new AutoFilter(.015)
-        noiseSynth.envelope.attack = 0
-        noiseSynth.envelope.sustain = 1
-
-        pulseSynth.envelope.attack = 0
-        pulseSynth.envelope.sustain = 1
-        pulseSynth.envelope.release = 0
-        pulse2Synth.envelope.attack = 0
-        pulse2Synth.envelope.sustain = 1
-        pulse2Synth.envelope.release = 0
-
-        triangleSynth.envelope.attack = 0
-        triangleSynth.envelope.sustain = 1
-        triangleSynth.envelope.release = 0
-
-        sineSynth.envelope.attack = .5
-        sineSynth.envelope.release = .5
-
-        pulseSynth.disconnect()
-        pulseSynth.chain(autoFilter, gain)
-        pulse2Synth.disconnect()
-        pulse2Synth.chain(autoFilter, gain)
-        autoFilter.start()
-
-        triangleSynth.disconnect()
-        triangleSynth.chain(autoFilter2, gain)
-        squareSynth.disconnect()
-        squareSynth.chain(autoFilter2, gain)
-        autoFilter2.start()
-      },
-      deinit: () => {
-        pulseSynth.envelope.attack = 0.005
-        pulseSynth.envelope.release = 0.8
-        triangleSynth.envelope.attack = 0.005
-        triangleSynth.envelope.release = 0.8
-        sineSynth.envelope.attack = 0.005
-        sineSynth.envelope.release = 0.8
-        autoFilter.stop()
-        autoFilter2.stop()
-
-        noiseSynth.envelope.attack = 0.005
-        noiseSynth.envelope.release = 0.8
-        noiseSynth.noise.type = 'white'
-      },
-    },
-    // Czino - I'm sad
-    gameOver: {
-      id: 'gameOver',
-      length: 20.00,
-      sine: gameOver.melody,
-      triangle: gameOver.rhythm,
-      // reverbs: [ sineSynth ],
-      loop: false
-    }
+  },
+  // Czino - I'm sad
+  gameOver: {
+    id: 'gameOver',
+    length: 20.00,
+    sine: gameOver.melody,
+    triangle: gameOver.rhythm,
+    // reverbs: [ sineSynth ],
+    loop: false
+  }
 }
 let enabled
 let song

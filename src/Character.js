@@ -11,6 +11,7 @@ import { addTextToQueue } from './textUtils';
 import { playSound } from './sounds';
 import { duckButton, backButton } from './events'
 import Agent from './Agent'
+import { canDrawOn } from './performanceUtils'
 
 const sprites = {
   hodlonaut,
@@ -399,6 +400,7 @@ class Character extends Agent {
   }
 
   draw = () => {
+    if (!canDrawOn('charContext')) return
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {

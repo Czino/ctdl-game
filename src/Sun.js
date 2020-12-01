@@ -1,8 +1,9 @@
-import constants from "./constants";
-import { CTDLGAME, getTimeOfDay } from "./gameUtils";
+import constants from './constants'
+import { CTDLGAME, getTimeOfDay } from './gameUtils'
+import { canDrawOn } from './performanceUtils'
 
 export default function(options) {
-  this.id = 'sun';
+  this.id = 'sun'
   this.class = 'Sun'
   this.w = 7
   this.h = 7
@@ -30,6 +31,8 @@ export default function(options) {
     constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
   }
   this.update = () => {
+    if (!canDrawOn('skyContext')) return
+
     let timeOfDay = getTimeOfDay()
     // first column, is day time, second is night time
     this.y = Math.round(CTDLGAME.viewport.y + 10)
@@ -50,9 +53,9 @@ export default function(options) {
     let center = this.getCenter()
 
     constants.skyContext.fillStyle = '#FFF'
-    constants.skyContext.beginPath();
-    constants.skyContext.arc(center.x, center.y, this.w, 0, 2 * Math.PI);
-    constants.skyContext.fill();
+    constants.skyContext.beginPath()
+    constants.skyContext.arc(center.x, center.y, this.w, 0, 2 * Math.PI)
+    constants.skyContext.fill()
   }
   this.getBoundingBox = () => this
 

@@ -4,6 +4,7 @@ import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects } from './geometryUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants'
+import { canDrawOn } from './performanceUtils'
 
 BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
@@ -208,7 +209,7 @@ class Agent {
     return obstacles.length === 0
   }
 
-  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|burning/.test(this.status) && this.protection === 0
+  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|burning/.test(this.status) && !this.protection
   onHurt = () => {}
   onDie = () => {
     if (this.usd) {
@@ -261,6 +262,8 @@ class Agent {
   }
 
   draw = () => {
+    if (!canDrawOn('gameContext')) return
+
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {

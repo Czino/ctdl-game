@@ -2,6 +2,7 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
 import { toCurrency } from '../stringUtils'
+import { canDrawOn } from '../performanceUtils'
 
 const backpack = {
   x: constants.WIDTH / 2 - 10,
@@ -18,6 +19,8 @@ const backpack = {
  * @param {Number} inventory.usd USD Balance
  */
 export const showInventory = inventory => {
+  if (!canDrawOn('menuContext')) return
+
   const pos = {
     x: backpack.x + CTDLGAME.viewport.x,
     y: backpack.y + CTDLGAME.viewport.y
@@ -53,7 +56,6 @@ export const showInventory = inventory => {
     true
   )
 
-  
   write(
     constants.menuContext,
     toCurrency(inventory.sats, 'BTC') + '\n' + toCurrency(inventory.usd, 'USD'), {

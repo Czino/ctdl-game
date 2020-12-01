@@ -1,12 +1,15 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
+import { canDrawOn } from '../performanceUtils'
 
 /**
  * @description Method to render character's health
  * @returns {void}
  */
 export const showHealth = () => {
+  if (!canDrawOn('menuContext')) return
+
   const pos = {
     x: constants.WIDTH + CTDLGAME.viewport.x - 30,
     y: constants.HEIGHT + CTDLGAME.viewport.y - constants.MENU.h + 2

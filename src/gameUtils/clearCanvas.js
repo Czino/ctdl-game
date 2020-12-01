@@ -1,4 +1,5 @@
 import constants from '../constants'
+import { canDrawOn } from '../performanceUtils';
 import { CTDLGAME } from './CTDLGAME'
 
 /**
@@ -6,17 +7,22 @@ import { CTDLGAME } from './CTDLGAME'
  * @returns {void}
  */
 export const clearCanvas = () => {
-  constants.parallaxContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT);
+  if (canDrawOn('parallaxContext')) {
+    constants.parallaxContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  }
 
   [
-    constants.skyContext,
-    constants.bgContext,
-    constants.gameContext,
-    constants.fgContext,
-    constants.charContext,
-    constants.overlayContext,
-    constants.menuContext
-  ].map(context => {
-    context.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-  })
+    'skyContext',
+    'bgContext',
+    'charContext',
+    'gameContext',
+    'fgContext',
+    'overlayContext',
+    'menuContext'
+  ]
+    .filter(layer => canDrawOn(layer))
+    .map(layer => constants[layer])
+    .map(context => {
+      context.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    })
 }

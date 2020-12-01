@@ -1,6 +1,6 @@
 import * as db from './db'
-import Sun from './sun'
-import Moon from './moon'
+import Sun from './Sun'
+import Moon from './Moon'
 import { initEvents } from './events'
 import constants from './constants'
 import {
@@ -31,7 +31,7 @@ import { applyGravity } from './physicsUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 import { changeMap } from './mapUtils'
-import { showButtons } from './debugUtils'
+import { showButtons, showFrameRate } from './debugUtils'
 import Item from './Item'
 
 // import { playSound } from './sounds'
@@ -138,24 +138,26 @@ async function init() {
  * It also takes care of rendering a frame at specified framerate
  */
 function tick() {
+  CTDLGAME.frame++
+  if (CTDLGAME.frame % constants.FRAMERATE !== 0) {
+    // throttle framerate
+    return window.requestAnimationFrame(tick)
+  }
 
   if (!CTDLGAME.isSoundLoaded) {
-    if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
-
     showStartGameScreen()
 
     if (window.SHOWBUTTONS) showButtons()
 
-    CTDLGAME.frame++
+    showFrameRate()
     return window.requestAnimationFrame(tick)
   }
   if (CTDLGAME.startScreen) {
-    if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
     clearCanvas()
-    if (window.SHOWBUTTONS) showButtons()
 
     showStartScreen()
-    CTDLGAME.frame++
+    if (window.SHOWBUTTONS) showButtons()
+    showFrameRate()
     return window.requestAnimationFrame(tick)
   }
   if (CTDLGAME.cutScene) {
@@ -163,11 +165,14 @@ function tick() {
 
     writeMenu()
     showSettings()
-    CTDLGAME.frame++
+
+    showFrameRate()
     return window.requestAnimationFrame(tick)
   }
 
   if (!CTDLGAME.hodlonaut) {
+    showFrameRate()
+
     return window.requestAnimationFrame(tick)
   }
 
@@ -177,7 +182,7 @@ function tick() {
 
     if (window.SHOWBUTTONS) showButtons()
 
-    CTDLGAME.frame++
+    showFrameRate()
     return window.requestAnimationFrame(tick)
   }
 
@@ -186,104 +191,101 @@ function tick() {
     // TODO sometimes it happens that the background does not change
     circadianRhythm(time)
   }
-  if (CTDLGAME.frame % constants.FRAMERATE === 0) {
-    time = getTimeOfDay()
-    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) checkBlocks()
 
-    if (CTDLGAME.showShop) {
-      showShop()
-      showMenu(CTDLGAME.inventory)
-      writeMenu()
+  time = getTimeOfDay()
+  if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) checkBlocks()
 
-      if (window.SHOWBUTTONS) showButtons()
-
-      CTDLGAME.frame++
-      return window.requestAnimationFrame(tick)
-    }
-
-    if (CTDLGAME.prompt) {
-      prompt(CTDLGAME.prompt)
-
-      if (window.SHOWBUTTONS) showButtons()
-
-      CTDLGAME.frame++
-      return window.requestAnimationFrame(tick)
-    }
-
-    clearCanvas()
-
-    if (CTDLGAME.world) cleanUpStage()
-
-    spawnEnemies()
-
-    if (CTDLGAME.wizardCountdown === 0) {
-      CTDLGAME.objects.push(new Wizard(
-        'wizard',
-        {
-          x: window.SELECTEDCHARACTER.x - 40,
-          y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
-        }
-      ))
-    } else if (CTDLGAME.wizardCountdown) {
-      CTDLGAME.wizardCountdown--
-    }
-
-    if (CTDLGAME.world.map.overworld) {
-      sun.update()
-      moon.update()
-    } else if (CTDLGAME.world.map.bgColor) {
-      constants.skyContext.globalAlpha = 1
-      constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor()
-      constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-    }
-
-    CTDLGAME.world.update()
-
-    applyGravity()
-
-    // update objects that shall update and are in viewport
-    CTDLGAME.objects
-      .filter(obj => obj.update && obj.inViewport)
-      .forEach(obj => obj.update())
-
-    if (CTDLGAME.world.map.update) CTDLGAME.world.map.update()
-
-    updateViewport()
-
-
-    if (CTDLGAME.showOverlay) showOverlay()
-
+  if (CTDLGAME.showShop) {
+    showShop()
     showMenu(CTDLGAME.inventory)
     writeMenu()
 
-    // Don't add blocks to Quadtree that are not in viewport
-    CTDLGAME.quadTree.clear()
-    CTDLGAME.objects
-      .filter(obj => obj.inViewport)
-      .forEach(object => CTDLGAME.quadTree.insert(object))
-
-    // TODO abstract into all in one debug function
     if (window.SHOWBUTTONS) showButtons()
-    if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
 
-    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
-      saveGame()
-    }
-    // fade out save icon
-    if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
-      showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
-    }
-
-    if (CTDLGAME.frame > constants.FRAMERESET) {
-      CTDLGAME.frame = 0
-    }
-
-    if (!CTDLGAME.hodlonaut.health && !CTDLGAME.katoshi.health) {
-      fadeIntoGameOver()
-    }
+    return window.requestAnimationFrame(tick)
   }
 
-  CTDLGAME.frame++
+  if (CTDLGAME.prompt) {
+    prompt(CTDLGAME.prompt)
+
+    if (window.SHOWBUTTONS) showButtons()
+
+    return window.requestAnimationFrame(tick)
+  }
+
+  clearCanvas()
+
+  if (CTDLGAME.world) cleanUpStage()
+
+  spawnEnemies()
+
+  if (CTDLGAME.wizardCountdown === 0) {
+    CTDLGAME.objects.push(new Wizard(
+      'wizard',
+      {
+        x: window.SELECTEDCHARACTER.x - 40,
+        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
+      }
+    ))
+  } else if (CTDLGAME.wizardCountdown) {
+    CTDLGAME.wizardCountdown--
+  }
+
+  if (CTDLGAME.world.map.overworld) {
+    sun.update()
+    moon.update()
+  } else if (CTDLGAME.world.map.bgColor) {
+    constants.skyContext.globalAlpha = 1
+    constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor()
+    constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+  }
+
+  CTDLGAME.world.update()
+
+  applyGravity()
+
+  // update objects that shall update and are in viewport
+  CTDLGAME.objects
+    .filter(obj => obj.update && obj.inViewport)
+    .forEach(obj => obj.update())
+
+  if (CTDLGAME.world.map.update) CTDLGAME.world.map.update()
+
+  updateViewport()
+
+
+  if (CTDLGAME.showOverlay) showOverlay()
+
+  showMenu(CTDLGAME.inventory)
+  writeMenu()
+
+  // Don't add blocks to Quadtree that are not in viewport
+  CTDLGAME.quadTree.clear()
+  CTDLGAME.objects
+    .filter(obj => obj.inViewport)
+    .forEach(object => CTDLGAME.quadTree.insert(object))
+
+  // TODO abstract into all in one debug function
+  if (window.SHOWBUTTONS) showButtons()
+  if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
+
+  if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
+    saveGame()
+  }
+  // fade out save icon
+  if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
+    showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
+  }
+
+  if (CTDLGAME.frame > constants.FRAMERESET) {
+    CTDLGAME.frame = 0
+  }
+
+  if (!CTDLGAME.hodlonaut.health && !CTDLGAME.katoshi.health) {
+    fadeIntoGameOver()
+  }
+
+  showFrameRate()
   return window.requestAnimationFrame(tick)
 }
 

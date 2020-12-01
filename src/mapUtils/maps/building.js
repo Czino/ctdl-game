@@ -1,7 +1,7 @@
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
-import GameObject from '../../gameObject'
+import GameObject from '../../GameObject'
 import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 

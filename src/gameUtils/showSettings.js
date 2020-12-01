@@ -2,12 +2,15 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
 import { musicButton, soundButton } from '../events'
+import { canDrawOn } from '../performanceUtils'
 
 /**
  * @description Method to render in game settings (music, sound)
  * @returns {void}
  */
 export const showSettings = () => {
+  if (!canDrawOn('menuContext')) return // do net render on menu yet
+
   const posMusic = {
     x: musicButton.x + CTDLGAME.viewport.x,
     y: musicButton.y + CTDLGAME.viewport.y
