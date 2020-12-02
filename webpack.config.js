@@ -32,6 +32,7 @@ module.exports = {
       // }
     ]
   },
+  devtool: 'inline-source-map',
   // optimization: {
   //   splitChunks: {
   //     chunks: 'all',
