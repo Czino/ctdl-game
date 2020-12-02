@@ -50,7 +50,6 @@ class Flashbang {
       if (this.vy < -12) this.vy = -12
 
       const hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
-      console.log(hasCollided, this.x, this.y)
       if (hasCollided) {
         this.vy = 0
       }
