@@ -95,12 +95,12 @@ init()
  */
 async function init() {
   let i = 0
-
+  let len = Object.keys(CTDLGAME.assets).length
   for (let key in CTDLGAME.assets) {
     CTDLGAME.assets[key] = await loadAsset(CTDLGAME.assets[key])
     constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
 
-    showProgressBar(i / (Object.keys(CTDLGAME.assets).length - 1))
+    showProgressBar(i / (len - 1))
     i++
   }
 
@@ -170,7 +170,7 @@ function tick() {
     return window.requestAnimationFrame(tick)
   }
 
-  if (!CTDLGAME.hodlonaut) {
+  if (!CTDLGAME.hodlonaut || !CTDLGAME.world.ready) {
     showFrameRate()
 
     return window.requestAnimationFrame(tick)
@@ -325,9 +325,3 @@ window.CTDLGAME = CTDLGAME
 window.constants = constants
 window.addTextToQueue = addTextToQueue
 window.getTimeOfDay = getTimeOfDay
-
-import PoliceForce from './enemies/PoliceForce'
-window.PoliceForce = PoliceForce
-
-import Flashbang from './objects/Flashbang'
-window.Flashbang = Flashbang

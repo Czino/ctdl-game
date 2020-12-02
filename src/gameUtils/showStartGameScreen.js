@@ -1,15 +1,18 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
+import { canDrawOn } from '../performanceUtils'
 
 /**
  * @description Method to display progress bar
  * @returns {void}
  */
 export const showStartGameScreen = () => {
-  constants.overlayContext.fillStyle = '#212121'
+  if (!canDrawOn('menuContext')) return
 
-  constants.overlayContext.fillRect(
+  constants.menuContext.fillStyle = '#212121'
+
+  constants.menuContext.fillRect(
     CTDLGAME.viewport.x,
     CTDLGAME.viewport.y,
     constants.WIDTH,
@@ -18,7 +21,7 @@ export const showStartGameScreen = () => {
 
   let text = CTDLGAME.frame / constants.FRAMERATE > constants.FRAMERATE ? '$ bitcoind -daemon' : '$ bitcoind -daemon|'
   write(
-    constants.overlayContext,
+    constants.menuContext,
     text, {
       x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 40,
       y: CTDLGAME.viewport.y + constants.HEIGHT / 2,
@@ -27,7 +30,7 @@ export const showStartGameScreen = () => {
     'left'
   )
   write(
-    constants.overlayContext,
+    constants.menuContext,
     'click to start', {
       x: CTDLGAME.viewport.x + constants.WIDTH / 2 - 29,
       y: CTDLGAME.viewport.y + constants.HEIGHT / 2 + 20,

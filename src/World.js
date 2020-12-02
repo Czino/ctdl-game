@@ -1,18 +1,35 @@
 import constants from './constants'
-import { CTDLGAME } from './gameUtils'
+import { CTDLGAME, loadAsset, showProgressBar } from './gameUtils'
 import { intersects } from './geometryUtils'
 import { loadMap } from './mapUtils'
 import { canDrawOn } from './performanceUtils'
 
-export default function (id) {
-  this.id = id
-  this.map = loadMap(id)
-  this.w = this.map.world.w
-  this.h = this.map.world.h
+class World {
+  constructor(id) {
+    this.id = id
+    this.map = loadMap(id)
+    this.w = this.map.world.w
+    this.h = this.map.world.h
+    CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
+    CTDLGAME.lightSources = this.map.lightSources
 
-  CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
-  CTDLGAME.lightSources = this.map.lightSources
-  this.update = () => {
+    this.loadAssets()
+  }
+
+  loadAssets = async () => {
+    let i = 0
+    let len = Object.keys(this.map.assets).length
+    for (let key in this.map.assets) {
+      CTDLGAME.assets[key] = await loadAsset(this.map.assets[key])
+      constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+
+      showProgressBar(i / (len - 1))
+      i++
+    }
+    this.ready = true
+  }
+
+  update = () => {
     let sprite = CTDLGAME.assets[this.id]
 
     if (canDrawOn('parallaxContext')) {
@@ -79,3 +96,4 @@ export default function (id) {
     }
   }
 }
+export default World

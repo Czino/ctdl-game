@@ -14,28 +14,28 @@ const progressBar = {
  * @param {Number} progress current progress between 0 - 1
  */
 export const showProgressBar = progress => {
-  constants.overlayContext.fillStyle = '#212121'
+  constants.menuContext.fillStyle = '#212121'
 
-  constants.overlayContext.fillRect(
+  constants.menuContext.fillRect(
     CTDLGAME.viewport.x,
     CTDLGAME.viewport.y,
     constants.WIDTH,
     constants.HEIGHT
   )
-  constants.overlayContext.fillStyle = '#FFF'
-  constants.overlayContext.strokeStyle = '#FFF'
-  constants.overlayContext.lineWidth = 1
+  constants.menuContext.fillStyle = '#FFF'
+  constants.menuContext.strokeStyle = '#FFF'
+  constants.menuContext.lineWidth = 1
 
-  constants.overlayContext.beginPath()
-  constants.overlayContext.rect(
+  constants.menuContext.beginPath()
+  constants.menuContext.rect(
     progressBar.x + CTDLGAME.viewport.x - .5,
     progressBar.y + CTDLGAME.viewport.y - .5,
     progressBar.w,
     progressBar.h
   )
-  constants.overlayContext.stroke()
+  constants.menuContext.stroke()
 
-  constants.overlayContext.fillRect(
+  constants.menuContext.fillRect(
     progressBar.x + CTDLGAME.viewport.x,
     progressBar.y + CTDLGAME.viewport.y,
     progressBar.w * progress - 1,
@@ -43,7 +43,7 @@ export const showProgressBar = progress => {
   )
 
   write(
-    constants.overlayContext,
+    constants.menuContext,
     Math.round(progress * 100) + '%', {
       x: progressBar.x + CTDLGAME.viewport.x,
       y: progressBar.y + CTDLGAME.viewport.y + progressBar.h + 1,
