@@ -7,7 +7,7 @@ import strings from './strings'
 import viola from './viola'
 // import violin from './violin'
 
-window.SNDTRCK.song = {
+export default {
   id: 'mariamMatremVirginem',
   length: 200.97,
   loop: false,

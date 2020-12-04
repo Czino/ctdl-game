@@ -6,19 +6,12 @@ import pulse1 from './pulse1'
 import pulse2 from './pulse2'
 
 export default {
-  triangle,
-  sine,
-  pulse1,
-  pulse2
-}
-
-window.SNDTRCK.song = {
   id: 'bullsVsBears',
   length: 26.182,
   reverbs: [
-    window.SNDTRCK.devices.sineSynth,
-    window.SNDTRCK.devices.pulseSynth,
-    window.SNDTRCK.devices.pulse2Synth
+    'sineSynth',
+    'pulseSynth',
+    'pulse2Synth'
   ],
   loop: true,
   tracks: {

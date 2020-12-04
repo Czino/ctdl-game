@@ -5,12 +5,12 @@ import pulse1 from './pulse1'
 import noise from './noise'
 import drum from './drum'
 
-window.SNDTRCK.song = {
+export default {
   id: 'endOfTheRabbitHole',
   length: 7.559,
   bpm: 127,
   delay: 0.25,
-  delays: [window.SNDTRCK.devices.sineSynth],
+  delays: ['sineSynth'],
   loop: true,
   tracks: {
     drum: drum,

@@ -8,15 +8,6 @@ import noise from './noise'
 import drum from './drum'
 
 export default {
-  triangle,
-  pulse1,
-  square,
-  sine,
-  noise,
-  drum
-}
-
-window.SNDTRCK.song = {
   id: 'imperayritzDeLaCiutatIoyosa',
   length: 190.7624,
   loop: true,

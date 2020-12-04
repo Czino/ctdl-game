@@ -9,7 +9,7 @@ import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } 
 
 let logoOffsetTop = 100
 let logoOffsetBottom = 200
-let musicStart = 264
+let musicStart = 200
 const originalFramerate = constants.FRAMERATE
 
 /**

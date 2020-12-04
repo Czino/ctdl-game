@@ -5,12 +5,6 @@ import triangle from './triangle'
 import pulse1 from './pulse1'
 
 export default {
-  noise,
-  triangle,
-  pulse1
-}
-
-window.SNDTRCK.song = {
   id: 'briansTheme',
   length: 31.8333 + 0.1667,
   loop: true,

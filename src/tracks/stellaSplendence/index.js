@@ -7,14 +7,6 @@ import flute2 from './flute2'
 import sine from './sine'
 
 export default {
-  bass1,
-  bass2,
-  flute1,
-  flute2,
-  sine
-}
-
-window.SNDTRCK.song = {
   id: 'stellaSplendence',
   length: 136.575,
   loop: true,

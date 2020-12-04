@@ -42,7 +42,7 @@ const sineOptions = {
   }
 }
 
-window.SNDTRCK = {
+const SNDTRCK = {
   constructor: {
     AutoFilter,
     Gain,
@@ -69,21 +69,21 @@ window.SNDTRCK = {
 }
 
 
-window.SNDTRCK.devices.drumSynth.portamento = .1
-window.SNDTRCK.devices.brownNoiseSynth.noise.type = 'brown'
+SNDTRCK.devices.drumSynth.portamento = .1
+SNDTRCK.devices.brownNoiseSynth.noise.type = 'brown'
 
-window.SNDTRCK.synths = [
-  window.SNDTRCK.devices.pulseSynth,
-  window.SNDTRCK.devices.pulse2Synth,
-  window.SNDTRCK.devices.squareSynth,
-  window.SNDTRCK.devices.triangleSynth,
-  window.SNDTRCK.devices.sineSynth,
-  window.SNDTRCK.devices.drumSynth,
-  window.SNDTRCK.devices.noiseSynth,
-  window.SNDTRCK.devices.brownNoiseSynth
+SNDTRCK.synths = [
+  SNDTRCK.devices.pulseSynth,
+  SNDTRCK.devices.pulse2Synth,
+  SNDTRCK.devices.squareSynth,
+  SNDTRCK.devices.triangleSynth,
+  SNDTRCK.devices.sineSynth,
+  SNDTRCK.devices.drumSynth,
+  SNDTRCK.devices.noiseSynth,
+  SNDTRCK.devices.brownNoiseSynth
 ]
 
-window.SNDTRCK.synths .map(synth => synth.volume.value = -19)
+SNDTRCK.synths .map(synth => synth.volume.value = -19)
 
 let enabled
 
@@ -98,10 +98,13 @@ let drumPart = new Part()
 
 
 export const initSoundtrack = async id => {
-  if (window.SNDTRCK.song?.deinit) window.SNDTRCK.song.deinit()
+  if (SNDTRCK.song?.deinit) SNDTRCK.song.deinit(SNDTRCK)
 
-  let song = await fetch(`/tracks/${id}.js`)
-  eval(await song.text())
+  let song = await import(
+    /* webpackMode: "lazy" */
+    `./tracks/${id}/index.js`
+  )
+  SNDTRCK.song = song.default
 
   if (Transport.state === 'started') stopMusic()
 
@@ -112,81 +115,81 @@ export const initSoundtrack = async id => {
   if (noisePart) noisePart.remove()
   if (brownNoisePart) brownNoisePart.remove()
 
-  window.SNDTRCK.synths.map(synth =>
-    synth.disconnect() && synth.connect(window.SNDTRCK.devices.gain)
+  SNDTRCK.synths.map(synth =>
+    synth.disconnect() && synth.connect(SNDTRCK.devices.gain)
   )
-  if (window.SNDTRCK.song.reverbs) {
-    window.SNDTRCK.song.reverbs.map(synth => {
-      synth.disconnect()
-      synth.chain(
-        window.SNDTRCK.devices.reverb,
-        window.SNDTRCK.devices.gain)
+  if (SNDTRCK.song.reverbs) {
+    SNDTRCK.song.reverbs.map(synth => {
+      SNDTRCK.devices[synth].disconnect()
+      SNDTRCK.devices[synth].chain(
+        SNDTRCK.devices.reverb,
+        SNDTRCK.devices.gain)
     })
   }
-  if (window.SNDTRCK.song.delays) {
-    window.SNDTRCK.devices.delay = new PingPongDelay(
-      60 / window.SNDTRCK.song.bpm * window.SNDTRCK.song.delay,
-      window.SNDTRCK.song.delayFeedback
+  if (SNDTRCK.song.delays) {
+    SNDTRCK.devices.delay = new PingPongDelay(
+      60 / SNDTRCK.song.bpm * SNDTRCK.song.delay,
+      SNDTRCK.song.delayFeedback
     )
-    window.SNDTRCK.song.delays.map(synth => {
-      synth.chain(
-        window.SNDTRCK.devices.delay,
-        window.SNDTRCK.devices.gain
+    SNDTRCK.song.delays.map(synth => {
+      SNDTRCK.devices[synth].chain(
+        SNDTRCK.devices.delay,
+        SNDTRCK.devices.gain
       )
     })
   }
 
-  if (window.SNDTRCK.song.init) window.SNDTRCK.song.init()
+  if (SNDTRCK.song.init) SNDTRCK.song.init(SNDTRCK)
 
-  Transport.loop = window.SNDTRCK.song.loop
+  Transport.loop = SNDTRCK.song.loop
   Transport.loopStart = 0
-  Transport.loopEnd = window.SNDTRCK.song.length
+  Transport.loopEnd = SNDTRCK.song.length
 
-  if (window.SNDTRCK.song.tracks.pulse) {
+  if (SNDTRCK.song.tracks.pulse) {
     pulsePart = new Part((time, note) => {
-      window.SNDTRCK.devices.pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.pulse))
+      SNDTRCK.devices.pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.pulse))
   }
-  if (window.SNDTRCK.song.tracks.pulse2) {
+  if (SNDTRCK.song.tracks.pulse2) {
     pulse2Part = new Part((time, note) => {
-      window.SNDTRCK.devices.pulse2Synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.pulse2))
+      SNDTRCK.devices.pulse2Synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.pulse2))
   }
 
-  if (window.SNDTRCK.song.tracks.square) {
+  if (SNDTRCK.song.tracks.square) {
     squarePart = new Part((time, note) => {
-      window.SNDTRCK.devices.squareSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.square))
+      SNDTRCK.devices.squareSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.square))
   }
 
-  if (window.SNDTRCK.song.tracks.triangle) {
+  if (SNDTRCK.song.tracks.triangle) {
     trianglePart = new Part((time, note) => {
-      window.SNDTRCK.devices.triangleSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.triangle))
+      SNDTRCK.devices.triangleSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.triangle))
   }
 
-  if (window.SNDTRCK.song.tracks.sine) {
+  if (SNDTRCK.song.tracks.sine) {
     sinePart = new Part((time, note) => {
-      window.SNDTRCK.devices.sineSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.sine))
+      SNDTRCK.devices.sineSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.sine))
   }
 
-  if (window.SNDTRCK.song.tracks.noise) {
+  if (SNDTRCK.song.tracks.noise) {
     noisePart = new Part((time, note) => {
-      window.SNDTRCK.devices.noiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.noise))
+      SNDTRCK.devices.noiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.noise))
   }
-  if (window.SNDTRCK.song.tracks.brownNoise) {
+  if (SNDTRCK.song.tracks.brownNoise) {
     brownNoisePart = new Part((time, note) => {
-      window.SNDTRCK.devices.brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.brownNoise))
+      SNDTRCK.devices.brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.brownNoise))
   }
-  if (window.SNDTRCK.song.tracks.drum) {
+  if (SNDTRCK.song.tracks.drum) {
     drumPart = new Part((time, note) => {
-      window.SNDTRCK.devices.drumSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-      window.SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.01, note.velocity)
-      window.SNDTRCK.devices.brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
-    }, parseNotes(window.SNDTRCK.song.tracks.drum))
+      SNDTRCK.devices.drumSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+      SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.01, note.velocity)
+      SNDTRCK.devices.brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
+    }, parseNotes(SNDTRCK.song.tracks.drum))
   }
 
   if (enabled) startMusic()
@@ -195,33 +198,33 @@ export const initSoundtrack = async id => {
 window.initSoundtrack = initSoundtrack
 
 
-export const getSoundtrack = () => window.SNDTRCK.song?.id
+export const getSoundtrack = () => SNDTRCK.song?.id
 
 export const toggleSoundtrack = enable => {
   enabled = enable
   if (!enabled) {
     stopMusic()
-  } else if (enabled && window.SNDTRCK.song) {
+  } else if (enabled && SNDTRCK.song) {
     startMusic()
   }
 }
 
 export const startMusic = async () => {
-  if (!window.SNDTRCK.song || !enabled) return
+  if (!SNDTRCK.song || !enabled) return
 
-  await Transport.start('+0.1', 0)
-  if (window.SNDTRCK.song.tracks.pulse) pulsePart.start(0)
-  if (window.SNDTRCK.song.tracks.pulse2) pulse2Part.start(0)
-  if (window.SNDTRCK.song.tracks.square) squarePart.start(0)
-  if (window.SNDTRCK.song.tracks.triangle) trianglePart.start(0)
-  if (window.SNDTRCK.song.tracks.sine) sinePart.start(0)
-  if (window.SNDTRCK.song.tracks.noise) noisePart.start(0)
-  if (window.SNDTRCK.song.tracks.brownNoise) brownNoisePart.start(0)
-  if (window.SNDTRCK.song.tracks.drum) drumPart.start(0)
+  await Transport.start('+.5', 0)
+  if (SNDTRCK.song.tracks.pulse) pulsePart.start(0)
+  if (SNDTRCK.song.tracks.pulse2) pulse2Part.start(0)
+  if (SNDTRCK.song.tracks.square) squarePart.start(0)
+  if (SNDTRCK.song.tracks.triangle) trianglePart.start(0)
+  if (SNDTRCK.song.tracks.sine) sinePart.start(0)
+  if (SNDTRCK.song.tracks.noise) noisePart.start(0)
+  if (SNDTRCK.song.tracks.brownNoise) brownNoisePart.start(0)
+  if (SNDTRCK.song.tracks.drum) drumPart.start(0)
 }
 
 export const stopMusic = () => {
-  if (!window.SNDTRCK.song) return
+  if (!SNDTRCK.song) return
 
   Transport.stop()
   if (pulsePart) pulsePart.stop(0)
@@ -235,7 +238,7 @@ export const stopMusic = () => {
 }
 
 export const changeVolume = value => {
-  window.SNDTRCK.devices.gain.gain.rampTo(value, 0)
+  SNDTRCK.devices.gain.gain.rampTo(value, 0)
 }
 
 function parseNotes(notes) {

@@ -1,17 +1,28 @@
+const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const glob = require('glob')
+const entry = {
+  game: {
+    import: './src/game.js'
+  }
+}
+console.log(entry)
+
 const game = {
   devServer: {
     https: true,
     host: '0.0.0.0'
   },
-  entry: {
-    game: './src/game.js'
+  entry,
+  output: {
+    publicPath: '/',
+    chunkFilename: '[name].js',
+    filename: '[name].js'
   },
   module: {
     rules: [
       {
         test: /\.(png|jpe?g|gif)$/i,
+        include: path.resolve(__dirname, 'src/sprites'),
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]'
@@ -19,12 +30,26 @@ const game = {
       },
       {
         test: /\.js$/,
+        include: path.resolve(__dirname, 'src'),
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/tracks')
+        ],
+        use: ['babel-loader']
+      },
+      {
+        test: /\.js$/,
+        include: path.resolve(__dirname, 'src/tracks'),
         exclude: /node_modules/,
         use: ['babel-loader']
-      }
+      },
     ]
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-cheap-source-map',
+  cache: true,
+  watchOptions: {
+    poll: 5000
+  },
   plugins: [
     new HtmlWebpackPlugin({
       chunks: ['game'],
@@ -34,39 +59,23 @@ const game = {
   ]
 }
 
-const soundtracks = {
-  entry: glob.sync('./src/tracks/**/index.js').reduce((obj, path) => {
-    let name = path.split('/')
-    name = name[name.length - 2]
-    obj[name] = path
-    return obj
-  },{}),
-  mode: 'production',
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ['babel-loader']
-      },
-    ]
-  },
-  output: {
-    filename: 'tracks/[name].js'
-  }
-}
 const mapCreator = {
   devServer: {
     https: true,
+    contentBase: path.join(__dirname, 'dist'),
     host: '0.0.0.0'
   },
   entry: {
     mapCreator: './src/mapCreator.js'
   },
+  output: {
+    publicPath: '/dist/',
+  },
   module: {
     rules: [
       {
         test: /\.(png|jpe?g|gif)$/i,
+        include: path.resolve(__dirname, 'src/sprites'),
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]'
@@ -74,12 +83,15 @@ const mapCreator = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/tracks')
+        ],
         use: ['babel-loader']
       }
     ]
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-cheap-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       chunks: ['mapCreator'],
@@ -91,15 +103,20 @@ const mapCreator = {
 const spriteViewer = {
   devServer: {
     https: true,
+    contentBase: path.join(__dirname, 'dist'),
     host: '0.0.0.0'
   },
   entry: {
     spritePreview: './src/spritePreview.js'
   },
+  output: {
+    publicPath: '/dist/',
+  },
   module: {
     rules: [
       {
         test: /\.(png|jpe?g|gif)$/i,
+        include: path.resolve(__dirname, 'src/sprites'),
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]'
@@ -107,12 +124,15 @@ const spriteViewer = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/tracks')
+        ],
         use: ['babel-loader']
       }
     ]
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-cheap-source-map',
   plugins: [
     new HtmlWebpackPlugin({
         chunks: ['spritePreview'],
@@ -124,7 +144,6 @@ const spriteViewer = {
 
 module.exports = [
   game,
-  soundtracks,
   // mapCreator,
   // spriteViewer
 ]

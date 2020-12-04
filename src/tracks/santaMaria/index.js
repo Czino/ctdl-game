@@ -5,15 +5,9 @@ import pulse from './pulse'
 import sine from './sine'
 
 export default {
-  noise,
-  pulse,
-  sine
-}
-
-window.SNDTRCK.song = {
   id: 'santaMaria',
   length: 79.7342,
-  reverbs: [window.SNDTRCK.devices.sineSynth],
+  reverbs: ['sineSynth'],
   loop: true,
   tracks: {
     noise: noise,
