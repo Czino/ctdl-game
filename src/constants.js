@@ -116,7 +116,7 @@ export default {
     gameContext: 8,
     fgContext: 8,
     overlayContext: 16,
-    menuContext: 32
+    menuContext: 8
   },
   SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,

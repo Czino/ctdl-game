@@ -3,6 +3,7 @@ import { write } from '../font'
 import { textQueue } from './textQueue'
 import { CTDLGAME } from '../gameUtils'
 import { skipCutSceneButton } from '../events'
+import { canDrawOn } from '../performanceUtils'
 
 const timeToShowFinishedText = 256
 
@@ -11,6 +12,7 @@ const timeToShowFinishedText = 256
  * @returns {void}
  */
 export const writeMenu = () => {
+  if (!canDrawOn('menuContext')) return // do net render on menu yet
   if (textQueue.length === 0) return
   let next = textQueue[0]
 

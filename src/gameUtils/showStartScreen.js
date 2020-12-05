@@ -7,35 +7,53 @@ import { playSound } from '../sounds'
 import { initSoundtrack } from '../soundtrack'
 import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../events'
 
-let logoOffsetTop = 100
-let logoOffsetBottom = 200
-let musicStart = 200
-const originalFramerate = constants.FRAMERATE
+const velocity = 4
+let logoOffsetTop = -100
+let logoOffsetBottom = 180
+let musicStart = 180
+
+const $body = document.getElementById('body')
+const shock = (x = 0, y = 1) => {
+  $body.style.left = x + 'vh'
+  $body.style.top = y + 'vh'
+  setTimeout(() => {
+    $body.style.left = '0'
+    $body.style.top = '0'
+  })
+}
 
 /**
  * @description Method to display progress bar
  * @returns {void}
  */
 export const showStartScreen = () => {
-  if (logoOffsetBottom > 0) {
-    constants.FRAMERATE = 1 // start screen needs fast animation
-    constants.FRAMERATES.gameContext = 1
-  } else {
-    constants.FRAMERATE = originalFramerate
-    constants.FRAMERATES.gameContext = originalFramerate
+  if (logoOffsetTop < 0) logoOffsetTop += velocity
+  if (logoOffsetTop === -velocity) {
+    shock(1, .5)
   }
+   if (logoOffsetTop === -velocity && CTDLGAME.options.sound) {
+    playSound('drop')
+  }
+  if (logoOffsetBottom > 0) logoOffsetBottom -= velocity
+  if (logoOffsetBottom === velocity) {
+    shock(-1, .5)
+  }
+  if (logoOffsetBottom === velocity && CTDLGAME.options.sound) {
+    playSound('drop')
+  }
+  if (musicStart > 0) musicStart -= velocity
+  if (musicStart === velocity) initSoundtrack('mariamMatremVirginem')
 
-  if (logoOffsetTop > 0) logoOffsetTop -= 4
-  if (logoOffsetTop === 4 && CTDLGAME.options.sound) playSound('drop')
-  if (logoOffsetBottom > 0) logoOffsetBottom -= 4
-  if (logoOffsetBottom === 4 && CTDLGAME.options.sound) playSound('drop')
-  if (musicStart > 0) musicStart -= 4
-  if (musicStart === 4) initSoundtrack('mariamMatremVirginem')
-
+  constants.gameContext.clearRect(
+    CTDLGAME.viewport.x,
+    CTDLGAME.viewport.y + constants.HEIGHT / 3,
+    constants.WIDTH,
+    51
+  )
   constants.gameContext.drawImage(
     CTDLGAME.assets.logo,
     0, 0, 41, 10,
-    CTDLGAME.viewport.x + constants.WIDTH / 2 - 20 - logoOffsetTop,
+    CTDLGAME.viewport.x + constants.WIDTH / 2 - 20 + logoOffsetTop,
     CTDLGAME.viewport.y + constants.HEIGHT / 3,
     41, 10
   )
@@ -52,7 +70,7 @@ export const showStartScreen = () => {
   if (!canDrawOn('menuContext')) return // do net render menu yet
   write(
     constants.menuContext,
-    CTDLGAME.frame % (constants.FRAMERATES.menuContext * 2) === 0 ? '~ new game' : 'new game',
+    CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4 ? '~ new game' : 'new game',
     {
       x: CTDLGAME.viewport.x + newGameButton.x - 10,
       y: CTDLGAME.viewport.y + newGameButton.y,
@@ -64,7 +82,7 @@ export const showStartScreen = () => {
   if (!CTDLGAME.newGame) {
     write(
       constants.menuContext,
-      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 2) === 0 ? '~ resume game' : 'resume game',
+      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4 ? '~ resume game' : 'resume game',
       {
         x: CTDLGAME.viewport.x + loadGameButton.x - 10,
         y: CTDLGAME.viewport.y + loadGameButton.y,

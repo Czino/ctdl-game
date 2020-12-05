@@ -139,7 +139,14 @@ async function init() {
  */
 function tick() {
   CTDLGAME.frame++
-  if (CTDLGAME.frame % constants.FRAMERATE !== 0) {
+  if (CTDLGAME.startScreen) {
+    clearCanvas()
+
+    showStartScreen()
+    if (window.SHOWBUTTONS) showButtons()
+    showFrameRate()
+    return window.requestAnimationFrame(tick)
+  } else if (CTDLGAME.frame % constants.FRAMERATE !== 0) {
     // throttle framerate
     return window.requestAnimationFrame(tick)
   }
@@ -152,14 +159,7 @@ function tick() {
     showFrameRate()
     return window.requestAnimationFrame(tick)
   }
-  if (CTDLGAME.startScreen) {
-    clearCanvas()
-
-    showStartScreen()
-    if (window.SHOWBUTTONS) showButtons()
-    showFrameRate()
-    return window.requestAnimationFrame(tick)
-  }
+  
   if (CTDLGAME.cutScene) {
     clearCanvas()
 
@@ -170,7 +170,7 @@ function tick() {
     return window.requestAnimationFrame(tick)
   }
 
-  if (!CTDLGAME.hodlonaut || !CTDLGAME.world.ready) {
+  if (!CTDLGAME.hodlonaut || !CTDLGAME.world?.ready) {
     showFrameRate()
 
     return window.requestAnimationFrame(tick)
@@ -224,7 +224,7 @@ function tick() {
       'wizard',
       {
         x: window.SELECTEDCHARACTER.x - 40,
-        y: CTDLGAME.world.h - constants.GROUNDHEIGHT - constants.MENU.h - 33
+        y: window.SELECTEDCHARACTER.y - 4
       }
     ))
   } else if (CTDLGAME.wizardCountdown) {

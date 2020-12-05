@@ -44,7 +44,7 @@ export const showIntro = () => {
     'we know as Bitcoin.'
   ].join('\n'), () => {
     stopMusic()
-    CTDLGAME.cutScene = false
     newGame()
+    CTDLGAME.cutScene = false
   }, true)
 }
