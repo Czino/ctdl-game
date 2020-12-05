@@ -1,4 +1,4 @@
-import { assets } from './gameUtils/assets'
+import { assets } from './mapCreator/assets'
 import { loadAsset } from './gameUtils/loadAsset'
 import constants from './mapCreator/constants'
 
