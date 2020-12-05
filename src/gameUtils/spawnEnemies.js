@@ -11,7 +11,6 @@ import { intersects } from '../geometryUtils'
  */
 export const spawnEnemies = () => {
   if (CTDLGAME.isNight && Math.random() < CTDLGAME.world.map.spawnRates.shitcoiner) {
-    // TODO maybe spawn shitcoiners like rabbits
     // TODO maybe consider iterating through worldObects
     let shitcoiner = new Shitcoiner(
       'shitcoiner-' + Math.random(),
@@ -22,10 +21,20 @@ export const spawnEnemies = () => {
       }
     )
 
-    let hasCollided = CTDLGAME.quadTree.query(shitcoiner.getBoundingBox())
-      .filter(point => point.isSolid && point.id !== shitcoiner.id)
-      .some(point => intersects(shitcoiner.getBoundingBox(), point.getBoundingBox()))
-    if (!hasCollided) CTDLGAME.objects.push(shitcoiner)
+    // spawn low and test down until void is found
+    let spawned = false
+    do {
+      let hasCollided = CTDLGAME.quadTree.query(shitcoiner.getBoundingBox())
+        .filter(point => point.isSolid && point.id !== shitcoiner.id)
+        .some(point => intersects(shitcoiner.getBoundingBox(), point.getBoundingBox()))
+
+      if (!hasCollided) {
+        spawned = true
+        CTDLGAME.objects.push(shitcoiner)
+      } else {
+        shitcoiner.y -= 1
+      }
+    } while (!spawned && shitcoiner.y > 0)
   }
   if (Math.random() < CTDLGAME.world.map.spawnRates.rabbit) {
     let rabbit = new Rabbit(

@@ -215,6 +215,8 @@ class Brian extends Agent {
   update = () => {
     const sprite = CTDLGAME.assets.brian
 
+    if (!sprite) return
+
     this.applyPhysics()
 
     this.sensedEnemies = senseCharacters(this)

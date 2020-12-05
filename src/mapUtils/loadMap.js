@@ -1,3 +1,13 @@
+export const maps = [
+  'city',
+  'building',
+  'forest',
+  'rabbitHole',
+  'endOfTheRabbitHole',
+  'dogeCoinMine',
+  'miningFarm'
+]
+
 /**
  * @description Method to load map settings
  * @param {String} id world id
