@@ -2,6 +2,7 @@ import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
 import World from '../World'
 import { initSoundtrack } from '../soundtrack'
+import { loadMap } from './loadMap'
 
 /**
  * @description Method to fascilitate changing of maps
@@ -17,7 +18,7 @@ export const changeMap = async (id, from) => {
   CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character')
 
   // create new world
-  const newWorld = new World(id)
+  const newWorld = new World(id, await loadMap(id))
   const objects = from !== 'newGame' ? await loadWorldObjects(id) : null
   const worldState = from !== 'newGame' ? await loadWorldState(id) : null
 

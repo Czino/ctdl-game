@@ -1,27 +1,29 @@
 import constants from './constants'
 import { CTDLGAME, loadAsset, showProgressBar } from './gameUtils'
 import { intersects } from './geometryUtils'
-import { loadMap } from './mapUtils'
 import { canDrawOn } from './performanceUtils'
 
 class World {
-  constructor(id) {
+  constructor(id, map) {
     this.id = id
-    this.map = loadMap(id)
+
+    this.map = map
     this.w = this.map.world.w
     this.h = this.map.world.h
     CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
     CTDLGAME.lightSources = this.map.lightSources
-
     this.loadAssets()
   }
 
   loadAssets = async () => {
     let i = 0
     let len = Object.keys(this.map.assets).length
+
     for (let key in this.map.assets) {
-      CTDLGAME.assets[key] = await loadAsset(this.map.assets[key])
-      constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+      if (!CTDLGAME.assets[key]) {
+        CTDLGAME.assets[key] = await loadAsset(this.map.assets[key])
+        constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+      }
 
       showProgressBar(i / (len - 1))
       i++

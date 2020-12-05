@@ -6,6 +6,7 @@ import { getTimeOfDay } from './getTimeOfDay'
 import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { gameObjects } from './gameObjects'
+import { loadMap } from '../mapUtils'
 
 /**
  * @description Method to load game
@@ -31,7 +32,7 @@ export const loadGame = async () => {
       .map(object => new gameObjects[object.class](object.id, object))
   }
 
-  setWorld(new World(worldId))
+  setWorld(new World(worldId, await loadMap(worldId)))
 
   if (CTDLGAME.objects.length === 0) {
     CTDLGAME.objects = CTDLGAME.world.map.objects

@@ -8,6 +8,7 @@ import { CTDLGAME } from '../gameUtils'
  * @param {Number} tileSize size of tiles
  */
 export const drawLightSources = (lightSources, mapAsset, tileSize) => {
+  if (!lightSources) return
   constants.skyContext.globalAlpha = .0125
   constants.skyContext.globalCompositeOperation = 'source-atop'
 
