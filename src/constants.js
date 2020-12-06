@@ -110,12 +110,12 @@ export default {
   FRAMERATE: 8, // render every X frame
   FRAMERATES: {
     skyContext: 8,
-    parallaxContext: 16,
+    parallaxContext: 8,
     bgContext: 8,
     charContext: 8,
     gameContext: 8,
     fgContext: 8,
-    overlayContext: 16,
+    overlayContext: 8,
     menuContext: 8
   },
   SAVERATE: Math.pow(2, 12), // render every X frame

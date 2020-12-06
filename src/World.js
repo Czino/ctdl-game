@@ -49,16 +49,15 @@ class World {
             tile.tile[0], tile.tile[1], tile.w, tile.h,
             tile.x, tile.y, tile.w, tile.h
           )
-          constants.parallaxContext.globalCompositeOperation = 'multiply'
-          constants.parallaxContext.globalAlpha = .3
-          constants.parallaxContext.drawImage(
-            sprite,
-            tile.tile[0], tile.tile[1], tile.w, tile.h,
-            tile.x, tile.y, tile.w, tile.h
-            )
-          constants.parallaxContext.globalAlpha = 1
-          constants.parallaxContext.globalCompositeOperation = 'source-over'
         })
+        constants.parallaxContext.globalCompositeOperation = 'source-atop'
+        constants.parallaxContext.globalAlpha = .1
+        constants.parallaxContext.fillStyle = `hsl(${CTDLGAME.skyColor.h}, ${CTDLGAME.skyColor.s}%, ${CTDLGAME.skyColor.l}%)`
+        constants.parallaxContext.fillRect(
+          parallaxViewport.x, parallaxViewport.y, constants.WIDTH, constants.HEIGHT
+        )
+        constants.parallaxContext.globalAlpha = 1
+        constants.parallaxContext.globalCompositeOperation = 'source-over'
     }
 
     if (canDrawOn('bgContext')) {

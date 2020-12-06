@@ -26,6 +26,7 @@ export default function(options) {
       s: Math.max(11, Math.min(50, 50 - y * 39)),
       l: Math.min(78, Math.max(3, 3 + y * 75))
     }
+    CTDLGAME.skyColor = sky
 
     constants.skyContext.fillStyle = `hsl(${sky.h}, ${sky.s}%, ${sky.l}%)`
     constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
