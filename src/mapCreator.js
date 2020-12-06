@@ -4,6 +4,7 @@ import constants from './mapCreator/constants'
 
 let frame = 0
 const $menu = document.getElementById('ctdl-game-menu')
+const $parallax = document.getElementById('ctdl-game-parallax')
 const $bg = document.getElementById('ctdl-game-bg')
 const $base = document.getElementById('ctdl-game-base')
 const $fg = document.getElementById('ctdl-game-fg')
@@ -88,6 +89,7 @@ const highlightCurrentTile = () => {
 const renderMap = updateTiles => {
   if (updateTiles) {
     [
+      'parallaxContext',
       'bgContext',
       'baseContext',
       'fgContext'
@@ -151,6 +153,7 @@ function tick() {
 function changeMap (map) {
   loadTileSet(map.tileSet)
   ;[
+    constants.parallaxCanvas,
     constants.bgCanvas,
     constants.baseCanvas,
     constants.fgCanvas
@@ -160,13 +163,14 @@ function changeMap (map) {
   })
 
   stage = {
-    bg: createEmpty(map.width / 8, map.height / 8),
-    base: createEmpty(map.width * 2 / 8, map.height / 8),
-    fg: createEmpty(map.width / 8, map.height / 8)
+    parallax: createEmpty(map.height / 8),
+    bg: createEmpty(map.height / 8),
+    base: createEmpty(map.height / 8),
+    fg: createEmpty(map.height / 8)
   }
 }
 
-function createEmpty(width, height) {
+function createEmpty(height) {
   let empty = []
 
   for (let y = height; y > 0; y--) {
@@ -189,6 +193,7 @@ $loadJSON.addEventListener('click', () => {
 Array.from($layer).map($l => $l.addEventListener('change', e => {
   layer = e.target.value
   ;[
+    constants.parallaxCanvas,
     constants.bgCanvas,
     constants.baseCanvas,
     constants.fgCanvas
@@ -197,6 +202,7 @@ Array.from($layer).map($l => $l.addEventListener('change', e => {
 
 window.addEventListener('mousemove', mouseMoveHandler)
 $menu.addEventListener('mousedown', menuMouseDownHandler)
+$parallax.addEventListener('mousedown', mapMouseDownHandler)
 $bg.addEventListener('mousedown', mapMouseDownHandler)
 $base.addEventListener('mousedown', mapMouseDownHandler)
 $fg.addEventListener('mousedown', mapMouseDownHandler)
@@ -210,6 +216,7 @@ window.addEventListener('keydown', e => {
   if (key === 'arrowdown' || key === 's') vy = 8
   if (key === 'arrowleft' || key === 'a') vx = -8
   if (key === 'arrowright' || key === 'd') vx = 8
+  if (key === '0') document.querySelector('[value="parallax"]').click()
   if (key === '1') document.querySelector('[value="bg"]').click()
   if (key === '2') document.querySelector('[value="base"]').click()
   if (key === '3') document.querySelector('[value="fg"]').click()

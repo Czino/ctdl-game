@@ -102,7 +102,7 @@ class Character extends Agent {
     this.health = options.health ?? 21
     this.selected = options.selected
     this.strength = id === 'hodlonaut' ? 1 : 3
-    this.attackRange = id === 'hodlonaut' ? 1 : 5
+    this.attackRange = id === 'hodlonaut' ? 4 : 8
     this.senseRadius = 50
     this.follow = options.follow ?? true
     this.walkingSpeed = options.walkingSpeed || 3
@@ -312,7 +312,7 @@ class Character extends Agent {
     this.sensedEnemies
       .filter(enemy =>
         intersects({
-          x: this.direction === 'left' ? boundingBox.x - this.attackRange : boundingBox.x + boundingBox.w,
+          x: this.direction === 'left' ? boundingBox.x - this.attackRange + 3 : boundingBox.x + boundingBox.w - 3,
           y: boundingBox.y,
           w: this.attackRange,
           h: boundingBox.h

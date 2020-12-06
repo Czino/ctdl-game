@@ -26,12 +26,13 @@
       width: 100%;
       height: 100vh;
     }
-    #ctdl-game-base, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay {
+    #ctdl-game-parallax, #ctdl-game-base, #ctdl-game-bg, #ctdl-game, #ctdl-game-fg {
       position: absolute;
       z-index: 1;
       border: 1px solid #AAA;
+      border-left-width: 0;
     }
-    #ctdl-game-base, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
+    #ctdl-game-parallax, #ctdl-game-base, #ctdl-game-bg, #ctdl-game, #ctdl-game-fg, #ctdl-game-menu {
       image-rendering: optimizeSpeed;
       image-rendering: -moz-crisp-edges;
       image-rendering: -o-crisp-edges;
@@ -43,7 +44,7 @@
       /* opacity: 0; */
     }
     #ctdl-game-menu {
-      width: 100%;
+      width: 256px;
       border: 1px solid #AAA;
       border-right-width: 0;
     }
@@ -83,12 +84,12 @@
   </style>
 </head>
 <body class="cursor-crosshair">
-  <div style="width: 256px;">
+  <div style="width: 256px; position: fixed; z-index: 2; top: 0; left: 0; background-color: #000; border-right: 1px solid #AAA;">
     <canvas id="ctdl-game-menu"></canvas>
     <select id="ctdl-game-tileset">
       <option value='{"tileSet": "building", "width": 512, "height": 1024}'>building</option>
       <option value='{"tileSet": "city", "width": 1024, "height": 1024}'>city</option>
-      <option value='{"tileSet": "forest", "width": 1024, "height": 1024}'>forest</option>
+      <option value='{"tileSet": "forest", "width": 2048, "height": 1024}'>forest</option>
       <option value='{"tileSet": "rabbitHole", "width": 1024, "height": 1024}'>rabbitHole</option>
       <option value='{"tileSet": "endOfTheRabbitHole", "width": 256, "height": 256}'>endOfTheRabbitHole</option>
       <option value='{"tileSet": "dogeCoinMine", "width": 1024, "height": 1024}'>dogeCoinMine</option>
@@ -101,21 +102,24 @@
     </select>
     <div style="position: relative;">
       <div style="display: flex;">
+        <input type="radio" name="layer" value="parallax"/>
         <input type="radio" name="layer" value="bg"/>
         <input type="radio" name="layer" value="base" checked="checked"/>
         <input type="radio" name="layer" value="fg"/>
       </div>
-      <div style="color: #888; display: flex; text-align: center; position: absolute; top: 3px; width: 100%; z-index: 1; pointer-events: none">
-        <div style="width: 100%;">bg</div>
-        <div style="width: 100%;">base</div>
-        <div style="width: 100%;">fg</div>
+      <div style="color: #888; font-size: 8px; display: flex; text-align: center; position: absolute; top: 8px; width: 100%; z-index: 1; pointer-events: none">
+        <div style="width: 100%;">PARALLAX</div>
+        <div style="width: 100%;">BG</div>
+        <div style="width: 100%;">BASE</div>
+        <div style="width: 100%;">FG</div>
       </div>
     </div>
     <textarea id="ctdl-game-map">Map as JSON</textarea>
     <button id="ctdl-game-getJSON" style="width: 100%; appearance: none; padding: 5px 10px; border: 1px solid #AAA;">GET JSON</button>
     <button id="ctdl-game-loadJSON" style="width: 100%; appearance: none; padding: 5px 10px; border: 1px solid #AAA;">LOAD JSON</button>
   </div>
-  <div class="pos-rel" style="width: 100%;">
+  <div class="pos-rel" style="width: 100%; left: 256px;">
+    <canvas id="ctdl-game-parallax" style="opacity: .5"></canvas>
     <canvas id="ctdl-game-bg" style="opacity: .5"></canvas>
     <canvas id="ctdl-game-base" style="opacity: .5"></canvas>
     <canvas id="ctdl-game-fg" style="opacity: .5"></canvas>

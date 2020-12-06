@@ -34,7 +34,7 @@ class World {
   update = () => {
     let sprite = CTDLGAME.assets[this.id]
 
-    if (canDrawOn('parallaxContext')) {
+    if (this.map.parallax.length > 0 && canDrawOn('parallaxContext')) {
       let parallaxViewport = {
         x: CTDLGAME.viewport.x / 2,
         y: CTDLGAME.viewport.y,
@@ -50,17 +50,19 @@ class World {
             tile.x, tile.y, tile.w, tile.h
           )
         })
-        constants.parallaxContext.globalCompositeOperation = 'source-atop'
-        constants.parallaxContext.globalAlpha = .1
-        constants.parallaxContext.fillStyle = `hsl(${CTDLGAME.skyColor.h}, ${CTDLGAME.skyColor.s}%, ${CTDLGAME.skyColor.l}%)`
-        constants.parallaxContext.fillRect(
-          parallaxViewport.x, parallaxViewport.y, constants.WIDTH, constants.HEIGHT
-        )
-        constants.parallaxContext.globalAlpha = 1
-        constants.parallaxContext.globalCompositeOperation = 'source-over'
+        if (CTDLGAME.skyColor) {
+          constants.parallaxContext.globalCompositeOperation = 'source-atop'
+          constants.parallaxContext.globalAlpha = .1
+          constants.parallaxContext.fillStyle = `hsl(${CTDLGAME.skyColor.h}, ${CTDLGAME.skyColor.s}%, ${CTDLGAME.skyColor.l}%)`
+          constants.parallaxContext.fillRect(
+            parallaxViewport.x, parallaxViewport.y, constants.WIDTH, constants.HEIGHT
+          )
+          constants.parallaxContext.globalAlpha = 1
+          constants.parallaxContext.globalCompositeOperation = 'source-over'
+        }
     }
 
-    if (canDrawOn('bgContext')) {
+    if (this.map.bg.length > 0 && canDrawOn('bgContext')) {
       this.map.bg
         .filter(tile => intersects(tile, CTDLGAME.viewport))
         .map(tile => {
@@ -72,7 +74,7 @@ class World {
         })
     }
 
-    if (this.map.base && canDrawOn('gameContext')) {
+    if (this.map.base && this.map.base.length > 0 && canDrawOn('gameContext')) {
       this.map.base
         .filter(tile => intersects(tile, CTDLGAME.viewport))
         .map(tile => {
@@ -84,7 +86,7 @@ class World {
         })
     }
 
-    if (canDrawOn('fgContext')) {
+    if (this.map.fg.length > 0 && canDrawOn('fgContext')) {
       this.map.fg
         .filter(tile => intersects(tile, CTDLGAME.viewport))
         .map(tile => {

@@ -117,6 +117,9 @@ class Goldbugs extends Agent {
     if (this.status === 'fall') this.status = 'idle'
     let spriteData = this.spriteData[this.direction][this.status]
 
+    if (this.protection > 0) {
+      this.protection--
+    }
     this.frame++
     if (this.status === 'hurt' && this.frame === 3) {
       this.status = 'idle'
@@ -156,9 +159,9 @@ class Goldbugs extends Agent {
 
   getBoundingBox = () => ({
     id: this.id,
-    x: this.x + 4,
+    x: this.x,
     y: this.y,
-    w: 2,
+    w: this.w,
     h: this.h + 10
   })
 

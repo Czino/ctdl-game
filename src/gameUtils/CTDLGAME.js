@@ -26,9 +26,9 @@ export const CTDLGAME = {
 export const setWorld = world => {
   CTDLGAME.world = world
   CTDLGAME.quadTree = new QuadTree(new Boundary({
-    x: -16,
-    y: -16,
-    w: world.w + 32,
-    h: world.h + 32
+    x: -16.0415, // use odd number to avoid tiles lining up on half lines
+    y: -16.0415,
+    w: world.w + 32.83,
+    h: world.h + 32.83
   }))
 }

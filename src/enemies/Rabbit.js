@@ -268,6 +268,9 @@ class Rabbit extends Agent {
       this.bTree.step()
     }
 
+    if (this.protection > 0) {
+      this.protection--
+    }
     if (this.status !== 'idle' || Math.random() < .1) this.frame++
     if (this.status === 'hurt' && this.frame === 3) {
       this.status = 'idle'

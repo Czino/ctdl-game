@@ -9,6 +9,8 @@
     "start:mapCreator": "webpack serve --env NODE_ENV=development --env BUNDLE=mapCreator",
     "start:spriteViewer": "webpack serve --env NODE_ENV=development --env BUNDLE=spriteViewer",
     "build": "npm run lint && webpack --env NODE_ENV=development --env BUNDLE=game",
+    "build:mapCreator": "npm run lint && webpack --env NODE_ENV=development --env BUNDLE=mapCreator",
+    "build:spriteViewer": "npm run lint && webpack --env NODE_ENV=development --env BUNDLE=spriteViewer",
     "build:dev": "npm run lint && webpack --env NODE_ENV=development --env BUNDLE=game",
     "test": "jest --coverage --colors --cache --maxWorkers=4",
     "lint": "eslint src/**/*.js --color"
