@@ -10,10 +10,10 @@ import { intersects } from './intersects'
 const collidesWithHeightMap = (anchor, point) => {
   const heightMap = point.getHeightMap()
 
-  for (let i = 3; i > 0; i--) {
+  for (let i = 2; i > 0; i--) {
     let anchorPoint = {
       ...anchor,
-      x: anchor.x + Math.round(anchor.w / i)
+      x: anchor.x + (i === 2 ? anchor.w : 0)
     }
 
     if (intersects(anchorPoint, point.getBoundingBox())) {
@@ -41,22 +41,13 @@ const collidesWithHeightMap = (anchor, point) => {
  * @param {QuadTree} tree the quad tree
  * @returns {Boolean} if true object has collided
  */
-export const moveObject = (object, vector, tree) => {
-  let hasCollided = true
-  let originalVector = JSON.parse(JSON.stringify(vector))
-  let possibleVectors = []
+const moveAndCheck = (object, vector, tree) => {
+  let hasCollided = false
+  while (vector.x || vector.y) {
+    object.x += vector.x ? vector.x / Math.abs(vector.x) : 0
+    object.y += vector.y ? vector.y / Math.abs(vector.y) : 0
 
-  // we allow object to go up by 3 pixel in case the obstacle is now steep
-  // we are going up
-  for (let i = 0; i < 4; i++) {
-    hasCollided = true
-    object.y -= i
-
-    while (hasCollided && (vector.x !== 0 || vector.y !== 0)) {
-      object.x += vector.x
-      object.y += vector.y
-
-      hasCollided = tree.query(object.getBoundingBox())
+    hasCollided = tree.query(object.getBoundingBox())
         .filter(point => point.isSolid && point.id !== object.id)
         .filter(point => intersects(object.getBoundingBox(), point.getBoundingBox()))
         .some(point => {
@@ -68,51 +59,60 @@ export const moveObject = (object, vector, tree) => {
           return collidesWithHeightMap(anchor, point)
         })
 
-      if (hasCollided) {
-        // would collide, roll back change
-        object.x -= vector.x
-        object.y -= vector.y
+    // has collided, roll back change and exit
+    if (hasCollided) {
+      object.x -= vector.x ? vector.x / Math.abs(vector.x) : 0
+      object.y -= vector.y ? vector.y / Math.abs(vector.y) : 0
 
-        // reduce vector to find max distance object can move
-        if (vector.x > 0) vector.x--
-        if (vector.x < 0) vector.x++
-        if (vector.y > 0) vector.y--
-        if (vector.y < 0) vector.y++
+      return hasCollided
+    } else {
+      // reduce vector for next round
+      if (vector.x > 0) vector.x--
+      if (vector.x < 0) vector.x++
+      if (vector.y > 0) vector.y--
+      if (vector.y < 0) vector.y++
+    }
+  }
+
+  return hasCollided
+}
+
+/**
+ * @description Method to move object while respecting collisions
+ * @param {Object} object object to be moved
+ * @param {Object} vector vector with x, y
+ * @param {QuadTree} tree the quad tree
+ * @returns {Boolean} if true object has collided
+ */
+export const moveObject = (object, vector, tree) => {
+  let hasCollided = false
+  let isHorizontal = vector.x && !vector.y
+  let isVertical = vector.y && !vector.x
+
+  if (isHorizontal) {
+    // pure horizontal movement, do the routine of walking slopes
+    for (let i = 0; i < 4; i++) {
+      let vectorCopy = JSON.parse(JSON.stringify(vector))
+      let originalX = object.x
+      let originalY = object.y
+      object.y -= i
+
+      // check if object collides on move
+      if (moveAndCheck(object, vectorCopy, tree)) {
+        // collided, roll back change
+        if (i !== 3) object.x = originalX
+        object.y = originalY
+      } else {
+        // does not collide, all good
+        break
       }
     }
-
-    // store valid vector for later and reset object and vector
-    if (!hasCollided) {
-      possibleVectors.push({
-        y: i,
-        vector: JSON.parse(JSON.stringify(vector))
-      })
-    }
-
-    object.x -= vector.x
-    object.y -= vector.y
-    object.y += i
-    vector = JSON.parse(JSON.stringify(originalVector))
+  } else {
+    hasCollided = moveAndCheck(object, vector, tree)
   }
 
-  possibleVectors = possibleVectors
-    .sort((a, b) => {
-      let sumA = Math.abs(a.vector.x) + Math.abs(a.vector.y)
-      let sumB = Math.abs(b.vector.x) + Math.abs(b.vector.y)
-
-      if (sumA === sumB) return a.y < b.y ? -1 : 1
-      return sumA > sumB ? -1 : 1
-    })
-
-  let bestVector = possibleVectors[0]
-
-  if (bestVector) {
-    object.x += bestVector.vector.x
-    object.y += bestVector.vector.y
-    object.y -= bestVector.y
-
-    if (bestVector.y > 0 && originalVector.x === 0) object.vy = 0
+  if (hasCollided && isVertical) {
+    object.vy = 0
   }
-
-  return possibleVectors.length === 0
+  return hasCollided
 }
