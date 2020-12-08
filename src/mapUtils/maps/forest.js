@@ -586,7 +586,9 @@ const rabbitHole = [
   [ t_5_8 ],
   [ t_6_8 ],
   [ t_6_8 ],
-  [ t_5_8 ]
+  [ t_5_8 ],
+  [ t_6_8 ],
+  [ t_6_8 ]
 ]
 
 const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
@@ -607,7 +609,7 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'forest', tileSi
 
 const gotToCity = new GameObject('gotToCity', {
   x: 1 * tileSize,
-  y: 116 * tileSize,
+  y: 124 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
@@ -701,7 +703,7 @@ export default {
   track: () => 'santaMaria',
   overworld: true,
   spawnRates: {
-    rabbit: .005,
-    goldbugs: .005
+    // rabbit: .005,
+    // goldbugs: .005
   }
 }

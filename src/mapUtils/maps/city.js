@@ -652,7 +652,7 @@ export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     newGame: { x: 8 * tileSize, y: 124 * tileSize - 2},
-    forest: { x: 122 * tileSize, y: 1024 * tileSize - 2}
+    forest: { x: 122 * tileSize, y: 122 * tileSize - 2}
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -703,6 +703,6 @@ export default {
   canSetBlocks: false,
   overworld: true,
   spawnRates: {
-    shitcoiner: .01
+    // shitcoiner: .01
   }
 }

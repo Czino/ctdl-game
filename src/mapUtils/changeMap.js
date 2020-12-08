@@ -12,6 +12,8 @@ import { loadMap } from './loadMap'
  */
 export const changeMap = async (id, from) => {
   // save state before changing
+  CTDLGAME.world.ready = false
+
   if (from !== 'newGame') await saveGame()
 
   // remove all objects but characters
