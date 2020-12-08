@@ -7,7 +7,6 @@ export default function(id, options) {
   this.class = 'NPC'
   this.applyGravity = true
   this.spriteData = NPCSprite[this.id]
-  this.sprite = CTDLGAME.assets[this.spriteData.sprite || 'NPCs']
   this.w = this.spriteData.frames[0].w
   this.h = this.spriteData.frames[0].h
   this.x = options.x
@@ -26,7 +25,7 @@ export default function(id, options) {
     }
 
     constants.gameContext.drawImage(
-      this.sprite,
+      CTDLGAME.assets[this.spriteData.sprite || 'NPCs'],
       data.x, data.y, data.w, data.h,
       this.x, this.y, this.w, this.h
     )
