@@ -384,7 +384,6 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
   }))
 }
 
-makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
