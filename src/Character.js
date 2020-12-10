@@ -267,10 +267,13 @@ class Character extends Agent {
   }
 
   canDuck = () => {
+    if (this.selected) return true
+
+    // otherwise check if AI should want to duck
     let duckTo = this.getBoundingBox()
     duckTo.y += 6
     duckTo.x += this.direction === 'right' ? 3 : -3
-    duckTo.h -= 6
+    duckTo.h -= 10 // 4 extra for walking up slopes
 
     if (window.DRAWSENSORS) {
       constants.overlayContext.globalAlpha = .5
@@ -286,9 +289,10 @@ class Character extends Agent {
   }
 
   canStandUp = () => {
-    if (!/duck/.test(this.status)) return SUCCESS
+    if (!/duck/.test(this.status)) return true
     let standUpTo = this.getBoundingBox()
       standUpTo.y -= 6
+      // standUpTo.x += this.direction === 'right' ? 2 : -2 // do not stand up if you face obstacle
       standUpTo.h = 6
 
     if (window.DRAWSENSORS) {

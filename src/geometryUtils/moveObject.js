@@ -22,11 +22,6 @@ const collidesWithHeightMap = (anchor, point) => {
         y: anchorPoint.y - point.y
       }
 
-      if (window.DRAWSENSORS) {
-        constants.menuContext.globalAlpha = 1
-        constants.menuContext.fillStyle = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`
-        constants.menuContext.fillRect(anchorPoint.x, anchorPoint.y, 1, 1)
-      }
       const isSolid = !heightMap[touchPoint.y] || heightMap[touchPoint.y][touchPoint.x] > 0
       if (isSolid) return true
     }
@@ -59,6 +54,12 @@ const moveAndCheck = (object, vector, tree) => {
           return collidesWithHeightMap(anchor, point)
         })
 
+    if (window.DRAWSENSORS) {
+      constants.menuContext.globalAlpha = 1
+      constants.menuContext.fillStyle = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`
+      constants.menuContext.fillRect(object.getAnchor().x, object.getAnchor().y, 1, 1)
+      constants.menuContext.fillRect(object.getAnchor().x + object.getAnchor().w, object.getAnchor().y, 1, 1)
+    }
     // has collided, roll back change and exit
     if (hasCollided) {
       object.x -= vector.x ? vector.x / Math.abs(vector.x) : 0
@@ -85,12 +86,11 @@ const moveAndCheck = (object, vector, tree) => {
  * @returns {Boolean} if true object has collided
  */
 export const moveObject = (object, vector, tree) => {
-  let hasCollided = false
-  let isHorizontal = vector.x && !vector.y
+  let hasCollided = true
   let isVertical = vector.y && !vector.x
 
-  if (isHorizontal) {
-    // pure horizontal movement, do the routine of walking slopes
+  if (!isVertical) {
+    // is not pure vertical movement, do the routine of walking slopes
     for (let i = 0; i < 4; i++) {
       let vectorCopy = JSON.parse(JSON.stringify(vector))
       let originalX = object.x
@@ -102,8 +102,9 @@ export const moveObject = (object, vector, tree) => {
         // collided, roll back change
         if (i !== 3) object.x = originalX
         object.y = originalY
-      } else {
+       } else {
         // does not collide, all good
+        hasCollided = false
         break
       }
     }
