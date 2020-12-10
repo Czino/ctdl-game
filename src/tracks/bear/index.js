@@ -23,7 +23,8 @@ export default {
     SNDTRCK.devices.sineSynth.disconnect()
     SNDTRCK.devices.sineSynth.chain(
       SNDTRCK.devices.autoFilter,
-      SNDTRCK.devices.reverb, SNDTRCK.devices.gain
+      SNDTRCK.devices.reverb,
+      SNDTRCK.devices.gain
     )
     SNDTRCK.devices.autoFilter.start()
 

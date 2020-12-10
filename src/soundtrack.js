@@ -4,7 +4,6 @@ import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb, PingPongD
 // TODO add "Procurans odium II" ?
 // TODO add "Guillaume de Machaut - Douce Dame Jolie" ?
 
-
 const pulseOptions = {
   oscillator: {
     type: 'pulse'
@@ -50,10 +49,7 @@ const SNDTRCK = {
   },
   devices: {
     gain: new Gain(1).toDestination(),
-    reverb: new Reverb({
-      decay: 17,
-      wet: .5,
-    }),
+    reverb: null,
     delay: null,
     autoFilter: null,
     autoFilter2: null,
@@ -119,13 +115,21 @@ export const initSoundtrack = async id => {
     synth.disconnect() && synth.connect(SNDTRCK.devices.gain)
   )
   if (SNDTRCK.song.reverbs) {
+    SNDTRCK.devices.reverb = new Reverb({
+      decay: 7,
+      wet: .5,
+    })
     SNDTRCK.song.reverbs.map(synth => {
       SNDTRCK.devices[synth].disconnect()
       SNDTRCK.devices[synth].chain(
         SNDTRCK.devices.reverb,
-        SNDTRCK.devices.gain)
+        SNDTRCK.devices.gain
+      )
     })
+  } else if (SNDTRCK.devices.reverb) {
+    SNDTRCK.devices.reverb.stop()
   }
+
   if (SNDTRCK.song.delays) {
     SNDTRCK.devices.delay = new PingPongDelay(
       60 / SNDTRCK.song.bpm * SNDTRCK.song.delay,
@@ -137,6 +141,8 @@ export const initSoundtrack = async id => {
         SNDTRCK.devices.gain
       )
     })
+  } else if (SNDTRCK.devices.delay) {
+    SNDTRCK.devices.delay.stop()
   }
 
   if (SNDTRCK.song.init) SNDTRCK.song.init(SNDTRCK)
@@ -192,7 +198,9 @@ export const initSoundtrack = async id => {
     }, parseNotes(SNDTRCK.song.tracks.drum))
   }
 
-  if (enabled) startMusic()
+  if (enabled) {
+    startMusic()
+  }
 }
 
 window.initSoundtrack = initSoundtrack
@@ -212,7 +220,7 @@ export const toggleSoundtrack = enable => {
 export const startMusic = async () => {
   if (!SNDTRCK.song || !enabled) return
 
-  await Transport.start('+.5', 0)
+  await Transport.start('+.3', 0)
   if (SNDTRCK.song.tracks.pulse) pulsePart.start(0)
   if (SNDTRCK.song.tracks.pulse2) pulse2Part.start(0)
   if (SNDTRCK.song.tracks.square) squarePart.start(0)

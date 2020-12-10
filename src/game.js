@@ -38,13 +38,10 @@ import Item from './Item'
 // playSound('policeForceHurt')
 // setInterval(() => playSound('policeForceHurt'), 1000)
 
-// TODO accomodate forest and city for new update viewport
 // TODO improve stair walking (press up key)
 // TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again
-// TODO game freezes when climbing on trees?
 // TODO character on map multiple times
-// TODO make the monk's riddle easier?
 // TODO add Mt. Gox stage
 // TODO add endbosses for Rabbit Hole stage
 // TODO add endboss for Doge Mine stage
