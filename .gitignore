@@ -18,3 +18,5 @@ tmp/*.json
 .DS_Store
 
 coverage/
+
+workspace.code-workspace
