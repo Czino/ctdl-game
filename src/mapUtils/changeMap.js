@@ -30,11 +30,13 @@ export const changeMap = async (id, from) => {
   if (worldState) CTDLGAME.world.map.state = worldState;
 
   if (objects && objects.length > 0) {
+    // we have saved objects, let's initialize them
     objects
       .filter(object => gameObjects[object.class])
       .map(object => new gameObjects[object.class](object.id, object))
       .map(object => CTDLGAME.objects.push(object))
   } else {
+    // we have no objects saved, let's get the default ones
     CTDLGAME.world.map.npcs().map(object => CTDLGAME.objects.push(object))
     CTDLGAME.world.map.items().map(object => CTDLGAME.objects.push(object))
   }

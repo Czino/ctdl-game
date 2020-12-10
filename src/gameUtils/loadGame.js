@@ -35,8 +35,10 @@ export const loadGame = async () => {
   setWorld(new World(worldId, await loadMap(worldId)))
 
   if (CTDLGAME.objects.length === 0) {
+    // we have no objects, let's get them from the world map
     CTDLGAME.objects = CTDLGAME.world.map.objects
   } else {
+    // we already have objects, only get tiles and ramps
     CTDLGAME.world.map.objects
     .filter(object => !object.class || object.class === 'Ramp')
     .map(object => CTDLGAME.objects.push(object))

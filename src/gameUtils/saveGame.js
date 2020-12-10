@@ -1,3 +1,4 @@
+import { unique } from '../arrayUtils'
 import * as db from '../db'
 import { maps } from '../mapUtils'
 import { CTDLGAME } from './CTDLGAME'
@@ -26,6 +27,7 @@ export const saveGame = async () => {
   await db.set(`worldState-${CTDLGAME.world.id}`, CTDLGAME.world.map.state)
   await db.set(`objects-${CTDLGAME.world.id}`, CTDLGAME.objects
     .filter(object => object && object.class !== 'Character' && object.toJSON)
+    .filter(unique('id'))
     .map(object => {
       return object.toJSON()
     }))
