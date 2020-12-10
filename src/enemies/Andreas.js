@@ -396,7 +396,7 @@ class Andreas extends Agent {
     ['Andreas:\nI can see a few interesting technologies across an\nentire ecosystem'],
     ['Andreas:\nI am not a maximalist'],
     [
-      'Andreas:\nI don\'t see these systems as competing.',
+      'Andreas:\nI don\'t see these systems\nas competing.',
       'Andreas:\nThey serve different niches, in my opinion.'
     ],
     [
