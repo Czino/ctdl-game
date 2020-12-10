@@ -3,7 +3,7 @@ import Shitcoiner from '../enemies/Shitcoiner'
 import Rabbit from '../enemies/Rabbit'
 import Goldbugs from '../enemies/Goldbugs'
 import { CTDLGAME } from './CTDLGAME'
-import { intersects } from '../geometryUtils'
+import { collidesWithHeightMap, intersects } from '../geometryUtils'
 
 
 /**
@@ -12,36 +12,44 @@ import { intersects } from '../geometryUtils'
  */
 export const spawnAgent = agent => {
   // check vertical if solid tiles can be found
-  // TODO improve code to work in tunnels
   let vertical = {
-    x: agent.getBoundingBox(),
+    x: agent.getBoundingBox().x,
     y: CTDLGAME.viewport.y,
     w: agent.getBoundingBox().w,
     h: constants.HEIGHT
   }
-  let highestSolid = CTDLGAME.quadTree.query(vertical)
-      .filter(point => point.isSolid)
+  let highestSpawnPoint = CTDLGAME.quadTree.query(vertical)
+      .filter(point => point.spawnPoint)
       .sort((a, b) => a.y > b.y ? 1 : -1)
       .find(() => true)
 
-  if (highestSolid) {
-    agent.y = highestSolid.y - agent.getBoundingBox().h
+  if (highestSpawnPoint) {
+    agent.y = highestSpawnPoint.getTrueY
+      ? highestSpawnPoint.getTrueY() - agent.getBoundingBox().h - 1
+      : highestSpawnPoint.y - agent.getBoundingBox().h - 1
   }
   let hasCollided = CTDLGAME.quadTree.query(agent.getBoundingBox())
     .filter(point => point.isSolid && point.id !== agent.id)
-    .some(point => intersects(agent.getBoundingBox(), point.getBoundingBox()))
+    .filter(point => intersects(agent.getBoundingBox(), point.getBoundingBox()))
+    .some(point => {
+      if (!point.getHeightMap) return true
+
+      const anchor = agent.getAnchor()
+      return collidesWithHeightMap(anchor, point)
+    })
 
   if (!hasCollided) {
+    agent.y += 1 // let them spawn a little inside the floor
     CTDLGAME.objects.push(agent)
   }
 }
+
 /**
  * @description Method that takes care of spawning enemies according to spawn rate and world
  * @returns {void}
  */
 export const spawnEnemies = () => {
   if (CTDLGAME.isNight && Math.random() < CTDLGAME.world.map.spawnRates.shitcoiner) {
-    // TODO maybe consider iterating through worldObects
     spawnAgent(new Shitcoiner(
       'shitcoiner-' + Math.random(),
       {

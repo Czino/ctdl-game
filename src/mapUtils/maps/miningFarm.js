@@ -58,6 +58,7 @@ const ramps = []
 const solids = [
   t_0_6, t_1_6, t_2_6, t_3_6, t_4_6, t_5_6, t_6_6, t_7_6
 ].map(tile => tile.toString())
+const spawnPoints = []
 const blinkingLights = [
   [1, 9], [10, 11],
   [1, 13], [10, 14],
@@ -106,7 +107,7 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'dogeCoinMine', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'dogeCoinMine', tileSize))
 
 // const goToRabbitHole = new GameObject('goToRabbitHole', {
 //   x: 1 * tileSize,

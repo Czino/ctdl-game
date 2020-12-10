@@ -12,6 +12,7 @@ export default function(id, context, options) {
   this.y = options.y
   this.spriteData = options.spriteData || { x: 0, y: 0, w: this.w, h: this.h}
   this.isSolid = options.isSolid
+  this.spawnPoint = options.spawnPoint
   this.status = options.status
 
   this.toggleSolid = () => {
@@ -54,6 +55,13 @@ export default function(id, context, options) {
       }, [[]])
 
     return this.heightMap
+  }
+
+  this.getTrueY = () => {
+    if (this.trueY) return this.trueY
+    const heightMap = this.getHeightMap()
+    this.trueY = this.y + heightMap.findIndex(row => row.indexOf(255) >= 0)
+    return this.trueY
   }
 
   this.select = () => {}

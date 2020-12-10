@@ -154,6 +154,8 @@ const solids = [
   t_1_9, t_2_9,
   t_0_10, t_1_10, t_2_10, t_3_10
 ].map(tile => tile.toString())
+
+const spawnPoints = []
 const lights = {
   '4_0': {
     color: '#f8c11f',
@@ -218,7 +220,7 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'endOfTheRabbitHole', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'endOfTheRabbitHole', tileSize))
 
 const goToRabbitHole = new GameObject('goToRabbitHole', {
   x: 30 * tileSize,

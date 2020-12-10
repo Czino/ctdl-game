@@ -316,6 +316,9 @@ const solids = [
   t_1_9, t_2_9,
   t_0_10, t_1_10, t_2_10, t_3_10
 ].map(tile => tile.toString())
+const spawnPoints = [
+  t_0_1, t_1_1, t_2_1, t_3_1
+].map(tile => tile.toString())
 const andreasTeleports = [
   { x: 551, y: 35, w: 1, h: 1 },
   { x: 662, y: 122, w: 1, h: 1 },
@@ -387,7 +390,7 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.fg, ramps, solids, 'rabbitHole', tileSize))
+objects = objects.concat(getHitBoxes(stage.fg, ramps, solids, spawnPoints, 'rabbitHole', tileSize))
 
 const goToMempool = new GameObject('goToMempool', {
   x: 3 * tileSize,

@@ -426,6 +426,7 @@ const solids = [
   t_2_3,
   t_0_5, t_1_5
 ].map(tile => tile.toString())
+const spawnPoints = []
 
 let events = []
 let objects = []
@@ -443,7 +444,7 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'building', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'building', tileSize))
 
 // const goToRabbitHole = new GameObject('goToRabbitHole', {
 //   x: 1 * tileSize,

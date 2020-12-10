@@ -572,7 +572,9 @@ const solids = [
   t_0_9, t_1_9, t_2_9,
   t_0_10, t_1_10, t_2_10,
 ].map(tile => tile.toString())
-
+const spawnPoints = [
+  t_0_1, t_1_1, t_2_1
+].map(tile => tile.toString())
 
 let objects = []
 let events = []
@@ -646,7 +648,7 @@ events.push(goToBuilding1)
 events.push(goToBuilding2)
 events.push(goToForest)
 
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'city', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'city', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },

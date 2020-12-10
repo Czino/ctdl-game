@@ -10,7 +10,7 @@ import Ramp from '../Ramp'
  * @param {String} sprite sprite to use for ramps
  * @param {Number} tileSize size of tiles
  */
-export const getHitBoxes = (layer, ramps, solids, sprite, tileSize) => layer
+export const getHitBoxes = (layer, ramps, solids, spawnPoints, sprite, tileSize) => layer
   .map(tile => {
     if (ramps.indexOf(tile.tile.toString()) !== -1) {
       return new Ramp(
@@ -29,6 +29,7 @@ export const getHitBoxes = (layer, ramps, solids, sprite, tileSize) => layer
           },
           direction: 'right',
           isSolid: true,
+          spawnPoint: spawnPoints.indexOf(tile.tile.toString()) !== -1
         }
       )
     } else if (solids.indexOf(tile.tile.toString()) !== -1) {
@@ -36,7 +37,8 @@ export const getHitBoxes = (layer, ramps, solids, sprite, tileSize) => layer
         x: tile.x * tileSize,
         y: tile.y * tileSize + 3,
         w: tileSize,
-        h: tileSize
+        h: tileSize,
+        spawnPoint: spawnPoints.indexOf(tile.tile.toString()) !== -1
       })
     }
   })
