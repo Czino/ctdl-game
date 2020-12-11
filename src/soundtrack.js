@@ -95,7 +95,6 @@ let drumPart = new Part()
 
 export const initSoundtrack = async id => {
   if (SNDTRCK.song?.deinit) SNDTRCK.song.deinit(SNDTRCK)
-
   let song = await import(
     /* webpackMode: "lazy" */
     `./tracks/${id}/index.js`
@@ -127,7 +126,7 @@ export const initSoundtrack = async id => {
       )
     })
   } else if (SNDTRCK.devices.reverb) {
-    SNDTRCK.devices.reverb.stop()
+    SNDTRCK.devices.reverb.dispose()
   }
 
   if (SNDTRCK.song.delays) {
@@ -142,7 +141,7 @@ export const initSoundtrack = async id => {
       )
     })
   } else if (SNDTRCK.devices.delay) {
-    SNDTRCK.devices.delay.stop()
+    SNDTRCK.devices.delay.dispose()
   }
 
   if (SNDTRCK.song.init) SNDTRCK.song.init(SNDTRCK)
@@ -198,7 +197,7 @@ export const initSoundtrack = async id => {
     }, parseNotes(SNDTRCK.song.tracks.drum))
   }
 
-  if (enabled) {
+  if (enabled && Transport.state !== 'started') {
     startMusic()
   }
 }
@@ -220,7 +219,7 @@ export const toggleSoundtrack = enable => {
 export const startMusic = async () => {
   if (!SNDTRCK.song || !enabled) return
 
-  await Transport.start('+.3', 0)
+  await Transport.start('+.1', 0)
   if (SNDTRCK.song.tracks.pulse) pulsePart.start(0)
   if (SNDTRCK.song.tracks.pulse2) pulse2Part.start(0)
   if (SNDTRCK.song.tracks.square) squarePart.start(0)

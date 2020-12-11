@@ -11,6 +11,7 @@ import { loadMap } from './loadMap'
  * @returns {void}
  */
 export const changeMap = async (id, from) => {
+  if (!CTDLGAME.world.ready) return
   // save state before changing
   CTDLGAME.world.ready = false
 
@@ -58,6 +59,7 @@ export const changeMap = async (id, from) => {
   CTDLGAME.katoshi.protection = 24
 
   updateViewport()
+
   initSoundtrack(newWorld.map.track())
   // save again the new map
   if (from !== 'newGame') await saveGame()
