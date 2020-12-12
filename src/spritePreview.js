@@ -1,4 +1,4 @@
-import { assets } from './gameUtils/assets'
+import { assets } from './spritePreview/assets'
 import { loadAsset } from './gameUtils/loadAsset'
 import constants from './spritePreview/constants'
 import sprites from './sprites'
