@@ -3,9 +3,14 @@ export const maps = [
   'building',
   'forest',
   'rabbitHole',
+  'mempool',
   'endOfTheRabbitHole',
   'dogeCoinMine',
-  'miningFarm'
+  'mtGox',
+  'miningFarm',
+  'capital',
+  'citadel',
+  'moon',
 ]
 
 /**

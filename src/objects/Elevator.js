@@ -131,6 +131,7 @@ class Elevator {
 
     this.offsetY += move
 
+    // TODO fix elevator
     CTDLGAME.objects
       .filter(obj => obj.applyGravity)
       .filter(obj => intersects(this.getBoundingBox('real'), obj.getBoundingBox()))

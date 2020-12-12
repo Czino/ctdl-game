@@ -577,7 +577,10 @@ const solids = [
   t_4_2, t_5_2, t_6_2, t_7_2,
   t_7_7, t_8_7, t_7_8, t_8_8
 ].map(tile => tile.toString())
-
+const spawnPoints = [
+  t_0_1, t_1_1,
+  t_2_6, t_3_6
+].map(tile => tile.toString())
 let events = []
 let objects = []
 
@@ -605,7 +608,7 @@ makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, 'forest', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'forest', tileSize))
 
 const gotToCity = new GameObject('gotToCity', {
   x: 1 * tileSize,
@@ -649,11 +652,23 @@ goToRabbitHole.touchEvent = () => {
 }
 events.push(goToRabbitHole)
 
+const goToMtGox = new GameObject('goToMtGox', {
+  x: 254 * tileSize,
+  y: 96 * tileSize,
+  w: 1 * tileSize,
+  h: 3 * tileSize,
+})
+
+goToMtGox.touchEvent = () => {
+  changeMap('mtGox', 'forest')
+}
+events.push(goToMtGox)
+
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    city: { x: 4 * tileSize, y: 124 * tileSize - 6},
-    mtGox: { x: 251 * tileSize, y: 96 * tileSize}
+    city: { x: 4 * tileSize, y: 124 * tileSize - 6 },
+    mtGox: { x: 251 * tileSize, y: 96 * tileSize }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
