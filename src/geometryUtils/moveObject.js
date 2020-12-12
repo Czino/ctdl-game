@@ -64,7 +64,7 @@ export const moveObject = (object, vector, tree) => {
 
   if (!isVertical) {
     // is not pure vertical movement, do the routine of walking slopes
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 7; i++) {
       let vectorCopy = JSON.parse(JSON.stringify(vector))
       let originalX = object.x
       let originalY = object.y
