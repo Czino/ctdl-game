@@ -106,7 +106,6 @@ export default {
   FRAMESINADAY: Math.pow(2, 14),
   FRAMERESET: Math.pow(2, 64),
   CHECKBLOCKTIME: Math.pow(2, 12), // check every X frame
-  GROUNDHEIGHT: 6, // TODO can we remove it somehow?
   FRAMERATE: 8, // render every X frame
   FRAMERATES: {
     skyContext: 8,

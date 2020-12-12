@@ -95,6 +95,7 @@ export default {
       })
     }
   },
+  // TODO add SideQuest "Schiff's Gold"
   peter: {
     frames: [
       { x: 0, y: 30, w: 11, h: 25 }
