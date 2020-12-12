@@ -14,6 +14,7 @@ import moon from '../../sprites/moon.png'
 const worldWidth = 128
 const worldHeight = 128
 
+// TODO change map to allow entrance and exit to dogecoinmine
 const tileSize = 8
 const t_0_0 = [0, 0], t_0_1 = [0, 1], t_0_2 = [0, 2], t_0_3 = [0, 3], t_0_4 = [0, 4], t_0_5 = [0, 5], t_0_6 = [0, 6], t_0_7 = [0, 7], t_0_8 = [0, 8], t_0_9 = [0, 9], t_0_10 = [0, 10],
   t_1_0 = [1, 0], t_1_1 = [1, 1], t_1_2 = [1, 2], t_1_3 = [1, 3], t_1_4 = [1, 4], t_1_5 = [1, 5], t_1_6 = [1, 6], t_1_7 = [1, 7], t_1_8 = [1, 8], t_1_9 = [1, 9], t_1_10 = [1, 10],
@@ -621,7 +622,7 @@ export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     forest: { x: 5 * tileSize, y: 124 * tileSize - 4 },
-    dogeCoinMine: { x: 79 * tileSize, y: 116 * tileSize - 2 }
+    dogeCoinMine: { x: 79 * tileSize, y: 114 * tileSize + 1 }
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),

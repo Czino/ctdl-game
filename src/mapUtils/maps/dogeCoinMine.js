@@ -487,10 +487,25 @@ goToRabbitHole.touchEvent = () => {
 }
 events.push(goToRabbitHole)
 
+
+const goToMtGox = new GameObject('goToMtGox', {
+  x: 31 * tileSize,
+  y: 7 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+goToMtGox.touchEvent = () => {
+  changeMap('mtGox', 'dogeCoinMine')
+}
+events.push(goToMtGox)
+
+
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    rabbitHole: { x: 30, y: 531 }
+    rabbitHole: { x: 30, y: 531 },
+    mtGox: { x: 34 * tileSize, y: 7 * tileSize + 4 }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
