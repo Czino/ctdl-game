@@ -131,12 +131,15 @@ class Elevator {
 
     this.offsetY += move
 
-    // TODO fix elevator
     CTDLGAME.objects
       .filter(obj => obj.applyGravity)
       .filter(obj => intersects(this.getBoundingBox('real'), obj.getBoundingBox()))
       .map(obj => {
-        moveObject(obj, { x: 0, y: move }, CTDLGAME.quadTree)
+        if (this.action === 'down') {
+          moveObject(obj, { x: 0, y: move }, CTDLGAME.quadTree)
+        } else {
+          obj.y += move
+        }
       })
 
     this.draw()
