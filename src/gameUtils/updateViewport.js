@@ -51,4 +51,16 @@ export const updateViewport = () => {
   ].map(context => {
     context.setTransform(1, 0, 0, 1, -CTDLGAME.viewport.x, -CTDLGAME.viewport.y)
   })
+
+  const extendedViewport = {
+    x: CTDLGAME.viewport.x - 16,
+    y: CTDLGAME.viewport.y - 128,
+    w: CTDLGAME.viewport.w + 32,
+    h: CTDLGAME.viewport.h + 256
+  }
+  CTDLGAME.objects
+    .map(obj => {
+      obj.inViewport = intersects(extendedViewport, obj.getBoundingBox('whole'))
+      return obj
+    })
 }

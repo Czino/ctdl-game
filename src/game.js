@@ -23,7 +23,7 @@ import {
   circadianRhythm,
   spawnEnemies,
   cleanUpStage,
-  showShop, showSettings
+  showShop, showSettings, executeHooks
 } from './gameUtils'
 import { addTextToQueue, prompt, writeMenu } from './textUtils'
 import Wizard from './npcs/Wizard'
@@ -41,7 +41,6 @@ import Item from './Item'
 // TODO improve stair walking (press up key)
 // TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again
-// TODO character on map multiple times
 // TODO add Mt. Gox stage
 // TODO add endbosses for Rabbit Hole stage
 // TODO add endboss for Doge Mine stage
@@ -51,15 +50,11 @@ import Item from './Item'
 // TODO when one char dies make the other cry?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
 // TODO add game tutorial of some sorts
-// TODO katoshi rekt, set block > freeze
 // TODO rekt characters should stay in the map they got rekt
 // TODO add inventory UI
-// TODO add option to buy Schiff's gold
 // TODO add exchange
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
 // TODO add a way to revive rekt characters
-// TODO load assets only when needed
-// TODO dynamically load songs when needed
 // TODO refactor code
 // TODO fix receiving blocks doubled
 // TODO consider Chef Nomi #SushiSwap
@@ -237,6 +232,7 @@ function tick() {
     constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
   }
 
+
   CTDLGAME.world.update()
 
   applyGravity()
@@ -248,19 +244,19 @@ function tick() {
 
   if (CTDLGAME.world.map.update) CTDLGAME.world.map.update()
 
+  executeHooks()
+
   updateViewport()
 
+  CTDLGAME.quadTree.clear()
+  CTDLGAME.objects
+    .filter(obj => obj.inViewport)
+    .forEach(object => CTDLGAME.quadTree.insert(object))
 
   if (CTDLGAME.showOverlay) showOverlay()
 
   showMenu(CTDLGAME.inventory)
   writeMenu()
-
-  // Don't add blocks to Quadtree that are not in viewport
-  CTDLGAME.quadTree.clear()
-  CTDLGAME.objects
-    .filter(obj => obj.inViewport)
-    .forEach(object => CTDLGAME.quadTree.insert(object))
 
   // TODO abstract into all in one debug function
   if (window.SHOWBUTTONS) showButtons()

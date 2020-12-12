@@ -1,7 +1,7 @@
 import * as db from './db'
 import { contains, intersects } from './geometryUtils'
 import constants from './constants'
-import { CTDLGAME, loadGame, newGame, saveStateExists, showIntro } from './gameUtils'
+import { addHook, CTDLGAME, loadGame, newGame, saveStateExists, showIntro, updateViewport } from './gameUtils'
 import { setTextQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
@@ -541,9 +541,11 @@ function zoomHandler (e) {
 }
 
 function switchCharacter() {
-  if (window.SELECTEDCHARACTER.id === 'hodlonaut') {
-    CTDLGAME.katoshi.choose()
-  } else {
-    CTDLGAME.hodlonaut.choose()
-  }
+  addHook(() => {
+    if (window.SELECTEDCHARACTER.id === 'hodlonaut') {
+      CTDLGAME.katoshi.choose()
+    } else {
+      CTDLGAME.hodlonaut.choose()
+    }
+  })
 }

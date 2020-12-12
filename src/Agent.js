@@ -296,9 +296,7 @@ class Agent {
 
       const hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
 
-      if (hasCollided) {
-        this.vy = 0
-      } else if (!/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
+      if (!hasCollided && !/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
         this.status = 'fall'
       }
 

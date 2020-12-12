@@ -2,6 +2,7 @@ import { CTDLGAME } from './CTDLGAME'
 import Character from '../Character'
 import { changeMap } from '../mapUtils'
 import { setTextQueue } from '../textUtils'
+import { getEmptyInventory } from './getEmptyInventory'
 
 /**
  * @description Method to prepare new game
@@ -10,11 +11,7 @@ import { setTextQueue } from '../textUtils'
 export const newGame = async () => {
   CTDLGAME.frame = 0
 
-  CTDLGAME.inventory = { // TODO refactor into factory
-    usd: 0,
-    sats: 0,
-    blocks: []
-  }
+  CTDLGAME.inventory = getEmptyInventory()
   CTDLGAME.blockHeight = -1 // set blockHeight to -1 to enable fetching genesis block
   setTextQueue([])
 
