@@ -14,5 +14,6 @@ export const parsePattern = (pattern, x, y) => pattern
     tile
   })))
   .reduce(flatten)
+  .filter(tile => tile.tile)
 
 export default parsePattern

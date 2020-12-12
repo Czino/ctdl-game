@@ -99,10 +99,8 @@ const renderMap = updateTiles => {
     })
     Object.keys(stage).map(layer => {
       stage[layer].map((row, y) => row.map((tile, x) => {
-        if (!tile || tile === 't_0_0') return
-        let tileX = tile.split('_')[1]
-        let tileY = tile.split('_')[2]
-        let imageData = constants.menuContext.getImageData(tileX * 8, tileY * 8, 8, 8)
+        if (!tile) return
+        let imageData = constants.menuContext.getImageData(tile[0] * 8, tile[1] * 8, 8, 8)
         constants[layer + 'Context'].putImageData(
           imageData,
           x * 8, y * 8
@@ -185,9 +183,9 @@ function createEmpty(height) {
 
 $tileSet.addEventListener('change', e => changeMap(JSON.parse(e.target.value)))
 
-$getJSON.addEventListener('click', () => $map.value = JSON.stringify(stage).replace(/"t/g, 't').replace(/(\d)"/g, '$1').replace(/null/g, 't_0_0'))
+$getJSON.addEventListener('click', () => $map.value = JSON.stringify(stage).replace(/null/g, '0'))
 $loadJSON.addEventListener('click', () => {
-  stage = JSON.parse($map.value.replace(/t/g, '"t').replace(/(\d)([\],])/g, '$1"$2'))
+  stage = JSON.parse($map.value)
 })
 
 Array.from($layer).map($l => $l.addEventListener('change', e => {
