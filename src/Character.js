@@ -142,6 +142,9 @@ class Character extends Agent {
         return SUCCESS
       }
 
+      // if couldn't move, check if downEvent frees path
+      this.checkDownEvents()
+
       return FAILURE
     }
   }
@@ -158,6 +161,9 @@ class Character extends Agent {
         this.status = 'move'
         return SUCCESS
       }
+
+      // if couldn't move, check if downEvent frees path
+      this.checkDownEvents()
 
       return FAILURE
     }
