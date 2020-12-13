@@ -42,9 +42,10 @@ export const QuadTree = function (boundary, capacity, level) {
     })
   }
   this.subdivide = () => {
+    // hint: make boundaries fuzzy to catch potential objects right on the border
     const subBoundary = {
-      w: this.boundary.w / 2,
-      h: this.boundary.h / 2
+      w: this.boundary.w / 2 + (Math.random() - .5),
+      h: this.boundary.h / 2 + (Math.random() - .5)
     }
     this.subs = [
       new QuadTree(
