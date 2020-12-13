@@ -36,8 +36,8 @@ class World {
 
     if (this.map.parallax.length > 0 && canDrawOn('parallaxContext')) {
       let parallaxViewport = {
-        x: CTDLGAME.viewport.x / 2,
-        y: CTDLGAME.viewport.y,
+        x: Math.round(CTDLGAME.viewport.x / 2),
+        y: Math.round(CTDLGAME.viewport.y / 4 + 624),
         w: CTDLGAME.viewport.w,
         h: CTDLGAME.viewport.h
       }
@@ -52,7 +52,7 @@ class World {
         })
         if (CTDLGAME.skyColor) {
           constants.parallaxContext.globalCompositeOperation = 'source-atop'
-          constants.parallaxContext.globalAlpha = .1
+          constants.parallaxContext.globalAlpha = .2
           constants.parallaxContext.fillStyle = `hsl(${CTDLGAME.skyColor.h}, ${CTDLGAME.skyColor.s}%, ${CTDLGAME.skyColor.l}%)`
           constants.parallaxContext.fillRect(
             parallaxViewport.x, parallaxViewport.y, constants.WIDTH, constants.HEIGHT

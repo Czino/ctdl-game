@@ -38,7 +38,7 @@ export const updateViewport = () => {
   CTDLGAME.viewport.y = Math.max(0, CTDLGAME.viewport.y)
   CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT + constants.MENU.h, CTDLGAME.viewport.y)
 
-  constants.parallaxContext.setTransform(1, 0, 0, 1, -(CTDLGAME.viewport.x - Math.round(CTDLGAME.viewport.x / 2)), -CTDLGAME.viewport.y)
+  constants.parallaxContext.setTransform(1, 0, 0, 1, -Math.round(CTDLGAME.viewport.x / 2), -Math.round(CTDLGAME.viewport.y / 4 + 624))
 
   ;[
     constants.skyContext,

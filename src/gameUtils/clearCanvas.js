@@ -8,7 +8,10 @@ import { CTDLGAME } from './CTDLGAME'
  */
 export const clearCanvas = () => {
   if (canDrawOn('parallaxContext')) {
-    constants.parallaxContext.clearRect(CTDLGAME.viewport.x - CTDLGAME.viewport.x / 2, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    constants.parallaxContext.clearRect(
+      Math.round(CTDLGAME.viewport.x / 2),
+      Math.round(CTDLGAME.viewport.y / 4 + 624),
+      constants.WIDTH, constants.HEIGHT)
   }
 
   [
