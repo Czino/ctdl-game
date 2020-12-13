@@ -88,6 +88,8 @@ events.push(goToDogeCoinMine)
 
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'mtGox', tileSize))
 
+objects.find(obj => obj.id === 'ramp-1_7-74_115').makeToggle(false)
+
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {

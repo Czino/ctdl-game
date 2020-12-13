@@ -166,6 +166,7 @@ class Character extends Agent {
     condition: () => true,
     effect: () => {
       this.status = 'duck'
+      this.checkDownEvents()
       return SUCCESS
     }
   }
@@ -174,6 +175,7 @@ class Character extends Agent {
     effect: () => {
       this.direction = 'left'
       this.status = 'duckMove'
+      this.checkDownEvents()
 
       const hasMoved = moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
       return hasMoved
@@ -184,6 +186,7 @@ class Character extends Agent {
     effect: () => {
       this.direction = 'right'
       this.status = 'duckMove'
+      this.checkDownEvents()
 
       const hasMoved = !moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
       return hasMoved
@@ -264,6 +267,14 @@ class Character extends Agent {
       this.status = 'action'
       return SUCCESS
     }
+  }
+  checkDownEvents = () => {
+    const boundingBox = this.getBoundingBox()
+    const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+      .filter(obj => obj.downEvent)
+      .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+
+    if (eventObject) eventObject.downEvent(this)
   }
 
   canDuck = () => {

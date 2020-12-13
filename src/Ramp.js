@@ -19,6 +19,17 @@ export default function(id, context, options) {
     this.isSolid = !this.isSolid
   }
 
+  this.makeToggle = isSolid => {
+    this.isSolid = isSolid
+    this.backEvent = character => {
+      this.isSolid = true
+      character.y = this.getTrueY() - character.getBoundingBox().h
+    }
+    this.downEvent = () => {
+      this.isSolid = false
+    }
+  }
+
   this.update = () => {}
 
   this.getBoundingBox = () => this
@@ -64,7 +75,11 @@ export default function(id, context, options) {
     return this.trueY
   }
 
-  this.select = () => {}
+  this.select = () => {
+    if (window.DEBUG) {
+      console.log(this)
+    }
+  }
 
   this.unselect = () => {}
 }

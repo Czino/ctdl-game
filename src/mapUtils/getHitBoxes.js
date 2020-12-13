@@ -14,7 +14,7 @@ export const getHitBoxes = (layer, ramps, solids, spawnPoints, sprite, tileSize)
   .map(tile => {
     if (ramps.indexOf(tile.tile.toString()) !== -1) {
       return new Ramp(
-        'ramp-' + tile.tile.toString(),
+        `ramp-${tile.tile.join('_')}-${tile.x}_${tile.y}`,
         constants.bgContext, {
           x: tile.x * tileSize,
           y: tile.y * tileSize + 3,
