@@ -26,6 +26,7 @@ const tileSize = 8
 
 stage.parallax = parsePattern(stage.parallax, 0, 0)
 stage.bg = parsePattern(stage.bg, 0, 0)
+stage.base = parsePattern(stage.base, 0, 0)
 stage.fg = parsePattern(stage.fg, 0, 0)
 const ramps = [
   [0, 1], [1, 1], [2, 1], [3, 1],
@@ -118,7 +119,7 @@ const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.fg, ramps, solids, spawnPoints, 'rabbitHole', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'rabbitHole', tileSize))
 
 const goToMempool = new GameObject('goToMempool', {
   x: 3 * tileSize,
@@ -168,8 +169,9 @@ export default {
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
+  base: stage.base.map(tile => mapTile(tile, tileSize)),
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
-  removeEnemy: stage.fg
+  removeEnemy: stage.base
     .filter(tile => tile.tile.toString() === '1,0')
     .map(tile => mapTile(tile, tileSize)),
   lightSources,
