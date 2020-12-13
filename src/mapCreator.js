@@ -222,7 +222,7 @@ window.addEventListener('keydown', e => {
   if (vx !== 0 || vy !== 0) e.preventDefault()
   currentTile.x += vx
   currentTile.y += vy
-  currentTile.id = 't_' + (currentTile.x / 8) + '_' + (currentTile.y / 8)
+  currentTile.id = [currentTile.x / 8, currentTile.y / 8]
 })
 
 function mouseMoveHandler (e) {
@@ -252,7 +252,7 @@ function menuMouseDownHandler () {
     w: 8,
     h: 8,
   }
-  currentTile.id = 't_' + (currentTile.x / 8) + '_' + (currentTile.y / 8)
+  currentTile.id = [currentTile.x / 8, currentTile.y / 8]
 }
 
 function mapMouseDownHandler () {
