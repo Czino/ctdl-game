@@ -38,10 +38,8 @@ import Item from './Item'
 // playSound('policeForceHurt')
 // setInterval(() => playSound('policeForceHurt'), 1000)
 
-// TODO improve stair walking (press up key)
 // TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again
-// TODO add Mt. Gox stage
 // TODO add endbosses for Rabbit Hole stage
 // TODO add endboss for Doge Mine stage
 // TODO add moon stage

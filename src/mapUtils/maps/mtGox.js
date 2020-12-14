@@ -16,7 +16,6 @@ import moon from '../../sprites/moon.png'
 const worldWidth = 128
 const worldHeight = 128
 
-// TODO change map to allow entrance and exit to dogecoinmine
 const tileSize = 8
 
 stage.parallax = parsePattern(stage.parallax, 0, 0)
