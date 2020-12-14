@@ -8,7 +8,7 @@ import dogeCoinMine from '../sprites/dogeCoinMine.png'
 // // import mempool from '../sprites/mempool.png'
 import mtGox from '../sprites/mtGox.png'
 // // import moon from '../sprites/moon.png'
-// // import capitalCity from '../sprites/capitalCity.png'
+import capitalCity from '../sprites/capitalCity.png'
 // // import citadel from '../sprites/citadel.png'
 import miningFarm from '../sprites/miningFarm.png'
 
@@ -22,7 +22,7 @@ export const assets = {
   // mempool,
   mtGox,
   // moon,
-  // capitalCity,
+  capitalCity,
   // citadel,
   miningFarm
 }
