@@ -8,7 +8,7 @@ export const maps = [
   'dogeCoinMine',
   'mtGox',
   'miningFarm',
-  'capital',
+  'capitalCity',
   'citadel',
   'moon',
 ]
