@@ -1,5 +1,10 @@
 import policeForceWithShield from '../sprites/policeForceWithShield.png'
 import policeForce from '../sprites/policeForce.png'
+import citizen1 from '../sprites/citizen-1.png'
+import citizen2 from '../sprites/citizen-2.png'
+import citizen3 from '../sprites/citizen-3.png'
+import citizen4 from '../sprites/citizen-4.png'
+import citizen5 from '../sprites/citizen-5.png'
 import hodlonaut from '../sprites/hodlonaut.png'
 import katoshi from '../sprites/katoshi.png'
 import shitcoiner from '../sprites/shitcoiner.png'
@@ -13,6 +18,11 @@ import doge from '../sprites/doge.png'
 export const assets = {
     policeForceWithShield,
     policeForce,
+    citizen1,
+    citizen2,
+    citizen3,
+    citizen4,
+    citizen5,
     hodlonaut,
     katoshi,
     shitcoiner,

@@ -3,6 +3,7 @@ import katoshi from './katoshi'
 import doge from './doge'
 import policeForce from './policeForce'
 import policeForceWithShield from './policeForceWithShield'
+import citizen from './citizen'
 import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
@@ -17,6 +18,7 @@ export default {
     doge,
     policeForce,
     policeForceWithShield,
+    citizen,
     shitcoiner,
     brian,
     bear,

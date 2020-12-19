@@ -59,6 +59,11 @@ const goToEnemy = new Selector({
     'jump'
   ]
 })
+
+// TODO hold position while condition is met
+// TODO attack Characters and Citizen while condition is met
+// TODO don't attack but walk around and be vigilant while condition is met
+// TODO attack when provoked
 const tree = new Selector({
   nodes: [
     pushEnemy,

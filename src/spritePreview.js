@@ -11,15 +11,15 @@ const $status = document.getElementById('ctdl-game-status')
 
 let sprite
 let spriteData
-let direction = 'right'
-let status = 'idle'
+let direction = $direction.value
+let status = $status.value
 const clearCanvas = () => {
   constants.baseContext.clearRect(0, 0, constants.baseCanvas.width, constants.baseCanvas.height)
 }
 
 const loadSprite = async id => {
-  sprite = await loadAsset(assets[id])
-  spriteData = sprites[id]
+  sprite = await loadAsset(assets[id.replace(/-/g, '')])
+  spriteData = sprites[id.replace(/\d|-/g, '')]
 }
 
 
