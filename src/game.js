@@ -44,6 +44,7 @@ import Item from './Item'
 // TODO add endboss for Doge Mine stage
 // TODO add moon stage
 // TODO add a citadel stage
+// TODO add a beam of light that Marty Bent is talking about
 // TODO add "mempool" stage
 // TODO when one char dies make the other cry?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%

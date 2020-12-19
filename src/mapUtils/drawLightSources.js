@@ -6,22 +6,23 @@ import { CTDLGAME } from '../gameUtils'
  * @param {Object} lightSources array of light sources
  * @param {String} mapAsset the asset for the map
  * @param {Number} tileSize size of tiles
+ * @param {Number} [intensity] light intensity
  */
-export const drawLightSources = (lightSources, mapAsset, tileSize) => {
+export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1) => {
   if (!lightSources) return
-  constants.skyContext.globalAlpha = .0125
+  constants.skyContext.globalAlpha = .0125 * intensity
   constants.skyContext.globalCompositeOperation = 'source-atop'
 
-  constants.bgContext.globalAlpha = .025
+  constants.bgContext.globalAlpha = .025 * intensity
   constants.bgContext.globalCompositeOperation = 'source-atop'
 
-  constants.fgContext.globalAlpha = .025
+  constants.fgContext.globalAlpha = .025 * intensity
   constants.fgContext.globalCompositeOperation = 'source-atop'
 
-  constants.charContext.globalAlpha = .025
+  constants.charContext.globalAlpha = .025 * intensity
   constants.charContext.globalCompositeOperation = 'source-atop'
 
-  constants.gameContext.globalAlpha = .025
+  constants.gameContext.globalAlpha = .025 * intensity
   constants.gameContext.globalCompositeOperation = 'source-atop'
 
   const objectLightSources = CTDLGAME.objects

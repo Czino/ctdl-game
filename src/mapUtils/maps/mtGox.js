@@ -4,14 +4,17 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME } from '../../gameUtils'
+import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
-import { makeBoundary } from '../../geometryUtils'
+import { easeInOut, makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 
 import mtGox from '../../sprites/mtGox.png'
 import moon from '../../sprites/moon.png'
+import drawLightSources from '../drawLightSources'
+import darken from '../darken'
+import parseLightSources from '../parseLightSources'
 
 const worldWidth = 128
 const worldHeight = 128

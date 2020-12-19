@@ -4,15 +4,18 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME } from '../../gameUtils'
+import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Brian from '../../enemies/Brian'
 import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
-import { makeBoundary } from '../../geometryUtils'
+import { easeInOut, makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 
 import capitalCity from '../../sprites/capitalCity.png'
 import moon from '../../sprites/moon.png'
+import darken from '../darken'
+import drawLightSources from '../drawLightSources'
+import parseLightSources from '../parseLightSources'
 
 const worldWidth = 256
 const worldHeight = 128
@@ -30,6 +33,14 @@ const solids = [
   [0, 2], [1, 2]
 ].map(tile => tile.toString())
 const spawnPoints = []
+const lights = {
+  '6_8': {
+    color: '#ebca09',
+    brightness: .4,
+    radius: 128
+  }
+}
+let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
 let objects = []
 let events = []
@@ -58,6 +69,7 @@ export default {
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   base: stage.base.map(tile => mapTile(tile, tileSize)),
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
+  lightSources,
   objects,
   npcs: () => [
   ],
@@ -68,6 +80,20 @@ export default {
     moon
   },
   track: () => 'aNewHope',
+  update: () => {
+    let timeOfDay = getTimeOfDay()
+    let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
+
+    if (timeOfDay >= 4 && timeOfDay <= 6) {
+      y = 1 - easeInOut((4 - timeOfDay) / -2, 3)
+    } else if (timeOfDay >= 17 && timeOfDay <= 20) {
+      y = easeInOut((timeOfDay - 17) / 3, 3)
+    }
+    if (y > 0) {
+      darken(y / 2, y / 2, '#212121')
+      drawLightSources(lightSources, 'capitalCity', tileSize, y)
+    }
+  },
   canSetBlocks: false,
   overworld: true,
   spawnRates: {

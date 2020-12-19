@@ -1,5 +1,6 @@
 import constants from './constants'
 import { CTDLGAME, getTimeOfDay } from './gameUtils'
+import { easeInOut } from './geometryUtils'
 import { canDrawOn } from './performanceUtils'
 
 export default function(options) {
@@ -11,14 +12,13 @@ export default function(options) {
   this.y = options.y
   this.isSolid = false
 
-  this.easeInOut = (x, a) => Math.pow(x, a) / (Math.pow(x, a) + Math.pow(1 - x, a))
   this.drawSky = timeOfDay => {
     let y = timeOfDay < 4 || timeOfDay > 20 ? 0 : 1
 
     if (timeOfDay >= 4 && timeOfDay <= 6) {
-      y = this.easeInOut((timeOfDay - 4) / 2, 3)
+      y = easeInOut((timeOfDay - 4) / 2, 3)
     } else if (timeOfDay >= 17 && timeOfDay <= 20) {
-      y = this.easeInOut((timeOfDay - 20) / -3, 3)
+      y = easeInOut((timeOfDay - 20) / -3, 3)
     }
 
     let sky = {

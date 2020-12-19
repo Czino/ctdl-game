@@ -1,6 +1,7 @@
 export { contains } from './contains'
 export { drawPolygon } from './drawPolygon'
 export { getClosest } from './getClosest'
+export { easeInOut } from './easeInOut'
 export { intersects } from './intersects'
 export { collidesWithHeightMap } from './collidesWithHeightMap'
 export { moveObject } from './moveObject'
