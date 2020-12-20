@@ -3,7 +3,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { capitalize } from '../stringUtils'
+import { capitalize, hexToRgb } from '../stringUtils'
 import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
@@ -18,6 +18,37 @@ const sprites = [
   'citizen4',
   'citizen5'
 ]
+
+const colorOverrides = {
+  hair: hexToRgb('#00ff00'),
+  skin: [hexToRgb('#ffffff'), hexToRgb('#aaaaaa')],
+  top: [hexToRgb('#ff0000'), hexToRgb('#ffff00')],
+  pants: [hexToRgb('#0000ff'), hexToRgb('#00ffff'), hexToRgb('#ff00ff')]
+}
+
+const colorSchemes = {
+  hair: [
+    hexToRgb('#d5a01a'),
+    hexToRgb('#b68f2d'),
+    hexToRgb('#5a3525'),
+    hexToRgb('#1f1510')
+  ],
+  skin: [
+    hexToRgb('#cca094'),
+    hexToRgb('#5d301e'),
+    hexToRgb('#a36f60')
+  ],
+  clothes: [
+    [hexToRgb('#E88210'), hexToRgb('#A0140D')],
+    [hexToRgb('#575757'), hexToRgb('#851c1c')],
+    [hexToRgb('#734b3a'), hexToRgb('#3b587b')],
+    [hexToRgb('#eeeeee'), hexToRgb('#2c2c2d')],
+    [hexToRgb('#242424'), hexToRgb('#212121')],
+    [hexToRgb('#1a523a'), hexToRgb('#2c2c2d')],
+    [hexToRgb('#666666'), hexToRgb('#425D8C')],
+    [hexToRgb('#1b02ab'), hexToRgb('#98befa')],
+  ]
+}
 
 const doesNotTouchEnemy = new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
@@ -49,7 +80,6 @@ const talk = new Task({
     return SUCCESS
   }
 })
-
 
 
 const moveToClosestEnemy = new Task({
@@ -116,7 +146,7 @@ const tree = new Selector({
 class Citizen extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.sprite = options.sprite || random(sprites)
+    this.spriteId = options.spriteId || random(sprites)
     this.spriteData = citizenSpriteData
     this.maxHealth = options.maxHealth ?? Math.round(Math.random() * 5) + 5
     this.health = options.health ?? this.maxHealth
@@ -131,6 +161,9 @@ class Citizen extends Agent {
     this.runningSpeed = options.runningSpeed || Math.round(Math.random() * 2) + 4
     this.protection = 0
 
+    this.hair = options.hair || random(colorSchemes.hair)
+    this.skin = options.skin || random(colorSchemes.skin)
+    this.clothes = options.clothes || random(colorSchemes.clothes)
     this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
     this.speed = Math.round(Math.random() * 3) * constants.FRAMERATE
   }
@@ -221,6 +254,87 @@ class Citizen extends Agent {
   }
 
   draw = () => {
+    if (!this.sprite) {
+      this.sprite = CTDLGAME.assets[this.spriteId]
+      constants.helperCanvas.width = this.sprite.width
+      constants.helperCanvas.height = this.sprite.height
+      constants.helperContext.clearRect(0, 0, this.sprite.width, this.sprite.height)
+      constants.helperContext.drawImage(
+        this.sprite,
+        0, 0, this.sprite.width, this.sprite.height,
+        0, 0, this.sprite.width, this.sprite.height
+      )
+
+      // pull the entire image into an array of pixel data
+      let imageData = constants.helperContext.getImageData(0, 0, this.sprite.width, this.sprite.height);
+
+      // examine every pixel,
+      // change any old rgb to the new-rgb
+      for (let i = 0, len = imageData.data.length; i < len; i += 4) {
+        if (imageData.data[i] === colorOverrides.hair.r &&
+          imageData.data[i + 1] === colorOverrides.hair.g &&
+          imageData.data[i + 2] === colorOverrides.hair.b
+        ) {
+          imageData.data[i] = this.hair.r
+          imageData.data[i + 1] = this.hair.g
+          imageData.data[i + 2] = this.hair.b
+        } else if (imageData.data[i] === colorOverrides.skin[0].r &&
+          imageData.data[i + 1] === colorOverrides.skin[0].g &&
+          imageData.data[i + 2] === colorOverrides.skin[0].b
+        ) {
+          imageData.data[i] = this.skin.r
+          imageData.data[i + 1] = this.skin.g
+          imageData.data[i + 2] = this.skin.b
+        } else if (imageData.data[i] === colorOverrides.skin[1].r &&
+          imageData.data[i + 1] === colorOverrides.skin[1].g &&
+          imageData.data[i + 2] === colorOverrides.skin[1].b
+        ) {
+          imageData.data[i] = Math.round(this.skin.r / 3 * 2)
+          imageData.data[i + 1] = Math.round(this.skin.g / 3 * 2)
+          imageData.data[i + 2] = Math.round(this.skin.b / 3 * 2)
+        } else if (imageData.data[i] === colorOverrides.top[0].r &&
+          imageData.data[i + 1] === colorOverrides.top[0].g &&
+          imageData.data[i + 2] === colorOverrides.top[0].b
+        ) {
+          imageData.data[i] = this.clothes[0].r
+          imageData.data[i + 1] = this.clothes[0].g
+          imageData.data[i + 2] = this.clothes[0].b
+        } else if (imageData.data[i] === colorOverrides.top[1].r &&
+          imageData.data[i + 1] === colorOverrides.top[1].g &&
+          imageData.data[i + 2] === colorOverrides.top[1].b
+        ) {
+          imageData.data[i] = Math.round(this.clothes[0].r / 2)
+          imageData.data[i + 1] = Math.round(this.clothes[0].g / 2)
+          imageData.data[i + 2] = Math.round(this.clothes[0].b / 2)
+        } else if (imageData.data[i] === colorOverrides.pants[0].r &&
+          imageData.data[i + 1] === colorOverrides.pants[0].g &&
+          imageData.data[i + 2] === colorOverrides.pants[0].b
+        ) {
+          imageData.data[i] = this.clothes[1].r
+          imageData.data[i + 1] = this.clothes[1].g
+          imageData.data[i + 2] = this.clothes[1].b
+        } else if (imageData.data[i] === colorOverrides.pants[1].r &&
+          imageData.data[i + 1] === colorOverrides.pants[1].g &&
+          imageData.data[i + 2] === colorOverrides.pants[1].b
+        ) {
+          imageData.data[i] = Math.round(this.clothes[1].r / 3 * 2)
+          imageData.data[i + 1] = Math.round(this.clothes[1].g / 3 * 2)
+          imageData.data[i + 2] = Math.round(this.clothes[1].b / 3 * 2)
+        } else if (imageData.data[i] === colorOverrides.pants[2].r &&
+          imageData.data[i + 1] === colorOverrides.pants[2].g &&
+          imageData.data[i + 2] === colorOverrides.pants[2].b
+        ) {
+          imageData.data[i] = Math.round(this.clothes[1].r / 2)
+          imageData.data[i + 1] = Math.round(this.clothes[1].g / 2)
+          imageData.data[i + 2] = Math.round(this.clothes[1].b / 2)
+        }
+      }
+      // put the altered data back on the canvas
+      constants.helperContext.putImageData(imageData, 0, 0)
+
+      this.sprite = new Image()
+      this.sprite.src = constants.helperCanvas.toDataURL()
+    }
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -237,7 +351,7 @@ class Citizen extends Agent {
       constants[this.context].globalAlpha = this.protection % 2
     }
     constants[this.context].drawImage(
-      CTDLGAME.assets[this.sprite],
+      this.sprite,
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
     )

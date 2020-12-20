@@ -42,7 +42,9 @@ export default function(id, context, options) {
   this.getHeightMap = () => {
     if (this.heightMap) return this.heightMap
 
-    constants.helperContext.clearRect(0, 0, 16, 16)
+    constants.helperCanvas.width = 8
+    constants.helperCanvas.height = 8
+    constants.helperContext.clearRect(0, 0, 8, 8)
     constants.helperContext.drawImage(
       CTDLGAME.assets[this.sprite],
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,

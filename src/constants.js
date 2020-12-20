@@ -142,6 +142,7 @@ export default {
   overlayCanvas,
   overlayContext,
   menuContext,
+  helperCanvas,
   helperContext,
   CONTROLS,
   BUTTONS

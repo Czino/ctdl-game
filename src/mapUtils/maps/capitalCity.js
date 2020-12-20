@@ -129,7 +129,7 @@ export default {
   objects,
   npcs: () => [
     new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4, vx: 0 }),
-    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', sprite: 'citizen6', applyGravity: false, context: 'fgContext' })
+    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, context: 'fgContext' })
   ]
     .concat(protesters)
     .concat(policeForces),
