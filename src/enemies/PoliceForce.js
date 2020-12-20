@@ -11,6 +11,7 @@ import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import Flashbang from '../objects/Flashbang'
 import { addTextToQueue } from '../textUtils'
+import { unique } from '../arrayUtils'
 
 const items = [
   { id: 'pizza', chance: 0.05 },
@@ -19,6 +20,9 @@ const items = [
 
 const touchesEnemy = new Task({
   run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+})
+const holdPositionOrder = new Task({
+  run: () => CTDLGAME.world.map.state.protestScene ? SUCCESS : FAILURE
 })
 const hasShield = new Task({
   run: agent => agent.hasShield ? SUCCESS : FAILURE
@@ -60,16 +64,35 @@ const goToEnemy = new Selector({
   ]
 })
 
+const vigilantBehaviour = new Sequence({
+  nodes: [
+    hostileBehaviour
+  ]
+})
+
+const hostileBehaviour = new Sequence({
+  nodes: [
+    'seesEnemy',
+    new Selector({
+      nodes: [
+        pushEnemy,
+        attackEnemy,
+        throwFlashbang,
+        goToEnemy
+      ]
+    })
+  ]
+})
+
+
 // TODO hold position while condition is met
 // TODO attack Characters and Citizen while condition is met
 // TODO don't attack but walk around and be vigilant while condition is met
 // TODO attack when provoked
 const tree = new Selector({
   nodes: [
-    pushEnemy,
-    attackEnemy,
-    throwFlashbang,
-    goToEnemy,
+    holdPositionOrder,
+    hostileBehaviour,
     'moveRandom',
     'idle'
   ]
@@ -83,14 +106,15 @@ class PoliceForce extends Agent {
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = Math.round(Math.random() * 50) + 30
     this.flashbangs = options.flashbangs || (Math.random() > .8 ? 1 : 0)
-    this.hasShield = options.hasShield || (Math.random() > .8)
+    this.enemy = options.enemy
+    this.sensedCriminals = options.sensedCriminals || []
+    this.hasShield = options.hasShield ?? (Math.random() > .8)
     this.spriteData = this.hasShield ? spritePoliceForceWithShield : spritePoliceForce
-    this.sprite = CTDLGAME.assets[this.hasShield ? 'policeForceWithShield' : 'policeForce']
     this.protection = 0
   }
 
   class = 'PoliceForce'
-  enemy = true
+  enemy = false
   w = 16
   h = 30
 
@@ -110,7 +134,7 @@ class PoliceForce extends Agent {
 
       if (this.status === 'attack' && this.frame === 3) {
         playSound('woosh')
-        return this.closestEnemy.hurt(Math.round(Math.random() * 2) + 1, this.direction === 'left' ? 'right' : 'left')
+        return this.closestEnemy.hurt(Math.round(Math.random() * 2) + 1, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack') return SUCCESS
 
@@ -164,7 +188,9 @@ class PoliceForce extends Agent {
     ? !/hurt|rekt/.test(this.status) && this.protection === 0 && /attack/.test(this.status) && Math.random() > .5
     :  !/hurt|rekt/.test(this.status) && this.protection === 0
 
-  onHurt = () => playSound('policeForceHurt') // TODO add sound
+  onHurt = () => {
+    playSound('policeForceHurt') // TODO add sound
+  }
   onDie = () => {
     this.removeTimer = 64
     playSound('policeForceHurt')
@@ -172,6 +198,7 @@ class PoliceForce extends Agent {
   }
 
   update = () => {
+    if (!this.sprite) this.sprite = CTDLGAME.assets[this.hasShield ? 'policeForceWithShield' : 'policeForce']
     if (CTDLGAME.lockCharacters) {
       let data = this.spriteData[this.direction][this.status][0]
       constants.charContext.globalAlpha = 1
@@ -188,11 +215,22 @@ class PoliceForce extends Agent {
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt|spawn/.test(this.status)) {
       this.sensedEnemies = senseCharacters(this)
+
+      // check who is doing "criminal activity"
+      this.sensedEnemies
+        .filter(enemy => /attack/i.test(enemy.status))
+        .forEach(enemy => this.sensedCriminals.push(enemy.id))
+
+      if (this.sensedCriminals.length > 0) this.sensedCriminals = this.sensedCriminals.filter(unique())
+
+      this.sensedEnemies = this.sensedEnemies.filter(enemy => this.sensedCriminals.indexOf(enemy.id) !== -1)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
     }
 
-    this.frame++
+    if (this.status !== 'idle' || Math.random() < .05) {
+      this.frame++
+    }
     if (this.status === 'hurt' && this.protection === 0) {
       this.status = 'idle'
     }

@@ -41,6 +41,14 @@ BehaviorTree.register('attack', new Task({
 BehaviorTree.register('moveTo', new Task({
   run: agent => agent.moveTo.condition() ? agent.moveTo.effect() : FAILURE
 }))
+BehaviorTree.register('hasLowHealth', new Task({
+  run: agent => agent.health / agent.maxHealth < .15 ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('runAwayFromClosestEnemy', new Task({
+  run: agent => agent.closestEnemy && agent.runAwayFrom.condition({ other: agent.closestEnemy })
+    ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
+    : FAILURE
+}))
 
 // Selector: runs until one node calls success
 // Sequence: runs each node until fail
@@ -145,7 +153,7 @@ class Agent {
     },
     effect: () => {
       if (this.status === 'attack' && this.frame === 3) {
-        this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
+        this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS
       }
       if (this.status === 'attack') return SUCCESS
@@ -183,9 +191,9 @@ class Agent {
       let action = 'idle'
 
       if (this.getBoundingBox().x > other.getBoundingBox().x) {
-        action = 'moveRight'
+        action = this['runRight'] ? 'runRight' : 'moveRight'
       } else if (other.getBoundingBox().x > this.getBoundingBox().x) {
-        action = 'moveLeft'
+        action = this['runLeft'] ? 'runLeft' : 'moveLeft'
       }
       if (this[action].condition()) return this[action].effect()
       return FAILURE

@@ -117,7 +117,7 @@ class Brian extends Agent {
 
       if (this.status === 'attack' && this.frame === 3) {
         playSound('woosh')
-        return this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+        return this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack' && this.frame < 4) return SUCCESS
 
@@ -142,7 +142,7 @@ class Brian extends Agent {
         .forEach(enemy => {
           const dmg = Math.round(Math.random()) * 1 + 3
           const direction = this.getCenter().x > enemy.getCenter().x ? 'right' : 'left'
-          enemy.hurt(dmg, direction)
+          enemy.hurt(dmg, direction, this)
         })
 
       return SUCCESS

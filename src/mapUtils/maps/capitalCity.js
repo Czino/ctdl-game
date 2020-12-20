@@ -10,12 +10,24 @@ import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 import { easeInOut, makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
-
-import capitalCity from '../../sprites/capitalCity.png'
-import moon from '../../sprites/moon.png'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
+import Citizen from '../../npcs/Citizen'
+import PoliceForce from '../../enemies/PoliceForce'
+import Car from '../../objects/Car'
+
+import capitalCity from '../../sprites/capitalCity.png'
+import moon from '../../sprites/moon.png'
+import citizen1 from '../../sprites/citizen-1.png'
+import citizen2 from '../../sprites/citizen-2.png'
+import citizen3 from '../../sprites/citizen-3.png'
+import citizen4 from '../../sprites/citizen-4.png'
+import citizen5 from '../../sprites/citizen-5.png'
+import citizen6 from '../../sprites/citizen-6.png'
+import cars from '../../sprites/cars.png'
+import policeForce from '../../sprites/policeForce.png'
+import policeForceWithShield from '../../sprites/policeForceWithShield.png'
 
 const worldWidth = 256
 const worldHeight = 128
@@ -58,12 +70,56 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
+const protesters = []
+const policeForces = []
+
+for (let i = 1; i < 57; i++) {
+  protesters.push(
+    new Citizen('protester-' + i, {
+      x: 155 * tileSize + Math.round(Math.random() * i * 2), y: 124 * tileSize - 6,
+      direction: 'right'
+    })
+  )
+}
+for (let i = 0; i < 6; i++) {
+  policeForces.push(
+    new PoliceForce('policeForceWithShield-' + i, {
+      x: 170 * tileSize + i * 4 + Math.round(Math.random()), y: 124 * tileSize - 6 + Math.round(Math.random() * 2),
+      direction: 'left',
+      hasShield: true
+    })
+  )
+}
+for (let i = 0; i < 16; i++) {
+  policeForces.push(
+    new PoliceForce('policeForce-' + i, {
+      x: 170 * tileSize + 24 + i * 4 + Math.round(Math.random()), y: 124 * tileSize - 6 + Math.round(Math.random() * 2),
+      direction: 'left',
+      hasShield: false
+    })
+  )
+}
+const startProtestScene = new GameObject('startProtestScene', {
+  x: 20 * tileSize,
+  y: 121 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+startProtestScene.touchEvent = () => {
+  console.log('Protest Scene Initiated')
+}
+events.push(startProtestScene)
+
+
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'capitalCity', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    mtGox: { x: 8 * tileSize, y: 124 * tileSize - 2}
+    mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 }
+  },
+  state: {
+    protestScene: true
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -72,12 +128,25 @@ export default {
   lightSources,
   objects,
   npcs: () => [
-  ],
+    new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4, vx: 0 }),
+    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', sprite: 'citizen6', applyGravity: false, context: 'fgContext' })
+  ]
+    .concat(protesters)
+    .concat(policeForces),
   items: () => [],
   events,
   assets: {
     capitalCity,
-    moon
+    moon,
+    citizen1,
+    citizen2,
+    citizen3,
+    citizen4,
+    citizen5,
+    citizen6,
+    cars,
+    policeForce,
+    policeForceWithShield
   },
   track: () => 'aNewHope',
   update: () => {
@@ -100,3 +169,7 @@ export default {
     // shitcoiner: .01
   }
 }
+
+window.Citizen = Citizen
+window.PoliceForce = PoliceForce
+window.Car = Car

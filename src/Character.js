@@ -343,16 +343,18 @@ class Character extends Agent {
         let dmg = Math.round(this.strength * (1 + Math.random() / 4))
         if (this.id === 'hodlonaut') dmg *= (1 + CTDLGAME.inventory.sats / 100000000)
 
-        enemy.hurt(Math.round(dmg * multiplier), this.direction === 'left' ? 'right' : 'left')
+        enemy.hurt(Math.round(dmg * multiplier), this.direction === 'left' ? 'right' : 'left', this)
       })
   }
 
-  hurt = (dmg, direction) => {
+  hurt = (dmg, direction, agent) => {
     if (/rekt/.test(this.status) || this.protection > 0) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
 
     if (!lostFullPoint) return
+
+    agent.enemy = true
 
     this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
     this.status = 'hurt'

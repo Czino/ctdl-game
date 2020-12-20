@@ -47,12 +47,6 @@ const disappear = new Task({
   }
 })
 
-const runAwayFromClosestEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.runAwayFrom.condition({ other: agent.closestEnemy })
-    ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
-    : FAILURE
-})
-
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -71,7 +65,7 @@ const goToEnemy = new Selector({
 })
 const runAway = new Selector({
   nodes: [
-    runAwayFromClosestEnemy,
+    'runAwayFromClosestEnemy',
     'jump'
  ]
 })
@@ -180,7 +174,7 @@ class Rabbit extends Agent {
     effect: () => {
       if (this.status === 'attack' && this.frame === 2) {
         this.frame = 0
-        this.closestEnemy.hurt(.5, this.direction === 'left' ? 'right' : 'left')
+        this.closestEnemy.hurt(.5, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS
       }
       if (this.status === 'attack') return RUNNING

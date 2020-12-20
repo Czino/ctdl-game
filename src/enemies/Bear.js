@@ -130,7 +130,7 @@ class Bear extends Agent {
       if (this.status === 'attack' && this.frame === 5) {
         playSound('woosh')
         let dmg = Math.round(Math.random() * 2) + 5
-        this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left')
+        this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS
       }
       if (this.status === 'attack') return SUCCESS

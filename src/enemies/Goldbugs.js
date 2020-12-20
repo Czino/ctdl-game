@@ -78,7 +78,7 @@ class Goldbugs extends Agent {
       this.kneels = this.closestEnemy.status === 'rekt'
 
       if (this.status === 'attack' && this.frame === 3) {
-        return this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left')
+        return this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack') return SUCCESS
 

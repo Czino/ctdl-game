@@ -6,9 +6,11 @@ import Andreas from '../enemies/Andreas'
 import Bear from '../enemies/Bear'
 import Brian from '../enemies/Brian'
 import PoliceForce from '../enemies/PoliceForce'
+import Citizen from '../npcs/Citizen'
 import NPC from '../npcs/NPC'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
+import Car from '../objects/Car'
 import Item from '../Item'
 import Wizard from '../npcs/Wizard'
 
@@ -21,10 +23,12 @@ export const gameObjects = {
     Andreas,
     Brian,
     PoliceForce,
+    Citizen,
     Bear,
     Item,
     NPC,
     Doge,
     Elevator,
+    Car,
     Wizard
 }
