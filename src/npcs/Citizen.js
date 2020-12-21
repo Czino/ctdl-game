@@ -382,6 +382,16 @@ class Citizen extends Agent {
       .query(senseBox)
       .filter(obj => obj.id !== this.id)
 
+    this.touchedObjects = CTDLGAME.quadTree
+      .query(this.getBoundingBox())
+      .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
+
+    // enter doors
+    if (this.touchedObjects.length > 0 && Math.random() < 0.075 &&
+      this.touchedObjects.some(obj => /door/.test(obj.id))) {
+      this.remove = true
+    }
+
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
       constants.charContext.rect(senseBox.x, senseBox.y, senseBox.w, senseBox.h)
