@@ -85,10 +85,6 @@ const hostileBehaviour = new Sequence({
 })
 
 
-// TODO hold position while condition is met
-// TODO attack Characters and Citizen while condition is met
-// TODO don't attack but walk around and be vigilant while condition is met
-// TODO attack when provoked
 const tree = new Selector({
   nodes: [
     holdPositionOrder,
@@ -214,14 +210,31 @@ class PoliceForce extends Agent {
     this.applyPhysics()
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt|spawn/.test(this.status)) {
+      const senseBox = {
+        x: this.x - this.senseRadius,
+        y: this.y - this.senseRadius,
+        w: this.w + this.senseRadius * 2,
+        h: this.h + this.senseRadius * 2
+      }
+      this.sensedObjects = CTDLGAME.quadTree
+        .query(senseBox)
+  
       this.sensedEnemies = senseCharacters(this)
+      this.sensedFriends = this.sensedObjects
+        .filter(obj => obj && obj.class === this.class && obj.status !== 'rekt')
 
       // check who is doing "criminal activity"
       this.sensedEnemies
         .filter(enemy => /attack/i.test(enemy.status))
+        .filter(enemy => enemy.id !== this.id)
         .forEach(enemy => this.sensedCriminals.push(enemy.id))
 
-      if (this.sensedCriminals.length > 0) this.sensedCriminals = this.sensedCriminals.filter(unique())
+      if (this.sensedCriminals.length > 0) {
+        this.sensedCriminals = this.sensedCriminals
+        this.sensedFriends.forEach(friend => {
+          friend.sensedCriminals = friend.sensedCriminals.concat(this.sensedCriminals).filter(unique())
+        })
+      }
 
       this.sensedEnemies = this.sensedEnemies.filter(enemy => this.sensedCriminals.indexOf(enemy.id) !== -1)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
