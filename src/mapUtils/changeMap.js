@@ -58,6 +58,7 @@ export const changeMap = async (id, from) => {
   CTDLGAME.katoshi.y = newWorld.map.start[from].y
   CTDLGAME.katoshi.protection = 24
 
+  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
   updateViewport()
 
   initSoundtrack(newWorld.map.track())

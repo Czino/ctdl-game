@@ -45,7 +45,9 @@ const solids = [
   [1, 0],
   [0, 2], [1, 2]
 ].map(tile => tile.toString())
-const spawnPoints = []
+const spawnPoints = [
+  [0, 1], [1, 1]
+].map(tile => tile.toString())
 const lights = {
   '6_8': {
     color: '#ebca09',
@@ -60,7 +62,7 @@ const doors = [
   [113, 124],
   [216, 124],
   [229, 124],
-  [251, 124]
+  [251, 124],
 ]
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
@@ -155,6 +157,18 @@ doors.map(door => {
   }
   events.push(doorEvent)
 })
+
+const goToMtGox = new GameObject('goToMtGox', {
+  x: 1 * tileSize,
+  y: 124 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+goToMtGox.touchEvent = () => {
+  changeMap('mtGox', 'capitalCity')
+}
+events.push(goToMtGox)
+
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'capitalCity', tileSize))
 
 export default {
@@ -195,6 +209,13 @@ export default {
     explosion
   },
   track: () => 'aNewHope',
+  init: () => {
+    if (!CTDLGAME.world.map.state.protestScene) {
+      CTDLGAME.objects
+        .filter(obj => /cotxe|protest|police/.test(obj.id))
+        .map(obj => obj.remove = true)
+    }
+  },
   update: () => {
     let timeOfDay = getTimeOfDay()
     let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
@@ -212,7 +233,8 @@ export default {
   canSetBlocks: false,
   overworld: true,
   spawnRates: {
-    // shitcoiner: .01
+    citizen: .08,
+    policeForce: .001
   }
 }
 

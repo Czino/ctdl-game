@@ -4,6 +4,8 @@ import Rabbit from '../enemies/Rabbit'
 import Goldbugs from '../enemies/Goldbugs'
 import { CTDLGAME } from './CTDLGAME'
 import { collidesWithHeightMap, intersects } from '../geometryUtils'
+import Citizen from '../npcs/Citizen'
+import { random } from '../arrayUtils'
 
 
 /**
@@ -27,7 +29,12 @@ export const spawnAgent = agent => {
     agent.y = highestSpawnPoint.getTrueY
       ? highestSpawnPoint.getTrueY() - agent.getBoundingBox().h - 1
       : highestSpawnPoint.y - agent.getBoundingBox().h - 1
+    agent.y -= agent.getBoundingBox().y - agent.y // normalize for boundingbox
   }
+
+
+  if (!highestSpawnPoint) return
+
   let hasCollided = CTDLGAME.quadTree.query(agent.getBoundingBox())
     .filter(point => point.isSolid && point.id !== agent.id)
     .filter(point => intersects(agent.getBoundingBox(), point.getBoundingBox()))
@@ -74,6 +81,22 @@ export const spawnEnemies = () => {
       'goldbugs-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
+        y: CTDLGAME.viewport.y + constants.HEIGHT,
+        status: 'idle'
+      }
+    ))
+  }
+  if (Math.random() < CTDLGAME.world.map.spawnRates.citizen) {
+    let doors = CTDLGAME.quadTree.query(CTDLGAME.viewport).filter(obj => /door/.test(obj.id))
+    let door = random(doors)
+    spawnAgent(new Citizen(
+      'citizen-' + Math.random(),
+      {
+        x: door && Math.random() < .2
+          ? door.x + Math.round(door.w / 2)
+          : Math.random() < .5
+          ? CTDLGAME.viewport.x - 16
+          : CTDLGAME.viewport.x + constants.WIDTH,
         y: CTDLGAME.viewport.y + constants.HEIGHT,
         status: 'idle'
       }

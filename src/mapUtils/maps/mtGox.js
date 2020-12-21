@@ -88,6 +88,17 @@ goToDogeCoinMine.touchEvent = () => {
 }
 events.push(goToDogeCoinMine)
 
+const goToCapitalCity = new GameObject('goToCapitalCity', {
+  x: 127 * tileSize,
+  y: 118 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+goToCapitalCity.touchEvent = () => {
+  changeMap('capitalCity', 'mtGox')
+}
+events.push(goToCapitalCity)
+
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'mtGox', tileSize))
 
 objects.find(obj => obj.id === 'ramp-1_7-74_115').makeToggle(false)
@@ -96,7 +107,8 @@ export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     forest: { x: 5 * tileSize, y: 124 * tileSize - 4 },
-    dogeCoinMine: { x: 79 * tileSize, y: 114 * tileSize + 1 }
+    dogeCoinMine: { x: 79 * tileSize, y: 114 * tileSize + 1 },
+    capitalCity: { x: 124 * tileSize, y: 118 * tileSize + 1 }
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),

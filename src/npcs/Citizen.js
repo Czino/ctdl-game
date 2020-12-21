@@ -48,6 +48,8 @@ const colorSchemes = {
     [hexToRgb('#666666'), hexToRgb('#425D8C')],
     [hexToRgb('#1b02ab'), hexToRgb('#98befa')],
     [hexToRgb('#0c5e17'), hexToRgb('#12283d')],
+    [hexToRgb('#f3f5d3'), hexToRgb('#080808')],
+    [hexToRgb('#0e2ab3'), hexToRgb('#956ec4')],
   ]
 }
 
@@ -249,6 +251,7 @@ class Citizen extends Agent {
   die = () => {
     this.status = 'rekt'
     this.health = 0
+    this.removeTimer = 64
 
     addTextToQueue(`Citizen got rekt`)
   }
@@ -430,6 +433,9 @@ class Citizen extends Agent {
       this.frame = 0
       if (/action/.test(this.status)) this.status = 'idle'
     }
+
+    if (this.removeTimer) this.removeTimer--
+    if (this.removeTimer === 0) this.remove = true
 
     this.draw()
 
