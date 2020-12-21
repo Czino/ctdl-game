@@ -79,7 +79,7 @@ export const writeMenu = () => {
     CTDLGAME.frame - text.frame
   )
 
-  if (CTDLGAME.lockCharacters) {
+  if (constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active) {
     write(
       constants.menuContext,
       'skip', {

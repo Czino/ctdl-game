@@ -47,6 +47,7 @@ const colorSchemes = {
     [hexToRgb('#1a523a'), hexToRgb('#2c2c2d')],
     [hexToRgb('#666666'), hexToRgb('#425D8C')],
     [hexToRgb('#1b02ab'), hexToRgb('#98befa')],
+    [hexToRgb('#0c5e17'), hexToRgb('#12283d')],
   ]
 }
 
@@ -69,7 +70,7 @@ const lookAtEnemy = new Task({
   run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
 })
 const isUnhappy = new Task({
-  run: () => CTDLGAME.world.map.state.protestScene ? SUCCESS : FAILURE
+  run: agent => agent.isUnhappy ? SUCCESS : FAILURE
 })
 const isProtestLeader = new Task({
   run: agent => agent.id === 'protest-leader' ? SUCCESS : FAILURE
@@ -84,13 +85,6 @@ const talk = new Task({
 
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: 9 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: 9 }) : FAILURE
-})
-
-const survive = new Sequence({
-  nodes: [
-    'hasLowHealth',
-    'runAwayFromClosestEnemy'
- ]
 })
 
 // Selector: runs until one node calls success
@@ -136,7 +130,7 @@ const leadProtest = new Sequence({
 // only "protest while condition is met otherwise just walk around
 const tree = new Selector({
   nodes: [
-    survive,
+    'survive',
     leadProtest,
     protest,
     regularBehaviour
@@ -159,6 +153,7 @@ class Citizen extends Agent {
     this.applyGravity = options.applyGravity ?? true
     this.walkingSpeed = options.walkingSpeed || 3
     this.runningSpeed = options.runningSpeed || Math.round(Math.random() * 2) + 4
+    this.isUnhappy = options.isUnhappy
     this.protection = 0
 
     this.hair = options.hair || random(colorSchemes.hair)
@@ -225,6 +220,11 @@ class Citizen extends Agent {
     }
   }
 
+  stun = direction => {
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
+  }
 
   hurt = (dmg, direction) => {
     if (/hurt|rekt/.test(this.status) || this.protection > 0) return
@@ -250,7 +250,7 @@ class Citizen extends Agent {
     this.status = 'rekt'
     this.health = 0
 
-    addTextToQueue(`${capitalize(this.id)} got rekt`)
+    addTextToQueue(`Citizen got rekt`)
   }
 
   draw = () => {
@@ -398,7 +398,7 @@ class Citizen extends Agent {
       constants.charContext.stroke()
     }
 
-    if (CTDLGAME.world.map.state.protestScene) {
+    if (this.isUnhappy) {
       this.sensedEnemies = this.sensedObjects
         .filter(enemy => enemy.class === 'PoliceForce')
         .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
@@ -451,6 +451,19 @@ class Citizen extends Agent {
         return {
           ...dmg,
           y: dmg.y - 1
+        }
+      })
+    this.says = this.says
+      .filter(say => say.y > -24)
+      .map(say => {
+        write(constants.charContext, say.say, {
+          x: this.getCenter().x - 26,
+          y: this.y + say.y,
+          w: 52
+        }, 'center', false, 5, false, '#FFF')
+        return {
+          ...say,
+          y: say.y - 1
         }
       })
   }

@@ -5,7 +5,6 @@ import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
-import Brian from '../../enemies/Brian'
 import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 import { easeInOut, makeBoundary } from '../../geometryUtils'
@@ -28,6 +27,8 @@ import citizen6 from '../../sprites/citizen-6.png'
 import cars from '../../sprites/cars.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
+import explosion from '../../sprites/explosion.png'
+import constants from '../../constants'
 
 const worldWidth = 256
 const worldHeight = 128
@@ -52,6 +53,15 @@ const lights = {
     radius: 128
   }
 }
+const doors = [
+  [3, 124],
+  [30, 124],
+  [44, 124, character => { CTDLGAME.showShop = character}],
+  [113, 124],
+  [216, 124],
+  [229, 124],
+  [251, 124]
+]
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
 let objects = []
@@ -77,7 +87,8 @@ for (let i = 1; i < 57; i++) {
   protesters.push(
     new Citizen('protester-' + i, {
       x: 155 * tileSize + Math.round(Math.random() * i * 2), y: 124 * tileSize - 6,
-      direction: 'right'
+      direction: 'right',
+      isUnhappy: true
     })
   )
 }
@@ -100,17 +111,50 @@ for (let i = 0; i < 16; i++) {
   )
 }
 const startProtestScene = new GameObject('startProtestScene', {
-  x: 20 * tileSize,
-  y: 121 * tileSize,
+  x: 155 * tileSize,
+  y: 124 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
 startProtestScene.touchEvent = () => {
-  console.log('Protest Scene Initiated')
+  if (!CTDLGAME.world.map.state.protestScene || CTDLGAME.world.map.state.activatedProtestScene) return
+
+  CTDLGAME.world.map.state.activatedProtestScene = true
+  constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
+
+  setTextQueue([])
+
+  addTextToQueue('Protester:\nThe whole world is watching now!')
+  addTextToQueue('Protester:\nIt is a class warfare that\'s\nbeen waged on the poor.')
+  addTextToQueue('Protester:\nThe elites steal our wealth\nthrough inflation.')
+  addTextToQueue('Protester:\nThey are using the financial system to oppress us.')
+  addTextToQueue('Protester:\nThey are killing us with\nour own money!')
+  addTextToQueue('Protester:\nStop the printing press!\nStop bailing out the elites.')
+  addTextToQueue('Protester:\nTo all the people who are\nprotesting the money grab.')
+  addTextToQueue('Protester:\nThere\'s a new system,\nI want to present to you.\nThat is open to everyone.')
+  addTextToQueue('Protester:\nThis system is called Bitcoin. It was created for this\nvery purpose.')
+  addTextToQueue('Protester:\nSo the elites don\'t have\ncontrol over the financial\nsystem anymore.')
+  addTextToQueue('Protester:\nWith Bitcoin the elites\ncannot turn on the printing press to bail out their friends.', () => {
+    CTDLGAME.objects.find(obj => obj.id === 'protest-leader').applyGravity = true
+    CTDLGAME.world.map.state.protestScene = false
+    constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = false
+    addTextToQueue('Protester:\nWe no longer let the elites\nkill us with our own mon...')
+  })
 }
 events.push(startProtestScene)
 
-
+doors.map(door => {
+  const doorEvent = new GameObject(`door-${door[0]}-${door[1]}`, {
+    x: door[0] * tileSize,
+    y: door[1] * tileSize,
+    w: tileSize,
+    h: 3 * tileSize,
+  })
+  doorEvent.backEvent = door[2] ? door[2] : () => {
+    addTextToQueue('You cannot enter here')
+  }
+  events.push(doorEvent)
+})
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'capitalCity', tileSize))
 
 export default {
@@ -119,7 +163,8 @@ export default {
     mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 }
   },
   state: {
-    protestScene: true
+    protestScene: true,
+    activatedProtestScene: false
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -129,7 +174,7 @@ export default {
   objects,
   npcs: () => [
     new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4, vx: 0 }),
-    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, context: 'fgContext' })
+    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, isUnhappy: true})
   ]
     .concat(protesters)
     .concat(policeForces),
@@ -146,7 +191,8 @@ export default {
     citizen6,
     cars,
     policeForce,
-    policeForceWithShield
+    policeForceWithShield,
+    explosion
   },
   track: () => 'aNewHope',
   update: () => {

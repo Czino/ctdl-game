@@ -1,4 +1,4 @@
-import { BehaviorTree, Selector, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
 import Item from './Item'
 import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects } from './geometryUtils'
@@ -42,12 +42,18 @@ BehaviorTree.register('moveTo', new Task({
   run: agent => agent.moveTo.condition() ? agent.moveTo.effect() : FAILURE
 }))
 BehaviorTree.register('hasLowHealth', new Task({
-  run: agent => agent.health / agent.maxHealth < .15 ? SUCCESS : FAILURE
+  run: agent => agent.health / agent.maxHealth < .2 ? SUCCESS : FAILURE
 }))
 BehaviorTree.register('runAwayFromClosestEnemy', new Task({
   run: agent => agent.closestEnemy && agent.runAwayFrom.condition({ other: agent.closestEnemy })
     ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
     : FAILURE
+}))
+BehaviorTree.register('survive', new Sequence({
+  nodes: [
+    'hasLowHealth',
+    'runAwayFromClosestEnemy'
+ ]
 }))
 
 // Selector: runs until one node calls success

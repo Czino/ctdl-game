@@ -85,6 +85,7 @@ const goToFriend = new Sequence({
 
 const tree = new Selector({
   nodes: [
+    'survive',
     attackEnemy,
     goToEnemy,
     goToFriend,

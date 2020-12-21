@@ -146,7 +146,7 @@ class PoliceForce extends Agent {
   }
 
   throwFlashbang = {
-    condition: () => this.closestEnemy && this.flashbangs > 0,
+    condition: () => this.closestEnemy && this.flashbangs > 0 && Math.random() < .3,
     effect: () => {
       if (this.getCenter().x > this.closestEnemy.getCenter().x) {
         this.direction = 'left'
