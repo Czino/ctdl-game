@@ -1,6 +1,7 @@
 import hodlonaut from './hodlonaut'
 import katoshi from './katoshi'
 import doge from './doge'
+import bagholder from './bagholder'
 import policeForce from './policeForce'
 import policeForceWithShield from './policeForceWithShield'
 import citizen from './citizen'
@@ -16,6 +17,7 @@ export default {
     hodlonaut,
     katoshi,
     doge,
+    bagholder,
     policeForce,
     policeForceWithShield,
     citizen,

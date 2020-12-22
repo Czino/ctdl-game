@@ -50,6 +50,7 @@ const colorSchemes = {
     [hexToRgb('#0c5e17'), hexToRgb('#12283d')],
     [hexToRgb('#f3f5d3'), hexToRgb('#080808')],
     [hexToRgb('#0e2ab3'), hexToRgb('#956ec4')],
+    [hexToRgb('#3f888f'), hexToRgb('#e6e6fa')],
   ]
 }
 
