@@ -93,7 +93,7 @@ const moveToClosestEnemy = new Task({
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
-    'moveRandom',
+    'moveToPointX',
     'idle'
   ]
 })
@@ -164,6 +164,8 @@ class Citizen extends Agent {
     this.clothes = options.clothes || random(colorSchemes.clothes)
     this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
     this.speed = Math.round(Math.random() * 3) * constants.FRAMERATE
+    this.goal = options.goal
+    if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
   class = 'Citizen'

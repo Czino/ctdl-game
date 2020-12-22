@@ -27,8 +27,19 @@ BehaviorTree.register('moveRight', new Task({
 BehaviorTree.register('moveRandom', new Task({
   run: agent => {
     // if already moving, continue journey
-    if (agent.isMoving === 'left' && Math.random() < .8) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
-    if (agent.isMoving === 'right' && Math.random() < .8) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    if (agent.isMoving === 'left' && Math.random() < .95) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    if (agent.isMoving === 'right' && Math.random() < .95) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    agent.isMoving = false
+    return agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
+  }
+}))
+BehaviorTree.register('moveToPointX', new Task({
+  run: agent => {
+    if (!agent.goal && Math.random() < .05) agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
+    if (agent.x % agent.goal < 5) agent.goal = null
+    if (!agent.goal) return FAILURE
+    if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    if (agent.x > agent.goal) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
     return agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
   }
 }))
