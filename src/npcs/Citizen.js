@@ -395,6 +395,10 @@ class Citizen extends Agent {
       this.touchedObjects.some(obj => /door/.test(obj.id))) {
       this.remove = true
     }
+    // out of frame out of mind
+    if (!this.isUnhappy && Math.random() < 0.075 && !intersects(CTDLGAME.viewport, this.getBoundingBox())) {
+      this.remove = true
+    }
 
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
@@ -480,23 +484,30 @@ class Citizen extends Agent {
   }
 
   thingsToSay = [
-    ['Citizen:\nWe need open blockchains'],
-    ['Citizen:\nEthereum\'s technology\nis very interesting'],
-    ['Citizen:\nI can see a few interesting technologies across an\nentire ecosystem'],
-    ['Citizen:\nI am not a maximalist'],
-    [
-      'Citizen:\nI don\'t see these systems\nas competing.',
-      'Citizen:\nThey serve different niches, in my opinion.'
-    ],
-    [
-      'Citizen:\nI want to calculate the\nprecise supply of\nfucks to give.',
-      'Citizen:\nI think it might require\na script.'
-    ],
-    ['Citizen:\nImmutability is not a waste of energy. Christmas lights are a waste of energy']
+    ['Citizen:\n...cheesy vagina...'],
+    ['Citizen:\nYo stupid malaka!'],
+    ['Citizen:\nwtf..., like actually wtf'],
+    ['Citizen:\n7.7% are mentally\nchallenged...'],
+    ['Citizen:\nDamn, they asked to call⁄nthem back, we should do it'],
+    ['Citizen:\nJesus, WHAT ELSE ARE THEY GONNA THROW AT US!'],
+    ['Citizen:\nMaybe we don\'t go shoppin after all?'],
+    ['Citizen:\nIt\'s super small btw...'],
+    ['Citizen:\nStarts with a six ends with a point one five.'],
+    ['Citizen:\nOf course they were fucked, lol'],
+    ['Citizen:\nI love how religions "know"\nanything that\'s right\nor wrong.'],
+    ['Citizen:\nDamn son.'],
+    ['Citizen:\n...Pouring pints of orange Guinness for some dry shites who just kept saying...'],
+    ['Citizen:\nSi no me crees o no lo\nentiendes, no tengo tiempo para tratar de convencerte...'],
+    ['Citizen:\nA truck made for\nfuuuuuuuckkkkkinggg...'],
+    ['Citizen:\nI smell like rust.'],
+    ['Citizen:\nWould you rather... Pee on a bum or be peed on\nby a bum?'],
+    ['Citizen:\nMaybe smells funny at my\nplace...'],
+    ['Citizen:\nI\'m so tired'],
+    ['Citizen:\n...and unfortunately no sex...']
   ]
 
-  select = () => {
-    if (this.talks) return
+  touchEvent = () => {
+    if (this.talks || Math.random() > .001) return
     this.talks = true
 
     let whatToSay = random(this.thingsToSay)

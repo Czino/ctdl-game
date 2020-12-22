@@ -233,8 +233,8 @@ export default {
   canSetBlocks: false,
   overworld: true,
   spawnRates: {
-    citizen: .08,
-    policeForce: .001
+    citizen: .06,
+    policeForce: .002
   }
 }
 
