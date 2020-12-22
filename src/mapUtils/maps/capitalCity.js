@@ -187,7 +187,7 @@ export default {
   lightSources,
   objects,
   npcs: () => [
-    new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4, vx: 0 }),
+    new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4 - 25, vx: 0 }),
     new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, isUnhappy: true})
   ]
     .concat(protesters)
@@ -233,8 +233,9 @@ export default {
   canSetBlocks: false,
   overworld: true,
   spawnRates: {
-    citizen: .06,
-    policeForce: .002
+    citizen: .08,
+    car: 0.06,
+    policeForce: .01
   }
 }
 

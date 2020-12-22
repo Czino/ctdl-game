@@ -6,6 +6,8 @@ import { CTDLGAME } from './CTDLGAME'
 import { collidesWithHeightMap, intersects } from '../geometryUtils'
 import Citizen from '../npcs/Citizen'
 import { random } from '../arrayUtils'
+import Car from '../objects/Car'
+import PoliceForce from '../enemies/PoliceForce'
 
 
 /**
@@ -99,6 +101,35 @@ export const spawnEnemies = () => {
           : CTDLGAME.viewport.x + constants.WIDTH,
         y: CTDLGAME.viewport.y + constants.HEIGHT,
         status: 'idle'
+      }
+    ))
+  }
+  if (Math.random() < CTDLGAME.world.map.spawnRates.policeForce) {
+    let doors = CTDLGAME.quadTree.query(CTDLGAME.viewport).filter(obj => /door/.test(obj.id))
+    let door = random(doors)
+    spawnAgent(new PoliceForce(
+      'policeForce-' + Math.random(),
+      {
+        x: door && Math.random() < .2
+          ? door.x + Math.round(door.w / 2)
+          : Math.random() < .5
+          ? CTDLGAME.viewport.x - 16
+          : CTDLGAME.viewport.x + constants.WIDTH,
+        y: CTDLGAME.viewport.y + constants.HEIGHT,
+        status: 'idle',
+        hasShield: false,
+        flashbangs: 0
+      }
+    ))
+  }
+  if (Math.random() < CTDLGAME.world.map.spawnRates.car && !CTDLGAME.world.map.state.protestScene) {
+    spawnAgent(new Car(
+      'car-' + Math.random(),
+      {
+        x: Math.random() < .5 ? CTDLGAME.viewport.x - 75 : CTDLGAME.viewport.x + constants.WIDTH,
+        y: CTDLGAME.viewport.y + constants.HEIGHT,
+        offsetY: 6,
+        vx: Math.round((Math.random() - .5) * 5) * 4
       }
     ))
   }

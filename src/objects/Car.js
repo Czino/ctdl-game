@@ -2,6 +2,7 @@ import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import spriteData from '../sprites/cars'
 import { random } from '../arrayUtils'
+import { intersects } from '../geometryUtils'
 
 const types = [
   'beetleWhite',
@@ -18,6 +19,7 @@ class Car {
     this.id = id
     this.x = options.x
     this.y = options.y
+    this.offsetY = options.offsetY || 0
     this.vx = options.vx || 0
     this.type = options.type || random(types)
     this.context = options.context || 'fgContext'
@@ -32,11 +34,16 @@ class Car {
     constants[this.context].drawImage(
       CTDLGAME.assets.cars,
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,
-      this.x, this.y - this.h, this.spriteData.w, this.spriteData.h
+      this.x, this.y + this.offsetY, this.spriteData.w, this.spriteData.h
     )
   }
 
   update = () => {
+    // out of frame out of mind
+    if (Math.random() < 0.075 && !intersects(CTDLGAME.viewport, this.getBoundingBox())) {
+      this.remove = true
+    }
+
     this.x += this.vx
 
     if (this.x < -128 || this.x > CTDLGAME.world.w + 128) this.remove = true

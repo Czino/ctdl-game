@@ -20,7 +20,7 @@ export default {
     },
     ferrari: {
       x: 0,
-      y: 60,
+      y: 69,
       w: 74,
       h: 21
     },
@@ -64,7 +64,7 @@ export default {
     },
     ferrari: {
       x: 75 + 0,
-      y: 60,
+      y: 69,
       w: 74,
       h: 21
     },
