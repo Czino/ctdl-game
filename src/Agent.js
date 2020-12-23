@@ -268,6 +268,7 @@ class Agent {
 
   die = () => {
     this.status = 'rekt'
+    this.frame = 0
 
     if (this.usd) CTDLGAME.inventory.usd += this.usd
     if (this.item) {
@@ -300,7 +301,7 @@ class Agent {
     this.h = data.h
 
     constants.gameContext.globalAlpha = data.opacity ?? 1
-    if (this.protection > 0) {
+    if (this.protection > 0 && this.status !== 'rekt') {
       this.protection--
       constants.gameContext.globalAlpha = this.protection % 2
     }

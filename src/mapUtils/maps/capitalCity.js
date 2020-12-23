@@ -1,5 +1,6 @@
 import stage from './stage/capitalCity'
 
+import constants from '../../constants'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
@@ -28,7 +29,6 @@ import cars from '../../sprites/cars.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
 import explosion from '../../sprites/explosion.png'
-import constants from '../../constants'
 
 const worldWidth = 256
 const worldHeight = 128
@@ -238,7 +238,3 @@ export default {
     policeForce: .01
   }
 }
-
-window.Citizen = Citizen
-window.PoliceForce = PoliceForce
-window.Car = Car

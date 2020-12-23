@@ -3,7 +3,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { capitalize, hexToRgb } from '../stringUtils'
+import { hexToRgb } from '../stringUtils'
 import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
@@ -54,9 +54,6 @@ const colorSchemes = {
   ]
 }
 
-const doesNotTouchEnemy = new Task({
-  run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const touchesEnemy = new Task({
   run: agent => {
     if (!agent.closestEnemy) return FAILURE
@@ -85,11 +82,6 @@ const talk = new Task({
   }
 })
 
-
-const moveToClosestEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: 9 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: 9 }) : FAILURE
-})
-
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
@@ -97,20 +89,6 @@ const regularBehaviour = new Selector({
     'idle'
   ]
 })
-
-// Sequence: runs each node until fail
-const goToEnemy = new Sequence({
-  nodes: [
-    'seesEnemy',
-    doesNotTouchEnemy,
-    new Selector({
-      nodes: [
-        moveToClosestEnemy
-      ]
-    })
-  ]
-})
-
 
 // Sequence: runs each node until fail
 const protest = new Sequence({

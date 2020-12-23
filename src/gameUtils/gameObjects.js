@@ -1,5 +1,6 @@
 import Block from '../Block'
 import Shitcoiner from '../enemies/Shitcoiner'
+import Bagholder from '../enemies/Bagholder'
 import Rabbit from '../enemies/Rabbit'
 import Goldbugs from '../enemies/Goldbugs'
 import Andreas from '../enemies/Andreas'
@@ -18,6 +19,7 @@ import Wizard from '../npcs/Wizard'
 export const gameObjects = {
     Block,
     Shitcoiner,
+    Bagholder,
     Rabbit,
     Goldbugs,
     Andreas,
