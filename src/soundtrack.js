@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb, PingPongDelay } from 'tone'
+import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb, PingPongDelay, Oscillator } from 'tone'
 
 // TODO add "Nomen a solempnibus II" ?
 // TODO add "Procurans odium II" ?
@@ -45,12 +45,14 @@ const SNDTRCK = {
   constructor: {
     AutoFilter,
     Gain,
-    Reverb
+    Reverb,
+    Oscillator
   },
   devices: {
     gain: new Gain(1).toDestination(),
     reverb: null,
     delay: null,
+    lfo: null,
     autoFilter: null,
     autoFilter2: null,
     pulseSynth: new Synth(pulseOptions),
@@ -142,6 +144,19 @@ export const initSoundtrack = async id => {
     })
   } else if (SNDTRCK.devices.delay) {
     SNDTRCK.devices.delay.dispose()
+  }
+  if (SNDTRCK.song.lfo) {
+    SNDTRCK.devices.lfo = new Oscillator({
+      frequency: 7,
+      volume: 10,
+      type: 'sine'
+    })
+    SNDTRCK.song.lfo.map(synth => {
+      SNDTRCK.devices.lfo.connect(SNDTRCK.devices[synth].frequency)
+    })
+    SNDTRCK.devices.lfo.start()
+  } else if (SNDTRCK.devices.lfo) {
+    SNDTRCK.devices.lfo.dispose()
   }
 
   if (SNDTRCK.song.init) SNDTRCK.song.init(SNDTRCK)
