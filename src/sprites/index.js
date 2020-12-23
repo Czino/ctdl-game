@@ -5,6 +5,7 @@ import bagholder from './bagholder'
 import policeForce from './policeForce'
 import policeForceWithShield from './policeForceWithShield'
 import citizen from './citizen'
+import vlad from './vlad'
 import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
@@ -21,6 +22,7 @@ export default {
     policeForce,
     policeForceWithShield,
     citizen,
+    vlad,
     shitcoiner,
     brian,
     bear,

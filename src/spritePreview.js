@@ -9,6 +9,10 @@ const $sprites = document.getElementById('ctdl-game-sprites')
 const $direction = document.getElementById('ctdl-game-direction')
 const $status = document.getElementById('ctdl-game-status')
 
+if (window.location.hash) {
+  $status.value = window.location.hash.replace('#', '')
+}
+
 let sprite
 let spriteData
 let direction = $direction.value
@@ -86,4 +90,7 @@ function tick() {
 
 $sprites.addEventListener('change', e => loadSprite(e.target.value))
 $direction.addEventListener('change', e => direction = e.target.value)
-$status.addEventListener('change', e => status = e.target.value)
+$status.addEventListener('change', e => {
+  status = e.target.value
+  window.location.hash = status
+})
