@@ -85,6 +85,7 @@ const talk = new Task({
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
+    isUnhappy,
     'moveToPointX',
     'idle'
   ]
@@ -127,7 +128,7 @@ class Citizen extends Agent {
     this.health = options.health ?? this.maxHealth
     this.strength = 1
     this.context = options.context || (Math.random() < .5 ? 'bgContext' : 'charContext')
-    this.attackRange = options.attackRange ?? Math.ceil(Math.random() * 70)
+    this.attackRange = options.attackRange ?? Math.ceil(Math.random() * 70) + 70
     this.hasSign = options.hasSign ?? Math.random() < .1
     this.films = options.films ?? Math.random() < .1
     this.senseRadius = this.attackRange
@@ -468,8 +469,8 @@ class Citizen extends Agent {
     ['Citizen:\nYo stupid malaka!'],
     ['Citizen:\nwtf..., like actually wtf'],
     ['Citizen:\n7.7% are mentally\nchallenged...'],
-    ['Citizen:\nDamn, they asked to call⁄nthem back, we should do it'],
-    ['Citizen:\nJesus, WHAT ELSE ARE THEY GONNA THROW AT US!'],
+    ['Citizen:\nDamn, they asked to call\nthem back, we should do it'],
+    ['Citizen:\nJesus, WHAT ELSE ARE THEY\nGONNA THROW AT US!'],
     ['Citizen:\nMaybe we don\'t go shoppin after all?'],
     ['Citizen:\nIt\'s super small btw...'],
     ['Citizen:\nStarts with a six ends with a point one five.'],

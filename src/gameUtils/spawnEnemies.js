@@ -39,7 +39,10 @@ export const spawnAgent = agent => {
   if (!highestSpawnPoint) return
 
   let hasCollided = CTDLGAME.quadTree.query(agent.getBoundingBox())
-    .filter(point => point.isSolid && point.id !== agent.id)
+    .filter(point => point.isSolid && point.id !== agent.id).concat(
+      CTDLGAME.quadTree.query(agent.getBoundingBox())
+      .filter(point => point.class === agent.class && point.id !== agent.id)
+    )
     .filter(point => intersects(agent.getBoundingBox(), point.getBoundingBox()))
     .some(point => {
       if (!point.getHeightMap) return true
@@ -117,7 +120,7 @@ export const spawnEnemies = () => {
       }
     ))
   }
-  if (Math.random() < CTDLGAME.world.map.spawnRates.policeForce) {
+  if (Math.random() < CTDLGAME.world.map.spawnRates.policeForce && !CTDLGAME.world.map.state.protestScene) {
     let doors = CTDLGAME.quadTree.query(CTDLGAME.viewport).filter(obj => /door/.test(obj.id))
     let door = random(doors)
     spawnAgent(new PoliceForce(

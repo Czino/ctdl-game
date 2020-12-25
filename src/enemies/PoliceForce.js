@@ -64,12 +64,6 @@ const goToEnemy = new Selector({
   ]
 })
 
-const vigilantBehaviour = new Sequence({
-  nodes: [
-    hostileBehaviour
-  ]
-})
-
 const hostileBehaviour = new Sequence({
   nodes: [
     'seesEnemy',
@@ -83,7 +77,6 @@ const hostileBehaviour = new Sequence({
     })
   ]
 })
-
 
 const tree = new Selector({
   nodes: [
@@ -101,7 +94,7 @@ class PoliceForce extends Agent {
     this.usd = options.usd ?? Math.round(Math.random() * 400 + 1)
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = Math.round(Math.random() * 50) + 30
-    this.flashbangs = options.flashbangs || (Math.random() > .8 ? 1 : 0)
+    this.flashbangs = options.flashbangs ?? (Math.random() > .8 ? 1 : 0)
     this.enemy = options.enemy
     this.sensedCriminals = options.sensedCriminals || []
     this.hasShield = options.hasShield ?? (Math.random() > .8)
@@ -122,6 +115,7 @@ class PoliceForce extends Agent {
   attack = {
     condition: () => this.closestEnemy && intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox()),
     effect: () => {
+      if (!this.enemy) this.enemy = true
       if (this.getCenter().x > this.closestEnemy.getCenter().x) {
         this.direction = 'left'
       } else {
@@ -195,6 +189,8 @@ class PoliceForce extends Agent {
 
   update = () => {
     if (!this.sprite) this.sprite = CTDLGAME.assets[this.hasShield ? 'policeForceWithShield' : 'policeForce']
+    this.isSolid = this.hasShield && CTDLGAME.world.map.state.protestScene
+
     if (CTDLGAME.lockCharacters) {
       let data = this.spriteData[this.direction][this.status][0]
       constants.charContext.globalAlpha = 1

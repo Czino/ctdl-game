@@ -96,7 +96,7 @@ for (let i = 1; i < 57; i++) {
 }
 for (let i = 0; i < 6; i++) {
   policeForces.push(
-    new PoliceForce('policeForceWithShield-' + i, {
+    new PoliceForce('demoPoliceForceWithShield-' + i, {
       x: 170 * tileSize + i * 4 + Math.round(Math.random()), y: 124 * tileSize - 6 + Math.round(Math.random() * 2),
       direction: 'left',
       hasShield: true
@@ -105,7 +105,7 @@ for (let i = 0; i < 6; i++) {
 }
 for (let i = 0; i < 16; i++) {
   policeForces.push(
-    new PoliceForce('policeForce-' + i, {
+    new PoliceForce('demoPoliceForce-' + i, {
       x: 170 * tileSize + 24 + i * 4 + Math.round(Math.random()), y: 124 * tileSize - 6 + Math.round(Math.random() * 2),
       direction: 'left',
       hasShield: false
@@ -119,9 +119,12 @@ const startProtestScene = new GameObject('startProtestScene', {
   h: 3 * tileSize,
 })
 startProtestScene.touchEvent = () => {
-  if (!CTDLGAME.world.map.state.protestScene || CTDLGAME.world.map.state.activatedProtestScene) return
+  if (!CTDLGAME.world.map.state.protestScene || CTDLGAME.world.map.state.protestSceneActivated) return
+  activateProtestScene()
+}
 
-  CTDLGAME.world.map.state.activatedProtestScene = true
+function activateProtestScene () {
+  CTDLGAME.world.map.state.protestSceneActivated = true
   constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
 
   setTextQueue([])
@@ -138,6 +141,7 @@ startProtestScene.touchEvent = () => {
   addTextToQueue('Protester:\nSo the elites don\'t have\ncontrol over the financial\nsystem anymore.')
   addTextToQueue('Protester:\nWith Bitcoin the elites\ncannot turn on the printing press to bail out their friends.', () => {
     CTDLGAME.objects.find(obj => obj.id === 'protest-leader').applyGravity = true
+    CTDLGAME.world.map.state.protestSceneEscalated = true
     CTDLGAME.world.map.state.protestScene = false
     constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = false
     addTextToQueue('Protester:\nWe no longer let the elites\nkill us with our own mon...')
@@ -178,7 +182,7 @@ export default {
   },
   state: {
     protestScene: true,
-    activatedProtestScene: false
+    protestSceneActivated: false
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -212,8 +216,12 @@ export default {
   init: () => {
     if (!CTDLGAME.world.map.state.protestScene) {
       CTDLGAME.objects
-        .filter(obj => /cotxe|protest|police/.test(obj.id))
+        .filter(obj => /cotxe|protest|demoPolice/.test(obj.id))
         .map(obj => obj.remove = true)
+    }
+
+    if (CTDLGAME.world.map.state.protestSceneActivated && !CTDLGAME.world.map.state.protestSceneEscalated) {
+      activateProtestScene()
     }
   },
   update: () => {
