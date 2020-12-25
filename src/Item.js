@@ -55,6 +55,15 @@ export default function(id, options) {
       character.maxHealth += Math.round(Math.random() * 3 + 1)
       character.heal(Math.round(character.maxHealth / 2))
       playSound('honeyBadger')
+    } else if (this.id === 'phoenix') {
+      if (CTDLGAME.inventory.phoenix >= 2) {
+        this.remove = false
+        this.collected = false
+      } else {
+        addTextToQueue('Like the Phoenix, you\'ll rise\nfrom the ashes.')
+        CTDLGAME.inventory.phoenix++
+        playSound('honeyBadger')
+      }
     }
   }
   this.update = () => {

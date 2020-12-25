@@ -378,6 +378,13 @@ class Character extends Agent {
   }
 
   die = () => {
+    if (CTDLGAME.inventory.phoenix) {
+      CTDLGAME.inventory.phoenix--
+      this.health = 9
+      addTextToQueue('The fire is still strong\nwithin you.')
+      return
+    }
+
     this.status = 'rekt'
     this.health = 0
     this.rektIn = CTDLGAME.world.id
@@ -508,6 +515,16 @@ class Character extends Agent {
     this.touchedObjects
       .filter(obj => obj.touch)
       .forEach(obj => obj.touch(this))
+
+    if (CTDLGAME.inventory.phoenix > 0) {
+      let rektFriend = this.touchedObjects
+        .find(friend => friend.class === 'Character' && friend.id !== this.id && friend.status === 'rekt')
+      if (rektFriend) {
+        addTextToQueue('You rise again like the\nPhoenix from the ashes!')
+        rektFriend.revive(9)
+        CTDLGAME.inventory.phoenix--
+      }
+    }
 
     // sense backEvents
     if (CTDLGAME.touchScreen && this.selected) {

@@ -5,5 +5,6 @@
 export const getEmptyInventory = () => ({
   usd: 0,
   sats: 0,
-  blocks: []
+  blocks: [],
+  phoenix: 0
 })

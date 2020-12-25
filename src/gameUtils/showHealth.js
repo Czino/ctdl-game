@@ -16,6 +16,15 @@ export const showHealth = () => {
   }
   const chars = [CTDLGAME.hodlonaut, CTDLGAME.katoshi]
 
+  for (let i = 0; i < CTDLGAME.inventory.phoenix; i++) {
+    drawIcon(
+      constants.menuContext,
+      'phoenix', {
+        x: CTDLGAME.viewport.x + constants.WIDTH - 51,
+        y: pos.y + 3 + i * 10 + (CTDLGAME.inventory.phoenix === 1 ? 5 : 0)
+      }
+    )
+  }
   chars.map((character, i) => {
     drawIcon(
       constants.menuContext,
