@@ -109,6 +109,7 @@ class Character extends Agent {
     this.walkingSpeed = options.walkingSpeed || 3
     this.duckSpeed = options.duckSpeed || 2
     this.protection = 0
+    this.rektIn = options.rektIn
   }
 
   class = 'Character'
@@ -379,6 +380,7 @@ class Character extends Agent {
   die = () => {
     this.status = 'rekt'
     this.health = 0
+    this.rektIn = CTDLGAME.world.id
 
     this.selected = false
     if (this.id === 'hodlonaut') {
@@ -388,6 +390,14 @@ class Character extends Agent {
     }
 
     addTextToQueue(`${capitalize(this.id)} got rekt`)
+  }
+
+  revive = (heal = 1) => {
+    if (this.status !== 'rekt') return
+    this.y -= 21
+    this.status = 'idle'
+    this.rektIn = null
+    this.health += heal
   }
 
   senseControls = () => {
@@ -449,6 +459,7 @@ class Character extends Agent {
   }
 
   update = () => {
+    if (this.status === 'rekt' && this.rektIn !== CTDLGAME.world.id) return
     if (CTDLGAME.lockCharacters) {
       this.frame = 0
 

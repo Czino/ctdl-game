@@ -44,6 +44,7 @@ export const loadGame = async () => {
     .map(object => CTDLGAME.objects.push(object))
   }
   if (worldState) CTDLGAME.world.map.state = worldState;
+  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
 
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory

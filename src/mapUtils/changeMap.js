@@ -51,12 +51,16 @@ export const changeMap = async (id, from) => {
     .filter(obj => obj.applyGravity)
     .map(obj => obj.vy = -2)
 
-  CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 3
-  CTDLGAME.hodlonaut.y = newWorld.map.start[from].y
-  CTDLGAME.hodlonaut.protection = 24
-  CTDLGAME.katoshi.x = newWorld.map.start[from].x + 3
-  CTDLGAME.katoshi.y = newWorld.map.start[from].y
-  CTDLGAME.katoshi.protection = 24
+  if (CTDLGAME.hodlonaut.health > 0) {
+    CTDLGAME.hodlonaut.x = newWorld.map.start[from].x - 3
+    CTDLGAME.hodlonaut.y = newWorld.map.start[from].y
+    CTDLGAME.hodlonaut.protection = 24
+  }
+  if (CTDLGAME.katoshi.health > 0) {
+    CTDLGAME.katoshi.x = newWorld.map.start[from].x + 3
+    CTDLGAME.katoshi.y = newWorld.map.start[from].y
+    CTDLGAME.katoshi.protection = 24
+  }
 
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
   updateViewport()

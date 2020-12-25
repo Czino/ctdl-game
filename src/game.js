@@ -49,7 +49,6 @@ import Item from './Item'
 // TODO when one char dies make the other cry?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
 // TODO add game tutorial of some sorts
-// TODO rekt characters should stay in the map they got rekt
 // TODO add inventory UI
 // TODO add exchange
 // TODO add rabbit hole stage (many white bunnies, some turn to demons and atec)
@@ -285,20 +284,12 @@ function tick() {
 
 // Developer cheat codes
 window.heal = () => {
-  CTDLGAME.hodlonaut.heal(5)
-  CTDLGAME.katoshi.heal(5)
+  CTDLGAME.hodlonaut.heal(10)
+  CTDLGAME.katoshi.heal(10)
 }
 window.revive = () => {
-  CTDLGAME.hodlonaut.heal(5)
-  CTDLGAME.katoshi.heal(5)
-  if (CTDLGAME.hodlonaut.status === 'rekt') {
-    CTDLGAME.hodlonaut.y -= 21
-    CTDLGAME.hodlonaut.status = 'idle'
-  }
-  if (CTDLGAME.katoshi.status === 'rekt') {
-    CTDLGAME.katoshi.y -= 21
-    CTDLGAME.katoshi.status = 'idle'
-  }
+  CTDLGAME.hodlonaut.revive(21)
+  CTDLGAME.katoshi.revive(21)
 }
 window.save = () => {
   saveGame()
