@@ -1,6 +1,7 @@
 
 import building from '../sprites/building.png'
 import city from '../sprites/city.png'
+import conbase from '../sprites/conbase.png'
 import forest from '../sprites/forest.png'
 import rabbitHole from '../sprites/rabbitHole.png'
 import endOfTheRabbitHole from '../sprites/endOfTheRabbitHole.png'
@@ -15,6 +16,7 @@ import miningFarm from '../sprites/miningFarm.png'
 export const assets = {
   building,
   city,
+  conbase,
   forest,
   rabbitHole,
   endOfTheRabbitHole,

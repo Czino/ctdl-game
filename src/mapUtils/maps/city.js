@@ -5,7 +5,6 @@ import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import { CTDLGAME } from '../../gameUtils'
-import Brian from '../../enemies/Brian'
 import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 import { makeBoundary } from '../../geometryUtils'
@@ -15,7 +14,6 @@ import city from '../../sprites/city.png'
 import wizard from '../../sprites/wizard.png'
 import explosion from '../../sprites/explosion.png'
 import shitcoiner from '../../sprites/shitcoiner.png'
-import brian from '../../sprites/brian.png'
 import moon from '../../sprites/moon.png'
 
 const worldWidth = 128
@@ -99,25 +97,22 @@ goToBuilding2.backEvent = () => {
   addTextToQueue('Something seems to be\nblocking the entry\nto the building')
 }
 
-const goToForest = new GameObject('goToForest', {
+const gotToConbase = new GameObject('gotToConbase', {
   x: 126 * tileSize,
   y: 122 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
 
-goToForest.touchEvent = () => {
-  const canGoToForest = !CTDLGAME.objects.find(obj => obj.id === 'brian' && obj.status !== 'rekt')
-  if (canGoToForest) {
-    changeMap('forest', 'city')
-  }
+gotToConbase.touchEvent = () => {
+  changeMap('conbase', 'city')
 }
 
 
 events.push(goToShop)
 events.push(goToBuilding1)
 events.push(goToBuilding2)
-events.push(goToForest)
+events.push(gotToConbase)
 
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'city', tileSize))
 
@@ -133,13 +128,6 @@ export default {
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
   objects,
   npcs: () => [
-    new Brian(
-      'brian',
-      {
-        x: 123 * tileSize,
-        y: 122 * tileSize
-      }
-    ),
     new NPC(
       'mirco',
       {
@@ -169,13 +157,12 @@ export default {
     wizard,
     explosion,
     shitcoiner,
-    brian,
     moon
   },
   track: () => 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: false,
   overworld: true,
   spawnRates: {
-    // shitcoiner: .01
+    shitcoiner: .005
   }
 }

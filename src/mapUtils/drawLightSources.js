@@ -7,8 +7,9 @@ import { CTDLGAME } from '../gameUtils'
  * @param {String} mapAsset the asset for the map
  * @param {Number} tileSize size of tiles
  * @param {Number} [intensity] light intensity
+ * @param {Boolean} [glows] if true draw object bright
  */
-export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1) => {
+export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1, glows = true) => {
   if (!lightSources) return
   constants.skyContext.globalAlpha = .0125 * intensity
   constants.skyContext.globalCompositeOperation = 'source-atop'
@@ -68,13 +69,15 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
     context.globalCompositeOperation = 'source-over'
   })
 
-  lightSources.map(lightSource => {
-    constants.bgContext.drawImage(
-      CTDLGAME.assets[mapAsset],
-      lightSource.tile[0] * tileSize, lightSource.tile[1] * tileSize, tileSize, tileSize,
-      lightSource.x, lightSource.y + 2, tileSize, tileSize
-    )
-  })
+  if (glows) {
+    lightSources.map(lightSource => {
+      constants.bgContext.drawImage(
+        CTDLGAME.assets[mapAsset],
+        lightSource.tile[0] * tileSize, lightSource.tile[1] * tileSize, tileSize, tileSize,
+        lightSource.x, lightSource.y + 2, tileSize, tileSize
+      )
+    })
+  }
   CTDLGAME.objects
     .filter(object => object.glows)
     .map(object => object.draw())

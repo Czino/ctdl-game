@@ -3,10 +3,7 @@ import stage from './stage/forest'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
-import { random } from '../../arrayUtils'
 import GameObject from '../../GameObject'
-import constants from '../../constants'
-import Ramp from '../../Ramp'
 import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../enemies/Bear'
 import NPC from '../../npcs/NPC'
@@ -137,7 +134,7 @@ events.push(goToMtGox)
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    city: { x: 4 * tileSize, y: 124 * tileSize - 6 },
+    conbase: { x: 4 * tileSize, y: 124 * tileSize - 6 },
     mtGox: { x: 251 * tileSize, y: 96 * tileSize }
   },
   state: {},
@@ -188,7 +185,7 @@ export default {
   track: () => 'santaMaria',
   overworld: true,
   spawnRates: {
-    // rabbit: .005,
-    // goldbugs: .005
+    rabbit: .005,
+    goldbugs: .005
   }
 }
