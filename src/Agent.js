@@ -262,8 +262,14 @@ class Agent {
 
   heal = heal => {
     if (/rekt/.test(this.status)) return
-    this.heals.push({y: -8, heal})
-    this.health = Math.min(this.health + heal, this.maxHealth)
+    let maxHeal = this.maxHealth - this.health
+    if (maxHeal < heal) heal = maxHeal
+
+    if (heal) {
+      this.heals.push({y: -8, heal})
+      this.health = Math.min(this.health + heal, this.maxHealth)
+    }
+    return heal > 0
   }
 
   die = () => {

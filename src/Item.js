@@ -28,19 +28,34 @@ export default function(id, options) {
     this.collected = true
     
     if (this.id === 'pizza') {
-      character.heal(2)
-      playSound('item')
+      if (character.heal(2)) {
+        playSound('item')
+      } else {
+        this.remove = false
+        this.collected = false
+      }
     } else if (this.id === 'taco') {
-      character.heal(5)
-      playSound('item')
+      if (character.heal(5)) {
+        playSound('item')
+      } else {
+        this.remove = false
+        this.collected = false
+      }
+    } else if (this.id === 'steak') {
+      if (character.heal(21000000)) {
+        playSound('item')
+      } else {
+        this.remove = false
+        this.collected = false
+      }
     } else if (this.id === 'opendime') {
-      let sats = Math.round(Math.random() * 10000)
+      let sats = Math.round(Math.random() * 13370)
       addTextToQueue(`You found an opendime with\nś${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
       playSound('item')
     } else if (this.id === 'coldcard') {
-      let sats = Math.round(Math.random() * 100000)
+      let sats = Math.round(Math.random() * 615000)
       addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
