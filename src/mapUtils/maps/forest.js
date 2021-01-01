@@ -77,17 +77,17 @@ makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'forest', tileSize))
 
-const gotToCity = new GameObject('gotToCity', {
+const goToConbase = new GameObject('goToConbase', {
   x: 1 * tileSize,
   y: 124 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
 
-gotToCity.touchEvent = () => {
-  changeMap('city', 'forest')
+goToConbase.touchEvent = () => {
+  changeMap('conbase', 'forest')
 }
-events.push(gotToCity)
+events.push(goToConbase)
 
 const rabbitHoleStart = new GameObject('rabbitHoleStart', {
   x: 63 * tileSize,

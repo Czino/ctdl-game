@@ -61,7 +61,7 @@ class Shitcoiner extends Agent {
     this.health = options.health ?? Math.round(Math.random() * 7 + 1)
     this.usd = options.usd ?? Math.round(Math.random() * 4 + 1)
     this.item = options.item || items.find(item => item.chance >= Math.random())
-    this.senseRadius = Math.round(Math.random() * 50) + 30
+    this.senseRadius = options.senseRadius || Math.round(Math.random() * 20) + 30
   }
 
   class = 'Shitcoiner'

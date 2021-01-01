@@ -5,10 +5,11 @@ import spriteData from './sprites/items'
 import { playSound } from './sounds';
 import { addTextToQueue } from './textUtils';
 
+// TODO add steak that fully heals you
 export default function(id, options) {
   this.id = id;
   this.class = 'Item'
-  this.applyGravity = true
+  this.applyGravity = options.applyGravity ?? true
   this.spriteData = spriteData[this.id]
 
   this.w = this.spriteData.w

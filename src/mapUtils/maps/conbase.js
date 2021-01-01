@@ -6,6 +6,8 @@ import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Brian from '../../enemies/Brian'
+import Shitcoiner from '../../enemies/Shitcoiner'
+import Bagholder from '../../enemies/Bagholder'
 import { easeInOut, makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 
@@ -17,6 +19,7 @@ import moon from '../../sprites/moon.png'
 import parseLightSources from '../parseLightSources'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
+import Item from '../../Item'
 
 const worldWidth = 64
 const worldHeight = 64
@@ -86,10 +89,10 @@ const goToForest = new GameObject('goToForest', {
   h: 3 * tileSize,
 })
 
-goToForest.touchEvent = () => {
+goToForest.backEvent = () => {
   const canGoToForest = !CTDLGAME.objects.find(obj => obj.id === 'brian' && obj.status !== 'rekt')
   if (canGoToForest) {
-    changeMap('forest', 'city')
+    changeMap('forest', 'conbase')
   }
 }
 
@@ -126,12 +129,47 @@ export default {
       'brian',
       {
         x: 55 * tileSize,
-        y: 48 * tileSize
+        y: 48 * tileSize - 2
       }
     )
-    // TODO add shitcoiners and bagholders
+  ].concat(
+    [
+      [35, 60],
+      [34, 60],
+      [28, 60],
+      [31, 54],
+      [7, 54],
+      [9, 54],
+      [29, 48],
+      [30, 48],
+      [32, 48],
+      [46, 54],
+      [57, 60]
+    ].map((coords, i) => new Shitcoiner(
+      'shitcoiner-' + i,
+      {
+        x: coords[0] * tileSize,
+        y: coords[1] * tileSize - 2,
+        senseRadius: 20
+      }
+    ))
+  ).concat(
+    [
+      [2, 48],
+      [61, 54]
+    ].map((coords, i) => new Bagholder(
+      'bagholder-' + i,
+      {
+        x: coords[0] * tileSize,
+        y: coords[1] * tileSize - 2,
+        senseRadius: 20
+      }
+    ))
+  ),
+  items: () => [
+    new Item('taco', { x: 31 * tileSize, y: 49 * tileSize - 2, applyGravity: false }),
+    new Item('honeybadger', { x: 42 * tileSize, y: 62 * tileSize })
   ],
-  items: () => [],
   lightSources,
   events,
   assets: {

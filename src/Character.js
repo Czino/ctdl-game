@@ -486,9 +486,9 @@ class Character extends Agent {
     const boundingBox = this.getBoundingBox()
     const senseBox = {
       x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
+      y: this.y - this.senseRadius / 2,
       w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
+      h: this.h + this.senseRadius
     }
     this.sensedObjects = CTDLGAME.quadTree
       .query(senseBox)

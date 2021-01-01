@@ -52,10 +52,10 @@ const tree = new Selector({
 class Bagholder extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.health = options.health ?? Math.round(Math.random() * 17 + 1)
+    this.health = options.health ?? Math.round(Math.random() * 17 + 5)
     this.usd = options.usd ?? Math.round(Math.random() * 8 + 1)
     this.item = options.item || items.find(item => item.chance >= Math.random())
-    this.senseRadius = Math.round(Math.random() * 50) + 30
+    this.senseRadius = options.senseRadius || Math.round(Math.random() * 50) + 30
     this.crawls = options.crawls || Math.random() < .1
     this.walkingSpeed = this.crawls ? 1 : 2
     this.protection = 0
@@ -131,6 +131,7 @@ class Bagholder extends Agent {
   onDie = () => {
     addTextToQueue(`${this.class} got rekt,\nyou found $${this.usd}`)
     playSound('shitcoinerHurt')
+    playSound('burn')
   }
 
   update = () => {

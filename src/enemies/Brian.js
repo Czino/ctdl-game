@@ -60,7 +60,7 @@ class Brian extends Agent {
     this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.hadIntro = options.hadIntro || false
-    this.canMove = options.canMove || false
+    this.canMove = options.hadIntro || false
     this.hurtAttackCounter = options.hurtAttackCounter || 0
   }
 
