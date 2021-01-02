@@ -8,10 +8,11 @@ import endOfTheRabbitHole from '../sprites/endOfTheRabbitHole.png'
 import dogeCoinMine from '../sprites/dogeCoinMine.png'
 // // import mempool from '../sprites/mempool.png'
 import mtGox from '../sprites/mtGox.png'
-// // import moon from '../sprites/moon.png'
 import capitalCity from '../sprites/capitalCity.png'
+import grasslands from '../sprites/grasslands.png'
 // // import citadel from '../sprites/citadel.png'
 import miningFarm from '../sprites/miningFarm.png'
+// // import moon from '../sprites/moon.png'
 
 export const assets = {
   building,
@@ -23,8 +24,9 @@ export const assets = {
   dogeCoinMine,
   // mempool,
   mtGox,
-  // moon,
   capitalCity,
+  grasslands,
   // citadel,
   miningFarm
+  // moon,
 }

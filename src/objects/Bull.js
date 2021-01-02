@@ -9,21 +9,28 @@ class Bull {
     this.id = id
     this.x = options.x
     this.y = options.y
-    this.offsetY = options.offsetY || 0
     this.vx = options.vx || 3
+    this.frame = 0
+    this.status = 'run'
     this.context = options.context || 'bgContext'
     this.spriteData = spriteData.right
-    this.w = this.spriteData.w
-    this.h = this.spriteData.h
   }
 
+  w = 47
+  h = 25
   class = 'Bull'
 
   draw = () => {
+    this.frame++
+    let spriteData = this.spriteData[this.status][this.frame]
+    if (!spriteData) {
+      this.frame = 0
+      spriteData = this.spriteData[this.status][this.frame]
+    }
     constants[this.context].drawImage(
       CTDLGAME.assets.bull,
-      this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,
-      this.x, this.y + this.offsetY, this.spriteData.w, this.spriteData.h
+      spriteData.x, spriteData.y, spriteData.w, spriteData.h,
+      this.x, this.y, spriteData.w, spriteData.h
     )
   }
 

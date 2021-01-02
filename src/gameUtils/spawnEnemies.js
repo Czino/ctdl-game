@@ -7,6 +7,7 @@ import { collidesWithHeightMap, intersects } from '../geometryUtils'
 import Citizen from '../npcs/Citizen'
 import { random } from '../arrayUtils'
 import Car from '../objects/Car'
+import Bull from '../objects/Bull'
 import PoliceForce from '../enemies/PoliceForce'
 import Bagholder from '../enemies/Bagholder'
 
@@ -34,7 +35,6 @@ export const spawnAgent = agent => {
       : highestSpawnPoint.y - agent.getBoundingBox().h - 1
     agent.y -= agent.getBoundingBox().y - agent.y // normalize for boundingbox
   }
-
 
   if (!highestSpawnPoint) return
 
@@ -146,6 +146,17 @@ export const spawnEnemies = () => {
         y: CTDLGAME.viewport.y + constants.HEIGHT,
         offsetY: 6,
         vx: Math.round((Math.random() - .5) * 5) * 4
+      }
+    ))
+  }
+  if (Math.random() < CTDLGAME.world.map.spawnRates.bull) {
+    spawnAgent(new Bull(
+      'bull-' + Math.random(),
+      {
+        x: CTDLGAME.viewport.x - 47,
+        y: CTDLGAME.viewport.y + constants.HEIGHT,
+        vx: Math.round((Math.random()) * 3) + 10,
+        context: Math.random() < .5 ? 'bgContext' : 'fgContext'
       }
     ))
   }

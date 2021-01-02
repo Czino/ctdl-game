@@ -9,9 +9,10 @@ import { canDrawOn } from '../performanceUtils'
 // TODO prize items (add inflation, lol)
 const priceList = {
   pizza: 6,
-  taco: 11
+  taco: 11,
+  steak: 30
 }
-const stock = ['pizza', 'taco']
+const stock = ['pizza', 'taco', 'steak']
 
 /**
  * @description Method to display progress bar
