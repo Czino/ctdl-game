@@ -185,15 +185,23 @@ class Rabbit extends Agent {
   }
 
   canJump = () => {
+    let onGround = this.getAnchor()
     let jumpTo = this.getBoundingBox()
     jumpTo.y -= 4
     jumpTo.x -= this.direction === 'right' ? 3 : -3
+
+    let obstacles = CTDLGAME.quadTree.query(onGround)
+      .filter(obj => obj.isSolid && !obj.enemy)
+      .filter(obj => intersects(obj, onGround))
+
+    if (obstacles.length === 0) return false // not on ground
 
     if (window.DRAWSENSORS) {
       constants.overlayContext.fillStyle = 'red'
       constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
     }
-    let obstacles = CTDLGAME.quadTree.query(jumpTo)
+
+    obstacles = CTDLGAME.quadTree.query(jumpTo)
       .filter(obj => obj.isSolid && !obj.enemy)
       .filter(obj => intersects(obj, jumpTo))
 
