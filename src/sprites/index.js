@@ -12,6 +12,7 @@ import bear from './bear'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
 import andreas from './andreas'
+import bull from './bull'
 
 
 export default {
@@ -28,5 +29,6 @@ export default {
     bear,
     goldbugs,
     rabbit,
-    andreas
+    andreas,
+    bull
 }

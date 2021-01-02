@@ -38,7 +38,6 @@ import Item from './Item'
 // playSound('policeForceHurt')
 // setInterval(() => playSound('policeForceHurt'), 1000)
 
-// TODO add coinbase stage with brian in it instead of just a ruin
 // TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again
 // TODO add Frances Copolla Enemy that subdivides and becomes more
