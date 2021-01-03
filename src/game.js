@@ -220,6 +220,7 @@ function tick() {
   spawnEnemies()
 
   if (CTDLGAME.wizardCountdown === 0) {
+    CTDLGAME.wizardCountdown = null
     CTDLGAME.objects.push(new Wizard(
       'wizard',
       {
