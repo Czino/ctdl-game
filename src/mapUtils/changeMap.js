@@ -11,9 +11,8 @@ import { loadMap } from './loadMap'
  * @returns {void}
  */
 export const changeMap = async (id, from) => {
-  if (!CTDLGAME.world.ready) return
+  if (CTDLGAME.world && !CTDLGAME.world.ready) return
   // save state before changing
-  CTDLGAME.world.ready = false
 
   if (from !== 'newGame') await saveGame()
 
@@ -28,6 +27,8 @@ export const changeMap = async (id, from) => {
   // Save state of old world
 
   setWorld(newWorld)
+  CTDLGAME.world.ready = false
+
   if (worldState) CTDLGAME.world.map.state = worldState;
 
   if (objects && objects.length > 0) {
