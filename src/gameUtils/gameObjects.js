@@ -2,6 +2,7 @@ import Block from '../Block'
 import Shitcoiner from '../enemies/Shitcoiner'
 import Bagholder from '../enemies/Bagholder'
 import Rabbit from '../enemies/Rabbit'
+import Cobra from '../enemies/Cobra'
 import Goldbugs from '../enemies/Goldbugs'
 import Andreas from '../enemies/Andreas'
 import Bear from '../enemies/Bear'
@@ -21,6 +22,7 @@ export const gameObjects = {
     Shitcoiner,
     Bagholder,
     Rabbit,
+    Cobra,
     Goldbugs,
     Andreas,
     Brian,

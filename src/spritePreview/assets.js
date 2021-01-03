@@ -1,3 +1,4 @@
+import cobra from '../sprites/cobra.png'
 import bull from '../sprites/bull.png'
 import bagholder from '../sprites/bagholder.png'
 import policeForceWithShield from '../sprites/policeForceWithShield.png'
@@ -20,6 +21,7 @@ import andreas from '../sprites/andreas.png'
 import doge from '../sprites/doge.png'
 
 export const assets = {
+    cobra,
     bull,
     bagholder,
     policeForceWithShield,

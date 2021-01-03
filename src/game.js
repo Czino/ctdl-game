@@ -38,7 +38,6 @@ import Item from './Item'
 // playSound('policeForceHurt')
 // setInterval(() => playSound('policeForceHurt'), 1000)
 
-// TODO add forest enemies
 // TODO add enemy that forks into two and you have to fight them before they fork again
 // TODO add Frances Copolla Enemy that subdivides and becomes more
 // TODO add endbosses for Rabbit Hole stage
@@ -71,6 +70,7 @@ import Item from './Item'
 // TODO turn miningfarm stage red and change music, when there's an attack on the citadel
 // TODO add green cat (bisq)
 // TODO add "Cobra"
+// TODO add salt lamp
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null

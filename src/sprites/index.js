@@ -13,7 +13,7 @@ import goldbugs from './goldbugs'
 import rabbit from './rabbit'
 import andreas from './andreas'
 import bull from './bull'
-
+import cobra from './cobra'
 
 export default {
     hodlonaut,
@@ -30,5 +30,6 @@ export default {
     goldbugs,
     rabbit,
     andreas,
-    bull
+    bull,
+    cobra
 }

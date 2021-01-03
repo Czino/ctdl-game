@@ -13,6 +13,7 @@ import getHitBoxes from '../getHitBoxes'
 import forest from '../../sprites/forest.png'
 import rabbit from '../../sprites/rabbit.png'
 import goldbugs from '../../sprites/goldbugs.png'
+import cobra from '../../sprites/cobra.png'
 import bear from '../../sprites/bear.png'
 import moon from '../../sprites/moon.png'
 
@@ -178,6 +179,7 @@ export default {
   assets: {
     forest,
     rabbit,
+    cobra,
     goldbugs,
     bear,
     moon
@@ -186,6 +188,7 @@ export default {
   overworld: true,
   spawnRates: {
     rabbit: .005,
+    cobra: .003,
     goldbugs: .005
   }
 }

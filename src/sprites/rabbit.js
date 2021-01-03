@@ -43,6 +43,14 @@ export default {
           h: 7
         }
       ],
+      hurt: [
+        {
+          x: 8,
+          y: 0,
+          w: 8,
+          h: 7
+        }
+      ],
       move: [
         {
           x: 8,
@@ -170,6 +178,14 @@ export default {
         }
       ],
       fall: [
+        {
+          x: 32 + 8,
+          y: 0,
+          w: 8,
+          h: 7
+        }
+      ],
+      hurt: [
         {
           x: 32 + 8,
           y: 0,

@@ -10,6 +10,7 @@ import Car from '../objects/Car'
 import Bull from '../objects/Bull'
 import PoliceForce from '../enemies/PoliceForce'
 import Bagholder from '../enemies/Bagholder'
+import Cobra from '../enemies/Cobra'
 
 
 /**
@@ -87,6 +88,18 @@ export const spawnEnemies = () => {
       'goldbugs-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
+        y: CTDLGAME.viewport.y + constants.HEIGHT,
+        status: 'idle'
+      }
+    ))
+  }
+  if (Math.random() < CTDLGAME.world.map.spawnRates.cobra) {
+    spawnAgent(new Cobra(
+      'cobra-' + Math.random(),
+      {
+        x: Math.random() < .5
+          ? CTDLGAME.viewport.x - 16
+          : CTDLGAME.viewport.x + constants.WIDTH,
         y: CTDLGAME.viewport.y + constants.HEIGHT,
         status: 'idle'
       }

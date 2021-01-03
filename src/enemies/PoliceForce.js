@@ -100,6 +100,7 @@ class PoliceForce extends Agent {
     this.hasShield = options.hasShield ?? (Math.random() > .8)
     this.spriteData = this.hasShield ? spritePoliceForceWithShield : spritePoliceForce
     this.protection = 0
+    this.removeTimer = options.removeTimer
   }
 
   class = 'PoliceForce'

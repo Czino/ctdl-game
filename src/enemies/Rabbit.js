@@ -208,7 +208,7 @@ class Rabbit extends Agent {
       return obstacles.length === 0
   }
 
-  hurtCondition = () => this.isEvil && !/turnEvil|spawn|hurt|rekt/.test(this.status)
+  hurtCondition = () => !/turnEvil|spawn|hurt|rekt/.test(this.status)
   onHurt = () => playSound('rabbitHurt')
   onDie = () => {
     playSound('burn')

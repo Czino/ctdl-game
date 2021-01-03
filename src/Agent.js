@@ -60,6 +60,12 @@ BehaviorTree.register('runAwayFromClosestEnemy', new Task({
     ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
     : FAILURE
 }))
+BehaviorTree.register('moveToClosestEnemy', new Task({
+  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 })
+    ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 })
+    : FAILURE
+}))
+
 BehaviorTree.register('survive', new Sequence({
   nodes: [
     'hasLowHealth',
