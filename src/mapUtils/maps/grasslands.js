@@ -10,6 +10,8 @@ import getHitBoxes from '../getHitBoxes'
 import grasslands from '../../sprites/grasslands.png'
 import bull from '../../sprites/bull.png'
 import moon from '../../sprites/moon.png'
+import shitcoiner from '../../sprites/shitcoiner.png'
+import bagholder from '../../sprites/bagholder.png'
 import constants from '../../constants'
 import { CTDLGAME } from '../../gameUtils'
 
@@ -50,27 +52,40 @@ makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
 
-const goToCapitalCity = new GameObject('goToCapitalCity', {
+const goToForest = new GameObject('goToForest', {
   x: 2 * tileSize,
-  y: 50 * tileSize,
+  y: 60 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
-goToCapitalCity.touchEvent = () => {
-  changeMap('capitalCity', 'grasslands')
+goToForest.touchEvent = () => {
+  changeMap('forest', 'grasslands')
 }
-events.push(goToCapitalCity)
+events.push(goToForest)
 
-const goToCitadel = new GameObject('goToCitadel', {
-  x: 127 * tileSize,
-  y: 59 * tileSize,
+
+
+const bullrunSeen = new GameObject('bullrunSeen', {
+  x: 6 * tileSize,
+  y: 60 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
-goToCitadel.touchEvent = () => {
-  changeMap('citadel', 'grasslands')
+bullrunSeen.touchEvent = () => {
+  CTDLGAME.world.map.state.bullrunSeen = true
 }
-events.push(goToCitadel)
+events.push(bullrunSeen)
+
+const goToMtGox = new GameObject('goToMtGox', {
+  x: 127 * tileSize,
+  y: 60 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+goToMtGox.touchEvent = () => {
+  changeMap('mtGox', 'grasslands')
+}
+events.push(goToMtGox)
 
 
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'grasslands', tileSize))
@@ -78,13 +93,16 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'gr
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    capitalCity: { x: 5 * tileSize, y: 59 * tileSize + 1 },
-    citadel: { x: 124 * tileSize, y: 59 * tileSize + 1 }
+    forest: { x: 5 * tileSize, y: 59 * tileSize + 1 },
+    mtGox: { x: 124 * tileSize, y: 59 * tileSize + 1 }
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
   base: stage.base.map(tile => mapTile(tile, tileSize)),
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
+  state: {
+    bullrun: true
+  },
   objects,
   npcs: () => [
   ],
@@ -93,9 +111,26 @@ export default {
   assets: {
     grasslands,
     bull,
+    shitcoiner,
+    bagholder,
     moon
   },
+  init: () => {
+    if (CTDLGAME.world.map.state.bullrunSeen) {
+      CTDLGAME.world.map.state.bullrun = false
+    }
+    CTDLGAME.world.map.overworld = !CTDLGAME.world.map.state.bullrun
+    if (!CTDLGAME.world.map.state.bullrun) {
+      CTDLGAME.objects
+        .filter(obj => obj.class === 'Bull')
+        .map(obj => obj.remove = true)
+      CTDLGAME.world.map.spawnRates.bull = 0
+      CTDLGAME.world.map.spawnRates.shitcoiner = 0.01
+      CTDLGAME.world.map.spawnRates.bagholder = 0.005
+    }
+  },
   update: () => {
+    if (!CTDLGAME.world.map.state.bullrun) return
     let gradient = constants.skyContext.createLinearGradient(
       CTDLGAME.viewport.x, CTDLGAME.viewport.y,
       CTDLGAME.viewport.x, CTDLGAME.viewport.y + constants.HEIGHT
@@ -110,6 +145,8 @@ export default {
   canSetBlocks: false,
   overworld: false,
   spawnRates: {
-    bull: .421
+    bull: .421,
+    shitcoiner: 0,
+    bagholder: 0
   }
 }

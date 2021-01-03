@@ -66,16 +66,16 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-const goToForest = new GameObject('goToForest', {
+const goToGrasslands = new GameObject('goToGrasslands', {
   x: 1 * tileSize,
   y: 124 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
-goToForest.touchEvent = () => {
-  changeMap('forest', 'mtGox')
+goToGrasslands.touchEvent = () => {
+  changeMap('grasslands', 'mtGox')
 }
-events.push(goToForest)
+events.push(goToGrasslands)
 
 const goToDogeCoinMine = new GameObject('goToDogeCoinMine', {
   x: 84 * tileSize,
@@ -106,7 +106,7 @@ objects.find(obj => obj.id === 'ramp-1_7-74_115').makeToggle(false)
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    forest: { x: 5 * tileSize, y: 124 * tileSize - 4 },
+    grasslands: { x: 5 * tileSize, y: 124 * tileSize - 4 },
     dogeCoinMine: { x: 79 * tileSize, y: 114 * tileSize + 1 },
     capitalCity: { x: 124 * tileSize, y: 118 * tileSize + 1 }
   },

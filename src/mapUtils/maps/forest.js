@@ -119,23 +119,23 @@ goToRabbitHole.touchEvent = () => {
 }
 events.push(goToRabbitHole)
 
-const goToMtGox = new GameObject('goToMtGox', {
+const goToGrasslands = new GameObject('goToGrasslands', {
   x: 254 * tileSize,
   y: 96 * tileSize,
   w: 1 * tileSize,
   h: 3 * tileSize,
 })
 
-goToMtGox.touchEvent = () => {
-  changeMap('mtGox', 'forest')
+goToGrasslands.touchEvent = () => {
+  changeMap('grasslands', 'forest')
 }
-events.push(goToMtGox)
+events.push(goToGrasslands)
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     conbase: { x: 4 * tileSize, y: 124 * tileSize - 6 },
-    mtGox: { x: 251 * tileSize, y: 96 * tileSize }
+    grasslands: { x: 251 * tileSize, y: 96 * tileSize }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
