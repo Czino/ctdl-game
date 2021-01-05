@@ -14,6 +14,7 @@ import rabbit from './rabbit'
 import andreas from './andreas'
 import bull from './bull'
 import cobra from './cobra'
+import cat from './cat'
 
 export default {
     hodlonaut,
@@ -23,6 +24,8 @@ export default {
     policeForce,
     policeForceWithShield,
     citizen,
+    czino: citizen,
+    luma: citizen,
     vlad,
     shitcoiner,
     brian,
@@ -31,5 +34,8 @@ export default {
     rabbit,
     andreas,
     bull,
-    cobra
+    cobra,
+    bisq: cat,
+    crispy: cat,
+    pita: cat,
 }

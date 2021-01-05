@@ -1,3 +1,5 @@
+import czino from '../sprites/czino.png'
+import luma from '../sprites/luma.png'
 import cobra from '../sprites/cobra.png'
 import bull from '../sprites/bull.png'
 import bagholder from '../sprites/bagholder.png'
@@ -19,8 +21,13 @@ import goldbugs from '../sprites/goldbugs.png'
 import rabbit from '../sprites/rabbit.png'
 import andreas from '../sprites/andreas.png'
 import doge from '../sprites/doge.png'
+import bisq from '../sprites/bisq.png'
+import crispy from '../sprites/crispy.png'
+import pita from '../sprites/pita.png'
 
 export const assets = {
+    czino,
+    luma,
     cobra,
     bull,
     bagholder,
@@ -41,5 +48,8 @@ export const assets = {
     goldbugs,
     rabbit,
     andreas,
-    doge
+    doge,
+    bisq,
+    crispy,
+    pita
 }
