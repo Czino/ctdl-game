@@ -78,9 +78,7 @@ export default function(id, context, options) {
   }
 
   this.select = () => {
-    if (window.DEBUG) {
-      console.log(this)
-    }
+    if (window.DEBUG) console.log(this)
   }
 
   this.unselect = () => {}

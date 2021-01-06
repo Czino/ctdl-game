@@ -565,7 +565,7 @@ export const playSound = id => {
   try {
     if (enabled) sounds[id]()
   } catch(e) {
-    console.log(e)
+    if (window.DEBUG) console.log(e)
     // do nothing
   }
 }

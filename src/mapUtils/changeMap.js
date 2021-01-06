@@ -26,8 +26,8 @@ export const changeMap = async (id, from) => {
 
   // Save state of old world
 
+  if (CTDLGAME.world) CTDLGAME.world.ready = false
   setWorld(newWorld)
-  CTDLGAME.world.ready = false
 
   if (worldState) CTDLGAME.world.map.state = worldState;
 

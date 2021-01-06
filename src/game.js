@@ -170,7 +170,6 @@ function tick() {
     return window.requestAnimationFrame(tick)
   }
 
-  console.log(CTDLGAME.world, CTDLGAME.world?.ready)
   if (!CTDLGAME.hodlonaut || !CTDLGAME.world?.ready) {
     showFrameRate()
 
