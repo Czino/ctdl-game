@@ -1,6 +1,6 @@
-import { BehaviorTree, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
-import spriteData from '../sprites/Citizen'
+import catSpriteData from '../sprites/cat'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font';
@@ -8,16 +8,71 @@ import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
 import { playSound } from '../sounds';
 import Agent from '../Agent'
+import { random } from '../arrayUtils'
+
+const sprites = [
+  'bisq',
+  'crispy',
+  'pita'
+]
+
+const lick = new Task({
+  run: agent => {
+    if (Math.random() > .005 && agent.status !== 'lick') return FAILURE
+    if (Math.random() < .05) return FAILURE
+    agent.status = 'lick'
+
+    return SUCCESS
+  }
+})
+
+const moveToFriend = new Task({
+  run: agent => {
+    if (!agent.closestFriend || agent.goal || Math.random() < .95) return FAILURE
+    agent.goal = agent.closestFriend.x
+    return SUCCESS
+  }
+})
+const moveToPointX = new Task({
+  run: agent => {
+    if (!agent.goal && Math.random() < .008) {
+      agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
+      agent.status = 'move'
+    }
+    if (agent.x % agent.goal < 5) agent.goal = null
+    if (!agent.goal || agent.status !== 'move') return FAILURE
+
+    if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    if (agent.x > agent.goal) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    return agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
+  }
+})
+
+const runToPointX = new Task({
+  run: agent => {
+    if (!agent.goal && Math.random() < .002) {
+      agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
+      agent.status = 'run'
+    }
+    if (agent.x % agent.goal < 10) agent.goal = null
+    if (!agent.goal || agent.status !== 'run') return FAILURE
+    if (agent.x < agent.goal) return agent.runRight.condition() ? agent.runRight.effect() : FAILURE
+    if (agent.x > agent.goal) return agent.runLeft.condition() ? agent.runLeft.effect() : FAILURE
+  }
+})
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
-    // 'moveToPointX',
+    moveToPointX,
+    runToPointX,
+    lick,
+    moveToFriend,
     'idle'
   ]
 })
 
-// only "protest while condition is met otherwise just walk around
+
 const tree = new Selector({
   nodes: [
     'survive',
@@ -25,30 +80,30 @@ const tree = new Selector({
   ]
 })
 
-class Czino extends Agent {
+class Cat extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.spriteData = spriteData
+    this.spriteId = options.spriteId || random(sprites)
+    this.spriteData = catSpriteData
     this.maxHealth = options.maxHealth ?? Math.round(Math.random() * 5) + 5
     this.health = options.health ?? this.maxHealth
     this.strength = 1
+    this.status = options.status || 'idle'
     this.attackRange = options.attackRange ?? Math.ceil(Math.random() * 70) + 70
     this.senseRadius = this.attackRange
-    this.applyGravity = options.applyGravity ?? true
-    this.walkingSpeed = options.walkingSpeed || 3
-    this.runningSpeed = options.runningSpeed || Math.round(Math.random() * 2) + 4
+    this.walkingSpeed = options.walkingSpeed || 2
+    this.runningSpeed = options.runningSpeed || 6
     this.protection = 0
 
     this.goal = options.goal
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  // TODO consider class Citizen or rename it to Human
-  class = 'Czino'
+  class = 'Cat'
   says = []
-  w = 16
-  h = 30
-
+  w = 15
+  h = 9
+  applyGravity = true
 
   bTree = new BehaviorTree({
     tree,
@@ -63,7 +118,7 @@ class Czino extends Agent {
       const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
-        this.status = 'move'
+        this.status = 'run'
         return SUCCESS
       }
 
@@ -78,33 +133,12 @@ class Czino extends Agent {
 
       const hasMoved = !moveObject(this, { x: this.runningSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
-        this.status = 'move'
+        this.status = 'run'
         return SUCCESS
       }
 
       return FAILURE
     }
-  }
-
-  attack = {
-    condition: () => {
-      return SUCCESS
-    },
-    effect: () => {
-      this.status = this.hasSign
-        ? 'hold'
-        : this.films
-        ? 'action'
-        : 'attack'
-
-      return SUCCESS
-    }
-  }
-
-  stun = direction => {
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
   }
 
   hurt = (dmg, direction) => {
@@ -119,8 +153,7 @@ class Czino extends Agent {
     this.vx = direction === 'left' ? 5 : -5
     this.vy = -3
     this.protection = 8
-    playSound('playerHurt')
-    if (this.health / this.maxHealth <= .2) this.say('help!')
+    playSound('rabbitHurt')
     if (this.health <= 0) {
       this.health = 0
       this.die()
@@ -130,12 +163,15 @@ class Czino extends Agent {
   die = () => {
     this.status = 'rekt'
     this.health = 0
+    this.removeTimer = 64
 
-    addTextToQueue(`Czino got rekt`)
+    addTextToQueue(`Cat got rekt`)
   }
 
   draw = () => {
-    if (!this.sprite) this.sprite = CTDLGAME.assets.czino
+    if (!this.sprite) {
+      this.sprite = CTDLGAME.assets[this.spriteId]
+    }
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -167,7 +203,7 @@ class Czino extends Agent {
     }
 
     this.applyPhysics()
-    if (this.status === 'fall') this.status = 'hurt'
+    if (this.status === 'fall') this.status = 'run'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
       this.status = 'idle'
@@ -199,7 +235,7 @@ class Czino extends Agent {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Cat|Czino|Luma/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {
@@ -208,11 +244,7 @@ class Czino extends Agent {
       this.bTree.step()
     }
 
-    if (/attack/i.test(this.status)) {
-      if ((CTDLGAME.frame + this.delay) % this.speed === 0) {
-        this.frame++
-      }
-    } else if (this.status !== 'idle' || Math.random() < .05) {
+    if (this.status !== 'idle' || Math.random() < .05) {
       this.frame++
     }
 
@@ -221,14 +253,10 @@ class Czino extends Agent {
       if (/action/.test(this.status)) this.status = 'idle'
     }
 
-    this.draw()
+    if (this.removeTimer) this.removeTimer--
+    if (this.removeTimer === 0) this.remove = true
 
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
+    this.draw()
 
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)
@@ -262,34 +290,19 @@ class Czino extends Agent {
     this.says = [{y: -8, say}]
   }
 
-  getBoundingBox = () =>this.status !== 'rekt'
-    ? ({ // normal
-        id: this.id,
-        x: this.x + 6,
-        y: this.y + 6,
-        w: this.w - 12,
-        h: this.h - 6
-      })
-    : ({ // rekt
+  getBoundingBox = () => ({ // rekt
       id: this.id,
-      x: this.x + 5,
-      y: this.y + 3,
-      w: this.w - 10,
-      h: this.h - 3
+      x: this.x,
+      y: this.y,
+      w: this.w,
+      h: this.h
     })
 
-  getAnchor = () => this.status !== 'rekt'
-    ? ({
-        x: this.getBoundingBox().x + 2,
-        y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-        w: this.getBoundingBox().w - 4,
-        h: 1
-    })
-    : ({
+  getAnchor = () => ({
       x: this.getBoundingBox().x,
       y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
       w: this.getBoundingBox().w,
       h: 1
   })
 }
-export default Czino
+export default Cat

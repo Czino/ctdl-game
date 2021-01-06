@@ -6,10 +6,12 @@ export const maps = [
   'mempool',
   'endOfTheRabbitHole',
   'dogeCoinMine',
+  'grasslands',
+  'czinosCitadel',
   'mtGox',
-  'miningFarm',
   'capitalCity',
   'citadel',
+  'miningFarm',
   'moon',
 ]
 

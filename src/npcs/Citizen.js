@@ -166,7 +166,7 @@ class Citizen extends Agent {
       const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
-        this.status = 'move'
+        this.status = 'run'
         return SUCCESS
       }
 
@@ -181,7 +181,7 @@ class Citizen extends Agent {
 
       const hasMoved = !moveObject(this, { x: this.runningSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
-        this.status = 'move'
+        this.status = 'run'
         return SUCCESS
       }
 
@@ -424,13 +424,6 @@ class Citizen extends Agent {
     if (this.removeTimer === 0) this.remove = true
 
     this.draw()
-
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
 
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)

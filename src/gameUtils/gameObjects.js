@@ -15,6 +15,9 @@ import Elevator from '../objects/Elevator'
 import Car from '../objects/Car'
 import Item from '../Item'
 import Wizard from '../npcs/Wizard'
+import Czino from '../npcs/Czino'
+import Luma from '../npcs/Luma'
+import Cat from '../npcs/Cat'
 
 
 export const gameObjects = {
@@ -34,5 +37,8 @@ export const gameObjects = {
     Doge,
     Elevator,
     Car,
-    Wizard
+    Wizard,
+    Czino,
+    Luma,
+    Cat
 }

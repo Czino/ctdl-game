@@ -94,6 +94,7 @@ export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     forest: { x: 5 * tileSize, y: 59 * tileSize + 1 },
+    czinosCitadel: { x: 5 * tileSize, y: 59 * tileSize + 1 },
     mtGox: { x: 124 * tileSize, y: 59 * tileSize + 1 }
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),

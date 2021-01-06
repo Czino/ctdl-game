@@ -25,7 +25,7 @@ const tree = new Selector({
   ]
 })
 
-class Czino extends Agent {
+class Luma extends Agent {
   constructor(id, options) {
     super(id, options)
     this.spriteData = spriteData
@@ -43,8 +43,7 @@ class Czino extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  // TODO consider class Citizen or rename it to Human
-  class = 'Czino'
+  class = 'Luma'
   says = []
   w = 16
   h = 30
@@ -131,11 +130,11 @@ class Czino extends Agent {
     this.status = 'rekt'
     this.health = 0
 
-    addTextToQueue(`Czino got rekt`)
+    addTextToQueue(`Luma got rekt`)
   }
 
   draw = () => {
-    if (!this.sprite) this.sprite = CTDLGAME.assets.czino
+    if (!this.sprite) this.sprite = CTDLGAME.assets.luma
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -292,4 +291,4 @@ class Czino extends Agent {
       h: 1
   })
 }
-export default Czino
+export default Luma
