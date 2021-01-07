@@ -119,12 +119,11 @@ events.push(gotToConbase)
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'city', tileSize))
 
 
-console.log(objects)
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     newGame: { x: 8 * tileSize, y: 124 * tileSize - 2},
-    forest: { x: 122 * tileSize, y: 122 * tileSize - 2}
+    conbase: { x: 122 * tileSize, y: 122 * tileSize - 2}
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
