@@ -1,18 +1,33 @@
-export default function(id, options) {
-  this.id = id
-  this.w = options.w || 6
-  this.h = options.h || 6
-  this.x = options.x
-  this.y = options.y
+class GameObject {
+  constructor(id, options) {
+    this.id = id
+    this.w = options.w || 6
+    this.h = options.h || 6
+    this.x = options.x
+    this.y = options.y
+  }
 
-  this.update = () => {}
-  this.getBoundingBox = () => this
+  update = () => {}
 
-  this.getCenter = () => ({
-    x: this.x + this.w / 2 - 1,
-    y: this.y + this.h / 2 - 1
+  getBoundingBox = () => ({
+    id: this.id,
+    x: this.x,
+    y: this.y,
+    w: this.w,
+    h: this.h
   })
 
-  this.select = () => {}
-  this.unselect = () => {}
+  getCenter = () => ({
+    x: Math.round(this.x + this.w / 2),
+    y: Math.round(this.y + this.h / 2)
+  })
+
+  getClass = () => this.constructor.name
+
+  select = () => {
+    if (window.DEBUG) console.log(this)
+  }
+  unselect = () => {}
 }
+
+export default GameObject

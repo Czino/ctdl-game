@@ -260,7 +260,7 @@ function tick() {
   CTDLGAME.quadTree.clear()
   CTDLGAME.objects
     .filter(obj => obj.inViewport)
-    .forEach(object => CTDLGAME.quadTree.insert(object))
+    .forEach(obj => CTDLGAME.quadTree.insert(obj))
 
   if (CTDLGAME.showOverlay) showOverlay()
 

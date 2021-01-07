@@ -42,7 +42,7 @@ export const spawnAgent = agent => {
   let hasCollided = CTDLGAME.quadTree.query(agent.getBoundingBox())
     .filter(point => point.isSolid && point.id !== agent.id).concat(
       CTDLGAME.quadTree.query(agent.getBoundingBox())
-      .filter(point => point.class === agent.class && point.id !== agent.id)
+      .filter(point => point.getClass() === agent.getClass() && point.id !== agent.id)
     )
     .filter(point => intersects(agent.getBoundingBox(), point.getBoundingBox()))
     .some(point => {

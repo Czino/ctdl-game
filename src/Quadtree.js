@@ -15,13 +15,13 @@ export const QuadTree = function (boundary, capacity, level) {
   this.objects = []
   this.level = level || 0
 
-  this.insert = object => {
-    if (!intersects(this.boundary, object.getBoundingBox ? object.getBoundingBox() : object)) {
+  this.insert = obj => {
+    if (!intersects(this.boundary, obj.getBoundingBox ? obj.getBoundingBox() : obj)) {
       return false
     }
 
     if (this.subs.length === 0 && this.objects.length < this.capacity) {
-      this.objects.push(object)
+      this.objects.push(obj)
       return true
     }
 
@@ -38,7 +38,7 @@ export const QuadTree = function (boundary, capacity, level) {
     }
 
     return this.subs.forEach(sub => {
-      return sub.insert(object, true)
+      return sub.insert(obj, true)
     })
   }
   this.subdivide = () => {

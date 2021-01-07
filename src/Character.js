@@ -112,7 +112,6 @@ class Character extends Agent {
     this.rektIn = options.rektIn
   }
 
-  class = 'Character'
   says = []
   w = 16
   h = 30
@@ -301,7 +300,7 @@ class Character extends Agent {
       constants.overlayContext.globalAlpha = 1
     }
     let obstacles = CTDLGAME.quadTree.query(duckTo)
-      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
       .filter(obj => intersects(obj, duckTo))
 
     return obstacles.length === 0
@@ -321,7 +320,7 @@ class Character extends Agent {
       constants.overlayContext.globalAlpha = 1
     }
     let obstacles = CTDLGAME.quadTree.query(standUpTo)
-      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
       .filter(obj => intersects(obj, standUpTo))
 
     return obstacles.length === 0
@@ -504,7 +503,7 @@ class Character extends Agent {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => friend.class === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => friend.getClass() === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.touchedObjects = CTDLGAME.quadTree
@@ -518,7 +517,7 @@ class Character extends Agent {
 
     if (CTDLGAME.inventory.phoenix > 0) {
       let rektFriend = this.touchedObjects
-        .find(friend => friend.class === 'Character' && friend.id !== this.id && friend.status === 'rekt')
+        .find(friend => friend.getClass() === 'Character' && friend.id !== this.id && friend.status === 'rekt')
       if (rektFriend) {
         addTextToQueue('You rise again like the\nPhoenix from the ashes!')
         rektFriend.revive(9)

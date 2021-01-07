@@ -17,7 +17,6 @@ class Flashbang {
     this.senseRadius = 20 // explosion stunning radius
   }
 
-  class = 'Flashbang'
   applyGravity = true
   spriteData = spriteData.flashbang
   w = 4
@@ -124,12 +123,16 @@ class Flashbang {
 
   select = () => {}
 
-  toJSON = () => Object.keys(this)
+  toJSON = () => {
+    let json = Object.keys(this)
     .filter(key => /string|number|boolean/.test(typeof this[key]))
     .reduce((obj, key) => {
       obj[key] = this[key]
       return obj
     }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
 
 export default Flashbang

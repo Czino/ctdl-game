@@ -5,6 +5,7 @@ import { moveObject, intersects } from './geometryUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants'
 import { canDrawOn } from './performanceUtils'
+import GameObject from './GameObject'
 
 BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
@@ -89,15 +90,11 @@ const tree = new Selector({
   ]
 })
 
-class Agent {
+class Agent extends GameObject {
   constructor(id, options) {
-    this.id = id
+    super(id, options)
     this.health = options.health ?? 5
     this.usd = options.usd ?? 0
-    this.w = 16
-    this.h = 30
-    this.x = options.x
-    this.y = options.y
     this.vx = options.vx || 0
     this.vy = options.vy || 0
     this.status = options.status || 'idle'
@@ -108,8 +105,9 @@ class Agent {
     this.protection = 0
   }
 
-  class = 'Agent'
   applyGravity = true
+  w = 16
+  h = 30
   dmgs = []
   heals = []
 
@@ -207,9 +205,9 @@ class Agent {
     }
   }
   lookAt = {
-    condition: object => object,
-    effect: object => {
-      this.direction = this.getCenter().x > object.getCenter().x ? 'left' : 'right'
+    condition: obj => obj,
+    effect: obj => {
+      this.direction = this.getCenter().x > obj.getCenter().x ? 'left' : 'right'
       return SUCCESS
     }
   }
@@ -239,7 +237,7 @@ class Agent {
       constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
     }
     let obstacles = CTDLGAME.quadTree.query(jumpTo)
-      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
       .filter(obj => intersects(obj, jumpTo))
 
     return obstacles.length === 0
@@ -249,9 +247,9 @@ class Agent {
   onHurt = () => {}
   onDie = () => {
     if (this.usd) {
-      addTextToQueue(`${this.class} got rekt,\nyou found $${this.usd}`)
+      addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
     } else {
-      addTextToQueue(`${this.class} got rekt`)
+      addTextToQueue(`${this.getClass()} got rekt`)
     }
   }
 
@@ -352,14 +350,6 @@ class Agent {
     }
   }
 
-  getBoundingBox = () => ({
-    id: this.id,
-    x: this.x,
-    y: this.y,
-    w: this.w,
-    h: this.h
-  })
-
   getAnchor = () => ({
       x: this.getBoundingBox().x + 2,
       y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
@@ -367,19 +357,16 @@ class Agent {
       h: 1
   })
 
-  getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  select = () => {}
-
-  toJSON = () => Object.keys(this)
+  toJSON = () => {
+    let json = Object.keys(this)
     .filter(key => /string|number|boolean/.test(typeof this[key]))
     .reduce((obj, key) => {
       obj[key] = this[key]
       return obj
     }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
 
 export default Agent

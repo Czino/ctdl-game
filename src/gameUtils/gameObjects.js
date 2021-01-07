@@ -8,6 +8,7 @@ import Andreas from '../enemies/Andreas'
 import Bear from '../enemies/Bear'
 import Brian from '../enemies/Brian'
 import PoliceForce from '../enemies/PoliceForce'
+import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
 import NPC from '../npcs/NPC'
 import Doge from '../npcs/Doge'
@@ -19,7 +20,6 @@ import Czino from '../npcs/Czino'
 import Luma from '../npcs/Luma'
 import Cat from '../npcs/Cat'
 
-
 export const gameObjects = {
     Block,
     Shitcoiner,
@@ -30,6 +30,7 @@ export const gameObjects = {
     Andreas,
     Brian,
     PoliceForce,
+    Human,
     Citizen,
     Bear,
     Item,

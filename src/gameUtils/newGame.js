@@ -40,8 +40,8 @@ export const newGame = async () => {
 
   await changeMap('city', 'newGame')
 
-  CTDLGAME.objects.forEach(object => CTDLGAME.quadTree.insert(object))
-  CTDLGAME.objects.forEach(object => object.update())
+  CTDLGAME.objects.forEach(obj => CTDLGAME.quadTree.insert(obj))
+  CTDLGAME.objects.forEach(obj => obj.update())
 
   CTDLGAME.frame = 6096 + 250
 }

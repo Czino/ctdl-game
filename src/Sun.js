@@ -1,18 +1,20 @@
 import constants from './constants'
+import GameObject from './GameObject'
 import { CTDLGAME, getTimeOfDay } from './gameUtils'
 import { easeInOut } from './geometryUtils'
 import { canDrawOn } from './performanceUtils'
 
-export default function(options) {
-  this.id = 'sun'
-  this.class = 'Sun'
-  this.w = 7
-  this.h = 7
-  this.x = options.x
-  this.y = options.y
-  this.isSolid = false
+class Sun extends GameObject {
+  constructor(options) {
+    super('sun', options)
+    this.class = 'Sun'
+    this.isSolid = false
+  }
 
-  this.drawSky = timeOfDay => {
+  w = 7
+  h = 7
+
+  drawSky = timeOfDay => {
     let y = timeOfDay < 4 || timeOfDay > 20 ? 0 : 1
 
     if (timeOfDay >= 4 && timeOfDay <= 6) {
@@ -31,7 +33,8 @@ export default function(options) {
     constants.skyContext.fillStyle = `hsl(${sky.h}, ${sky.s}%, ${sky.l}%)`
     constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
   }
-  this.update = () => {
+
+  update = () => {
     if (!canDrawOn('skyContext')) return
 
     let timeOfDay = getTimeOfDay()
@@ -58,20 +61,21 @@ export default function(options) {
     constants.skyContext.arc(center.x, center.y, this.w, 0, 2 * Math.PI)
     constants.skyContext.fill()
   }
-  this.getBoundingBox = () => this
 
-  this.getCenter = () => ({
+  getCenter = () => ({
     x: this.x,
     y: this.y
   })
 
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    isSolid: this.isSolid
-  })
+  toJSON = () => {
+    let json = Object.keys(this)
+    .filter(key => /string|number|boolean/.test(typeof this[key]))
+    .reduce((obj, key) => {
+      obj[key] = this[key]
+      return obj
+    }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
+export default Sun

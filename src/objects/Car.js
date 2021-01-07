@@ -28,8 +28,6 @@ class Car {
     this.h = this.spriteData.h
   }
 
-  class = 'Car'
-
   draw = () => {
     constants[this.context].drawImage(
       CTDLGAME.assets.cars,
@@ -73,12 +71,16 @@ class Car {
 
   select = () => {}
 
-  toJSON = () => Object.keys(this)
+  toJSON = () => {
+    let json = Object.keys(this)
     .filter(key => /string|number|boolean/.test(typeof this[key]))
     .reduce((obj, key) => {
       obj[key] = this[key]
       return obj
     }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
 
 export default Car

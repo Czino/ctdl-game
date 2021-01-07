@@ -90,11 +90,9 @@ class Andreas extends Agent {
     this.protection = 0
   }
 
-  class = 'Andreas'
   says = []
   w = 16
   h = 30
-
 
   bTree = new BehaviorTree({
     tree,
@@ -229,7 +227,7 @@ class Andreas extends Agent {
       constants.overlayContext.globalAlpha = 1
     }
     let obstacles = CTDLGAME.quadTree.query(duckTo)
-      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
       .filter(obj => intersects(obj, duckTo))
 
     return obstacles.length === 0
@@ -248,7 +246,7 @@ class Andreas extends Agent {
       constants.overlayContext.globalAlpha = 1
     }
     let obstacles = CTDLGAME.quadTree.query(standUpTo)
-      .filter(obj => obj.isSolid && !obj.enemy && obj.class !== 'Ramp')
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
       .filter(obj => intersects(obj, standUpTo))
 
     return obstacles.length === 0
@@ -341,7 +339,7 @@ class Andreas extends Agent {
       .filter(being => Math.abs(being.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => friend.class === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => friend.getClass() === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt/.test(this.status)) {

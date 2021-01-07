@@ -64,7 +64,6 @@ class Shitcoiner extends Agent {
     this.senseRadius = options.senseRadius || Math.round(Math.random() * 20) + 30
   }
 
-  class = 'Shitcoiner'
   enemy = true
   w = 16
   h = 30

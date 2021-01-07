@@ -1,13 +1,12 @@
-import { BehaviorTree, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/index.node'
 
-import spriteData from '../sprites/Citizen'
+import spriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
-import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { intersects, getClosest } from '../geometryUtils'
 import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
-import Agent from '../Agent'
+import Human from './Human'
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
@@ -25,7 +24,7 @@ const tree = new Selector({
   ]
 })
 
-class Czino extends Agent {
+class Czino extends Human {
   constructor(id, options) {
     super(id, options)
     this.spriteData = spriteData
@@ -43,125 +42,19 @@ class Czino extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  // TODO consider class Citizen or rename it to Human
-  class = 'Czino'
-  says = []
-  w = 16
-  h = 30
-
-
   bTree = new BehaviorTree({
     tree,
     blackboard: this
   })
 
-  runLeft = {
-    condition: () => true,
-    effect: () => {
-      this.direction = 'left'
-      this.isMoving = 'left'
-      const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
-
-      if (hasMoved) {
-        this.status = 'move'
-        return SUCCESS
-      }
-
-      return FAILURE
-    }
-  }
-  runRight = {
-    condition: () => true,
-    effect: () => {
-      this.direction = 'right'
-      this.isMoving = 'right'
-
-      const hasMoved = !moveObject(this, { x: this.runningSpeed , y: 0}, CTDLGAME.quadTree)
-      if (hasMoved) {
-        this.status = 'move'
-        return SUCCESS
-      }
-
-      return FAILURE
-    }
-  }
-
-  attack = {
-    condition: () => {
-      return SUCCESS
-    },
-    effect: () => {
-      this.status = this.hasSign
-        ? 'hold'
-        : this.films
-        ? 'action'
-        : 'attack'
-
-      return SUCCESS
-    }
-  }
-
-  stun = direction => {
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-  }
-
-  hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
-
-    if (!lostFullPoint) return
-
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-    this.protection = 8
-    playSound('playerHurt')
-    if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
-  }
-
-  die = () => {
-    this.status = 'rekt'
-    this.health = 0
-
+  onDie = () => {
     addTextToQueue(`Czino got rekt`)
   }
 
-  draw = () => {
-    if (!this.sprite) this.sprite = CTDLGAME.assets.czino
-    let spriteData = this.spriteData[this.direction][this.status]
-
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-    }
-
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.charContext.globalAlpha = data.opacity ?? 1
-    if (this.protection > 0) {
-      this.protection--
-      constants.charContext.globalAlpha = this.protection % 2
-    }
-    constants.charContext.drawImage(
-      this.sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-    constants.charContext.globalAlpha = 1
-  }
-
   update = () => {
-    if (CTDLGAME.lockCharacters) {
+    if (!this.sprite) this.sprite = CTDLGAME.assets.czino
 
+    if (CTDLGAME.lockCharacters) {
       this.draw()
       return
     }
@@ -199,7 +92,7 @@ class Czino extends Agent {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Human/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {
@@ -230,6 +123,7 @@ class Czino extends Agent {
       )
     }
 
+    // TODO refactor this
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
@@ -257,39 +151,5 @@ class Czino extends Agent {
         }
       })
   }
-
-  say = say => {
-    this.says = [{y: -8, say}]
-  }
-
-  getBoundingBox = () =>this.status !== 'rekt'
-    ? ({ // normal
-        id: this.id,
-        x: this.x + 6,
-        y: this.y + 6,
-        w: this.w - 12,
-        h: this.h - 6
-      })
-    : ({ // rekt
-      id: this.id,
-      x: this.x + 5,
-      y: this.y + 3,
-      w: this.w - 10,
-      h: this.h - 3
-    })
-
-  getAnchor = () => this.status !== 'rekt'
-    ? ({
-        x: this.getBoundingBox().x + 2,
-        y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-        w: this.getBoundingBox().w - 4,
-        h: 1
-    })
-    : ({
-      x: this.getBoundingBox().x,
-      y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-      w: this.getBoundingBox().w,
-      h: 1
-  })
 }
 export default Czino

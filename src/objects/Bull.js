@@ -18,7 +18,6 @@ class Bull {
 
   w = 47
   h = 25
-  class = 'Bull'
 
   draw = () => {
     this.frame++
@@ -69,12 +68,16 @@ class Bull {
 
   select = () => {}
 
-  toJSON = () => Object.keys(this)
+  toJSON = () => {
+    let json = Object.keys(this)
     .filter(key => /string|number|boolean/.test(typeof this[key]))
     .reduce((obj, key) => {
       obj[key] = this[key]
       return obj
     }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
 
 export default Bull

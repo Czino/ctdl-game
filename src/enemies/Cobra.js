@@ -49,7 +49,6 @@ class Cobra extends Agent {
     this.removeTimer = options.removeTimer
   }
 
-  class = 'Cobra'
   enemy = true
   w = 14
   h = 14
@@ -79,7 +78,7 @@ class Cobra extends Agent {
 
     // AI logic
     if (!/rekt/.test(this.status)) {
-      this.sensedEnemies = sense(this, /Character|Citizen|Rabbit/)
+      this.sensedEnemies = sense(this, /Character|Human|Rabbit/)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
     }

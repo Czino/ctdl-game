@@ -147,7 +147,6 @@ class Citizen extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  class = 'Citizen'
   says = []
   w = 16
   h = 30
@@ -389,7 +388,7 @@ class Citizen extends Agent {
 
     if (this.isUnhappy) {
       this.sensedEnemies = this.sensedObjects
-        .filter(enemy => enemy.class === 'PoliceForce')
+        .filter(enemy => enemy.getClass() === 'PoliceForce')
         .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
     } else {
       this.sensedEnemies = this.sensedObjects
@@ -398,7 +397,7 @@ class Citizen extends Agent {
     }
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character|Citizen/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Human/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {

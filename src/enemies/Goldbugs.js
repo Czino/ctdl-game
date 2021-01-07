@@ -55,7 +55,6 @@ class Goldbugs extends Agent {
     this.senseRadius = Math.round(Math.random() * 30) + 10
   }
 
-  class = 'Goldbugs'
   enemy = true
   w = 10
   h = 10

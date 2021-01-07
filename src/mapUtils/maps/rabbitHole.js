@@ -210,7 +210,7 @@ export default {
   track: () => 'darkIsBetter',
   bgColor: () => '#170705',
   update: () => {
-    const andreas = CTDLGAME.objects.find(obj => obj.class === 'Andreas')
+    const andreas = CTDLGAME.objects.find(obj => obj.getClass() === 'Andreas')
     if (andreas && !andreas.inViewport && Math.random() < .01) {
       let teleportTo = random(andreasTeleports)
       if (!intersects(teleportTo, CTDLGAME.viewport)) {

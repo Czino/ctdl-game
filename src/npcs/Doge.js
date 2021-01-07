@@ -14,7 +14,6 @@ class Doge extends Agent {
     this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
     this.speed = (Math.round(Math.random() * 3) + 4) * constants.FRAMERATE
   }
-  class = 'Doge'
   w = 13
   h = 12
 

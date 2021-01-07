@@ -54,7 +54,6 @@ class Bear extends Agent {
     this.canMove = options.canMove
   }
 
-  class = 'Bear'
   enemy = true
   w = 27
   h = 28

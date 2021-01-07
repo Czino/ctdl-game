@@ -18,6 +18,7 @@ const sprites = [
 
 const lick = new Task({
   run: agent => {
+    // only lick sometimes and not forever
     if (Math.random() > .005 && agent.status !== 'lick') return FAILURE
     if (Math.random() < .05) return FAILURE
     agent.status = 'lick'
@@ -64,10 +65,10 @@ const runToPointX = new Task({
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
+    moveToFriend,
     moveToPointX,
     runToPointX,
     lick,
-    moveToFriend,
     'idle'
   ]
 })
@@ -99,7 +100,6 @@ class Cat extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  class = 'Cat'
   says = []
   w = 15
   h = 9
@@ -235,7 +235,7 @@ class Cat extends Agent {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character|Cat|Czino|Luma/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Cat|Human/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {

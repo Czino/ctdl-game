@@ -79,8 +79,8 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
     })
   }
   CTDLGAME.objects
-    .filter(object => object.glows)
-    .map(object => object.draw())
+    .filter(obj => obj.glows)
+    .map(obj => obj.draw())
 }
 
 export default drawLightSources

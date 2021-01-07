@@ -1,22 +1,23 @@
-import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
-import spriteData from '../sprites/citizen'
+import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
+import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
-import Human from './Human'
+import { playSound } from '../sounds';
+import Agent from '../Agent'
+
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
-    // 'moveToPointX',
+    'moveToPointX',
     'idle'
   ]
 })
 
-// only "protest while condition is met otherwise just walk around
 const tree = new Selector({
   nodes: [
     'survive',
@@ -24,13 +25,15 @@ const tree = new Selector({
   ]
 })
 
-class Luma extends Human {
+class Human extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.spriteData = spriteData
+    this.spriteId = options.spriteId || 'citizen1'
+    this.spriteData = citizenSpriteData
     this.maxHealth = options.maxHealth ?? Math.round(Math.random() * 5) + 5
     this.health = options.health ?? this.maxHealth
     this.strength = 1
+    this.context = options.context || (Math.random() < .5 ? 'bgContext' : 'charContext')
     this.attackRange = options.attackRange ?? Math.ceil(Math.random() * 70) + 70
     this.senseRadius = this.attackRange
     this.applyGravity = options.applyGravity ?? true
@@ -38,24 +41,118 @@ class Luma extends Human {
     this.runningSpeed = options.runningSpeed || Math.round(Math.random() * 2) + 4
     this.protection = 0
 
+    this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
+    this.speed = Math.round(Math.random() * 3) * constants.FRAMERATE
     this.goal = options.goal
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
+
+  says = []
+  w = 16
+  h = 30
+
 
   bTree = new BehaviorTree({
     tree,
     blackboard: this
   })
 
+  runLeft = {
+    condition: () => true,
+    effect: () => {
+      this.direction = 'left'
+      this.isMoving = 'left'
+      const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
+
+      if (hasMoved) {
+        this.status = 'run'
+        return SUCCESS
+      }
+
+      return FAILURE
+    }
+  }
+  runRight = {
+    condition: () => true,
+    effect: () => {
+      this.direction = 'right'
+      this.isMoving = 'right'
+
+      const hasMoved = !moveObject(this, { x: this.runningSpeed , y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        this.status = 'run'
+        return SUCCESS
+      }
+
+      return FAILURE
+    }
+  }
+
+  // TODO move to Agent?
+  stun = direction => {
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
+  }
+
+  // TODO compare to Agent and Character class
+  hurt = (dmg, direction) => {
+    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
+    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
+    this.health = Math.max(this.health - dmg, 0)
+
+    if (!lostFullPoint) return
+
+    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
+    this.protection = 8
+    playSound('playerHurt')
+    if (this.health / this.maxHealth <= .2) this.say('help!')
+    if (this.health <= 0) {
+      this.health = 0
+      this.die()
+    }
+  }
+
+  die = () => {
+    this.status = 'rekt'
+    this.health = 0
+  }
 
   onDie = () => {
-    addTextToQueue(`Luma got rekt`)
+    this.removeTimer = 64
+    addTextToQueue(`Human got rekt`)
+  }
+
+  draw = () => {
+    let spriteData = this.spriteData[this.direction][this.status]
+
+    if (this.frame >= spriteData.length) {
+      this.frame = 0
+    }
+
+    let data = spriteData[this.frame]
+    this.w = data.w
+    this.h = data.h
+
+    constants[this.context].globalAlpha = data.opacity ?? 1
+    if (this.protection > 0) {
+      this.protection--
+      constants[this.context].globalAlpha = this.protection % 2
+    }
+    constants[this.context].drawImage(
+      this.sprite,
+      data.x, data.y, this.w, this.h,
+      this.x, this.y, this.w, this.h
+    )
+    constants[this.context].globalAlpha = 1
   }
 
   update = () => {
-    if (!this.sprite) this.sprite = CTDLGAME.assets.luma
-
     if (CTDLGAME.lockCharacters) {
+
       this.draw()
       return
     }
@@ -80,7 +177,6 @@ class Luma extends Human {
     this.touchedObjects = CTDLGAME.quadTree
       .query(this.getBoundingBox())
       .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
-
 
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
@@ -115,15 +211,10 @@ class Luma extends Human {
       if (/action/.test(this.status)) this.status = 'idle'
     }
 
+    if (this.removeTimer) this.removeTimer--
+    if (this.removeTimer === 0) this.remove = true
+
     this.draw()
-
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
-
 
     // TODO refactor this
     this.dmgs = this.dmgs
@@ -153,5 +244,39 @@ class Luma extends Human {
         }
       })
   }
+
+  say = say => {
+    this.says = [{y: -8, say}]
+  }
+
+  getBoundingBox = () =>this.status !== 'rekt'
+    ? ({ // normal
+        id: this.id,
+        x: this.x + 6,
+        y: this.y + 6,
+        w: this.w - 12,
+        h: this.h - 6
+      })
+    : ({ // rekt
+      id: this.id,
+      x: this.x + 5,
+      y: this.y + 3,
+      w: this.w - 10,
+      h: this.h - 3
+    })
+
+  getAnchor = () => this.status !== 'rekt'
+    ? ({
+        x: this.getBoundingBox().x + 2,
+        y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
+        w: this.getBoundingBox().w - 4,
+        h: 1
+    })
+    : ({
+      x: this.getBoundingBox().x,
+      y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
+      w: this.getBoundingBox().w,
+      h: 1
+  })
 }
-export default Luma
+export default Human

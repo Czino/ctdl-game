@@ -17,7 +17,7 @@ export const changeMap = async (id, from) => {
   if (from !== 'newGame') await saveGame()
 
   // remove all objects but characters
-  CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.class === 'Character')
+  CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.getClass() === 'Character')
 
   // create new world
   const newWorld = new World(id, await loadMap(id))
@@ -34,18 +34,18 @@ export const changeMap = async (id, from) => {
   if (objects && objects.length > 0) {
     // we have saved objects, let's initialize them
     objects
-      .filter(object => gameObjects[object.class])
-      .map(object => new gameObjects[object.class](object.id, object))
-      .map(object => CTDLGAME.objects.push(object))
+      .filter(obj => gameObjects[obj.class])
+      .map(obj => new gameObjects[obj.class](obj.id, obj))
+      .map(obj => CTDLGAME.objects.push(obj))
   } else {
     // we have no objects saved, let's get the default ones
-    CTDLGAME.world.map.npcs().map(object => CTDLGAME.objects.push(object))
-    CTDLGAME.world.map.items().map(object => CTDLGAME.objects.push(object))
+    CTDLGAME.world.map.npcs().map(obj => CTDLGAME.objects.push(obj))
+    CTDLGAME.world.map.items().map(obj => CTDLGAME.objects.push(obj))
   }
 
   CTDLGAME.world.map.objects
-    .filter(object => !object.class || object.class === 'Ramp')
-    .map(object => CTDLGAME.objects.push(object))
+    .filter(obj => /Tile|Ramp/.test(obj.getClass()))
+    .map(obj => CTDLGAME.objects.push(obj))
 
   // prevent object falling into the floor
   CTDLGAME.objects

@@ -138,7 +138,6 @@ class Rabbit extends Agent {
   }
 
   activity = .05
-  class = 'Rabbit'
   spriteData = sprites.rabbit
   item = null
   w = 8

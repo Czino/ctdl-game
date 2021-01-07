@@ -3,26 +3,26 @@ import { CTDLGAME } from './gameUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants';
 import { setButtonClicked } from './events';
+import GameObject from './GameObject';
 
-export default function(id, options) {
-  this.id = id;
-  this.class = 'Block'
-  this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
-  this.context = constants[options.context || 'gameContext']
-  this.w = options.w || 6
-  this.h = options.h || 6
-  this.x = options.x
-  this.y = options.y
-  this.isSolid = options.isSolid
-  this.opacity = options.opacity || 1
-  this.status = options.status
-  this.info = options.info || {}
+class Block extends GameObject {
+  constructor(id, options) {
+    super(id, options)
+    this.spriteData = { x: 0, y: 0, w: 6, h: 6 }
+    this.context = constants[options.context || 'gameContext']
+    this.w = options.w || 6
+    this.h = options.h || 6
+    this.isSolid = options.isSolid
+    this.opacity = options.opacity || 1
+    this.status = options.status
+    this.info = options.info || {}
+  }
 
-  this.toggleSolid = () => {
+  toggleSolid = () => {
     this.isSolid = !this.isSolid
   }
 
-  this.update = () => {
+  update = () => {
     let sprite = CTDLGAME.assets.block
 
     let data = blockSprite['block']
@@ -46,28 +46,21 @@ export default function(id, options) {
       this.context.stroke()
     }
   }
-  this.getBoundingBox = () => this
 
-  this.getCenter = () => ({
-    x: this.x + this.w / 2 - 1,
-    y: this.y + this.h / 2 - 1
-  })
-
-  this.select = () => {
+  select = () => {
     setButtonClicked(this)
     addTextToQueue(this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock')
   }
-  this.unselect = () => {}
 
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    isSolid: this.isSolid,
-    opacity: this.opacity,
-    info: this.info
-  })
+  toJSON = () => {
+    let json = Object.keys(this)
+    .filter(key => /string|number|boolean/.test(typeof this[key]))
+    .reduce((obj, key) => {
+      obj[key] = this[key]
+      return obj
+    }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
+export default Block

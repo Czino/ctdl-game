@@ -218,7 +218,7 @@ class PoliceForce extends Agent {
   
       this.sensedEnemies = senseCharacters(this)
       this.sensedFriends = this.sensedObjects
-        .filter(obj => obj && obj.class === this.class && obj.status !== 'rekt')
+        .filter(obj => obj && obj.getClass() === this.getClass() && obj.status !== 'rekt')
 
       // check who is doing "criminal activity"
       this.sensedEnemies

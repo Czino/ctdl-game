@@ -1,18 +1,19 @@
 import constants from './constants'
+import GameObject from './GameObject';
 import { CTDLGAME, getTimeOfDay } from './gameUtils'
 import { canDrawOn } from './performanceUtils'
 
-export default function(options) {
-  this.id = 'moon';
-  this.class = 'Moon'
-  this.spriteData = { x: 0, y: 0, w: 109, h: 109 }
-  this.w = 109
-  this.h = 109
-  this.x = options.x
-  this.y = options.y
-  this.isSolid = false
+class Moon extends GameObject {
+  constructor(options) {
+    super('moon', options)
+    this.spriteData = { x: 0, y: 0, w: 109, h: 109 }
+    this.isSolid = false
+  }
 
-  this.update = () => {
+  w = 109
+  h = 109
+
+  update = () => {
     if (!canDrawOn('skyContext')) return
 
     let timeOfDay = getTimeOfDay()
@@ -35,20 +36,16 @@ export default function(options) {
       Math.round(this.x - this.w / 2), Math.round(this.y - this.h / 2), this.w, this.h
     )
   }
-  this.getBoundingBox = () => this
 
-  this.getCenter = () => ({
-    x: this.x + this.w / 2,
-    y: this.y + this.h / 2
-  })
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y,
-    isSolid: this.isSolid
-  })
+  toJSON = () => {
+    let json = Object.keys(this)
+    .filter(key => /string|number|boolean/.test(typeof this[key]))
+    .reduce((obj, key) => {
+      obj[key] = this[key]
+      return obj
+    }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
+export default Moon

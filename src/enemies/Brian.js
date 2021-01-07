@@ -64,7 +64,6 @@ class Brian extends Agent {
     this.hurtAttackCounter = options.hurtAttackCounter || 0
   }
 
-  class = 'Brian'
   enemy = true
   w = 16
   h = 30

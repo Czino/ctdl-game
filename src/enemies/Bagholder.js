@@ -61,7 +61,6 @@ class Bagholder extends Agent {
     this.protection = 0
   }
 
-  class = 'Bagholder'
   enemy = true
   w = 20
   h = 30
@@ -129,7 +128,7 @@ class Bagholder extends Agent {
     playSound('shitcoinerHurt')
   }
   onDie = () => {
-    addTextToQueue(`${this.class} got rekt,\nyou found $${this.usd}`)
+    addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
     playSound('shitcoinerHurt')
     playSound('burn')
   }

@@ -28,8 +28,8 @@ export const loadGame = async () => {
 
   if (objects) {
     CTDLGAME.objects = objects
-      .filter(object => gameObjects[object.class])
-      .map(object => new gameObjects[object.class](object.id, object))
+      .filter(obj => gameObjects[obj.class])
+      .map(obj => new gameObjects[obj.class](obj.id, obj))
   }
 
   setWorld(new World(worldId, await loadMap(worldId)))
@@ -40,8 +40,8 @@ export const loadGame = async () => {
   } else {
     // we already have objects, only get tiles and ramps
     CTDLGAME.world.map.objects
-    .filter(object => !object.class || object.class === 'Ramp')
-    .map(object => CTDLGAME.objects.push(object))
+    .filter(obj => /Tile|Ramp/.test(obj.getClass()))
+    .map(obj => CTDLGAME.objects.push(obj))
   }
   if (worldState) CTDLGAME.world.map.state = worldState;
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
@@ -67,8 +67,8 @@ export const loadGame = async () => {
   CTDLGAME.objects.push(CTDLGAME.hodlonaut)
   CTDLGAME.objects.push(CTDLGAME.katoshi)
 
-  CTDLGAME.objects.forEach(object => {
-    CTDLGAME.quadTree.insert(object)
+  CTDLGAME.objects.forEach(obj => {
+    CTDLGAME.quadTree.insert(obj)
   })
 
   let timeOfDay = getTimeOfDay()

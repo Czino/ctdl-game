@@ -1,25 +1,25 @@
 import { CTDLGAME } from './gameUtils'
-import constants from './constants';
+import constants from './constants'
+import GameObject from './GameObject'
 
-export default function(id, context, options) {
-  this.id = id;
-  this.class = 'Ramp'
-  this.sprite = options.sprite
-  this.context = context
-  this.w = options.w || 8
-  this.h = options.h || 8
-  this.x = options.x
-  this.y = options.y
-  this.spriteData = options.spriteData || { x: 0, y: 0, w: this.w, h: this.h}
-  this.isSolid = options.isSolid
-  this.spawnPoint = options.spawnPoint
-  this.status = options.status
+class Ramp extends GameObject {
+  constructor(id, context, options) {
+    super(id, options)
+    this.sprite = options.sprite
+    this.context = context
+    this.w = options.w || 8
+    this.h = options.h || 8
+    this.spriteData = options.spriteData || { x: 0, y: 0, w: this.w, h: this.h}
+    this.isSolid = options.isSolid
+    this.spawnPoint = options.spawnPoint
+    this.status = options.status
+  }
 
-  this.toggleSolid = () => {
+  toggleSolid = () => {
     this.isSolid = !this.isSolid
   }
 
-  this.makeToggle = isSolid => {
+  makeToggle = isSolid => {
     this.isSolid = isSolid
     this.backEvent = character => {
       this.isSolid = true
@@ -30,16 +30,7 @@ export default function(id, context, options) {
     }
   }
 
-  this.update = () => {}
-
-  this.getBoundingBox = () => this
-
-  this.getCenter = () => ({
-    x: this.x + this.w / 2 - 1,
-    y: this.y + this.h / 2 - 1
-  })
-
-  this.getHeightMap = () => {
+  getHeightMap = () => {
     if (this.heightMap) return this.heightMap
 
     constants.helperCanvas.width = 8
@@ -70,16 +61,11 @@ export default function(id, context, options) {
     return this.heightMap
   }
 
-  this.getTrueY = () => {
+  getTrueY = () => {
     if (this.trueY) return this.trueY
     const heightMap = this.getHeightMap()
     this.trueY = this.y + heightMap.findIndex(row => row.indexOf(255) >= 0)
     return this.trueY
   }
-
-  this.select = () => {
-    if (window.DEBUG) console.log(this)
-  }
-
-  this.unselect = () => {}
 }
+export default Ramp

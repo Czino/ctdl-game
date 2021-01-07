@@ -123,7 +123,7 @@ export default {
     CTDLGAME.world.map.overworld = !CTDLGAME.world.map.state.bullrun
     if (!CTDLGAME.world.map.state.bullrun) {
       CTDLGAME.objects
-        .filter(obj => obj.class === 'Bull')
+        .filter(obj => obj.getClass() === 'Bull')
         .map(obj => obj.remove = true)
       CTDLGAME.world.map.spawnRates.bull = 0
       CTDLGAME.world.map.spawnRates.shitcoiner = 0.01

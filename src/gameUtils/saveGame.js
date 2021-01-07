@@ -26,10 +26,10 @@ export const saveGame = async () => {
   await db.set('worldId', CTDLGAME.world.id)
   await db.set(`worldState-${CTDLGAME.world.id}`, CTDLGAME.world.map.state)
   await db.set(`objects-${CTDLGAME.world.id}`, CTDLGAME.objects
-    .filter(object => object && object.class !== 'Character' && object.toJSON)
+    .filter(obj => obj && obj.getClass() !== 'Character' && obj.toJSON)
     .filter(unique('id'))
-    .map(object => {
-      return object.toJSON()
+    .map(obj => {
+      return obj.toJSON()
     }))
   await db.set('blockHeight', CTDLGAME.blockHeight)
   await db.set('inventory', CTDLGAME.inventory)

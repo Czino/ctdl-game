@@ -372,7 +372,7 @@ function mouseMoveHandler (e) {
   }
   let blockHover = CTDLGAME.quadTree
     ? CTDLGAME.quadTree.query(hover)
-      .filter(obj => obj.class === 'Block')
+      .filter(obj => obj.getClass() === 'Block')
       .find(block => intersects(hover, block.getBoundingBox()))
     : null
 
@@ -461,7 +461,7 @@ function click (e) {
   if (window.SELECTED) window.SELECTED.unselect()
   if (!object) return
   if (object.select) object.select()
-  if (object.class === 'Block') {
+  if (object.getClass() === 'Block') {
     object.toggleSolid()
   }
 }

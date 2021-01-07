@@ -48,6 +48,8 @@ const spawnPoints = [
 let objects = []
 let events = []
 
+
+// TODO call Boundary directly?
 const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
   objects.push(makeBoundary({
     x: x * tileSize,
@@ -116,6 +118,8 @@ events.push(gotToConbase)
 
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'city', tileSize))
 
+
+console.log(objects)
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {

@@ -3,26 +3,28 @@ import { CTDLGAME, checkBlocks } from '../gameUtils'
 import { addTextToQueue } from '../textUtils'
 import { playSound } from '../sounds'
 import Explosion from '../Explosion'
+import Agent from '../Agent'
 
-export default function(id, options) {
-  this.id = id;
-  this.class = 'Wizard'
-  this.status = 'cool'
-  this.w = 43
-  this.h = 34
-  this.x = options.x
-  this.y = options.y
-  this.hasAppeared = false
-  this.opacity = .5
+class Wizard extends Agent {
+  constructor(id, options) {
+    super(id, options)
+    this.hasAppeared = false
+    this.opacity = .5
+    this.explosion = null
+  }
 
-  let explosion
-  this.update = () => {
+  status = 'cool'
+  applyGravity = false
+  w = 43
+  h = 34
+
+  update = () => {
     const sprite = CTDLGAME.assets.wizard
 
     if (!this.hasAppeared) {
       playSound('magic')
       this.hasAppeared = true
-      explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
+      this.explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
 
       CTDLGAME.hodlonaut.idle.effect()
       CTDLGAME.hodlonaut.direction = 'left'
@@ -62,8 +64,10 @@ export default function(id, options) {
     } else {
       if (this.status === 'disappear') {
         this.opacity = Math.min(this.opacity, Math.abs(this.opacity - .5))
-        if (explosion.remove) this.remove = true
+        if (this.explosion.remove) this.remove = true
       }
+
+      // TODO check if the draw method works here
       constants.charContext.globalAlpha = this.opacity
       constants.charContext.drawImage(
         sprite,
@@ -74,40 +78,17 @@ export default function(id, options) {
       if (this.status !== 'disappear') this.opacity = 1
     }
 
-    if (explosion) {
-      explosion.update()
+    if (this.explosion) {
+      this.explosion.update()
     }
   }
 
-  this.disappear = () => {
+  disappear = () => {
     playSound('magic')
-    explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
+    this.explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
     this.status = 'disappear'
     CTDLGAME.lockCharacters = false
     constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = false
   }
-
-  this.getBoundingBox = () => ({
-    id: this.id,
-    x: this.x,
-    y: this.y,
-    w: this.w,
-    h: this.h
-  })
-
-  this.getCenter = () => ({
-    x: this.x + this.w / 2,
-    y: this.y + this.h / 2
-  })
-
-  this.select = () => {}
-
-  this.toJSON = () => ({
-    id: this.id,
-    class: this.class,
-    w: this.w,
-    h: this.h,
-    x: this.x,
-    y: this.y
-  })
 }
+export default Wizard
