@@ -10,7 +10,7 @@ export const clearCanvas = () => {
   if (canDrawOn('parallaxContext')) {
     constants.parallaxContext.clearRect(
       Math.round(CTDLGAME.viewport.x / 2),
-      Math.round(CTDLGAME.viewport.y / 4 + 624),
+      Math.round(CTDLGAME.viewport.y / 4 + (CTDLGAME.world?.h || 0) / 4 * 3 - 144),
       constants.WIDTH, constants.HEIGHT)
   }
 

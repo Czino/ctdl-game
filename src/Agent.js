@@ -237,7 +237,7 @@ class Agent extends GameObject {
       constants.overlayContext.fillRect(jumpTo.x, jumpTo.y, jumpTo.w, jumpTo.h)
     }
     let obstacles = CTDLGAME.quadTree.query(jumpTo)
-      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp|Boundary/.test(obj.getClass()))
       .filter(obj => intersects(obj, jumpTo))
 
     return obstacles.length === 0

@@ -44,7 +44,7 @@ export const changeMap = async (id, from) => {
   }
 
   CTDLGAME.world.map.objects
-    .filter(obj => /Tile|Ramp/.test(obj.getClass()))
+    .filter(obj => /Tile|Ramp|Boundary/.test(obj.getClass()))
     .map(obj => CTDLGAME.objects.push(obj))
 
   // prevent object falling into the floor

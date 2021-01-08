@@ -300,7 +300,7 @@ class Character extends Agent {
       constants.overlayContext.globalAlpha = 1
     }
     let obstacles = CTDLGAME.quadTree.query(duckTo)
-      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp|Boundary/.test(obj.getClass()))
       .filter(obj => intersects(obj, duckTo))
 
     return obstacles.length === 0

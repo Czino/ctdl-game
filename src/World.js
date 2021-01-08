@@ -37,7 +37,7 @@ class World {
     if (this.map.parallax.length > 0 && canDrawOn('parallaxContext')) {
       let parallaxViewport = {
         x: Math.round(CTDLGAME.viewport.x / 2),
-        y: Math.round(CTDLGAME.viewport.y / 4 + 624),
+        y: Math.round(CTDLGAME.viewport.y / 4 + CTDLGAME.world.h / 4 * 3 - 144),
         w: CTDLGAME.viewport.w,
         h: CTDLGAME.viewport.h
       }

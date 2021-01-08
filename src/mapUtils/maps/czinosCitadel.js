@@ -17,7 +17,7 @@ import crispy from '../../sprites/crispy.png'
 import pita from '../../sprites/pita.png'
 import moon from '../../sprites/moon.png'
 
-const worldWidth = 30
+const worldWidth = 64
 const worldHeight = 64
 const tileSize = 8
 
@@ -26,7 +26,9 @@ stage.bg = parsePattern(stage.bg, 0, 0)
 stage.base = parsePattern(stage.base, 0, 0)
 stage.fg = parsePattern(stage.fg, 0, 0)
 const ramps = [
-  [0, 1], [1, 1], [2, 1]
+  [0, 1],[1, 1], [2, 1],
+  [0, 2], [1, 2],
+  [0, 3], [1, 3]
 ].map(tile => tile.toString())
 const solids = [
   [1, 0], [0, 4], [1, 4]
@@ -54,8 +56,8 @@ makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
 
 const goToGrasslands = new GameObject('goToGrasslands', {
-  x: 2 * tileSize,
-  y: 60 * tileSize,
+  x: 62 * tileSize,
+  y: 57 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
@@ -70,7 +72,7 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'cz
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    grasslands: { x: 5 * tileSize, y: 59 * tileSize + 1 }
+    grasslands: { x: 59 * tileSize, y: 57 * tileSize + 1 }
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -83,27 +85,27 @@ export default {
   npcs: () => [
     new Czino('czino',
       {
-        x: 10 * tileSize,
+        x: 20 * tileSize,
         y: 59 * tileSize + 1
       }
     ),
     new Luma('luma',
       {
-        x: 11 * tileSize,
+        x: 48 * tileSize,
         y: 59 * tileSize + 1
       }
     ),
     new Cat('crispy',
       {
         spriteId: 'crispy',
-        x: 14 * tileSize,
+        x: 52 * tileSize,
         y: 59 * tileSize + 1
       }
     ),
     new Cat('pita',
       {
         spriteId: 'pita',
-        x: 12 * tileSize,
+        x: 51 * tileSize,
         y: 59 * tileSize + 1
       }
     )
