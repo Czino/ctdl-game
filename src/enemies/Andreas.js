@@ -318,15 +318,8 @@ class Andreas extends Agent {
       this.status = 'idle'
     }
 
-    const senseBox = {
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    }
-    this.sensedObjects = CTDLGAME.quadTree
-      .query(senseBox)
-      .filter(obj => obj.id !== this.id)
+    const senseBox = this.getSenseBox()
+    this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
 
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
@@ -339,7 +332,7 @@ class Andreas extends Agent {
       .filter(being => Math.abs(being.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => friend.getClass() === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => friend.getClass() === 'Character' && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt/.test(this.status)) {

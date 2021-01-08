@@ -2,12 +2,11 @@ import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import { intersects, moveObject } from '../geometryUtils'
 import { playSound } from '../sounds'
+import GameObject from '../GameObject'
 
-class Elevator {
+class Elevator extends GameObject {
   constructor(id, options) {
-    this.id = id
-    this.x = options.x
-    this.y = options.y
+    super(id, options)
     this.offsetY = options.offsetY || 0
     this.minOffset = options.minOffset || 0
     this.maxOffset = options.maxOffset || 0
@@ -189,23 +188,7 @@ class Elevator {
       h: 1
   })
 
-  getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  select = () => {}
-
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
+  toJSON = this._toJSON
 }
 
 export default Elevator

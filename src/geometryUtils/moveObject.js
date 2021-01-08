@@ -16,7 +16,7 @@ const moveAndCheck = (object, vector, tree) => {
     object.y += vector.y ? vector.y / Math.abs(vector.y) : 0
 
     hasCollided = tree.query(object.getBoundingBox())
-        .filter(point => point.isSolid && point.id !== object.id)
+        .filter(point => point.isSolid)
         .filter(point => intersects(object.getBoundingBox(), point.getBoundingBox()))
         .some(point => {
           if (!point.getHeightMap) return true

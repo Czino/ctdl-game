@@ -13,8 +13,6 @@ class Item extends GameObject {
     this.spriteData = spriteData[this.id]
     this.w = this.spriteData.w
     this.h = this.spriteData.h
-    this.vx = options.vx || 0
-    this.vy = options.vy || 0
   }
 
   collected = false
@@ -111,15 +109,6 @@ class Item extends GameObject {
       h: 1
   })
 
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
+  toJSON = this._toJSON
 }
 export default Item

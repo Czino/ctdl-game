@@ -16,6 +16,7 @@ const sprites = [
   'pita'
 ]
 
+// TODO add behaviour for bisq cat
 const lick = new Task({
   run: agent => {
     // only lick sometimes and not forever
@@ -209,15 +210,8 @@ class Cat extends Agent {
       this.status = 'idle'
     }
 
-    const senseBox = {
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    }
-    this.sensedObjects = CTDLGAME.quadTree
-      .query(senseBox)
-      .filter(obj => obj.id !== this.id)
+    const senseBox = this.getSenseBox()
+    this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
 
     this.touchedObjects = CTDLGAME.quadTree
       .query(this.getBoundingBox())
@@ -235,7 +229,7 @@ class Cat extends Agent {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character|Cat|Human/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Cat|Czino|Luma/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {

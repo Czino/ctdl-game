@@ -5,6 +5,8 @@ class GameObject {
     this.h = options.h || 6
     this.x = options.x
     this.y = options.y
+    this.vx = options.vx || 0
+    this.vy = options.vy || 0
   }
 
   update = () => {}
@@ -15,6 +17,13 @@ class GameObject {
     y: this.y,
     w: this.w,
     h: this.h
+  })
+
+  getAnchor = () => ({
+    x: this.getBoundingBox().x,
+    y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
+    w: this.getBoundingBox().w,
+    h: 1
   })
 
   getCenter = () => ({
@@ -28,6 +37,17 @@ class GameObject {
     if (window.DEBUG) console.log(this)
   }
   unselect = () => {}
+
+  _toJSON = () => {
+    let json = Object.keys(this)
+    .filter(key => /string|number|boolean/.test(typeof this[key]))
+    .reduce((obj, key) => {
+      obj[key] = this[key]
+      return obj
+    }, {})
+    json.class = this.constructor.name
+    return json
+  }
 }
 
 export default GameObject

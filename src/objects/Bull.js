@@ -2,13 +2,12 @@ import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import spriteData from '../sprites/bull'
 import { intersects } from '../geometryUtils'
+import GameObject from '../GameObject'
 
 
-class Bull {
+class Bull extends GameObject {
   constructor(id, options) {
-    this.id = id
-    this.x = options.x
-    this.y = options.y
+    super(id, options)
     this.vx = options.vx || 3
     this.frame = 0
     this.status = 'run'
@@ -46,38 +45,7 @@ class Bull {
     this.draw()
   }
 
-  getBoundingBox = () => ({
-    id: this.id,
-    x: this.x,
-    y: this.y,
-    w: this.w,
-    h: this.h
-  })
-
-  getAnchor = () => ({
-      x: this.getBoundingBox().x,
-      y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-      w: this.getBoundingBox().w,
-      h: 1
-  })
-
-  getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  select = () => {}
-
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
+  toJSON = this._toJSON
 }
 
 export default Bull

@@ -207,14 +207,8 @@ class PoliceForce extends Agent {
     this.applyPhysics()
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt|spawn/.test(this.status)) {
-      const senseBox = {
-        x: this.x - this.senseRadius,
-        y: this.y - this.senseRadius,
-        w: this.w + this.senseRadius * 2,
-        h: this.h + this.senseRadius * 2
-      }
-      this.sensedObjects = CTDLGAME.quadTree
-        .query(senseBox)
+      const senseBox = this.getSenseBox()
+      this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
   
       this.sensedEnemies = senseCharacters(this)
       this.sensedFriends = this.sensedObjects
@@ -223,7 +217,6 @@ class PoliceForce extends Agent {
       // check who is doing "criminal activity"
       this.sensedEnemies
         .filter(enemy => /attack/i.test(enemy.status))
-        .filter(enemy => enemy.id !== this.id)
         .forEach(enemy => this.sensedCriminals.push(enemy.id))
 
       if (this.sensedCriminals.length > 0) {

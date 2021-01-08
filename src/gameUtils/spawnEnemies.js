@@ -40,9 +40,9 @@ export const spawnAgent = agent => {
   if (!highestSpawnPoint) return
 
   let hasCollided = CTDLGAME.quadTree.query(agent.getBoundingBox())
-    .filter(point => point.isSolid && point.id !== agent.id).concat(
+    .filter(point => point.isSolid).concat(
       CTDLGAME.quadTree.query(agent.getBoundingBox())
-      .filter(point => point.getClass() === agent.getClass() && point.id !== agent.id)
+      .filter(point => point.getClass() === agent.getClass())
     )
     .filter(point => intersects(agent.getBoundingBox(), point.getBoundingBox()))
     .some(point => {

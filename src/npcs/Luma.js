@@ -67,15 +67,8 @@ class Luma extends Human {
       this.status = 'idle'
     }
 
-    const senseBox = {
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius * 2
-    }
-    this.sensedObjects = CTDLGAME.quadTree
-      .query(senseBox)
-      .filter(obj => obj.id !== this.id)
+    const senseBox = this.getSenseBox()
+    this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
 
     this.touchedObjects = CTDLGAME.quadTree
       .query(this.getBoundingBox())

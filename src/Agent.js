@@ -95,8 +95,6 @@ class Agent extends GameObject {
     super(id, options)
     this.health = options.health ?? 5
     this.usd = options.usd ?? 0
-    this.vx = options.vx || 0
-    this.vy = options.vy || 0
     this.status = options.status || 'idle'
     this.direction = options.direction || 'left'
     this.frame = options.frame || 0
@@ -228,6 +226,8 @@ class Agent extends GameObject {
 
   canJump = () => {
     if (this.hasShield) return false
+    if (this.id === window.SELECTEDCHARACTER.id) return true
+
     let jumpTo = this.getBoundingBox()
     jumpTo.y -= 6
     jumpTo.x += this.direction === 'right' ? 3 : -3
@@ -350,6 +350,14 @@ class Agent extends GameObject {
     }
   }
 
+  getSenseBox = () => ({
+    id: this.id,
+    x: this.x - this.senseRadius,
+    y: this.y - this.senseRadius / 2,
+    w: this.w + this.senseRadius * 2,
+    h: this.h + this.senseRadius
+  })
+
   getAnchor = () => ({
       x: this.getBoundingBox().x + 2,
       y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
@@ -357,16 +365,7 @@ class Agent extends GameObject {
       h: 1
   })
 
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
+  toJSON = this._toJSON
 }
 
 export default Agent

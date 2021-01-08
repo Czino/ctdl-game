@@ -1,7 +1,9 @@
 import { CTDLGAME } from '../gameUtils'
 
+// TODO replace use with sense()
 export const senseCharacters = enemy => {
   let characters = CTDLGAME.quadTree.query({
+      id: enemy.id,
       x: enemy.x - enemy.senseRadius,
       y: enemy.y - enemy.senseRadius / 2,
       w: enemy.w + enemy.senseRadius * 2,
@@ -15,6 +17,7 @@ export const senseCharacters = enemy => {
 
 export const sense = (enemy, regex) => {
   let characters = CTDLGAME.quadTree.query({
+      id: enemy.id,
       x: enemy.x - enemy.senseRadius,
       y: enemy.y - enemy.senseRadius / 2,
       w: enemy.w + enemy.senseRadius * 2,

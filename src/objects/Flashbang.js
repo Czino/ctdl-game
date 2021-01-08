@@ -5,14 +5,11 @@ import { intersects, moveObject } from '../geometryUtils'
 import { playSound } from '../sounds'
 import Explosion from '../Explosion'
 import { senseCharacters } from '../enemies/enemyUtils'
+import GameObject from '../GameObject'
 
-class Flashbang {
+class Flashbang extends GameObject {
   constructor(id, options) {
-    this.id = id
-    this.x = options.x
-    this.y = options.y
-    this.vx = options.vx
-    this.vy = options.vy
+    super(id, options)
     this.frame = 0
     this.senseRadius = 20 // explosion stunning radius
   }
@@ -109,30 +106,7 @@ class Flashbang {
       h: this.h
     })
 
-  getAnchor = () => ({
-      x: this.getBoundingBox().x,
-      y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-      w: this.getBoundingBox().w,
-      h: 1
-  })
-
-  getCenter = () => ({
-    x: Math.round(this.x + this.w / 2),
-    y: Math.round(this.y + this.h / 2)
-  })
-
-  select = () => {}
-
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
+  toJSON = this._toJSON
 }
 
 export default Flashbang

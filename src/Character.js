@@ -483,14 +483,8 @@ class Character extends Agent {
     }
 
     const boundingBox = this.getBoundingBox()
-    const senseBox = {
-      x: this.x - this.senseRadius,
-      y: this.y - this.senseRadius / 2,
-      w: this.w + this.senseRadius * 2,
-      h: this.h + this.senseRadius
-    }
-    this.sensedObjects = CTDLGAME.quadTree
-      .query(senseBox)
+    const senseBox = this.getSenseBox()
+    this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
 
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
@@ -503,7 +497,7 @@ class Character extends Agent {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => friend.getClass() === 'Character' && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => friend.getClass() === 'Character' && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.touchedObjects = CTDLGAME.quadTree
@@ -517,7 +511,7 @@ class Character extends Agent {
 
     if (CTDLGAME.inventory.phoenix > 0) {
       let rektFriend = this.touchedObjects
-        .find(friend => friend.getClass() === 'Character' && friend.id !== this.id && friend.status === 'rekt')
+        .find(friend => friend.getClass() === 'Character' && friend.status === 'rekt')
       if (rektFriend) {
         addTextToQueue('You rise again like the\nPhoenix from the ashes!')
         rektFriend.revive(9)

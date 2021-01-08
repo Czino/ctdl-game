@@ -52,15 +52,6 @@ class Block extends GameObject {
     addTextToQueue(this.info.height > 0 ? 'Block: ' + this.info.height : 'Genesisblock')
   }
 
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
+  toJSON = this._toJSON
 }
 export default Block

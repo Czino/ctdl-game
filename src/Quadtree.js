@@ -1,7 +1,8 @@
-import { flatten } from './arrayUtils'
+import { flatten, unique } from './arrayUtils'
 import { intersects } from './geometryUtils'
 
-export const Boundary = function ({ x, y, w, h }) {
+export const Boundary = function ({ id, x, y, w, h }) {
+  this.id = id
   this.x = x
   this.y = y
   this.w = w
@@ -106,7 +107,14 @@ export const QuadTree = function (boundary, capacity, level) {
         .reduce(flatten, [])
     }
 
+    if (range.id) {
+      return result
+        .filter(obj => obj.id !== range.id)
+        .filter(unique('id'))
+    }
     return result
+      .filter(unique('id'))
+
   }
   this.show = context => {
     context.fillStyle = 'transparent'

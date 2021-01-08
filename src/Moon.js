@@ -36,16 +36,5 @@ class Moon extends GameObject {
       Math.round(this.x - this.w / 2), Math.round(this.y - this.h / 2), this.w, this.h
     )
   }
-
-  toJSON = () => {
-    let json = Object.keys(this)
-    .filter(key => /string|number|boolean/.test(typeof this[key]))
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-    json.class = this.constructor.name
-    return json
-  }
 }
 export default Moon

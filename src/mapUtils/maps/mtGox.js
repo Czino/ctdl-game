@@ -88,6 +88,8 @@ goToDogeCoinMine.touchEvent = () => {
 }
 events.push(goToDogeCoinMine)
 
+
+// TODO add event for sign to read "capital city"
 const goToCapitalCity = new GameObject('goToCapitalCity', {
   x: 127 * tileSize,
   y: 118 * tileSize,
