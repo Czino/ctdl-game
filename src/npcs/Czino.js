@@ -16,7 +16,12 @@ const regularBehaviour = new Selector({
   ]
 })
 
-// only "protest while condition is met otherwise just walk around
+// what does czino do?
+// go in and outside the house
+// greet hodlonaut and katja
+// talk: storyline needs further work
+// make a tea
+// work on the land
 const tree = new Selector({
   nodes: [
     'survive',

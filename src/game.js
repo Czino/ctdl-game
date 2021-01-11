@@ -60,6 +60,7 @@ import Item from './Item'
 // TODO add game tutorial of some sorts
 // TODO add inventory UI
 // TODO add exchange
+// TODO add prison scene where Hodlonaut is put in prison
 // TODO refactor code
 // TODO fix receiving blocks doubled
 // TODO consider Chef Nomi #SushiSwap
