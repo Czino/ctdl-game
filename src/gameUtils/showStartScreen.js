@@ -42,7 +42,8 @@ export const showStartScreen = () => {
     playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) initSoundtrack('mariamMatremVirginem')
+  if (musicStart === velocity) initSoundtrack('backFromWar')
+  // if (musicStart === velocity) initSoundtrack('mariamMatremVirginem')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,
