@@ -24,6 +24,8 @@ jsonTrack.tracks.forEach(track => {
 
   if(!fs.existsSync(`./src/tracks/${songName}`)) fs.mkdirSync(`./src/tracks/${songName}`)
 
+  if (parsedNotes.length === 0) return
+
   fs.writeFileSync(
     `./src/tracks/${songName}/${name}.js`,
     'export default ' + JSON.stringify(parsedNotes)
