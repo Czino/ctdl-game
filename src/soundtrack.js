@@ -221,6 +221,7 @@ window.initSoundtrack = initSoundtrack
 
 
 export const getSoundtrack = () => SNDTRCK.song?.id
+window.getSoundtrack = getSoundtrack
 
 export const toggleSoundtrack = enable => {
   enabled = enable

@@ -1,4 +1,4 @@
-// Czino - 10 Years (8-Bit Mix)
+// Czino - CraigsTheme
 
 import triangle from './triangle'
 import sine from './sine'
@@ -8,7 +8,7 @@ import square from './square'
 import drum from './square'
 
 export default {
-  id: '10Years',
+  id: 'craigsTheme',
   length: 156,
   loop: true,
   tracks: {

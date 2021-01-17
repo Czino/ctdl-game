@@ -14,6 +14,7 @@ import capitalCity from '../sprites/capitalCity.png'
 // // import citadel from '../sprites/citadel.png'
 import miningFarm from '../sprites/miningFarm.png'
 // // import moon from '../sprites/moon.png'
+import craigsStage from '../sprites/craigsStage.png'
 
 export const assets = {
   building,
@@ -29,6 +30,7 @@ export const assets = {
   mtGox,
   capitalCity,
   // citadel,
-  miningFarm
+  miningFarm,
   // moon,
+  craigsStage
 }

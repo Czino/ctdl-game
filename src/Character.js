@@ -97,19 +97,20 @@ const tree = new Selector({
 class Character extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.spriteData = sprites[id]
-    this.sprite = CTDLGAME.assets[this.id]
+    this.spriteData = sprites[id.replace(/-|\d/g, '')]
+    this.sprite = CTDLGAME.assets[id.replace(/-|\d/g, '')]
     this.maxHealth = options.maxHealth ?? 21
     this.health = options.health ?? 21
     this.selected = options.selected
-    this.strength = id === 'hodlonaut' ? 1 : 3
-    this.attackRange = id === 'hodlonaut' ? 4 : 8
-    this.senseRadius = 50
+    this.strength = options.strength || (/hodlonaut/.test(id) ? 1 : 3)
+    this.attackRange = /hodlonaut/.test(id) ? 4 : 8
+    this.senseRadius = options.senseRadius || 50
     this.follow = options.follow ?? true
     this.walkingSpeed = options.walkingSpeed || 3
     this.duckSpeed = options.duckSpeed || 2
     this.protection = 0
     this.rektIn = options.rektIn
+    this.oneHitWonder = options.oneHitWonder
   }
 
   says = []
@@ -342,10 +343,12 @@ class Character extends Agent {
       .filter((_, index) => index <= 2) // can only hurt 3 enemies at once
       .forEach(enemy => {
         let dmg = Math.round(this.strength * (1 + Math.random() / 4))
-        if (this.id === 'hodlonaut') dmg *= (1 + CTDLGAME.inventory.sats / 100000000)
+        if (/hodlonaut/.test(this.id)) dmg *= (1 + CTDLGAME.inventory.sats / 100000000)
 
         enemy.hurt(Math.round(dmg * multiplier), this.direction === 'left' ? 'right' : 'left', this)
       })
+
+    if (this.oneHitWonder) this.remove = true
   }
 
   hurt = (dmg, direction, agent) => {
@@ -377,9 +380,13 @@ class Character extends Agent {
   }
 
   die = () => {
+    if (this.oneHitWonder) {
+      this.remove = true
+      return
+    }
     if (CTDLGAME.inventory.phoenix) {
       CTDLGAME.inventory.phoenix--
-      this.health = 9
+      this.health = Math.round(this.maxHealth / 2)
       addTextToQueue('The fire is still strong\nwithin you.')
       return
     }
@@ -475,7 +482,7 @@ class Character extends Agent {
 
     this.applyPhysics()
 
-    if (this.status === 'fall' && this.id === 'hodlonaut') this.glows = false
+    if (this.status === 'fall' && /hodlonaut/.test(this.id)) this.glows = false
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
@@ -542,7 +549,7 @@ class Character extends Agent {
       }
     }
 
-    if (this.id === 'hodlonaut') {
+    if (/hodlonaut/.test(this.id)) {
       if (/attack/i.test(this.status)) {
         this.glows = true
       } else {
@@ -603,10 +610,10 @@ class Character extends Agent {
       .filter(say => say.y > -24)
       .map(say => {
         write(constants.charContext, say.say, {
-          x: this.getCenter().x - 26,
+          x: this.getCenter().x - 50,
           y: this.y + say.y,
-          w: 52
-        }, 'center', false, 5, false, '#FFF')
+          w: 100
+        }, 'center', false, 20, false, '#FFF')
         return {
           ...say,
           y: say.y - 1

@@ -11,6 +11,7 @@ import { playSound } from '../sounds'
 import { getSoundtrack, initSoundtrack } from '../soundtrack';
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
+import { skipCutSceneButton } from '../events'
 
 const items = [
   { id: 'pizza', chance: 0.01 },
@@ -222,7 +223,7 @@ class Brian extends Agent {
 
     if (!this.hadIntro && this.sensedEnemies.length > 0) {
       CTDLGAME.lockCharacters = true
-      constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
+      skipCutSceneButton.active = true
 
       setTextQueue([])
       addTextToQueue('Brian:\nWelcome to crypto!')
@@ -232,7 +233,7 @@ class Brian extends Agent {
       addTextToQueue('Brian:\nI will delete you!', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
-        constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = false
+        skipCutSceneButton.active = false
       })
       this.hadIntro = true
     }

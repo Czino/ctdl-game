@@ -7,6 +7,7 @@ import Goldbugs from '../enemies/Goldbugs'
 import Andreas from '../enemies/Andreas'
 import Bear from '../enemies/Bear'
 import Brian from '../enemies/Brian'
+import Craig from '../enemies/Craig'
 import PoliceForce from '../enemies/PoliceForce'
 import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
@@ -29,6 +30,7 @@ export const gameObjects = {
     Goldbugs,
     Andreas,
     Brian,
+    Craig,
     PoliceForce,
     Human,
     Citizen,

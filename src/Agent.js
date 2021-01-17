@@ -7,6 +7,9 @@ import constants from './constants'
 import { canDrawOn } from './performanceUtils'
 import GameObject from './GameObject'
 
+BehaviorTree.register('seesItem', new Task({
+  run: agent => agent.sensedItems.length > 0 ? SUCCESS : FAILURE
+}))
 BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
 }))
@@ -241,6 +244,25 @@ class Agent extends GameObject {
       .filter(obj => intersects(obj, jumpTo))
 
     return obstacles.length === 0
+  }
+
+  makeDamage = multiplier => {
+    const boundingBox = this.getBoundingBox()
+
+    this.sensedEnemies
+      .filter(enemy =>
+        intersects({
+          x: this.direction === 'left' ? boundingBox.x - this.attackRange + 3 : boundingBox.x + boundingBox.w - 3,
+          y: boundingBox.y,
+          w: this.attackRange,
+          h: boundingBox.h
+        }, enemy.getBoundingBox()))
+      .filter((_, index) => index <= 2) // can only hurt 3 enemies at once
+      .forEach(enemy => {
+        let dmg = Math.round(this.strength * (1 + Math.random() / 4))
+
+        enemy.hurt(Math.round(dmg * multiplier), this.direction === 'left' ? 'right' : 'left', this)
+      })
   }
 
   hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|burning/.test(this.status) && !this.protection

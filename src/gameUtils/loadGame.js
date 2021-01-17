@@ -44,7 +44,6 @@ export const loadGame = async () => {
     .map(obj => CTDLGAME.objects.push(obj))
   }
   if (worldState) CTDLGAME.world.map.state = worldState;
-  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
 
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
@@ -58,6 +57,9 @@ export const loadGame = async () => {
     'katoshi',
     katoshi
   )
+
+  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
+
 
   if (CTDLGAME.hodlonaut.selected) window.SELECTEDCHARACTER = CTDLGAME.hodlonaut
   if (CTDLGAME.katoshi.selected) window.SELECTEDCHARACTER = CTDLGAME.katoshi

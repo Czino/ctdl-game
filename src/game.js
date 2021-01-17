@@ -272,7 +272,7 @@ function tick() {
   if (window.SHOWBUTTONS) showButtons()
   if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
 
-  if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
+  if (!CTDLGAME.bossFight && CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
     saveGame()
   }
   // fade out save icon
