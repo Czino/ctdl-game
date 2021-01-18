@@ -20,7 +20,7 @@ export const CTDLGAME = {
     usd: 0,
     sats: 0,
     blocks: []
-  },
+  }
 }
 
 export const setWorld = world => {

@@ -37,9 +37,6 @@ const lookAtItem = new Task({
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: 4 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: 4 }) : FAILURE
 })
-const moveToClosestItem = new Task({
-  run: agent => agent.closestItem && agent.moveTo.condition({ other: agent.closestItem, distance: 0 }) ? agent.moveTo.effect({ other: agent.closestItem, distance: 0 }) : FAILURE
-})
 
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({

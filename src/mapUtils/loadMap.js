@@ -13,6 +13,8 @@ export const maps = [
   'citadel',
   'miningFarm',
   'moon',
+  'craigsCastle',
+  'craigsStage',
 ]
 
 /**

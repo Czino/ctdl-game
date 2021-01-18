@@ -115,7 +115,7 @@ export default {
     if (CTDLGAME.hodlonaut.status === 'rekt') katoshisWrath = true
     const craig = CTDLGAME.objects.find(obj => obj.id === 'craig')
 
-    if (!craig || craig.hadIntro) return
+    if (craig && craig.hadIntro) return
   
     CTDLGAME.katoshi.x = 15 * 8
     CTDLGAME.hodlonaut.x = 17.5 * 8
@@ -129,20 +129,11 @@ export default {
     })
     addTextToQueue('hodlonaut:\nKatia, I can\'t allow him to\nhurt you.')
     addTextToQueue('hodlonaut:\nI need to face him alone.', () => {
-      // TODO remove this for the actual game
-      CTDLGAME.hodlonaut.health = 120
-      CTDLGAME.hodlonaut.strength = 2
-      CTDLGAME.hodlonaut.maxHealth = 120
-      CTDLGAME.katoshi.health = 120
-      CTDLGAME.katoshi.maxHealth = 120
-      CTDLGAME.hodlonaut.strength = 11
-      CTDLGAME.katoshi.strength = 42
-      CTDLGAME.inventory.phoenix = 2
-      // end TODO
 
       CTDLGAME.preventCharacterSwitch = true
+      CTDLGAME.katoshi.follow = false
       CTDLGAME.katoshi.select = () => {
-        if (CTDLGAME.inventory.sats > 2 * 100000000) return
+        if (CTDLGAME.inventory.sats > 1 * 100000000) return
 
         addTextToQueue('katoshi: Take my Bitcoin,\nanything that can help.', () => {
           CTDLGAME.inventory.sats += 1.8 * 100000000
