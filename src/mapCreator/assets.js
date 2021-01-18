@@ -6,7 +6,7 @@ import forest from '../sprites/forest.png'
 import rabbitHole from '../sprites/rabbitHole.png'
 import endOfTheRabbitHole from '../sprites/endOfTheRabbitHole.png'
 import dogeCoinMine from '../sprites/dogeCoinMine.png'
-// // import mempool from '../sprites/mempool.png'
+import mempool from '../sprites/mempool.png'
 import grasslands from '../sprites/grasslands.png'
 import czinosCitadel from '../sprites/czinosCitadel.png'
 import mtGox from '../sprites/mtGox.png'
@@ -24,7 +24,7 @@ export const assets = {
   rabbitHole,
   endOfTheRabbitHole,
   dogeCoinMine,
-  // mempool,
+  mempool,
   grasslands,
   czinosCitadel,
   mtGox,

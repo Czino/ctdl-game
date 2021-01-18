@@ -54,7 +54,6 @@ import Item from './Item'
 // TODO add link marines (maybe city, create trouble, police attacks both)
 // TODO add a beam of light that Marty Bent is talking about
 // TODO add egyption like stage with "blocks" and those bagholders
-// TODO add "mempool" stage
 // TODO when one char dies make the other cry?
 // TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
 // TODO add game tutorial of some sorts

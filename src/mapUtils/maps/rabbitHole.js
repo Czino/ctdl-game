@@ -129,8 +129,7 @@ const goToMempool = new GameObject('goToMempool', {
 })
 
 goToMempool.touchEvent = () => {
-  addTextToQueue('Here you would get to the mempool')
-  // changeMap('mempool', 'rabbitHole')
+  changeMap('mempool', 'rabbitHole')
 }
 events.push(goToMempool)
 
