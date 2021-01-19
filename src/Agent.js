@@ -228,7 +228,7 @@ class Agent extends GameObject {
   }
 
   canJump = () => {
-    if (this.hasShield) return false
+    if (this.hasShield || this.swims) return false
     if (this.id === window.SELECTEDCHARACTER.id) return true
 
     let jumpTo = this.getBoundingBox()

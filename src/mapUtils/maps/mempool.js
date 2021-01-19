@@ -4,23 +4,25 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { intersects, makeBoundary } from '../../geometryUtils'
 import NPC from '../../npcs/NPC'
 import { CTDLGAME } from '../../gameUtils'
 import Item from '../../Item'
-import Andreas from '../../enemies/Andreas'
-import { random } from '../../arrayUtils'
-import { addTextToQueue } from '../../textUtils'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import getHitBoxes from '../getHitBoxes'
 
 import mempool from '../../sprites/mempool.png'
+import { checkMempool } from '../../gameUtils/checkBlocks'
+import constants from '../../constants'
 
-const worldWidth = 128
-const worldHeight = 128
+const worldWidth = 76
+const worldHeight = 37
 const tileSize = 8
+const CHECKMEMPOOLTIME = Math.pow(2, 12) // check every X frame
+const mempoolSize = 100000000
+const poolTop = 29 * tileSize
+const maxPoolHeight = 8 * tileSize + 4
 
 stage.parallax = parsePattern(stage.parallax, 0, 0)
 stage.bg = parsePattern(stage.bg, 0, 0)
@@ -88,18 +90,6 @@ let lightSources = parseLightSources(lights, stage.bg, tileSize)
 let events = []
 let objects = []
 
-const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
-  objects.push(makeBoundary({
-    x: x * tileSize,
-    y: y * tileSize,
-    w: w * tileSize,
-    h: h * tileSize,
-  }))
-}
-
-makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
-makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
-
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'mempool', tileSize))
 
 
@@ -161,7 +151,39 @@ export default {
   },
   track: () => 'underTheSand',
   bgColor: () => '#250d07',
+  init: () => {
+    checkMempool()
+  },
   update: () => {
+    if (CTDLGAME.frame !== 0 && CTDLGAME.frame % CHECKMEMPOOLTIME === 0) checkMempool()
+
+    let poolHeight = 0
+    if (CTDLGAME.mempool) {
+      constants.fgContext.globalCompositeOperation = 'destination-over'
+      Object.keys(CTDLGAME.mempool.fee_histogram)
+        .sort((a, b) => parseInt(a) > parseInt(b) ? 1 : -1)
+        .map(feeBucket => {
+        let bucket = CTDLGAME.mempool.fee_histogram[feeBucket]
+        let height = Math.ceil(bucket.size / mempoolSize * maxPoolHeight)
+        poolHeight += height
+
+        constants.fgContext.fillStyle = bucket.color
+        constants.fgContext.fillRect(1 * tileSize, poolTop + maxPoolHeight - poolHeight, 58 * tileSize, height)
+      })
+
+      ;['hodlonaut', 'katoshi'].map(char => {
+        if (CTDLGAME[char].y + 11 > poolTop + maxPoolHeight - poolHeight) {
+          CTDLGAME[char].y-=2
+          if (CTDLGAME[char].vy > 2) CTDLGAME[char].vy = 0
+          CTDLGAME[char].applyGravity = false
+          CTDLGAME[char].swims = true
+        } else {
+          CTDLGAME[char].applyGravity = true
+          CTDLGAME[char].swims = false
+        }
+      })
+    }
+
     darken(.4, .3, '#250d07')
     drawLightSources(lightSources, 'mempool', tileSize)
   },

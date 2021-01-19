@@ -108,6 +108,7 @@ class Character extends Agent {
     this.follow = options.follow ?? true
     this.walkingSpeed = options.walkingSpeed || 3
     this.duckSpeed = options.duckSpeed || 2
+    this.swims = options.swims
     this.protection = 0
     this.rektIn = options.rektIn
     this.oneHitWonder = options.oneHitWonder
@@ -463,10 +464,12 @@ class Character extends Agent {
       this.protection--
       constants.charContext.globalAlpha = this.protection % 2
     }
+
+    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
     constants.charContext.drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
+      x, this.y, this.w, this.h
     )
     constants.charContext.globalAlpha = 1
   }
