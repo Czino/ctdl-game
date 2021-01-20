@@ -122,8 +122,9 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'ci
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    newGame: { x: 8 * tileSize, y: 124 * tileSize - 2},
-    conbase: { x: 122 * tileSize, y: 122 * tileSize - 2}
+    newGame: { x: 8 * tileSize, y: 124 * tileSize },
+    mempool: { x: 58 * tileSize, y: 119 * tileSize },
+    conbase: { x: 122 * tileSize, y: 122 * tileSize }
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),

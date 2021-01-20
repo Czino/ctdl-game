@@ -70,7 +70,6 @@ import Item from './Item'
 // TODO turn miningfarm stage red and change music, when there's an attack on the citadel
 // TODO add green cat (bisq)
 // TODO add "Cobra"
-// TODO add salt lamp
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null

@@ -48,6 +48,7 @@ const feeBuckets = Object.keys(feeMap)
   .map(fee => Number(fee))
 
 const mempoolDummy = {"count":38687,"vsize":83417040,"total_fee":336141760,"fee_histogram":{"1":{"color":"#14756f","feeBucket":1,"size":32443873},"2":{"color":"#167e78","feeBucket":2,"size":11472001},"3":{"color":"#188780","feeBucket":3,"size":9775463},"4":{"color":"#199089","feeBucket":4,"size":17477358},"5":{"color":"#1b9992","feeBucket":5,"size":7566486},"6":{"color":"#1ca29a","feeBucket":6,"size":394374},"8":{"color":"#1eaba3","feeBucket":8,"size":635365},"10":{"color":"#2aafa8","feeBucket":10,"size":479547},"12":{"color":"#36b4ad","feeBucket":12,"size":526769},"15":{"color":"#42b8b2","feeBucket":15,"size":290780},"20":{"color":"#4ebdb7","feeBucket":20,"size":265493},"30":{"color":"#5ac1bb","feeBucket":30,"size":568230},"40":{"color":"#66c6c0","feeBucket":40,"size":334703},"50":{"color":"#71cac5","feeBucket":50,"size":151070},"60":{"color":"#7dcfca","feeBucket":60,"size":207769},"70":{"color":"#89d3cf","feeBucket":70,"size":469104},"80":{"color":"#95d8d4","feeBucket":80,"size":150821},"90":{"color":"#a1dcd9","feeBucket":90,"size":106075},"Infinity":{"color":"#b9e5e2","feeBucket":null,"size":101759}}}
+const mempoolDummyEmpty = {"count":1,"vsize":2000000,"total_fee":1,"fee_histogram":{"1":{"color":"#14756f","feeBucket":1,"size":2000000}}}
 
 /**
  * @description Method to fetch new blocks from the blockchain
@@ -72,11 +73,9 @@ export const checkBlocks = startHeight => {
  * @param {Number} startHeight height to start from
  * @returns {void}
  */
-export const checkMempool = () => {
+export const checkMempool = callback => {
   let url = 'https://mempool.space/api/mempool'
 
-  CTDLGAME.mempool = JSON.parse(JSON.stringify(mempoolDummy))
-  return
   fetch(url, {
       method: 'GET',
       redirect: 'follow'
@@ -84,7 +83,7 @@ export const checkMempool = () => {
     .then(response => response.json())
     .then(mempool => {
       CTDLGAME.mempool = mempool
-      CTDLGAME.mempool.fee_histogram = CTDLGAME.mempool.fee_histogram.reduce((h, val) => {
+      CTDLGAME.mempool.fee_histogram = mempool.fee_histogram.reduce((h, val) => {
         let currentFee = Math.round(val[0])
         let feeBucket = feeBuckets.find(fee => currentFee <= fee)
         let color = feeMap[feeBucket]
@@ -92,7 +91,11 @@ export const checkMempool = () => {
         h[feeBucket].size += val[1]
         return h
       }, {})
+      if (callback) callback()
     })
-    .catch(() => {})
-}
+    .catch(() => {
+      CTDLGAME.mempool = mempoolDummy
+      if (callback) callback()
+    })
+  }
 

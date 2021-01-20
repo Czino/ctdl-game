@@ -1,5 +1,4 @@
-import GameObject from "../GameObject"
-
+import GameObject from '../GameObject'
 
 export class Boundary extends GameObject {
   constructor(boundingBox) {
