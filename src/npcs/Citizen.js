@@ -240,6 +240,8 @@ class Citizen extends Agent {
   draw = () => {
     if (!this.sprite) {
       this.sprite = CTDLGAME.assets[this.spriteId]
+    } else if (!this.sprite && this.hair && this.skin && this.clothes) {
+      this.sprite = CTDLGAME.assets[this.spriteId]
       constants.helperCanvas.width = this.sprite.width
       constants.helperCanvas.height = this.sprite.height
       constants.helperContext.clearRect(0, 0, this.sprite.width, this.sprite.height)

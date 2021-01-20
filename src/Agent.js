@@ -39,7 +39,7 @@ BehaviorTree.register('moveRandom', new Task({
 }))
 BehaviorTree.register('moveToPointX', new Task({
   run: agent => {
-    if (!agent.goal && Math.random() < .05) agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
+    if (!agent.goal && Math.random() < .05 * agent.business) agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
     if (agent.x % agent.goal < 5) agent.goal = null
     if (!agent.goal) return FAILURE
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
@@ -104,6 +104,7 @@ class Agent extends GameObject {
     this.walkingSpeed = options.walkingSpeed || 2
     this.senseRadius = 30
     this.protection = 0
+    this.business = options.business || 1
   }
 
   applyGravity = true
@@ -342,10 +343,12 @@ class Agent extends GameObject {
       this.protection--
       constants.gameContext.globalAlpha = this.protection % 2
     }
+
+    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
     constants.gameContext.drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
+      x, this.y, this.w, this.h
     )
     constants.gameContext.globalAlpha = 1
   }

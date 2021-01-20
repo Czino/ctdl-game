@@ -12,6 +12,7 @@ import citizen4 from '../sprites/citizen-4.png'
 import citizen5 from '../sprites/citizen-5.png'
 import citizen6 from '../sprites/citizen-6.png'
 import vlad from '../sprites/vlad.png'
+import everitt from '../sprites/everitt.png'
 import hodlonaut from '../sprites/hodlonaut.png'
 import katoshi from '../sprites/katoshi.png'
 import shitcoiner from '../sprites/shitcoiner.png'
@@ -42,6 +43,7 @@ export const assets = {
     citizen5,
     citizen6,
     vlad,
+    everitt,
     hodlonaut,
     katoshi,
     shitcoiner,

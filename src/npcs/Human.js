@@ -8,6 +8,7 @@ import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
 import { playSound } from '../sounds';
 import Agent from '../Agent'
+import { random } from '../arrayUtils';
 
 
 // Selector: runs until one node calls success
@@ -40,6 +41,7 @@ class Human extends Agent {
     this.walkingSpeed = options.walkingSpeed || 3
     this.runningSpeed = options.runningSpeed || Math.round(Math.random() * 2) + 4
     this.protection = 0
+    this.thingsToSay = options.thingsToSay
 
     this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
     this.speed = Math.round(Math.random() * 3) * constants.FRAMERATE
@@ -127,6 +129,7 @@ class Human extends Agent {
   }
 
   draw = () => {
+    if (!this.sprite) this.sprite = CTDLGAME.assets[this.spriteId]
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -142,10 +145,12 @@ class Human extends Agent {
       this.protection--
       constants[this.context].globalAlpha = this.protection % 2
     }
+
+    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
     constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
+      x, this.y, this.w, this.h
     )
     constants[this.context].globalAlpha = 1
   }
@@ -234,6 +239,22 @@ class Human extends Agent {
         return {
           ...say,
           y: say.y - 1
+        }
+      })
+  }
+
+  select = () => {
+    if (!this.thingsToSay || this.isTouched) return
+    this.isTouched = true
+
+    let whatToSay = random(this.thingsToSay)
+      whatToSay.map((text, index) => {
+        if (index === whatToSay.length - 1) {
+          addTextToQueue(text, () => {
+            this.isTouched = false
+          })
+        } else {
+          addTextToQueue(text)
         }
       })
   }

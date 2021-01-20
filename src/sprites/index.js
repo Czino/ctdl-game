@@ -28,6 +28,7 @@ export default {
     czino: citizen,
     luma: citizen,
     vlad,
+    everitt: citizen,
     shitcoiner,
     brian,
     bear,

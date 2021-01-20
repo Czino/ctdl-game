@@ -7,17 +7,20 @@ import GameObject from '../../GameObject'
 import NPC from '../../npcs/NPC'
 import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Item from '../../Item'
+import Human from '../../npcs/Human'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import getHitBoxes from '../getHitBoxes'
-
-import mempool from '../../sprites/mempool.png'
 import { checkMempool } from '../../gameUtils/checkBlocks'
 import constants from '../../constants'
 import { random } from '../../arrayUtils'
 import { addTextToQueue } from '../../textUtils'
 import { playSound } from '../../sounds'
+
+import mempool from '../../sprites/mempool.png'
+import everitt from '../../sprites/everitt.png'
+import { intersects } from '../../geometryUtils'
 
 const worldWidth = 76
 const worldHeight = 45
@@ -108,6 +111,15 @@ goToRabbitHole.touchEvent = () => {
   changeMap('rabbitHole', 'mempool')
 }
 events.push(goToRabbitHole)
+
+
+const npcBarrier = new GameObject('npcBarrier', {
+  x: 65 * tileSize,
+  y: 20 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+events.push(npcBarrier)
 
 
 const treasure = new GameObject('treasure', {
@@ -244,11 +256,25 @@ export default {
   lightSources,
   objects,
   npcs: () => [
+    new Human(
+      'everitt',
+      {
+        spriteId: 'everitt',
+        x: 43 * tileSize,
+        y: 18 * tileSize,
+        walkingSpeed: 2,
+        business: 0.03,
+        thingsToSay: [
+          ['Jack Everitt:\nI am relaxed']
+        ]
+      }
+    )
   ],
   items: () => [],
   events,
   assets: {
-    mempool
+    mempool,
+    everitt
   },
   track: () => 'mempool',
   bgColor: () => '#250d07',
@@ -274,17 +300,25 @@ export default {
 
       updateBucket()
 
-      ;['hodlonaut', 'katoshi'].map(char => {
-        if (CTDLGAME[char].y + 11 > poolTop + maxPoolHeight - poolHeight) {
-          CTDLGAME[char].y-=2
-          if (CTDLGAME[char].vy > 2) CTDLGAME[char].vy = 0
-          CTDLGAME[char].applyGravity = false
-          CTDLGAME[char].swims = true
-        } else {
-          CTDLGAME[char].applyGravity = true
-          CTDLGAME[char].swims = false
-        }
-      })
+
+      // prevent NPCs from falling down and collecting in the pool
+      CTDLGAME.objects
+        .filter(obj => /Human/.test(obj.getClass()))
+        .filter(npc => intersects(npc, npcBarrier))
+        .map(npc => npc.goal = null)
+
+      CTDLGAME.objects.filter(obj => /Character|Human/.test(obj.getClass()))
+        .map(char => {
+          if (char.y + 11 > poolTop + maxPoolHeight - poolHeight) {
+            char.y-=2
+            if (char.vy > 2) char.vy = 0
+            char.applyGravity = false
+            char.swims = true
+          } else {
+            char.applyGravity = true
+            char.swims = false
+          }
+        })
     }
 
     darken(.4, .3, '#250d07')
