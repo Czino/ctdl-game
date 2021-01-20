@@ -74,9 +74,7 @@ export const checkBlocks = startHeight => {
  * @returns {void}
  */
 export const checkMempool = callback => {
-  let url = 'https://mempool.space/api/mempool'
-
-  fetch(url, {
+  fetch('https://mempool.space/api/mempool', {
       method: 'GET',
       redirect: 'follow'
     })
@@ -96,6 +94,17 @@ export const checkMempool = callback => {
     .catch(() => {
       CTDLGAME.mempool = mempoolDummy
       if (callback) callback()
+    })
+    fetch('https://mempool.space/api/v1/fees/recommended', {
+      method: 'GET',
+      redirect: 'follow'
+    })
+    .then(response => response.json())
+    .then(recommendedFees => {
+      CTDLGAME.recommendedFees = recommendedFees
+    })
+    .catch(() => {
+      CTDLGAME.recommendedFees = null
     })
   }
 

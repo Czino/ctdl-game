@@ -19,6 +19,7 @@ import { addTextToQueue } from '../../textUtils'
 import { playSound } from '../../sounds'
 
 import mempool from '../../sprites/mempool.png'
+import citizen1 from '../../sprites/citizen-1.png'
 import everitt from '../../sprites/everitt.png'
 import { intersects } from '../../geometryUtils'
 
@@ -268,17 +269,46 @@ export default {
           ['Jack Everitt:\nI am relaxed']
         ]
       }
+    ),
+    new Human(
+      'tbd-1',
+      {
+        spriteId: 'citizen1',
+        x: 43 * tileSize,
+        y: 18 * tileSize,
+        walkingSpeed: 2,
+        business: 0.04
+      }
     )
   ],
   items: () => [],
   events,
   assets: {
     mempool,
-    everitt
+    everitt,
+    citizen1
   },
   track: () => 'mempool',
   bgColor: () => '#250d07',
   init: () => {
+    const tbd1 = CTDLGAME.objects.find(obj => obj.id === 'tbd-1')
+    tbd1.select = () => {
+      if (tbd1.isTouched) return
+      let recommendation
+      if (CTDLGAME.recommendedFees) {
+        recommendation = Math.random() < .5
+          ? `I recommend ${CTDLGAME.recommendedFees.fastestFee} sats/vB, if you want your tx to go\nthrough quickly.`
+          : `Use ${CTDLGAME.recommendedFees.hourFee} sats/vB or less for\nlow priority transactions.`
+      } else {
+        recommendation = 'I like to watch the mempool.'
+      }
+      tbd1.isTouched = true
+
+      addTextToQueue('tbd1:\n' + recommendation, () => {
+        tbd1.isTouched = false
+      })
+    }
+
     checkMempool(mempoolCallback)
   },
   update: () => {
