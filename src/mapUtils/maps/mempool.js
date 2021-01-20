@@ -262,7 +262,7 @@ export default {
       {
         spriteId: 'everitt',
         x: 43 * tileSize,
-        y: 18 * tileSize,
+        y: 18 * tileSize - 4,
         walkingSpeed: 2,
         business: 0.03,
         thingsToSay: [
@@ -275,7 +275,17 @@ export default {
       {
         spriteId: 'citizen1',
         x: 43 * tileSize,
-        y: 18 * tileSize,
+        y: 18 * tileSize - 4,
+        walkingSpeed: 2,
+        business: 0.04
+      }
+    ),
+    new Human(
+      'tbd-2',
+      {
+        spriteId: 'citizen1',
+        x: 43 * tileSize,
+        y: 18 * tileSize - 4,
         walkingSpeed: 2,
         business: 0.04
       }
@@ -292,6 +302,7 @@ export default {
   bgColor: () => '#250d07',
   init: () => {
     const tbd1 = CTDLGAME.objects.find(obj => obj.id === 'tbd-1')
+    const tbd2 = CTDLGAME.objects.find(obj => obj.id === 'tbd-2')
     tbd1.select = () => {
       if (tbd1.isTouched) return
       let recommendation
@@ -306,6 +317,23 @@ export default {
 
       addTextToQueue('tbd1:\n' + recommendation, () => {
         tbd1.isTouched = false
+      })
+    }
+
+    tbd2.select = () => {
+      if (tbd2.isTouched) return
+      let recommendation
+      if (CTDLGAME.mempool) {
+        recommendation = Math.random() < .5
+          ? `There are ${CTDLGAME.mempool.count} tx\nsitting in the mempool.`
+          : `The mempool is\n${Math.round(CTDLGAME.mempool.vsize / 1024)} MvB big.`
+      } else {
+        recommendation = 'I like to watch the mempool.'
+      }
+      tbd2.isTouched = true
+
+      addTextToQueue('tbd2:\n' + recommendation, () => {
+        tbd2.isTouched = false
       })
     }
 
