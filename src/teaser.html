@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CTDLGAME</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'/>
+  <style>
+    body {
+      margin: 0;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      background-color: #212121;
+      overflow: hidden;
+    }
+    .cursor-crosshair {
+      cursor: crosshair;
+    }
+    .cursor-pointer {
+      cursor: pointer;
+    }
+    #ctdl-game-sky {
+      background-color: #212121;
+      position: absolute;
+    }
+    #ctdl-game-sky {
+      background-color: #212121;
+      position: absolute;
+    }
+    #ctdl-game-parallax, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
+      position: absolute;
+      z-index: 1;
+    }
+    #ctdl-game-sky, #ctdl-game-parallax, #ctdl-game-bg, #ctdl-game, #ctdl-game-chars, #ctdl-game-fg, #ctdl-game-overlay, #ctdl-game-menu {
+      max-height: 100vh;
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -o-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: pixelated;
+      image-rendering: optimize-contrast;
+    }
+    #ctdl-game-helper {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body id="body" class="cursor-crosshair">
+  <canvas id="ctdl-game-sky"></canvas>
+  <canvas id="ctdl-game-parallax"></canvas>
+  <canvas id="ctdl-game-bg"></canvas>
+  <canvas id="ctdl-game"></canvas>
+  <canvas id="ctdl-game-chars"></canvas>
+  <canvas id="ctdl-game-fg"></canvas>
+  <canvas id="ctdl-game-overlay"></canvas>
+  <canvas id="ctdl-game-menu"></canvas>
+  <canvas id="ctdl-game-helper"></canvas>
+</body>
+</html>

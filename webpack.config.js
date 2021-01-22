@@ -1,8 +1,9 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = env => {
-  const dev = env.NODE_ENV === 'development';
+  const dev = env.NODE_ENV === 'development'
 
   const game = {
     devServer: {
@@ -42,11 +43,69 @@ module.exports = env => {
     watchOptions: {
       poll: 5000
     },
+    optimization: dev ? {} : {
+      minimize: true,
+      minimizer: [new UglifyJsPlugin({
+        include: /\.min\.js$/
+      })]
+    },
     plugins: [
       new HtmlWebpackPlugin({
         chunks: ['game'],
         excludeChunks: ['mapCreator', 'spritePreview'],
         template: './src/game.html'
+      })
+    ]
+  }
+
+  const teaser = {
+    devServer: {
+      https: true,
+      host: '0.0.0.0'
+    },
+    entry: {
+      teaser: {
+        import: './src/teaser.js'
+      }
+    },
+    output: {
+      publicPath: '',
+      chunkFilename: '[name].js',
+      filename: '[name].js'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(png|jpe?g|gif)$/i,
+          // include: path.resolve(__dirname, 'src/sprites'),
+          loader: 'file-loader',
+          options: {
+            name: '[path][name].[ext]'
+          }
+        },
+        {
+          test: /\.js$/,
+          include: path.resolve(__dirname, 'src'),
+          exclude: /node_modules/,
+          use: ['babel-loader']
+        }
+      ]
+    },
+    mode: dev ? 'development' : 'production',
+    cache: dev,
+    watchOptions: {
+      poll: 5000
+    },
+    optimization: dev ? {} : {
+      minimize: true,
+      minimizer: [new UglifyJsPlugin({
+        include: /\.min\.js$/
+      })]
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        chunks: ['teaser'],
+        template: './src/teaser.html'
       })
     ]
   }
@@ -145,5 +204,7 @@ module.exports = env => {
     ? mapCreator
     : env.BUNDLE === 'spriteViewer'
     ? spriteViewer
+    : env.BUNDLE === 'teaser'
+    ? teaser
     : game
 }
