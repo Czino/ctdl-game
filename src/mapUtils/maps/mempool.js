@@ -122,6 +122,22 @@ const npcBarrier = new GameObject('npcBarrier', {
 })
 events.push(npcBarrier)
 
+const npcBarrier2 = new GameObject('npcBarrier2', {
+  x: 54 * tileSize,
+  y: 26 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+events.push(npcBarrier2)
+
+const npcBarrier3 = new GameObject('npcBarrier3', {
+  x: 33 * tileSize,
+  y: 28 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+events.push(npcBarrier3)
+
 
 const treasure = new GameObject('treasure', {
   x: 16 * tileSize,
@@ -264,10 +280,7 @@ export default {
         x: 43 * tileSize,
         y: 18 * tileSize - 4,
         walkingSpeed: 2,
-        business: 0.03,
-        thingsToSay: [
-          ['Jack Everitt:\nI am relaxed']
-        ]
+        business: 0.03
       }
     ),
     new Human(
@@ -289,6 +302,16 @@ export default {
         walkingSpeed: 2,
         business: 0.04
       }
+    ),
+    new Human(
+      'tbd-3',
+      {
+        spriteId: 'citizen1',
+        x: 43 * tileSize,
+        y: 27 * tileSize,
+        walkingSpeed: 1,
+        business: 0.3
+      }
     )
   ],
   items: () => [],
@@ -301,14 +324,33 @@ export default {
   track: () => 'mempool',
   bgColor: () => '#250d07',
   init: () => {
+    const everitt = CTDLGAME.objects.find(obj => obj.id === 'everitt')
     const tbd1 = CTDLGAME.objects.find(obj => obj.id === 'tbd-1')
     const tbd2 = CTDLGAME.objects.find(obj => obj.id === 'tbd-2')
+    const tbd3 = CTDLGAME.objects.find(obj => obj.id === 'tbd-3')
+    if (!tbd1) return
+
+    everitt.thingsToSay = [
+      ['Jack Everitt:\nI am relaxed']
+    ]
+    tbd3.thingsToSay = [
+      [
+        'tbd3:\nPeople say that there is a\ntreasure hidden in the\nmempool.',
+        'tbd3:\nI am trying to find it.'
+      ],
+      ['tbd3:\nEach drop in this pool\nrepresents a byte waiting\nto be confirmed.'],
+      [
+        'tbd3:\nDid you know?, there is no\n"the mempool". Each node\nhas their own mempool.',
+        'tbd3:\nWhat you see here is just\na metaphor.'
+      ]
+    ]
+
     tbd1.select = () => {
       if (tbd1.isTouched) return
       let recommendation
       if (CTDLGAME.recommendedFees) {
         recommendation = Math.random() < .5
-          ? `I recommend ${CTDLGAME.recommendedFees.fastestFee} sats/vB, if you want your tx to go\nthrough quickly.`
+          ? `I recommend ${CTDLGAME.recommendedFees.fastestFee} sats/vB, if\nyou want your tx to go\nthrough quickly.`
           : `Use ${CTDLGAME.recommendedFees.hourFee} sats/vB or less for\nlow priority transactions.`
       } else {
         recommendation = 'I like to watch the mempool.'
@@ -362,7 +404,7 @@ export default {
       // prevent NPCs from falling down and collecting in the pool
       CTDLGAME.objects
         .filter(obj => /Human/.test(obj.getClass()))
-        .filter(npc => intersects(npc, npcBarrier))
+        .filter(npc => intersects(npc, npcBarrier) || intersects(npc, npcBarrier2) || intersects(npc, npcBarrier3))
         .map(npc => npc.goal = null)
 
       CTDLGAME.objects.filter(obj => /Character|Human/.test(obj.getClass()))
