@@ -37,39 +37,6 @@ import Item from './Item'
 // playSound('policeForceHurt')
 // setInterval(() => playSound('policeForceHurt'), 1000)
 
-// TODO add enemy that forks into two and you have to fight them before they fork again
-// TODO add Frances Copolla Enemy that subdivides and becomes more
-// TODO add endbosses for Rabbit Hole stage
-// TODO add endboss for Doge Mine stage
-// TODO add moon stage
-// TODO add stoners/crackheads to building in city
-// TODO add cornfield stage (maybe next to my farm)
-// TODO add a magic money tree
-// TODO make chairs destoryable
-// TODO add cyberhornets
-// TODO add shit(coins) you have to jump over
-// TODO add phoenix to rabbit hole stage, maybe on top of a tree in the forest, in the doge coin mine etc...
-// TODO add a citadel stage
-// TODO add link marines (maybe city, create trouble, police attacks both)
-// TODO add a beam of light that Marty Bent is talking about
-// TODO add egyption like stage with "blocks" and those bagholders
-// TODO when one char dies make the other cry?
-// TODO when loading game and and another isntance oof game is already opened in another tab, it stalls at 100%
-// TODO add game tutorial of some sorts
-// TODO add inventory UI
-// TODO add exchange
-// TODO add prison scene where Hodlonaut is put in prison
-// TODO refactor code
-// TODO fix receiving blocks doubled
-// TODO consider Chef Nomi #SushiSwap
-// TODO add more enemies and bosses
-// TODO add moon ending scene
-// TODO add Zeus
-// TODO add Thor
-// TODO turn miningfarm stage red and change music, when there's an attack on the citadel
-// TODO add green cat (bisq)
-// TODO add "Cobra"
-
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
 
