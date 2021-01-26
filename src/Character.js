@@ -99,6 +99,7 @@ class Character extends Agent {
     super(id, options)
     this.spriteData = sprites[id.replace(/-|\d/g, '')]
     this.sprite = CTDLGAME.assets[id.replace(/-|\d/g, '')]
+    this.context = options.context || 'charContext'
     this.maxHealth = options.maxHealth ?? 21
     this.health = options.health ?? 21
     this.selected = options.selected
@@ -249,6 +250,13 @@ class Character extends Agent {
       this.status = 'jump'
       this.vx = this.direction === 'right' ? 6 : -6
       this.vy = -6
+
+      const boundingBox = this.getBoundingBox()
+      const eventObject =  CTDLGAME.quadTree.query(boundingBox)
+        .filter(obj => obj.jumpEvent)
+        .find(obj => intersects(boundingBox, obj.getBoundingBox()))
+
+      if (eventObject) eventObject.jumpEvent(this)
 
       return SUCCESS
     }
@@ -448,7 +456,7 @@ class Character extends Agent {
   }
 
   draw = () => {
-    if (!canDrawOn('charContext')) return
+    if (!canDrawOn(this.context)) return
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -459,19 +467,19 @@ class Character extends Agent {
     this.w = data.w
     this.h = data.h
 
-    constants.charContext.globalAlpha = data.opacity ?? 1
+    constants[this.context].globalAlpha = data.opacity ?? 1
     if (this.protection > 0) {
       this.protection--
-      constants.charContext.globalAlpha = this.protection % 2
+      constants[this.context].globalAlpha = this.protection % 2
     }
 
     let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
-    constants.charContext.drawImage(
+    constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
       x, this.y, this.w, this.h
     )
-    constants.charContext.globalAlpha = 1
+    constants[this.context].globalAlpha = 1
   }
 
   update = () => {
@@ -576,12 +584,12 @@ class Character extends Agent {
 
     this.draw()
 
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
+    // if (this.selected) {
+    //   constants.charContext.fillStyle = '#0F0'
+    //   constants.charContext.fillRect(
+    //     this.x + this.w / 2, this.y - 2, 1, 1
+    //   )
+    // }
 
     this.dmgs = this.dmgs
       .filter(dmg => dmg.y > -24)

@@ -102,6 +102,7 @@ class Agent extends GameObject {
     this.direction = options.direction || 'left'
     this.frame = options.frame || 0
     this.walkingSpeed = options.walkingSpeed || 2
+    this.context = options.context || 'gameContext'
     this.senseRadius = 30
     this.protection = 0
     this.business = options.business || 1
@@ -326,7 +327,7 @@ class Agent extends GameObject {
   }
 
   draw = () => {
-    if (!canDrawOn('gameContext')) return
+    if (!canDrawOn(this.context)) return
 
     let spriteData = this.spriteData[this.direction][this.status]
 
@@ -338,19 +339,19 @@ class Agent extends GameObject {
     this.w = data.w
     this.h = data.h
 
-    constants.gameContext.globalAlpha = data.opacity ?? 1
+    constants[this.context].globalAlpha = data.opacity ?? 1
     if (this.protection > 0 && this.status !== 'rekt') {
       this.protection--
-      constants.gameContext.globalAlpha = this.protection % 2
+      constants[this.context].globalAlpha = this.protection % 2
     }
 
     let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
-    constants.gameContext.drawImage(
+    constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
       x, this.y, this.w, this.h
     )
-    constants.gameContext.globalAlpha = 1
+    constants[this.context].globalAlpha = 1
   }
 
   applyPhysics = () => {
@@ -360,7 +361,13 @@ class Agent extends GameObject {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
 
-      const hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
+      let hasCollided = false
+      if (this.context === 'fgContext') {
+        this.x += this.vx
+        this.y += this.vy
+      } else {
+        hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
+      }
 
       if (!hasCollided && !/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
         this.status = 'fall'

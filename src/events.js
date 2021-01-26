@@ -554,7 +554,7 @@ function zoomHandler (e) {
 }
 
 function switchCharacter() {
-  addHook(() => {
+  addHook(CTDLGAME.frame, () => {
     if (!CTDLGAME.preventCharacterSwitch && window.SELECTEDCHARACTER.id === 'hodlonaut') {
       CTDLGAME.katoshi.choose()
     } else {

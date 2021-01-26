@@ -5,7 +5,7 @@ import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import NPC from '../../npcs/NPC'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
+import { addHook, CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Item from '../../Item'
 import Human from '../../npcs/Human'
 import darken from '../darken'
@@ -113,6 +113,21 @@ goToRabbitHole.touchEvent = () => {
 }
 events.push(goToRabbitHole)
 
+
+const jumpIntoThePool = new GameObject('jumpIntoThePool', {
+  x: 26 * tileSize,
+  y: 20 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+jumpIntoThePool.jumpEvent = char => {
+  char.context = 'fgContext'
+  addHook(CTDLGAME.frame + 80, () => {
+    char.context = 'charContext'
+  })
+}
+events.push(jumpIntoThePool)
 
 const npcBarrier = new GameObject('npcBarrier', {
   x: 65 * tileSize,
