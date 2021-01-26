@@ -1,12 +1,14 @@
 import { unique } from '../arrayUtils'
 import * as db from '../db'
 import { maps } from '../mapUtils'
+import { playSound } from '../sounds'
 import { CTDLGAME } from './CTDLGAME'
 
 /**
  * @description Method to save game to database
  */
 export const saveGame = async () => {
+  if (CTDLGAME.gameOver) return
   if (CTDLGAME.startedNewGame) {
     CTDLGAME.startedNewGame = false
     await db.remove('time')
@@ -36,4 +38,6 @@ export const saveGame = async () => {
   await db.set('blockHeight', CTDLGAME.blockHeight)
   await db.set('inventory', CTDLGAME.inventory)
   await db.set('options', CTDLGAME.options)
+  playSound('select')
+  CTDLGAME.savedAt = CTDLGAME.frame
 }

@@ -1,7 +1,7 @@
 import * as db from './db'
 import Sun from './Sun'
 import Moon from './Moon'
-import { initEvents } from './events'
+import { initEvents, loadGameButton, initGameButton } from './events'
 import constants from './constants'
 import {
   CTDLGAME,
@@ -16,7 +16,6 @@ import {
   saveGame,
   checkBlocks,
   getTimeOfDay,
-  showSaveIcon,
   clearCanvas,
   saveStateExists,
   fadeIntoGameOver,
@@ -113,15 +112,11 @@ async function init() {
   CTDLGAME.isSoundLoaded = isSoundLoaded()
 
   if (CTDLGAME.isSoundLoaded) {
-    constants.BUTTONS
-        .filter(button => /initGame/.test(button.action))
-        .forEach(button => button.active = false)
+    initGameButton.active = false
     if (!(await saveStateExists())) {
       CTDLGAME.newGame = true
     } else {
-      constants.BUTTONS
-        .filter(button => /loadGame/.test(button.action))
-        .forEach(button => button.active = true)
+      loadGameButton.active = true
     }
 
     initEvents(CTDLGAME.startScreen)
@@ -177,6 +172,7 @@ function tick() {
 
   if (CTDLGAME.gameOver) {
     if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
+    clearCanvas()
     showGameOverScreen()
 
     if (window.SHOWBUTTONS) showButtons()
@@ -269,14 +265,6 @@ function tick() {
   // TODO abstract into all in one debug function
   if (window.SHOWBUTTONS) showButtons()
   if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
-
-  if (!CTDLGAME.bossFight && CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
-    saveGame()
-  }
-  // fade out save icon
-  if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
-    showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
-  }
 
   if (CTDLGAME.frame > constants.FRAMERESET) {
     CTDLGAME.frame = 0

@@ -3,6 +3,7 @@ import Character from '../Character'
 import { changeMap } from '../mapUtils'
 import { setTextQueue } from '../textUtils'
 import { getEmptyInventory } from './getEmptyInventory'
+import { saveButton } from '../events'
 
 /**
  * @description Method to prepare new game
@@ -28,6 +29,7 @@ export const newGame = async () => {
   )
 
   CTDLGAME.startedNewGame = true
+  saveButton.active = true
   CTDLGAME.hodlonaut.choose()
 
   CTDLGAME.objects = []

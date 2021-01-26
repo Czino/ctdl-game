@@ -7,6 +7,7 @@ import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { gameObjects } from './gameObjects'
 import { loadMap } from '../mapUtils'
+import { saveButton } from '../events'
 
 /**
  * @description Method to load game
@@ -48,6 +49,9 @@ export const loadGame = async () => {
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
   if (options) CTDLGAME.options = options
+
+  CTDLGAME.gameOver = false
+  saveButton.active = true
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',

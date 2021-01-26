@@ -1,7 +1,7 @@
 import * as db from './db'
 import { contains, intersects } from './geometryUtils'
 import constants from './constants'
-import { addHook, CTDLGAME, loadGame, newGame, saveStateExists, showIntro, updateViewport } from './gameUtils'
+import { addHook, CTDLGAME, loadGame, newGame, saveGame, saveStateExists, showIntro } from './gameUtils'
 import { setTextQueue, skipText } from './textUtils'
 import { addClass, removeClass } from './htmlUtils'
 import { stopMusic, toggleSoundtrack } from './soundtrack'
@@ -189,6 +189,17 @@ constants.BUTTONS = constants.BUTTONS.concat([
     }
   },
   {
+    action: 'save',
+    x: 3,
+    y: 3,
+    w: 9,
+    h: 9,
+    active: true,
+    onclick: () => {
+      saveGame()
+    }
+  },
+  {
     action: 'music',
     x: constants.WIDTH - 3 - 9 - 11,
     y: 3,
@@ -223,6 +234,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
   { action: 'switch', x: 21 * 3, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true, onclick: switchCharacter}
 ])
 
+export const initGameButton = constants.BUTTONS.find(btn => btn.action === 'initGame')
 export const newGameButton = constants.BUTTONS.find(btn => btn.action === 'newGame')
 export const loadGameButton = constants.BUTTONS.find(btn => btn.action === 'loadGame')
 export const singlePlayerButton = constants.BUTTONS.find(btn => btn.action === 'singlePlayer')
@@ -230,6 +242,7 @@ export const multiPlayerButton = constants.BUTTONS.find(btn => btn.action === 'm
 export const skipCutSceneButton = constants.BUTTONS.find(btn => btn.action === 'skipCutScene')
 export const yesButton = constants.BUTTONS.find(btn => btn.action === 'yes')
 export const nahButton = constants.BUTTONS.find(btn => btn.action === 'nah')
+export const saveButton = constants.BUTTONS.find(button => button.action === 'save')
 export const musicButton = constants.BUTTONS.find(button => button.action === 'music')
 export const soundButton = constants.BUTTONS.find(button => button.action === 'sound')
 export const duckButton = constants.BUTTONS.find(button => button.action === 'duck')

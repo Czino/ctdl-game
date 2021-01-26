@@ -117,7 +117,6 @@ export default {
     overlayContext: 8,
     menuContext: 8
   },
-  SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
   canvases: [
     skyCanvas,
