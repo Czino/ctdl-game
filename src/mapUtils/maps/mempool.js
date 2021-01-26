@@ -331,7 +331,11 @@ export default {
     if (!tbd1) return
 
     everitt.thingsToSay = [
-      ['Jack Everitt:\nI am relaxed']
+      ['Jack THNDR:\nI know at least 100,000\npeople who are interested in the Lightning Network.'],
+      [
+        'Jack THNDR:\nOne of my no-coiner friends asked me to let him know if bitcoin',
+        'Jack THNDR:\ngoes back to 5k so he can\nbuy. How do I break it\nto him?'
+      ]
     ]
     tbd3.thingsToSay = [
       [
