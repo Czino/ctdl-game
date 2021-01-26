@@ -1,7 +1,7 @@
-const WIDTH = 128 // viewport
-const HEIGHT = 256 // viewport
+const WIDTH = 32 // viewport
+const HEIGHT = 18 // viewport
 const START = { x: 512, y: 1024 - HEIGHT, w: WIDTH, h: HEIGHT }
-const MENU = { x: 0, y: HEIGHT - 64, w: WIDTH, h: 64 }
+const MENU = { x: 0, y: HEIGHT - 64, w: WIDTH, h: 0 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
 
 const skyCanvas = document.getElementById('ctdl-game-sky')
@@ -106,16 +106,16 @@ export default {
   FRAMESINADAY: Math.pow(2, 14),
   FRAMERESET: Math.pow(2, 64),
   CHECKBLOCKTIME: Math.pow(2, 12), // check every X frame
-  FRAMERATE: 8, // render every X frame
+  FRAMERATE: 4, // render every X frame
   FRAMERATES: {
-    skyContext: 8,
-    parallaxContext: 8,
-    bgContext: 8,
-    charContext: 8,
-    gameContext: 8,
-    fgContext: 8,
-    overlayContext: 8,
-    menuContext: 8
+    skyContext: 4,
+    parallaxContext: 4,
+    bgContext: 4,
+    charContext: 4,
+    gameContext: 4,
+    fgContext: 4,
+    overlayContext: 4,
+    menuContext: 4
   },
   SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,

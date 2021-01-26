@@ -24,6 +24,6 @@ export const showMenu = inventory => {
 
   showInventory(inventory)
   showHealth()
-  showSettings()
+  // showSettings()
   if (CTDLGAME.touchScreen) showControls()
 }

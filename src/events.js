@@ -26,7 +26,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
     y: 0,
     w: constants.WIDTH,
     h: constants.HEIGHT,
-    active: true,
+    active: false,
     onclick: async () => {
       await start() // start tone JS
 
@@ -55,10 +55,10 @@ constants.BUTTONS = constants.BUTTONS.concat([
   },
   {
     action: 'loadGame',
-    x: constants.WIDTH / 2 - 41,
-    y: constants.HEIGHT / 2 + 20,
-    w: 80,
-    h: 10,
+    x: 0,
+    y: 0,
+    w: constants.WIDTH,
+    h: constants.HEIGHT,
     active: false,
     onclick: async () => {
       stopMusic()
@@ -82,7 +82,7 @@ constants.BUTTONS = constants.BUTTONS.concat([
     y: constants.HEIGHT / 2,
     w: 60,
     h: 10,
-    active: true,
+    active: false,
     onclick: () => {
       playSound('select')
 

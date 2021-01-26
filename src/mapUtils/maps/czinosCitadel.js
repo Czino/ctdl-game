@@ -16,6 +16,7 @@ import luma from '../../sprites/luma.png'
 import crispy from '../../sprites/crispy.png'
 import pita from '../../sprites/pita.png'
 import moon from '../../sprites/moon.png'
+import { CTDLGAME } from '../../gameUtils'
 
 const worldWidth = 64
 const worldHeight = 64
@@ -85,7 +86,7 @@ export default {
   npcs: () => [
     new Czino('czino',
       {
-        x: 20 * tileSize,
+        x: 30 * tileSize,
         y: 59 * tileSize + 1
       }
     ),
@@ -110,6 +111,9 @@ export default {
       }
     )
   ],
+  init: () => {
+    CTDLGAME.hodlonaut.applyGravity = false
+  },
   items: () => [],
   events,
   assets: {

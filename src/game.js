@@ -143,7 +143,7 @@ function tick() {
 
     showStartScreen()
     if (window.SHOWBUTTONS) showButtons()
-    showFrameRate()
+
     return window.requestAnimationFrame(tick)
   } else if (CTDLGAME.frame % constants.FRAMERATE !== 0) {
     // throttle framerate
@@ -155,7 +155,7 @@ function tick() {
 
     if (window.SHOWBUTTONS) showButtons()
 
-    showFrameRate()
+
     return window.requestAnimationFrame(tick)
   }
   
@@ -165,12 +165,12 @@ function tick() {
     writeMenu()
     showSettings()
 
-    showFrameRate()
+
     return window.requestAnimationFrame(tick)
   }
 
   if (!CTDLGAME.hodlonaut || !CTDLGAME.world?.ready) {
-    showFrameRate()
+
 
     return window.requestAnimationFrame(tick)
   }
@@ -181,7 +181,7 @@ function tick() {
 
     if (window.SHOWBUTTONS) showButtons()
 
-    showFrameRate()
+
     return window.requestAnimationFrame(tick)
   }
 
@@ -263,20 +263,20 @@ function tick() {
 
   if (CTDLGAME.showOverlay) showOverlay()
 
-  showMenu(CTDLGAME.inventory)
+  // showMenu(CTDLGAME.inventory)
   writeMenu()
 
   // TODO abstract into all in one debug function
   if (window.SHOWBUTTONS) showButtons()
   if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
 
-  if (!CTDLGAME.bossFight && CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
-    saveGame()
-  }
-  // fade out save icon
-  if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
-    showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
-  }
+  // if (!CTDLGAME.bossFight && CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.SAVERATE === 0) {
+  //   saveGame()
+  // }
+  // // fade out save icon
+  // if (CTDLGAME.frame > 256 && CTDLGAME.frame % constants.SAVERATE < 256) {
+  //   showSaveIcon((256 - CTDLGAME.frame % constants.SAVERATE) / 256)
+  // }
 
   if (CTDLGAME.frame > constants.FRAMERESET) {
     CTDLGAME.frame = 0
@@ -286,7 +286,6 @@ function tick() {
     fadeIntoGameOver()
   }
 
-  showFrameRate()
   return window.requestAnimationFrame(tick)
 }
 
