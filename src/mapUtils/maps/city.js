@@ -82,8 +82,7 @@ const goToBuilding1 = new GameObject('goToBuilding1', {
 })
 
 goToBuilding1.backEvent = () => {
-  setTextQueue([])
-  addTextToQueue('Something seems to be\nblocking the entry\nto the building')
+  changeMap('building', 'city')
 }
 
 
@@ -122,7 +121,8 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'ci
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    newGame: { x: 8 * tileSize, y: 124 * tileSize },
+    building: { x: 30 * tileSize, y: 124 * tileSize - 4},
+    building2: { x: 87 * tileSize, y: 122 * tileSize },
     mempool: { x: 58 * tileSize, y: 119 * tileSize },
     conbase: { x: 122 * tileSize, y: 122 * tileSize }
   },

@@ -181,18 +181,18 @@ function tick() {
 
   spawnEnemies()
 
-  if (CTDLGAME.wizardCountdown === 0) {
-    CTDLGAME.wizardCountdown = null
-    CTDLGAME.objects.push(new Wizard(
-      'wizard',
-      {
-        x: window.SELECTEDCHARACTER.x - 40,
-        y: window.SELECTEDCHARACTER.y - 4
-      }
-    ))
-  } else if (CTDLGAME.wizardCountdown) {
-    CTDLGAME.wizardCountdown--
-  }
+  // if (CTDLGAME.wizardCountdown === 0) {
+  //   CTDLGAME.wizardCountdown = null
+  //   CTDLGAME.objects.push(new Wizard(
+  //     'wizard',
+  //     {
+  //       x: window.SELECTEDCHARACTER.x - 40,
+  //       y: window.SELECTEDCHARACTER.y - 4
+  //     }
+  //   ))
+  // } else if (CTDLGAME.wizardCountdown) {
+  //   CTDLGAME.wizardCountdown--
+  // }
 
   if (CTDLGAME.world.map.overworld) {
     sun.update()
