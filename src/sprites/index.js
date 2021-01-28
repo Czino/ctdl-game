@@ -10,6 +10,7 @@ import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
 import craig from './craig'
+import des from './des'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
 import andreas from './andreas'
@@ -29,6 +30,7 @@ export default {
     luma: citizen,
     vlad,
     everitt: citizen,
+    des,
     shitcoiner,
     brian,
     bear,
