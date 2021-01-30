@@ -2,7 +2,7 @@ const w = 13
 const h = 30
 const set = [0, 1, 2, 3, 4, 4, 3, 2, 1, 0]
 export default {
-  right: {
+  left: {
     idle: set
       .concat(set)
       .concat(set)

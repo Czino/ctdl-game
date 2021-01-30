@@ -10,119 +10,80 @@ export default {
     frames: [
       { x: 0, y: 0, w: 11, h: 15 }
     ],
-    select: npc => {
-      addTextToQueue('Monk:\nCome to me if you seek\nenlightenment.', () => {
-        npc.isSelected = false
-      })
-    },
-    touch: npc => {
-      const thingsToSay = [
-        [
-          'Monk:\nI have meditated...',
-          'Monk:\nIf you get stuck\nyou can get a better view\nby climbing high'
-        ],
-        [
-          'Monk:\nI have meditated...',
-          'Monk:\nBears usually growl\n before they attack'
-        ],
-        [
-          'Monk:\nI fell into the rabbit hole'
-        ],
-        [
-          'Monk:\nI have meditated\n on Bitcoin...',
-          'Monk:\nBitcoin is a social\nphenomenon with many\nparallels to the mushroom'
-        ],
-        [
-          'Monk:\nI have meditated\n on Bitcoin...',
-          'Monk:\nBitcoin is cosmic,\nat its core'
-        ],
-        [
-          'Monk:\nI have meditated\n on Bitcoin...',
-          'Monk:\nBitcoin is a teacher'
-        ],
-        [
-          '*mumbling*\nDont trust, verify\nDont trust, verify\nDont trust, verify...'
-        ]
+    thingsToSayTouch: [
+      [
+        'Monk:\nCome to me if you seek\nenlightenment.'
       ]
-
-      let whatToSay = random(thingsToSay)
-      whatToSay.map((text, index) => {
-        if (index === whatToSay.length - 1) {
-          addTextToQueue(text, () => {
-            npc.isTouched = false
-          })
-        } else {
-          addTextToQueue(text)
-        }
-      })
-    }
+    ],
+    thingsToSaySelect: [
+      [
+        'Monk:\nI have meditated...',
+        'Monk:\nIf you get stuck\nyou can get a better view\nby climbing high'
+      ],
+      [
+        'Monk:\nI have meditated...',
+        'Monk:\nBears usually growl\n before they attack'
+      ],
+      [
+        'Monk:\nI fell into the rabbit hole'
+      ],
+      [
+        'Monk:\nI have meditated\n on Bitcoin...',
+        'Monk:\nBitcoin is a social\nphenomenon with many\nparallels to the mushroom'
+      ],
+      [
+        'Monk:\nI have meditated\n on Bitcoin...',
+        'Monk:\nBitcoin is cosmic,\nat its core'
+      ],
+      [
+        'Monk:\nI have meditated\n on Bitcoin...',
+        'Monk:\nBitcoin is a teacher'
+      ],
+      [
+        '*mumbling*\nDont trust, verify\nDont trust, verify\nDont trust, verify...'
+      ]
+    ]
   },
   dave: {
     frames: [
       { x: 0, y: 15, w: 11, h: 15 },
       { x: 11, y: 15, w: 11, h: 15 }
     ],
-    select: npc => {
-      addTextToQueue('Dave:\nI wish I held Bitcoin\nlonger than just a week.', () => {
-        npc.isSelected = false
-      })
-    },
-    touch: npc => {
-      const thingsToSay = [
-        [
-          'Dave:\nPlease, I need some sats...'
-        ],
-        [
-          'Dave:\nHave a sat to spare?'
-        ],
-        [
-          'Dave:\nI used to be rich...'
-        ],
-        [
-          'Dave:\nHow are your hands\nso strong?'
-        ]
+    thingsToSaySelect: [
+      [
+        'Dave:\nI wish I held Bitcoin\nlonger than just a week.'
       ]
-
-      let whatToSay = random(thingsToSay)
-      whatToSay.map((text, index) => {
-        if (index === whatToSay.length - 1) {
-          addTextToQueue(text, () => {
-            npc.isTouched = false
-          })
-        } else {
-          addTextToQueue(text)
-        }
-      })
-    }
+    ],
+    thingsToSayTouch: [
+      [
+        'Dave:\nPlease, I need some sats...'
+      ],
+      [
+        'Dave:\nHave a sat to spare?'
+      ],
+      [
+        'Dave:\nI used to be rich...'
+      ],
+      [
+        'Dave:\nHow are your hands\nso strong?'
+      ]
+    ]
   },
   // TODO add SideQuest "Schiff's Gold"
   peter: {
     frames: [
       { x: 0, y: 30, w: 11, h: 25 }
     ],
-    select: npc => {
-      addTextToQueue('Peter:\nGold has intrinsic value.', () => {
-        npc.isSelected = false
-      })
-    },
-    touch: npc => {
-      const thingsToSay = [
-        [
-          'Peter:\nBuy my gold!'
-        ]
+    thingsToSaySelect: [
+      [
+        'Peter:\nGold has intrinsic value.'
       ]
-
-      let whatToSay = random(thingsToSay)
-      whatToSay.map((text, index) => {
-        if (index === whatToSay.length - 1) {
-          addTextToQueue(text, () => {
-            npc.isTouched = false
-          })
-        } else {
-          addTextToQueue(text)
-        }
-      })
-    }
+    ],
+    thingsToSayTouch: [
+      [
+        'Peter:\nBuy my gold!'
+      ]
+    ]
   },
   mirco: {
     frames: [
@@ -173,14 +134,14 @@ export default {
     frames: [
       { x: 20, y: 0, w: 19, h: 27 }
     ],
-    select: npc => {
-      addTextToQueue('wyd_idk:\nLess and less time is left\nbefore "Second Impact".')
-      addTextToQueue('wyd_idk:\nStop trading shitcoins\nand look at your\nfuture seriously!')
-      addTextToQueue('wyd_idk:\nBitcoin has the most\npowerful monetary system.')
-      addTextToQueue('wyd_idk:\nThat\'s the only thing\nthat matters.', () => {
-        npc.isSelected = false
-      })
-    }
+    thingsToSaySelect: [
+      [
+        'wyd_idk:\nLess and less time is left\nbefore "Second Impact".',
+        'wyd_idk:\nStop trading shitcoins\nand look at your\nfuture seriously!',
+        'wyd_idk:\nBitcoin has the most\npowerful monetary system.',
+        'wyd_idk:\nThat\'s the only thing\nthat matters.'
+      ]
+    ]
   },
   elon: {
     frames: [
@@ -220,6 +181,8 @@ export default {
       { x: 40, y: 0, w: 11, h: 16 }
     ],
     touch: npc => {
+      if (npc.isTouched) return
+      npc.isTouched = true
       let time = Math.round(getTimeOfDay() * 2) / 2
 
       if (time % 1 === 0.5) {
@@ -252,12 +215,12 @@ export default {
       })
       
     },
-    select: npc => {
-      addTextToQueue('Leprikon:\nAre ye looking for me\npot of gold?')
-      addTextToQueue('Leprikon:\nWell bad luck, oi don\'t need a\npot to store me wealth\nanymore.', () => {
-        npc.isSelected = false
-      })
-    }
+    thingsToSaySelect: [
+      [
+        'Leprikon:\nAre ye looking for me\npot of gold?',
+        'Leprikon:\nWell bad luck, oi don\'t need a\npot to store me wealth\nanymore.'
+      ]
+    ]
   },
   honeybadger: {
     frames: [
@@ -390,22 +353,18 @@ export default {
       { x: 87, y: 28, w: 8, h: 8 },
       { x: 87, y: 28, w: 8, h: 8 }
     ],
-    select: npc => {
-      addTextToQueue('RD_btc:\nHODL!', () => {
-        npc.isSelected = false
-      })
-    }
+    thingsToSaySelect: [
+      ['RD_btc:\nHODL!']
+    ]
   },
   vlad: {
     // make him play a red Gibson ES 335 or a Fender Telecaster
     frames: [
       { x: 79, y: 28, w: 8, h: 8 }
     ],
-    select: npc => {
-      addTextToQueue('Vlad:\nDon’t forget that you were born free. This is a powerful thought that will one day break all chains!', () => {
-        npc.isSelected = false
-      })
-    }
+    thingsToSaySelect: [
+      ['Vlad:\nDon’t forget that you were born free. This is a powerful thought that will one day break all chains!']
+    ]
   },
   // Just converted my dads retirement fnd into $link
   // A homeless man once told me he could tell the state of the economy based on the length of the cigarette butts that people throw on the ground

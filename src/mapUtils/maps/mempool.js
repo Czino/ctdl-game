@@ -4,7 +4,6 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import NPC from '../../npcs/NPC'
 import { addHook, CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Item from '../../Item'
 import Human from '../../npcs/Human'
@@ -21,7 +20,9 @@ import { playSound } from '../../sounds'
 import mempool from '../../sprites/mempool.png'
 import citizen1 from '../../sprites/citizen-1.png'
 import everitt from '../../sprites/everitt.png'
+import des from '../../sprites/des.png'
 import { intersects } from '../../geometryUtils'
+import Des from '../../npcs/Des'
 
 const worldWidth = 76
 const worldHeight = 45
@@ -298,6 +299,13 @@ export default {
         business: 0.03
       }
     ),
+    new Des(
+      'des',
+      {
+        x: 18 * tileSize,
+        y: 24 * tileSize - 2
+      }
+    ),
     new Human(
       'tbd-1',
       {
@@ -334,6 +342,7 @@ export default {
   assets: {
     mempool,
     everitt,
+    des,
     citizen1
   },
   track: () => 'mempool',

@@ -12,6 +12,7 @@ import PoliceForce from '../enemies/PoliceForce'
 import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
 import NPC from '../npcs/NPC'
+import Des from '../npcs/Des'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
 import Car from '../objects/Car'
@@ -21,6 +22,7 @@ import Czino from '../npcs/Czino'
 import Luma from '../npcs/Luma'
 import Cat from '../npcs/Cat'
 
+// TODO can we somehow resolve this? I don't want to load all game objects ever from the start
 export const gameObjects = {
     Block,
     Shitcoiner,
@@ -37,6 +39,7 @@ export const gameObjects = {
     Bear,
     Item,
     NPC,
+    Des,
     Doge,
     Elevator,
     Car,

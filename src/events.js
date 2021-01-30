@@ -473,7 +473,7 @@ function click (e) {
   }
   if (window.SELECTED) window.SELECTED.unselect()
   if (!object) return
-  if (object.select) object.select()
+  if (object.select) object.select(object)
   if (object.getClass() === 'Block') {
     object.toggleSolid()
   }

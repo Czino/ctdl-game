@@ -244,14 +244,14 @@ class Human extends Agent {
   }
 
   select = () => {
-    if (!this.thingsToSay || this.isTouched) return
-    this.isTouched = true
+    if (!this.thingsToSay || this.isSelected) return
+    this.isSelected = true
 
     let whatToSay = random(this.thingsToSay)
       whatToSay.map((text, index) => {
         if (index === whatToSay.length - 1) {
           addTextToQueue(text, () => {
-            this.isTouched = false
+            this.isSelected = false
           })
         } else {
           addTextToQueue(text)
