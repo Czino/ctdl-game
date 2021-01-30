@@ -1,6 +1,4 @@
 import * as db from './db'
-import Sun from './Sun'
-import Moon from './Moon'
 import { initEvents, loadGameButton, initGameButton } from './events'
 import constants from './constants'
 import {
@@ -41,16 +39,6 @@ window.SELECTED = null
 window.SELECTEDCHARACTER = null
 
 let time
-
-// TODO sun and moon seem lost here
-const sun = new Sun({
-  x: CTDLGAME.viewport.x + constants.WIDTH / 2,
-  y: CTDLGAME.viewport.y + 10
-})
-const moon = new Moon({
-  x: CTDLGAME.viewport.x + constants.WIDTH / 2,
-  y: CTDLGAME.viewport.y + 10
-})
 
 init()
 
@@ -193,15 +181,6 @@ function tick() {
   // } else if (CTDLGAME.wizardCountdown) {
   //   CTDLGAME.wizardCountdown--
   // }
-
-  if (CTDLGAME.world.map.overworld) {
-    sun.update()
-    moon.update()
-  } else if (CTDLGAME.world.map.bgColor) {
-    constants.skyContext.globalAlpha = 1
-    constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor()
-    constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-  }
 
 
   CTDLGAME.world.update()

@@ -1,8 +1,18 @@
 import constants from './constants'
 import { CTDLGAME, loadAsset, showProgressBar } from './gameUtils'
 import { intersects } from './geometryUtils'
+import Moon from './Moon'
 import { canDrawOn } from './performanceUtils'
+import Sun from './Sun'
 
+const sun = new Sun({
+  x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+  y: CTDLGAME.viewport.y + 10
+})
+const moon = new Moon({
+  x: CTDLGAME.viewport.x + constants.WIDTH / 2,
+  y: CTDLGAME.viewport.y + 10
+})
 class World {
   constructor(id, map) {
     this.id = id
@@ -12,6 +22,7 @@ class World {
     this.h = this.map.world.h
     CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
     CTDLGAME.lightSources = this.map.lightSources
+
     this.loadAssets()
   }
 
@@ -34,6 +45,14 @@ class World {
   update = () => {
     let sprite = CTDLGAME.assets[this.id]
 
+    if (this.map.overworld) {
+      sun.update()
+      moon.update()
+    } else if (this.map.bgColor) {
+      constants.skyContext.globalAlpha = 1
+      constants.skyContext.fillStyle = CTDLGAME.world.map.bgColor()
+      constants.skyContext.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+    }
     if (this.map.parallax.length > 0 && canDrawOn('parallaxContext')) {
       let parallaxViewport = {
         x: Math.round(CTDLGAME.viewport.x / 2),
