@@ -6,6 +6,7 @@ import { addTextToQueue } from './textUtils'
 import constants from './constants'
 import { canDrawOn } from './performanceUtils'
 import GameObject from './GameObject'
+import { write } from './font'
 
 BehaviorTree.register('seesItem', new Task({
   run: agent => agent.sensedItems.length > 0 ? SUCCESS : FAILURE
@@ -352,6 +353,57 @@ class Agent extends GameObject {
       x, this.y, this.w, this.h
     )
     constants[this.context].globalAlpha = 1
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
+  }
+
+  drawDmgs = () => {
+    if (!this.dmgs) return
+    this.dmgs = this.dmgs
+      .filter(dmg => dmg.y > -24)
+      .map(dmg => {
+        write(constants.charContext, `-${dmg.dmg}`, {
+          x: this.getCenter().x - 24,
+          y: this.y + dmg.y,
+          w: 48
+        }, 'center', false, 8, true, '#F00')
+        dmg.y--
+        return dmg
+      })
+  }
+  drawHeals = () => {
+    if (!this.heals) return
+    this.heals = this.heals
+      .filter(heal => heal.y > -24)
+      .map(heal => {
+        write(constants.charContext, `+${heal.heal}`, {
+          x: this.getCenter().x - 24,
+          y: this.y + heal.y,
+          w: 48
+        }, 'center', false, 8, true, '#0F0')
+
+        heal.y--
+        return heal
+      })
+  }
+
+  drawSays = () => {
+    if (!this.says) return
+    this.says = this.says
+      .filter(say => say.y > -24)
+      .map(say => {
+        write(constants.charContext, say.say, {
+          x: this.getCenter().x - 50,
+          y: this.y + say.y,
+          w: 100
+        }, 'center', false, 20, false, '#FFF')
+        return {
+          ...say,
+          y: say.y - 1
+        }
+      })
   }
 
   applyPhysics = () => {

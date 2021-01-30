@@ -43,7 +43,6 @@ export const write = (context, text, { x, y, w }, align = 'left', shadow, limit 
     }
 
     if (char !== '\n' && !(char === ' ' && x === startX)) {
-
       context.drawImage(
         CTDLGAME.assets.font,
         data.x, data.y, data.w, data.h,

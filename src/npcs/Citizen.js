@@ -342,6 +342,10 @@ class Citizen extends Agent {
       this.x, this.y, this.w, this.h
     )
     constants[this.context].globalAlpha = 1
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
   }
 
   update = () => {
@@ -418,33 +422,6 @@ class Citizen extends Agent {
     if (this.removeTimer === 0) this.remove = true
 
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
-    this.says = this.says
-      .filter(say => say.y > -24)
-      .map(say => {
-        write(constants.charContext, say.say, {
-          x: this.getCenter().x - 26,
-          y: this.y + say.y,
-          w: 52
-        }, 'center', false, 5, false, '#FFF')
-        return {
-          ...say,
-          y: say.y - 1
-        }
-      })
   }
 
   say = say => {

@@ -214,6 +214,7 @@ class Rabbit extends Agent {
     addTextToQueue(`Evil Rabbit got rekt`)
   }
 
+  // TODO check if this can be refactored
   draw = () => {
     if (this.isSpecial && this.status === 'turnEvil') this.status = 'idle'
     let spriteData = this.spriteData[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good'][this.direction][this.status]
@@ -232,6 +233,10 @@ class Rabbit extends Agent {
       data.x, data.y, this.w, this.h,
       this.x, this.y, this.w, this.h
     )
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
   }
 
   update = () => {
@@ -290,20 +295,6 @@ class Rabbit extends Agent {
     }
 
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
   }
 
   getAnchor = () => ({

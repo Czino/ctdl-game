@@ -254,6 +254,7 @@ class Bear extends Agent {
       this.frame = 0
     }
 
+    // TODO check if this can be refactored
     let data = spriteData[this.frame]
     this.w = data.w
     this.h = data.h
@@ -264,19 +265,9 @@ class Bear extends Agent {
       this.x, this.y, this.w, this.h
     )
 
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
   }
 
   getBoundingBox = status => /idle|move/.test(status || this.status)

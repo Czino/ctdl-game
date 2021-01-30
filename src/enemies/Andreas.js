@@ -301,6 +301,10 @@ class Andreas extends Agent {
       this.x, this.y, this.w, this.h
     )
     constants.charContext.globalAlpha = 1
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
   }
 
   update = () => {
@@ -354,27 +358,6 @@ class Andreas extends Agent {
 
 
     this.draw()
-
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
   }
 
   say = say => {

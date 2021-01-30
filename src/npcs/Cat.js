@@ -188,6 +188,8 @@ class Cat extends Agent {
       this.protection--
       constants.charContext.globalAlpha = this.protection % 2
     }
+
+    // TODO check if this can be refactored
     constants.charContext.drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,

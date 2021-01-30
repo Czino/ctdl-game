@@ -173,20 +173,6 @@ class Bagholder extends Agent {
 
     this.frame++
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
   }
 
   getBoundingBox = () => this.crawls
