@@ -65,6 +65,8 @@ class Brian extends Agent {
   }
 
   enemy = true
+  spriteId = 'brian'
+  spriteData = brianSprite
   w = 16
   h = 30
   walkingSpeed = 3
@@ -212,10 +214,6 @@ class Brian extends Agent {
   }
 
   update = () => {
-    const sprite = CTDLGAME.assets.brian
-
-    if (!sprite) return
-
     this.applyPhysics()
 
     this.sensedEnemies = senseCharacters(this)
@@ -248,7 +246,6 @@ class Brian extends Agent {
 
     if (this.status === 'hurt') this.hurtAttackCounter--
 
-
     let spriteData = brianSprite[this.direction][this.status]
 
     if (!/hurt|rekt/.test(this.status)) this.frame++
@@ -261,20 +258,7 @@ class Brian extends Agent {
       if (/jump/.test(this.status)) this.status = 'idle'
     }
 
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    // TODO check if this can be refactored
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.drawDmgs()
-    this.drawHeals()
-    this.drawSays()
+    this.draw()
   }
 
   getBoundingBox = () => ({

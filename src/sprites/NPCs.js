@@ -150,6 +150,8 @@ export default {
     ],
     static: true,
     select: npc => {
+      if (npc.isSelected) return
+      npc.isSelected = true
       if (CTDLGAME.isNight) {
         npc.frame = 1
         addTextToQueue('Elon:\nMoOOooOOon', () => {
@@ -163,6 +165,9 @@ export default {
       }
     },
     touch: npc => {
+      if (npc.isTouched) return
+      npc.isTouched = true
+
       if (CTDLGAME.isNight) {
         npc.frame = 1
         addTextToQueue('Elon:\nMoOOooOOon', () => {

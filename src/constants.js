@@ -128,7 +128,7 @@ export default {
     overlayCanvas,
     menuCanvas
   ],
-  skyContext, // TODO use .canvases and .contexts ?
+  skyContext,
   parallaxContext,
   bgCanvas,
   bgContext,

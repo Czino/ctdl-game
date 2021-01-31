@@ -67,6 +67,7 @@ class Shitcoiner extends Agent {
   enemy = true
   w = 16
   h = 30
+  spriteId = 'shitcoiner'
   spriteData = sprites.shitcoiner
   kneels = false
 
@@ -182,17 +183,8 @@ class Shitcoiner extends Agent {
   onDie = () => playSound('shitcoinerHurt')
 
   update = () => {
-    const sprite = CTDLGAME.assets.shitcoiner
-
     if (CTDLGAME.lockCharacters) {
-      let data = this.spriteData[this.direction][this.status][0]
-      constants.charContext.globalAlpha = 1
-
-      constants.charContext.drawImage(
-        sprite,
-        data.x, data.y, this.w, this.h,
-        this.x, this.y, this.w, this.h
-      )
+      this.draw()
       return
     }
 
@@ -223,20 +215,7 @@ class Shitcoiner extends Agent {
       this.frame = 0
     }
 
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    // TODO check if this can be refactored
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.drawDmgs()
-    this.drawHeals()
-    this.drawSays()
+    this.draw()
   }
 
   getBoundingBox = () => ({

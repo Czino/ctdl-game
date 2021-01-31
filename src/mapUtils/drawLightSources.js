@@ -30,7 +30,7 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
     .filter(obj => obj.glows)
     .map((obj => obj.getLightSource()))
 
-  CTDLGAME.lightSources.concat(objectLightSources)
+  ;(CTDLGAME.lightSources || []).concat(objectLightSources)
     .filter(lightSource => lightSource)
     .map(lightSource => {
       let x = lightSource.id ? lightSource.x : lightSource.x + .5 * tileSize

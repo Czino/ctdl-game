@@ -138,7 +138,7 @@ class Rabbit extends Agent {
   }
 
   activity = .05
-  spriteData = sprites.rabbit
+  spriteId = 'rabbit'
   item = null
   w = 8
   h = 6
@@ -214,32 +214,9 @@ class Rabbit extends Agent {
     addTextToQueue(`Evil Rabbit got rekt`)
   }
 
-  // TODO check if this can be refactored
-  draw = () => {
-    if (this.isSpecial && this.status === 'turnEvil') this.status = 'idle'
-    let spriteData = this.spriteData[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good'][this.direction][this.status]
-
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-      if (/jump/.test(this.status)) this.status = 'idle'
-    }
-
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      CTDLGAME.assets.rabbit,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.drawDmgs()
-    this.drawHeals()
-    this.drawSays()
-  }
-
   update = () => {
+    if (this.isSpecial && this.status === 'turnEvil') this.status = 'idle'
+
     if (CTDLGAME.lockCharacters) {
       constants.charContext.globalAlpha = 1
 
@@ -292,6 +269,13 @@ class Rabbit extends Agent {
     }
     if (this.status === 'rekt' && this.frame === 3) {
       this.remove = true
+    }
+
+    this.spriteData = sprites.rabbit[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good']
+
+    if (this.frame >= this.spriteData[this.direction][this.status].length) {
+      this.frame = 0
+      if (/jump/.test(this.status)) this.status = 'idle'
     }
 
     this.draw()
