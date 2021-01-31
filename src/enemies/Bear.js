@@ -53,6 +53,8 @@ class Bear extends Agent {
     this.canMove = options.canMove
   }
 
+  spriteId = 'bear'
+  spriteData = bearSprite
   enemy = true
   w = 27
   h = 28
@@ -202,8 +204,6 @@ class Bear extends Agent {
   }
 
   update = () => {
-    const sprite = CTDLGAME.assets.bear
-
     if (this.vx !== 0) {
       if (this.vx > 6) this.vx = 6
       if (this.vx < -6) this.vx = -6
@@ -243,30 +243,11 @@ class Bear extends Agent {
       this.bTree.step()
     }
 
-    let spriteData = bearSprite[this.direction][this.status]
-
     if (!/rekt/.test(this.status)) this.frame++
     if (this.status === 'hurt' && this.frame === 3) this.status = 'idle'
     if (this.status === 'block' && Math.random() < .3) this.status = 'idle'
 
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-    }
-
-    // TODO check if this can be refactored
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.drawDmgs()
-    this.drawHeals()
-    this.drawSays()
+    this.draw()
   }
 
   getBoundingBox = status => /idle|move/.test(status || this.status)
