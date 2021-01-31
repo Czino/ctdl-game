@@ -4,7 +4,6 @@ import bearSprite from '../sprites/bear'
 import Item from '../Item'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
@@ -148,7 +147,7 @@ class Bear extends Agent {
   onHurt = () => playSound('bearHurt')
 
   hurt = (dmg, direction) => {
-    if (/hurt|block|rekt/.test(this.status)) return
+    if (!this.hurtCondition(dmg, direction)) return
 
     if (dmg < 2 && Math.random() < .9) {
       if (Math.random() < .1) this.status = 'block'
@@ -156,7 +155,7 @@ class Bear extends Agent {
     } else if (dmg >= 2 && Math.random() < .3) {
       return
     }
-    
+
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
 

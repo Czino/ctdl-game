@@ -3,7 +3,6 @@ import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/ind
 import spriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
 import Human from './Human'

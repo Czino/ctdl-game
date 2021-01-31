@@ -4,11 +4,9 @@ import andreas from '../sprites/andreas'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { capitalize } from '../stringUtils'
-import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
-import Agent from '../Agent'
+import Human from '../npcs/Human'
 import { random } from '../arrayUtils'
 
 const sprites = {
@@ -76,7 +74,7 @@ const tree = new Selector({
   ]
 })
 
-class Andreas extends Agent {
+class Andreas extends Human {
   constructor(id, options) {
     super(id, options)
     this.spriteData = sprites[id]
@@ -250,26 +248,6 @@ class Andreas extends Agent {
       .filter(obj => intersects(obj, standUpTo))
 
     return obstacles.length === 0
-  }
-
-  hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
-
-    if (!lostFullPoint) return
-
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-    this.protection = 8
-    playSound('playerHurt')
-    if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
   }
 
   die = () => {

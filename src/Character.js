@@ -5,7 +5,6 @@ import katoshi from './sprites/katoshi'
 import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { capitalize } from './stringUtils'
-import { write } from './font';
 import constants from './constants'
 import { addTextToQueue } from './textUtils';
 import { playSound } from './sounds';
@@ -361,7 +360,7 @@ class Character extends Agent {
   }
 
   hurt = (dmg, direction, agent) => {
-    if (/rekt/.test(this.status) || this.protection > 0) return
+    if (!this.hurtCondition(dmg, direction)) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
 
@@ -378,8 +377,9 @@ class Character extends Agent {
     if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
       this.health = 0
-      this.die() // :(
+      return this.die() // :(
     }
+    return this.onHurt()
   }
 
   stun = direction => {

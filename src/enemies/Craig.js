@@ -3,7 +3,6 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } fro
 import craig from '../sprites/craig'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue, setTextQueue } from '../textUtils';
 import { playSound } from '../sounds';

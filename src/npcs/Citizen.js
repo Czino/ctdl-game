@@ -4,11 +4,9 @@ import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { hexToRgb } from '../stringUtils'
-import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
-import Agent from '../Agent'
+import Human from './Human'
 import { random } from '../arrayUtils'
 
 const sprites = [
@@ -119,7 +117,7 @@ const tree = new Selector({
   ]
 })
 
-class Citizen extends Agent {
+class Citizen extends Human {
   constructor(id, options) {
     super(id, options)
     this.spriteId = options.spriteId || random(sprites)
@@ -209,26 +207,6 @@ class Citizen extends Agent {
     this.vy = -3
   }
 
-  hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
-
-    if (!lostFullPoint) return
-
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-    this.protection = 8
-    playSound('playerHurt')
-    if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
-  }
-
   die = () => {
     this.status = 'rekt'
     this.health = 0
@@ -238,9 +216,7 @@ class Citizen extends Agent {
   }
 
   draw = () => {
-    if (!this.sprite) {
-      this.sprite = CTDLGAME.assets[this.spriteId]
-    } else if (!this.sprite && this.hair && this.skin && this.clothes) {
+    if (!this.sprite && this.hair && this.skin && this.clothes) {
       this.sprite = CTDLGAME.assets[this.spriteId]
       constants.helperCanvas.width = this.sprite.width
       constants.helperCanvas.height = this.sprite.height
@@ -320,6 +296,8 @@ class Citizen extends Agent {
 
       this.sprite = new Image()
       this.sprite.src = constants.helperCanvas.toDataURL()
+    } else if (!this.sprite) {
+      this.sprite = CTDLGAME.assets[this.spriteId]
     }
     let spriteData = this.spriteData[this.direction][this.status]
 

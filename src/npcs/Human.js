@@ -90,16 +90,9 @@ class Human extends Agent {
     }
   }
 
-  // TODO move to Agent?
-  stun = direction => {
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-  }
-
   // TODO compare to Agent and Character class
   hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
+    if (!this.hurtCondition(dmg, direction)) return
     const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
 
@@ -114,8 +107,9 @@ class Human extends Agent {
     if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
       this.health = 0
-      this.die()
+      return this.die()
     }
+    return this.onHurt()
   }
 
   die = () => {
@@ -128,40 +122,8 @@ class Human extends Agent {
     addTextToQueue(`Human got rekt`)
   }
 
-  draw = () => {
-    if (!this.sprite) this.sprite = CTDLGAME.assets[this.spriteId]
-    let spriteData = this.spriteData[this.direction][this.status]
-
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-    }
-
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants[this.context].globalAlpha = data.opacity ?? 1
-    if (this.protection > 0) {
-      this.protection--
-      constants[this.context].globalAlpha = this.protection % 2
-    }
-
-    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
-    constants[this.context].drawImage(
-      this.sprite,
-      data.x, data.y, this.w, this.h,
-      x, this.y, this.w, this.h
-    )
-    constants[this.context].globalAlpha = 1
-
-    this.drawDmgs()
-    this.drawHeals()
-    this.drawSays()
-  }
-
   update = () => {
     if (CTDLGAME.lockCharacters) {
-
       this.draw()
       return
     }

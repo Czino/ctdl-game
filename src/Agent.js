@@ -268,7 +268,6 @@ class Agent extends GameObject {
       })
   }
 
-  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|burning/.test(this.status) && !this.protection
   onHurt = () => {}
   onDie = () => {
     if (this.usd) {
@@ -278,6 +277,13 @@ class Agent extends GameObject {
     }
   }
 
+  stun = direction => {
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
+  }
+
+  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|block|burning/.test(this.status) && !this.protection
   hurt = (dmg, direction) => {
     if (!this.hurtCondition(dmg, direction)) return
 
@@ -329,7 +335,7 @@ class Agent extends GameObject {
 
   draw = () => {
     if (!canDrawOn(this.context)) return
-
+    if (!this.sprite && this.spriteId) this.sprite = CTDLGAME.assets[this.spriteId]
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -341,7 +347,7 @@ class Agent extends GameObject {
     this.h = data.h
 
     constants[this.context].globalAlpha = data.opacity ?? 1
-    if (this.protection > 0 && this.status !== 'rekt') {
+    if (this.protection > 0) {
       this.protection--
       constants[this.context].globalAlpha = this.protection % 2
     }
