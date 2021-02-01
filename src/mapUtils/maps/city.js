@@ -1,10 +1,10 @@
 import stage from './stage/city'
 
+import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME } from '../../gameUtils'
 import NPC from '../../npcs/NPC'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 import { makeBoundary } from '../../geometryUtils'

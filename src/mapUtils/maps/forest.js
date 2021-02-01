@@ -1,5 +1,6 @@
 import stage from './stage/forest'
 
+import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
@@ -7,7 +8,6 @@ import GameObject from '../../GameObject'
 import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../enemies/Bear'
 import NPC from '../../npcs/NPC'
-import { CTDLGAME } from '../../gameUtils'
 import getHitBoxes from '../getHitBoxes'
 
 import forest from '../../sprites/forest.png'

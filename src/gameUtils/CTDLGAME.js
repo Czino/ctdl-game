@@ -23,6 +23,8 @@ export const CTDLGAME = {
   }
 }
 
+export const getAssets = () => CTDLGAME.assets
+
 export const setWorld = world => {
   CTDLGAME.world = world
   CTDLGAME.quadTree = new QuadTree(new Boundary({

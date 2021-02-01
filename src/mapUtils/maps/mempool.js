@@ -1,10 +1,10 @@
 import stage from './stage/mempool'
 
+import { addHook, CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { addHook, CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Item from '../../Item'
 import Human from '../../npcs/Human'
 import darken from '../darken'

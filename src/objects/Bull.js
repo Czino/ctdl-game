@@ -4,7 +4,6 @@ import spriteData from '../sprites/bull'
 import { intersects } from '../geometryUtils'
 import GameObject from '../GameObject'
 
-
 class Bull extends GameObject {
   constructor(id, options) {
     super(id, options)

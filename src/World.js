@@ -1,8 +1,8 @@
 import constants from './constants'
 import { CTDLGAME, loadAsset, showProgressBar } from './gameUtils'
 import { intersects } from './geometryUtils'
-import Moon from './Moon'
 import { canDrawOn } from './performanceUtils'
+import Moon from './Moon'
 import Sun from './Sun'
 
 const sun = new Sun({

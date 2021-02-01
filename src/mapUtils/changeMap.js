@@ -1,5 +1,5 @@
-import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
+import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState } from '../gameUtils'
 import World from '../World'
 import { initSoundtrack } from '../soundtrack'
 import { loadMap } from './loadMap'

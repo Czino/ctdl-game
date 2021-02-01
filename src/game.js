@@ -138,7 +138,6 @@ function tick() {
 
 
   if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
-    // TODO sometimes it happens that the background does not change
     circadianRhythm(time)
   }
 

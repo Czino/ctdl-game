@@ -39,6 +39,7 @@ module.exports = env => {
       ]
     },
     mode: dev ? 'development' : 'production',
+    devtool: 'eval-source-map',
     cache: dev,
     watchOptions: {
       poll: 5000

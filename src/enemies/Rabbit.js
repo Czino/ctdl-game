@@ -1,18 +1,13 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
 
-import rabbit from '../sprites/rabbit'
+import rabbitSprite from '../sprites/rabbit'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
-
-const sprites = {
-  rabbit
-}
 
 const isEvil = new Task({
   run: agent => agent.isEvil ? SUCCESS : FAILURE
@@ -139,6 +134,7 @@ class Rabbit extends Agent {
 
   activity = .05
   spriteId = 'rabbit'
+  spriteData = rabbitSprite.special
   item = null
   w = 8
   h = 6
@@ -220,6 +216,7 @@ class Rabbit extends Agent {
     if (CTDLGAME.lockCharacters) {
       constants.charContext.globalAlpha = 1
 
+      this.spriteData = rabbitSprite[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good']
       this.draw()
       return
     }
@@ -271,7 +268,7 @@ class Rabbit extends Agent {
       this.remove = true
     }
 
-    this.spriteData = sprites.rabbit[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good']
+    this.spriteData = rabbitSprite[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good']
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {
       this.frame = 0

@@ -1,10 +1,10 @@
 import stage from './stage/conbase'
 
+import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import Brian from '../../enemies/Brian'
 import Shitcoiner from '../../enemies/Shitcoiner'
 import Bagholder from '../../enemies/Bagholder'
