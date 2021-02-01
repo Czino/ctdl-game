@@ -11,6 +11,7 @@ import brian from './brian'
 import bear from './bear'
 import craig from './craig'
 import des from './des'
+import hodlTarantula from './hodlTarantula'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
 import andreas from './andreas'
@@ -31,6 +32,7 @@ export default {
     vlad,
     everitt: citizen,
     des,
+    hodlTarantula,
     shitcoiner,
     brian,
     bear,

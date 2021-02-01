@@ -5,6 +5,7 @@ import Rabbit from '../enemies/Rabbit'
 import Cobra from '../enemies/Cobra'
 import Goldbugs from '../enemies/Goldbugs'
 import Andreas from '../enemies/Andreas'
+import HodlTarantula from '../npcs/HodlTarantula'
 import Bear from '../enemies/Bear'
 import Brian from '../enemies/Brian'
 import Craig from '../enemies/Craig'
@@ -31,6 +32,7 @@ export const gameObjects = {
     Cobra,
     Goldbugs,
     Andreas,
+    HodlTarantula,
     Brian,
     Craig,
     PoliceForce,

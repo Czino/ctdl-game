@@ -1,16 +1,16 @@
 import stage from './stage/rabbitHole'
 
+import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import { intersects, makeBoundary } from '../../geometryUtils'
 import NPC from '../../npcs/NPC'
-import { CTDLGAME } from '../../gameUtils'
 import Item from '../../Item'
 import Andreas from '../../enemies/Andreas'
+import HodlTarantula from '../../npcs/HodlTarantula'
 import { random } from '../../arrayUtils'
-import { addTextToQueue } from '../../textUtils'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
@@ -19,6 +19,10 @@ import getHitBoxes from '../getHitBoxes'
 import rabbitHole from '../../sprites/rabbitHole.png'
 import andreas from '../../sprites/andreas.png'
 import rabbit from '../../sprites/rabbit.png'
+import hodlTarantula from '../../sprites/hodlTarantula.png'
+import hodlTarantulaDenBg from '../../sprites/hodlTarantulaDenBg.png'
+import hodlTarantulaDenFg from '../../sprites/hodlTarantulaDenFg.png'
+import constants from '../../constants'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -183,6 +187,13 @@ export default {
         y: 0
       }
     ),
+    new HodlTarantula(
+      'hodlTarantula',
+      {
+        x: 81 * tileSize,
+        y: 42 * tileSize
+      }
+    ),
     new NPC(
       'honeybadger',
       {
@@ -204,11 +215,25 @@ export default {
   assets: {
     rabbitHole,
     andreas,
-    rabbit
+    rabbit,
+    hodlTarantula,
+    hodlTarantulaDenBg,
+    hodlTarantulaDenFg
   },
   track: () => 'darkIsBetter',
   bgColor: () => '#170705',
   update: () => {
+    constants.bgContext.drawImage(
+      CTDLGAME.assets.hodlTarantulaDenBg,
+      0, 0, 87, 36,
+      79 * tileSize + 2, 42 * tileSize + 5, 87, 36
+    )
+    constants.fgContext.drawImage(
+      CTDLGAME.assets.hodlTarantulaDenFg,
+      0, 0, 87, 36,
+      79 * tileSize + 2, 42 * tileSize + 5, 87, 36
+    )
+
     const andreas = CTDLGAME.objects.find(obj => obj.getClass() === 'Andreas')
     if (andreas && !andreas.inViewport && Math.random() < .01) {
       let teleportTo = random(andreasTeleports)
