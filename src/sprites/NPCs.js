@@ -124,7 +124,7 @@ export default {
     static: true,
     select: npc => {
       npc.frame = window.SELECTEDCHARACTER.getCenter().x > npc.getCenter().x ? 1 : 0
-      addTextToQueue('Wizard with no money:\nI wish I could use my magic\nto create Bitcoin.')
+      addTextToQueue('Wizard with no money:\nI wish I could use my magic\nto create bitcoin.')
       addTextToQueue('Wizard with no money:\nBut by Merlin\'s beard...\nit\'s impossible!', () => {
         npc.isSelected = false
       })
