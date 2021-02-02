@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Pixel';
+    src: url('fonts/pixel-font.woff2') format('woff2'),
+        url('fonts/pixel-font.woff') format('woff'),
+        url('fonts/pixel-font.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+html {
+    font-size: 32px;
+    margin: 20px;
+}
+
+body {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #212121;
+    color: #e1dfe0;
+    font-family: 'Pixel', Courier, monospace;
+}
+
+img {
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+}
+
+#logo {
+    width: 280px;
+}
+
+a {
+    color: #e1dfe0;
+    text-decoration: none;
+}
+
+.img-supporter {
+    height: 120px;
+}
