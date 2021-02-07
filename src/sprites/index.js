@@ -9,6 +9,7 @@ import vlad from './vlad'
 import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
+import ivan from './ivan'
 import craig from './craig'
 import des from './des'
 import hodlTarantula from './hodlTarantula'
@@ -36,6 +37,7 @@ export default {
     shitcoiner,
     brian,
     bear,
+    ivan,
     craig,
     craigWithArmor: craig,
     goldbugs,

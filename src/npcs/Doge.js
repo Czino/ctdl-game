@@ -101,8 +101,8 @@ class Doge extends Agent {
     if (this.frame === 0) {
       const length = Math.min(this.solving.text.length - 2, 5)
       const offset = length === 3 ? 1 : 0
+      constants.gameContext.fillStyle = this.solving.color
       for (let i = length; i > 0; i--) {
-        constants.gameContext.fillStyle = this.solving.color
         constants.gameContext.globalAlpha = Math.random()
         constants.gameContext.fillRect(
           this.direction === 'left' ? this.x - 2 + offset + i : this.x + this.w - 4 + offset + i,
@@ -114,8 +114,8 @@ class Doge extends Agent {
     }
 
     if (this.reward > 0) {
+      constants.gameContext.fillStyle = '#eecc43'
       this.coins = this.coins.map(coin => {
-        constants.gameContext.fillStyle = '#eecc43'
         constants.gameContext.globalAlpha = Math.random()
         constants.gameContext.fillRect(Math.round(coin.x), Math.round(coin.y), 1, 1)
         coin.x += coin.vx

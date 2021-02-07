@@ -390,6 +390,32 @@ const sounds = {
     pulseSynth.setNote('G7', present + dur / 2 * 1.5, .005)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
+  rumble: () => {
+    const present = now()
+    const dur = .2
+
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+
+    noise2Synth.noise.type = 'brown'
+    noise2Synth.envelope.attack = dur / 2
+    noise2Synth.envelope.decay = dur
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = dur
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .02)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    triangleSynth.envelope.attack = dur
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = dur / 4
+
+    triangleSynth.triggerAttack('A0', present, .1)
+    triangleSynth.triggerAttack('F#0', present + dur * 0.75, .3)
+    triangleSynth.triggerRelease(present + dur)
+  },
   bearGrowl: () => {
     const present = now()
     const dur = .3

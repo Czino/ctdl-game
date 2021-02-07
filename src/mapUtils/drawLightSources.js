@@ -27,7 +27,7 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
   constants.gameContext.globalCompositeOperation = 'source-atop'
 
   const objectLightSources = CTDLGAME.objects
-    .filter(obj => obj.glows)
+    .filter(obj => obj.glows && obj.getLightSource)
     .map((obj => obj.getLightSource()))
 
   ;(CTDLGAME.lightSources || []).concat(objectLightSources)

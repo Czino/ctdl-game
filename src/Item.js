@@ -6,6 +6,7 @@ import { playSound } from './sounds'
 import { addTextToQueue } from './textUtils'
 import GameObject from './GameObject'
 
+// TODO move to /objects
 class Item extends GameObject {
   constructor(id, options) {
     super(id, options)

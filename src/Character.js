@@ -366,7 +366,7 @@ class Character extends Agent {
 
     if (!lostFullPoint) return
 
-    agent.enemy = true
+    if (agent) agent.enemy = true
 
     this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
     this.status = 'hurt'
@@ -495,14 +495,15 @@ class Character extends Agent {
 
   update = () => {
     if (this.status === 'rekt' && this.rektIn !== CTDLGAME.world.id) return
+
+    this.applyPhysics()
+
     if (CTDLGAME.lockCharacters) {
       this.frame = 0
 
       this.draw()
       return
     }
-
-    this.applyPhysics()
 
     if (this.status === 'fall' && /hodlonaut/.test(this.id)) this.glows = false
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'

@@ -1,20 +1,24 @@
 import stage from './stage/rabbitHole'
 
+import constants from '../../constants'
 import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import { intersects, makeBoundary } from '../../geometryUtils'
-import NPC from '../../npcs/NPC'
-import Item from '../../Item'
-import Andreas from '../../enemies/Andreas'
-import HodlTarantula from '../../npcs/HodlTarantula'
 import { random } from '../../arrayUtils'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import getHitBoxes from '../getHitBoxes'
+
+import NPC from '../../npcs/NPC'
+import Item from '../../Item'
+import Andreas from '../../enemies/Andreas'
+import HodlTarantula from '../../npcs/HodlTarantula'
+import Ivan from '../../enemies/Ivan'
+
 
 import rabbitHole from '../../sprites/rabbitHole.png'
 import andreas from '../../sprites/andreas.png'
@@ -22,7 +26,9 @@ import rabbit from '../../sprites/rabbit.png'
 import hodlTarantula from '../../sprites/hodlTarantula.png'
 import hodlTarantulaDenBg from '../../sprites/hodlTarantulaDenBg.png'
 import hodlTarantulaDenFg from '../../sprites/hodlTarantulaDenFg.png'
-import constants from '../../constants'
+import ivan from '../../sprites/ivan.png'
+import shitcoins from '../../sprites/shitcoins.png'
+import Candle from '../../objects/Candle'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -194,6 +200,37 @@ export default {
         y: 42 * tileSize
       }
     ),
+    new Ivan(
+      'ivan',
+      {
+        x: 90 * tileSize,
+        y: 42 * tileSize
+      }
+    ),
+    new Candle(
+      'barrier-1',
+      {
+        x: 89 * tileSize,
+        y: 42 * tileSize,
+        static: true,
+        open: 0,
+        high: 1,
+        low: -32,
+        close: -43,
+      }
+    ),
+    new Candle(
+      'barrier-2',
+      {
+        x: 115 * tileSize,
+        y: 42 * tileSize,
+        static: true,
+        open: 0,
+        high: 3,
+        low: -3 * tileSize,
+        close: -3 * tileSize,
+      }
+    ),
     new NPC(
       'honeybadger',
       {
@@ -218,7 +255,9 @@ export default {
     rabbit,
     hodlTarantula,
     hodlTarantulaDenBg,
-    hodlTarantulaDenFg
+    hodlTarantulaDenFg,
+    ivan,
+    shitcoins
   },
   track: () => 'darkIsBetter',
   bgColor: () => '#170705',

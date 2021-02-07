@@ -20,6 +20,7 @@ import katoshi from '../sprites/katoshi.png'
 import shitcoiner from '../sprites/shitcoiner.png'
 import brian from '../sprites/brian.png'
 import bear from '../sprites/bear.png'
+import ivan from '../sprites/ivan.png'
 import craig from '../sprites/craig.png'
 import craigWithArmor from '../sprites/craigWithArmor.png'
 import goldbugs from '../sprites/goldbugs.png'
@@ -53,6 +54,7 @@ export const assets = {
     shitcoiner,
     brian,
     bear,
+    ivan,
     craig,
     craigWithArmor,
     goldbugs,

@@ -7,6 +7,7 @@ import Goldbugs from '../enemies/Goldbugs'
 import Andreas from '../enemies/Andreas'
 import HodlTarantula from '../npcs/HodlTarantula'
 import Bear from '../enemies/Bear'
+import Ivan from '../enemies/Ivan'
 import Brian from '../enemies/Brian'
 import Craig from '../enemies/Craig'
 import PoliceForce from '../enemies/PoliceForce'
@@ -18,6 +19,8 @@ import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
 import Car from '../objects/Car'
 import Item from '../Item'
+import Shitcoin from '../objects/Shitcoin'
+import Candle from '../objects/Candle'
 import Wizard from '../npcs/Wizard'
 import Czino from '../npcs/Czino'
 import Luma from '../npcs/Luma'
@@ -39,7 +42,10 @@ export const gameObjects = {
     Human,
     Citizen,
     Bear,
+    Ivan,
     Item,
+    Shitcoin,
+    Candle,
     NPC,
     Des,
     Doge,

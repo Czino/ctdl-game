@@ -23,6 +23,11 @@ BehaviorTree.register('doesNotTouchEnemy', new Task({
 BehaviorTree.register('idle', new Task({
   run: agent => agent.idle.condition() ? agent.idle.effect() : FAILURE
 }))
+BehaviorTree.register('move', new Task({
+  run: agent => agent.direction === 'left'
+    ? agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    : agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+}))
 BehaviorTree.register('moveLeft', new Task({
   run: agent => agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
 }))
@@ -53,6 +58,9 @@ BehaviorTree.register('jump', new Task({
 }))
 BehaviorTree.register('attack', new Task({
   run: agent => agent.attack.condition() ? agent.attack.effect() : FAILURE
+}))
+BehaviorTree.register('attack2', new Task({
+  run: agent => agent.attack2.condition() ? agent.attack2.effect() : FAILURE
 }))
 BehaviorTree.register('moveTo', new Task({
   run: agent => agent.moveTo.condition() ? agent.moveTo.effect() : FAILURE
@@ -284,9 +292,9 @@ class Agent extends GameObject {
   }
 
   hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|block|burning/.test(this.status) && !this.protection
-  hurt = (dmg, direction) => {
+  hurt = (dmg, direction, agent) => {
     if (!this.hurtCondition(dmg, direction)) return
-
+    if (this.status === 'exhausted') dmg *= 4
     this.dmgs.push({y: -8, dmg})
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
@@ -297,7 +305,7 @@ class Agent extends GameObject {
       return this.die()
     }
 
-    return this.onHurt()
+    return this.onHurt(agent)
   }
 
   heal = heal => {
@@ -443,9 +451,9 @@ class Agent extends GameObject {
   getSenseBox = () => ({
     id: this.id,
     x: this.x - this.senseRadius,
-    y: this.y - this.senseRadius / 2,
+    y: this.y - this.senseRadius / 4,
     w: this.w + this.senseRadius * 2,
-    h: this.h + this.senseRadius
+    h: this.h + this.senseRadius / 2
   })
 
   getAnchor = () => ({
