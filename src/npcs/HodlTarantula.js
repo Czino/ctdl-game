@@ -1,4 +1,4 @@
-import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import hodlTarantulaSprite from '../sprites/hodlTarantula'
 import { CTDLGAME } from '../gameUtils'
@@ -11,7 +11,7 @@ import { addTextToQueue } from '../textUtils'
 
 const moveToPointX = new Task({
   run: agent => {
-    if (!agent.goal && Math.random() < .05 * agent.business) agent.goal = Math.round(Math.random() * 82) + 632
+    if (!agent.goal && Math.random() < .05 * agent.business) agent.goal = 632 + Math.round(Math.random() * 82)
     if (agent.x % agent.goal < 5) agent.goal = null
     if (!agent.goal) return FAILURE
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
@@ -31,6 +31,14 @@ const hang = new Task({
   }
 })
 
+// Sequence: runs each node until fail
+const killIvan = new Sequence({
+  nodes: [
+    'touchesEnemy',
+    'attack'
+  ]
+})
+
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
@@ -44,6 +52,7 @@ const regularBehaviour = new Selector({
 const tree = new Selector({
   nodes: [
     'survive',
+    killIvan,
     regularBehaviour
   ]
 })
@@ -60,13 +69,14 @@ class HodlTarantula extends Agent {
     this.attackRange = options.attackRange ?? Math.ceil(Math.random() * 70) + 70
     this.senseRadius = this.attackRange
     this.walkingSpeed = options.walkingSpeed || 2
+    this.stayPut = options.stayPut ?? true
+    this.killIvan = options.killIvan ?? false
     this.protection = 0
     this.business = 1
     this.thingsToSay = [
       ['hodl_tarantula:\nBuild and Hodl my wayward\nson there\'ll be peace when\nyou are done.']
     ]
     this.goal = options.goal
-    if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
   says = []
@@ -79,8 +89,30 @@ class HodlTarantula extends Agent {
     blackboard: this
   })
 
+  attack = {
+    condition: () => {
+      if (!this.closestEnemy) return FAILURE
+
+      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return FAILURE // not in biting distance
+
+      return SUCCESS
+    },
+    effect: () => {
+      if (this.status === 'attack' && this.frame === 1) {
+        this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left', this)
+        return SUCCESS
+      }
+      if (this.status === 'attack') return SUCCESS
+
+      this.frame = 0
+      this.status = 'attack'
+
+      return SUCCESS
+    }
+  }
+
   update = () => {
-    if (CTDLGAME.lockCharacters) {
+    if (CTDLGAME.lockCharacters || this.stayPut) {
       this.draw()
       return
     }
@@ -107,7 +139,7 @@ class HodlTarantula extends Agent {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemey && enemy.health && enemy.health > 0)
+      .filter(enemy => this.killIvan && enemy.getClass() === 'Ivan' && !/rekt|wrapped/.test(enemy.status))
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
@@ -150,9 +182,9 @@ class HodlTarantula extends Agent {
 
   getBoundingBox = () => ({
     id: this.id,
-    x: this.x,
+    x: this.x + 5,
     y: this.y + 21,
-    w: this.w,
+    w: this.w - 10,
     h: this.h - 21
   })
 }

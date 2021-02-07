@@ -302,7 +302,7 @@ class Agent extends GameObject {
     this.protection = 4
     if (this.health <= 0) {
       this.health = 0
-      return this.die()
+      return this.die(agent)
     }
 
     return this.onHurt(agent)
@@ -320,7 +320,7 @@ class Agent extends GameObject {
     return heal > 0
   }
 
-  die = () => {
+  die = agent => {
     this.status = 'rekt'
     this.frame = 0
 
@@ -338,7 +338,7 @@ class Agent extends GameObject {
       CTDLGAME.objects.push(item)
     }
 
-    return this.onDie()
+    return this.onDie(agent)
   }
 
   draw = () => {

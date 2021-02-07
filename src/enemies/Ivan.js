@@ -81,7 +81,8 @@ class Ivan extends Agent {
     this.spriteData = ivan
     this.maxHealth = 99
     this.health = options.health ?? 99
-    this.usd = options.usd || Math.round(Math.random() * 10000)
+    this.usd = options.usd || Math.round(Math.random() * 80000)
+    this.sats = options.sats || Math.round(Math.random() * 40000)
     this.item = { id: 'pizza' }
     this.strength = 5
     this.attackRange = 8
@@ -89,9 +90,17 @@ class Ivan extends Agent {
     this.protection = 0
     this.hadIntro = options.hadIntro || false
     this.canMove = options.hadIntro || false
+    this.applyGravity = options.applyGravity || true
     this.walkingSpeed = 3
     this.pampLoaded = options.pampLoaded || 0
     this.exhaustion = options.exhaustion || 0
+    if (this.status === 'rekt') {
+      this.status = 'wrapped'
+      this.direction = 'right'
+      this.x = 692
+      this.y = 343
+      this.applyGravity = false
+    }
   }
 
   enemy = true
@@ -165,7 +174,7 @@ class Ivan extends Agent {
           'candle-' + CTDLGAME.frame,
           {
             x: enemy.x + Math.round((Math.random() - .5) * 8),
-            y: enemy.y + enemy.h
+            y: enemy.y + enemy.h + 4
           }
         ))
       }
@@ -178,18 +187,43 @@ class Ivan extends Agent {
     }
   }
 
-  onHurt = agent => {
+  onHurt = () => {
     this.protection = 8
     playSound('playerHurt')
-
-    if (agent.getClass() === 'hodlTarantula') {
-      this.status = 'rekt'
-    }
   }
 
-  die = () => {
-    // TODO go to hodl_tarantula and get rekt
-    this.endScene = true
+  die = agent => {
+    const hodlTarantula = CTDLGAME.objects.find(obj => obj.id === 'hodlTarantula')
+
+    if (agent.getClass() === 'HodlTarantula') {
+      this.status = 'rekt'
+      CTDLGAME.focusViewport = false
+      hodlTarantula.killIvan = false
+
+      addTextToQueue('hodl_tarantula:\nThanks, because of you I\ncould finally catch this\nannoying brat.')
+      addTextToQueue('hodl_tarantula:\nHe was good for nothing but he will make a great dinner.')
+      addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}\nand ś${this.sats}`)
+      if (this.usd) CTDLGAME.inventory.usd += this.usd
+      if (this.sats) CTDLGAME.inventory.sats += this.sats
+    } else {
+      const barrier1 = CTDLGAME.objects.find(obj => obj.id === 'barrier-1')
+      const barrier2 = CTDLGAME.objects.find(obj => obj.id === 'barrier-2')
+  
+      hodlTarantula.stayPut = false
+      hodlTarantula.killIvan = true
+  
+      barrier1.static = false
+      barrier1.spawnCountdown = 0
+      barrier2.static = false
+      barrier2.spawnCountdown = 0
+      CTDLGAME.focusViewport = this
+      this.endScene = true
+      this.pampLoaded = -9999
+      this.enemy = false
+
+      setTextQueue([])
+      addTextToQueue('Ivan:\nIt\'s all dumping! I need to\nget out of here.')
+    }
   }
 
   collectShitcoin = shitcoin => {
@@ -198,6 +232,7 @@ class Ivan extends Agent {
     shitcoin.collected = true
 
     this.pampLoaded += .2
+    playSound('item')
 
     if (this.pampLoaded >= 1) this.holdCountdown = 5
   }
@@ -210,7 +245,7 @@ class Ivan extends Agent {
       return
     }
 
-    if (this.status !== 'rekt' && Math.random() < .05) {
+    if (!this.endScene && !this.exhaustion && !/wrapped|rekt/.test(this.status) && Math.random() < .1) {
       CTDLGAME.objects.push(new Shitcoin(
         'shitcoin-' + CTDLGAME.frame,
         {
@@ -241,15 +276,6 @@ class Ivan extends Agent {
       .filter(enemy => enemy.getClass() === 'Character' && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
-    this.sensedItems = this.sensedObjects
-      .filter(enemy => enemy.getClass() === 'Shitcoin')
-      .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
-
-    this.touchedObjects = this.sensedItems
-      .filter(obj => obj.touch)
-      .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
-      .forEach(obj => obj.touch(this, this.collectShitcoin))
-
     if (!this.hadIntro && this.sensedEnemies.length > 0) {
       CTDLGAME.lockCharacters = true
       skipCutSceneButton.active = true
@@ -267,8 +293,17 @@ class Ivan extends Agent {
 
     this.sensedFriends = []
 
-    if (!this.exhaustion && Math.abs(this.vy) < 3 && this.canMove && !/jump|fall|rekt|hurt/.test(this.status)) {
+    if (!this.exhaustion && Math.abs(this.vy) < 3 && this.canMove && !/wrapped|fall|rekt|hurt/.test(this.status)) {
       if (getSoundtrack() !== 'ivansTheme') initSoundtrack('ivansTheme')
+
+      this.sensedItems = this.sensedObjects
+      .filter(enemy => enemy.getClass() === 'Shitcoin')
+      .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
+
+      this.touchedObjects = this.sensedItems
+        .filter(obj => obj.touch)
+        .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
+        .forEach(obj => obj.touch(this, this.collectShitcoin))
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)

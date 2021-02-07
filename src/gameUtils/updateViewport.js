@@ -14,7 +14,10 @@ const canTeleport = character => character.status !== 'rekt' && character.follow
  * @returns {void}
  */
 export const updateViewport = () => {
-  if (CTDLGAME.multiPlayer) {
+  if (CTDLGAME.focusViewport) {
+    CTDLGAME.viewport.x = Math.round(CTDLGAME.focusViewport.x + CTDLGAME.focusViewport.w / 2 - constants.WIDTH / 2)
+    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h, Math.round(CTDLGAME.focusViewport.y + CTDLGAME.focusViewport.h - constants.HEIGHT / 2))
+  } else if (CTDLGAME.multiPlayer) {
     CTDLGAME.viewport.x = Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2)
     CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
   } else {

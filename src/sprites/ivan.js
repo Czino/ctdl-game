@@ -58,6 +58,14 @@ export default {
         h: 10
       }
     ],
+    wrapped: [
+      {
+        x: 80,
+        y: 30,
+        w: 20,
+        h: 30
+      }
+    ],
     action: [
       {
         x: 0,

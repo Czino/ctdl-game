@@ -81,7 +81,7 @@ class Luma extends Human {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemey && enemy.health && enemy.health > 0)
+      .filter(enemy => enemy.enemy && enemy.health && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects

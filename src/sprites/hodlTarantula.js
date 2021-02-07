@@ -21,6 +21,10 @@ export default {
       { x: 1 * w, y: 1 * h, w, h },
       { x: 1 * w, y: 1 * h, w, h },
     ],
+    attack: [
+      { x: 0 * w, y: 1 * h, w, h },
+      { x: 1 * w, y: 1 * h, w, h }
+    ],
     move: [
       { x: 0 * w, y: 2 * h, w, h },
       { x: 1 * w, y: 2 * h, w, h },
@@ -50,6 +54,10 @@ export default {
       { x: 156 + 1 * w, y: 1 * h, w, h },
       { x: 156 + 1 * w, y: 1 * h, w, h },
       { x: 156 + 1 * w, y: 1 * h, w, h },
+    ],
+    attack: [
+      { x: 156 + 0 * w, y: 1 * h, w, h },
+      { x: 156 + 1 * w, y: 1 * h, w, h }
     ],
     move: [
       { x: 156 + 0 * w, y: 2 * h, w, h },

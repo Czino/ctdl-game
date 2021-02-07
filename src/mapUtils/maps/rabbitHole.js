@@ -196,14 +196,16 @@ export default {
     new HodlTarantula(
       'hodlTarantula',
       {
-        x: 81 * tileSize,
-        y: 42 * tileSize
+        x: 79 * tileSize,
+        y: 41 * tileSize,
+        status: 'hang',
+        stayPut: true
       }
     ),
     new Ivan(
       'ivan',
       {
-        x: 90 * tileSize,
+        x: 110 * tileSize,
         y: 42 * tileSize
       }
     ),
