@@ -11,7 +11,7 @@ import { addTextToQueue } from '../textUtils'
 
 const moveToPointX = new Task({
   run: agent => {
-    if (!agent.goal && Math.random() < .05 * agent.business) agent.goal = 632 + Math.round(Math.random() * 82)
+    if (!agent.goal && Math.random() < .05 * agent.business) agent.goal = 632 + Math.round(Math.random() * 70)
     if (agent.x % agent.goal < 5) agent.goal = null
     if (!agent.goal) return FAILURE
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
