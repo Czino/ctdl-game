@@ -234,6 +234,13 @@ export default {
       }
     ),
     new NPC(
+      'roger',
+      {
+        x: 67 * tileSize,
+        y: 67 * tileSize + 2
+      }
+    ),
+    new NPC(
       'honeybadger',
       {
         x: 342,

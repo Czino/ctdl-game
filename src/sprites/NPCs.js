@@ -130,6 +130,20 @@ export default {
       })
     }
   },
+  roger: {
+    frames: [
+      { x: 79, y: 37, w: 10, h: 16 }
+    ],
+    thingsToSayTouch: [
+      ['Roger:\nI can\'t believe some people\nstill think BTC is Bitcoin...'],
+      ['Roger:\nThey laughed at me in\nthe mempool...'],
+      ['Roger:\nBitcoin was designed to be\ndigital cash used to make\npayments over the internet.']
+    ],
+    thingsToSaySelect: [
+      ['Roger:\nBitcoin is a peer-to-peer\nelectronic cash system...'],
+      ['Roger:\nAll I want is Bitcoin to be\nused as cash...']
+    ]
+  },
   wyd_idk: {
     frames: [
       { x: 20, y: 0, w: 19, h: 27 }
