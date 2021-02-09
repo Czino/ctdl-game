@@ -58,11 +58,16 @@ const wantsItem = new Sequence({
 })
 
 
-// walks around randomly
-// wants to collect shitcoins
-// you can destroy shitcoins before he gets them
-// when he collected enough shitcoins he can start a PAMP
-// when he collected enough shitcoins he can also just throw them at you
+const moveToPointX = new Task({
+  run: agent => {
+    if (!agent.goal) agent.goal = (92 + Math.round(Math.random() * 18)) * 8
+    if (agent.x % agent.goal < 5) agent.goal = null
+    if (!agent.goal) return FAILURE
+    if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+    if (agent.x > agent.goal) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    return agent.moveRandom.condition() ? agent.moveRandom.effect() : FAILURE
+  }
+})
 
 const tree = new Selector({
   nodes: [
@@ -71,6 +76,7 @@ const tree = new Selector({
     attackEnemy,
     attack2Enemy,
     wantsItem,
+    'moveRandom',
     'idle'
   ]
 })
@@ -181,6 +187,7 @@ class Ivan extends Agent {
 
       if (this.pampLoaded < .1) {
         this.exhaustion = 24
+        this.isPamping = false
         this.status = 'exhausted'
       }
       return SUCCESS
@@ -199,6 +206,7 @@ class Ivan extends Agent {
       this.status = 'rekt'
       CTDLGAME.focusViewport = false
       hodlTarantula.killIvan = false
+      initSoundtrack('darkIsBetter')
 
       addTextToQueue('hodl_tarantula:\nThanks, because of you I\ncould finally catch this\nannoying brat.')
       addTextToQueue('hodl_tarantula:\nHe was good for nothing but he will make a great dinner.')
@@ -210,6 +218,7 @@ class Ivan extends Agent {
       const barrier2 = CTDLGAME.objects.find(obj => obj.id === 'barrier-2')
   
       hodlTarantula.stayPut = false
+      hodlTarantula.applyGravity = true
       hodlTarantula.killIvan = true
   
       barrier1.static = false
@@ -223,11 +232,24 @@ class Ivan extends Agent {
 
       setTextQueue([])
       addTextToQueue('Ivan:\nIt\'s all dumping! I need to\nget out of here.')
+
+      if (this.item) {
+        let item = new Item(
+          this.item.id,
+          {
+            x: this.x,
+            y: this.y,
+            vy: -8,
+            vx: Math.round((Math.random() - .5) * 10)
+          }
+        )
+        CTDLGAME.objects.push(item)
+      }
     }
   }
 
   collectShitcoin = shitcoin => {
-    if (shitcoin.vx) return
+    if (shitcoin.vx || /attack|hold|exhausted/.test(this.status)) return
     shitcoin.remove = true
     shitcoin.collected = true
 

@@ -21,6 +21,7 @@ const moveToPointX = new Task({
 })
 const hang = new Task({
   run: agent => {
+    if (agent.killIvan) return FAILURE
     if (agent.status === 'hang') {
       return SUCCESS
     } else if (agent.x > 648 || agent.goal || Math.random() < .2 * agent.business) {
@@ -71,6 +72,8 @@ class HodlTarantula extends Agent {
     this.walkingSpeed = options.walkingSpeed || 2
     this.stayPut = options.stayPut ?? true
     this.killIvan = options.killIvan ?? false
+    this.applyGravity = !this.stayPut
+
     this.protection = 0
     this.business = 1
     this.thingsToSay = [
@@ -82,7 +85,6 @@ class HodlTarantula extends Agent {
   says = []
   w = 39
   h = 34
-  applyGravity = true
 
   bTree = new BehaviorTree({
     tree,

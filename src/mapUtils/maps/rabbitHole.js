@@ -196,9 +196,9 @@ export default {
     new HodlTarantula(
       'hodlTarantula',
       {
-        x: 79 * tileSize,
-        y: 41 * tileSize,
-        status: 'hang',
+        x: 662,
+        y: 335,
+        status: 'idle',
         stayPut: true
       }
     ),
@@ -206,7 +206,7 @@ export default {
       'ivan',
       {
         x: 110 * tileSize,
-        y: 42 * tileSize
+        y: 43 * tileSize
       }
     ),
     new Candle(
