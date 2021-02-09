@@ -13,6 +13,7 @@ import Craig from '../enemies/Craig'
 import PoliceForce from '../enemies/PoliceForce'
 import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
+import Prophetoshi from '../npcs/Prophetoshi'
 import NPC from '../npcs/NPC'
 import Des from '../npcs/Des'
 import Doge from '../npcs/Doge'
@@ -41,6 +42,7 @@ export const gameObjects = {
     PoliceForce,
     Human,
     Citizen,
+    Prophetoshi,
     Bear,
     Ivan,
     Item,

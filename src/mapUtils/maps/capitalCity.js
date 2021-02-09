@@ -13,6 +13,7 @@ import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import Citizen from '../../npcs/Citizen'
+import Prophetoshi from '../../npcs/Prophetoshi'
 import PoliceForce from '../../enemies/PoliceForce'
 import Car from '../../objects/Car'
 
@@ -24,6 +25,7 @@ import citizen3 from '../../sprites/citizen-3.png'
 import citizen4 from '../../sprites/citizen-4.png'
 import citizen5 from '../../sprites/citizen-5.png'
 import citizen6 from '../../sprites/citizen-6.png'
+import prophetoshi from '../../sprites/prophetoshi.png'
 import cars from '../../sprites/cars.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
@@ -191,7 +193,8 @@ export default {
   objects,
   npcs: () => [
     new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4 - 25, vx: 0 }),
-    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, isUnhappy: true})
+    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, isUnhappy: true}),
+    new Prophetoshi('prophetoshi', { x: 30 * tileSize, y: 123 * tileSize})
   ]
     .concat(protesters)
     .concat(policeForces),
@@ -206,6 +209,7 @@ export default {
     citizen4,
     citizen5,
     citizen6,
+    prophetoshi,
     cars,
     policeForce,
     policeForceWithShield,
