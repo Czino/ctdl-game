@@ -523,7 +523,7 @@ class Character extends Agent {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemy && enemy.status !== 'rekt' && enemy.status !== 'burning')
+      .filter(enemy => enemy.enemy && enemy.status !== 'rekt' && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects

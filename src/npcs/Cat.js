@@ -41,7 +41,7 @@ const moveToPointX = new Task({
       agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
       agent.status = 'move'
     }
-    if (agent.x % agent.goal < 5) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 5) agent.goal = null
     if (!agent.goal || agent.status !== 'move') return FAILURE
 
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
@@ -56,7 +56,7 @@ const runToPointX = new Task({
       agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
       agent.status = 'run'
     }
-    if (agent.x % agent.goal < 10) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 10) agent.goal = null
     if (!agent.goal || agent.status !== 'run') return FAILURE
     if (agent.x < agent.goal) return agent.runRight.condition() ? agent.runRight.effect() : FAILURE
     if (agent.x > agent.goal) return agent.runLeft.condition() ? agent.runLeft.effect() : FAILURE

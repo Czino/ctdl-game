@@ -61,7 +61,7 @@ const wantsItem = new Sequence({
 const moveToPointX = new Task({
   run: agent => {
     if (!agent.goal) agent.goal = (92 + Math.round(Math.random() * 18)) * 8
-    if (agent.x % agent.goal < 5) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 5) agent.goal = null
     if (!agent.goal) return FAILURE
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
     if (agent.x > agent.goal) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
@@ -76,7 +76,7 @@ const tree = new Selector({
     attackEnemy,
     attack2Enemy,
     wantsItem,
-    'moveRandom',
+    moveToPointX,
     'idle'
   ]
 })
