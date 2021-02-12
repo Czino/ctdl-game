@@ -10,6 +10,7 @@ import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
 import ivan from './ivan'
+import lagarde from './lagarde'
 import craig from './craig'
 import des from './des'
 import hodlTarantula from './hodlTarantula'
@@ -19,6 +20,7 @@ import andreas from './andreas'
 import bull from './bull'
 import cobra from './cobra'
 import cat from './cat'
+import bitcoinLabrador from './bitcoinLabrador'
 
 export default {
     hodlonaut,
@@ -38,6 +40,7 @@ export default {
     brian,
     bear,
     ivan,
+    lagarde,
     craig,
     craigWithArmor: craig,
     goldbugs,
@@ -48,4 +51,5 @@ export default {
     bisq: cat,
     crispy: cat,
     pita: cat,
+    bitcoinLabrador
 }

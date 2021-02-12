@@ -21,6 +21,7 @@ import shitcoiner from '../sprites/shitcoiner.png'
 import brian from '../sprites/brian.png'
 import bear from '../sprites/bear.png'
 import ivan from '../sprites/ivan.png'
+import lagarde from '../sprites/lagarde.png'
 import craig from '../sprites/craig.png'
 import craigWithArmor from '../sprites/craigWithArmor.png'
 import goldbugs from '../sprites/goldbugs.png'
@@ -30,6 +31,7 @@ import doge from '../sprites/doge.png'
 import bisq from '../sprites/bisq.png'
 import crispy from '../sprites/crispy.png'
 import pita from '../sprites/pita.png'
+import bitcoinLabrador from '../sprites/bitcoinLabrador.png'
 
 export const assets = {
     czino,
@@ -55,6 +57,7 @@ export const assets = {
     brian,
     bear,
     ivan,
+    lagarde,
     craig,
     craigWithArmor,
     goldbugs,
@@ -63,5 +66,6 @@ export const assets = {
     doge,
     bisq,
     crispy,
-    pita
+    pita,
+    bitcoinLabrador
 }

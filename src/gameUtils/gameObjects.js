@@ -26,6 +26,7 @@ import Wizard from '../npcs/Wizard'
 import Czino from '../npcs/Czino'
 import Luma from '../npcs/Luma'
 import Cat from '../npcs/Cat'
+import BitcoinLabrador from '../npcs/BitcoinLabrador'
 
 // TODO can we somehow resolve this? I don't want to load all game objects ever from the start
 export const gameObjects = {
@@ -56,5 +57,6 @@ export const gameObjects = {
     Wizard,
     Czino,
     Luma,
-    Cat
+    Cat,
+    BitcoinLabrador
 }
