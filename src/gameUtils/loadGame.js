@@ -64,9 +64,10 @@ export const loadGame = async () => {
 
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
 
-
   if (CTDLGAME.hodlonaut.selected) window.SELECTEDCHARACTER = CTDLGAME.hodlonaut
   if (CTDLGAME.katoshi.selected) window.SELECTEDCHARACTER = CTDLGAME.katoshi
+
+  CTDLGAME.bitcoinLabrador = CTDLGAME.objects.find(obj => obj.id === 'bitcoinLabrador')
 
   updateViewport()
 

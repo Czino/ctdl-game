@@ -8,6 +8,8 @@ import getHitBoxes from '../getHitBoxes'
 
 import citadel from '../../sprites/citadel.png'
 import bitcoinLabrador from '../../sprites/bitcoinLabrador.png'
+import shitcoiner from '../../sprites/shitcoiner.png'
+import bagholder from '../../sprites/bagholder.png'
 import moon from '../../sprites/moon.png'
 
 const worldWidth = 20
@@ -83,10 +85,15 @@ export default {
   assets: {
     citadel,
     bitcoinLabrador,
+    shitcoiner,
+    bagholder,
     moon
   },
   track: () => 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: false,
   overworld: true,
-  spawnRates: {}
+  spawnRates: {
+    shitcoiner: .1,
+    bagholder: .1
+  }
 }

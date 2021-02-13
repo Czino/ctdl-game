@@ -32,8 +32,8 @@ import { showButtons, showFrameRate } from './debugUtils'
 import Item from './Item'
 
 // import { playSound } from './sounds'
-// playSound('rumble')
-// setInterval(() => playSound('rumble'), 100)
+// playSound('bark')
+// setInterval(() => playSound('bark'), 1000)
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null

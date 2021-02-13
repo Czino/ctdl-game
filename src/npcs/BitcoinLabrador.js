@@ -1,4 +1,4 @@
-import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Sequence, Selector, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import spriteData from '../sprites/bitcoinLabrador'
 import { CTDLGAME } from '../gameUtils'
@@ -8,15 +8,23 @@ import { addTextToQueue } from '../textUtils';
 import { playSound } from '../sounds';
 import Agent from '../Agent'
 
+// TODO add attack
+// TODO add barks
+// TODO add greeting scene
+// TODO add ocassionally digging up items
+
 const exhausted = new Task({
   run: agent => {
     if (agent.exhaustion > 10) agent.exhausted = true
     if (!agent.exhausted) return FAILURE
     agent.status = 'exhausted'
     agent.exhaustion--
-    if (agent.exhaustion === 0) agent.exhausted = false
+    if (agent.exhaustion <= 0) agent.exhausted = false
     return SUCCESS
   }
+})
+const bark = new Task({
+  run: agent => agent.bark.condition() ? agent.bark.effect() : FAILURE
 })
 const moveToFriend = new Task({
   run: agent => {
@@ -54,10 +62,37 @@ const runToPointX = new Task({
     if (agent.x > agent.goal) return agent.runLeft.condition() ? agent.runLeft.effect() : FAILURE
   }
 })
+const runToClosestEnemy = new Task({
+  run: agent => agent.closestEnemy && agent.runTo.condition({ other: agent.closestEnemy, distance: -1 })
+    ? agent.runTo.effect({ other: agent.closestEnemy, distance: -1 })
+    : FAILURE
+})
+
+
+// Sequence: runs each node until fail
+const attackEnemy = new Sequence({
+  nodes: [
+    'lookAtEnemy',
+    'touchesEnemy',
+    'attack'
+  ]
+})
+
+// Selector: runs until one node calls success
+const goToEnemy = new Sequence({
+  nodes: [
+    'seesEnemy',
+    'doesNotTouchEnemy',
+    runToClosestEnemy
+  ]
+})
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
+    bark,
+    attackEnemy,
+    goToEnemy,
     moveToFriend,
     moveToPointX,
     runToPointX,
@@ -81,15 +116,16 @@ class BitcoinLabrador extends Agent {
     this.spriteData = spriteData
     this.maxHealth = options.maxHealth ?? Math.round(Math.random() * 5) + 5
     this.health = options.health ?? this.maxHealth
-    this.strength = 1
+    this.strength = 4
     this.exhaustion = options.exhaustion || 0
     this.exhausted = options.exhausted
     this.status = options.status || 'idle'
-    this.attackRange = options.attackRange ?? Math.ceil(Math.random() * 70) + 70
-    this.senseRadius = this.attackRange
+    this.attackRange = 2
+    this.senseRadius = 40
     this.walkingSpeed = options.walkingSpeed || 2
     this.runningSpeed = options.runningSpeed || 6
     this.protection = 0
+    this.follow = options.follow
 
     this.goal = options.goal
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
@@ -147,31 +183,57 @@ class BitcoinLabrador extends Agent {
     }
   }
 
-  hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
+  runTo = {
+    condition: ({ other }) => other && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+    effect: ({ other, distance }) => {
+      let action = 'idle'
 
-    if (!lostFullPoint) return
-
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-    this.protection = 8
-    playSound('rabbitHurt')
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
+      if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
+        action = 'runLeft'
+      } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
+        action = 'runRight'
+      }
+      if (this[action].condition()) return this[action].effect()
+      return FAILURE
     }
   }
 
-  die = () => {
-    this.status = 'rekt'
-    this.health = 0
-    this.removeTimer = 64
+  bark = {
+    condition: () => (this.status === 'bark' && this.frame < 5)
+    || (this.closestEnemy && Math.random() < .1)
+    || Math.random() < .005,
+    effect: () => {
+      this.status = 'bark'
 
-    addTextToQueue(`Bitcoin Labrador got rekt`)
+      if (this.frame === 3) {
+        playSound('bark')
+        this.say('woef')
+      }
+      return SUCCESS
+    }
+  }
+
+  attack = {
+    condition: () => {
+      if (!this.closestEnemy) return FAILURE
+
+      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return FAILURE // not in biting distance
+
+      return SUCCESS
+    },
+    effect: () => {
+      if (this.status === 'attack' && this.frame === 3) {
+        this.closestEnemy.hurt(this.strength, this.direction === 'left' ? 'right' : 'left', this)
+        return SUCCESS
+      }
+      if (this.status === 'attack') return SUCCESS
+
+      this.exhaustion += 2
+      this.frame = 0
+      this.status = 'attack'
+
+      return SUCCESS
+    }
   }
 
   update = () => {
@@ -183,10 +245,6 @@ class BitcoinLabrador extends Agent {
 
     this.applyPhysics()
     if (this.status === 'fall') this.status = 'run'
-
-    if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
-      this.status = 'idle'
-    }
 
     this.exhaustion = Math.max(0, this.exhaustion)
 
@@ -212,7 +270,7 @@ class BitcoinLabrador extends Agent {
       .filter(friend => /Character/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
-    if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && !/fall/.test(this.status)) {
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)
       this.bTree.step()
@@ -231,10 +289,6 @@ class BitcoinLabrador extends Agent {
     if (this.removeTimer === 0) this.remove = true
 
     this.draw()
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 }
 export default BitcoinLabrador

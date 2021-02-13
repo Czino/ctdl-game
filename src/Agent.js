@@ -11,6 +11,9 @@ import { write } from './font'
 BehaviorTree.register('seesItem', new Task({
   run: agent => agent.sensedItems.length > 0 ? SUCCESS : FAILURE
 }))
+BehaviorTree.register('lookAtEnemy', new Task({
+  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
+}))
 BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
 }))
@@ -191,7 +194,7 @@ class Agent extends GameObject {
     },
     effect: () => {
       if (this.status === 'attack' && this.frame === 3) {
-        this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left', this)
+        this.closestEnemy.hurt(this.strength || 1, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS
       }
       if (this.status === 'attack') return SUCCESS
@@ -401,6 +404,10 @@ class Agent extends GameObject {
         heal.y--
         return heal
       })
+  }
+
+  say = say => {
+    this.says = [{y: -8, say}]
   }
 
   drawSays = () => {

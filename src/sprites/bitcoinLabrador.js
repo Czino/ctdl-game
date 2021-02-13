@@ -38,6 +38,12 @@ export default {
       { x: 0 * w, y: 4 * h, w, h },
       { x: 1 * w, y: 4 * h, w, h },
       { x: 2 * w, y: 4 * h, w, h },
+    ],
+    attack: [
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 1 * w, y: 5 * h, w, h },
+      { x: 1 * w, y: 5 * h, w, h },
+      { x: 1 * w, y: 5 * h, w, h }
     ]
   },
   left: {
@@ -76,6 +82,12 @@ export default {
       { x: (4 + 0) * w, y: 4 * h, w, h },
       { x: (4 + 1) * w, y: 4 * h, w, h },
       { x: (4 + 2) * w, y: 4 * h, w, h },
+    ],
+    attack: [
+      { x: (4 + 0) * w, y: 5 * h, w, h },
+      { x: (4 + 1) * w, y: 5 * h, w, h },
+      { x: (4 + 1) * w, y: 5 * h, w, h },
+      { x: (4 + 1) * w, y: 5 * h, w, h }
     ]
   }
 }

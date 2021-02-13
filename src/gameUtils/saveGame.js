@@ -31,6 +31,7 @@ export const saveGame = async () => {
     await db.set(`objects-${CTDLGAME.world.id}`, CTDLGAME.objects
       .filter(obj => obj && obj.getClass() !== 'Character' && obj.toJSON)
       .filter(unique('id'))
+      .filter(obj => obj.id !== 'bitcoinLabrador' || !obj.follow)
       .map(obj => {
         return obj.toJSON()
       }))

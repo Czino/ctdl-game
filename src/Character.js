@@ -597,10 +597,6 @@ class Character extends Agent {
     this.draw()
   }
 
-  say = say => {
-    this.says = [{y: -8, say}]
-  }
-
   select = () => {
     if (this.selected || CTDLGAME.multiPlayer || this.status === 'rekt') return
     this.follow = !this.follow

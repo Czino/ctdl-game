@@ -62,6 +62,13 @@ export const changeMap = async (id, from) => {
     CTDLGAME.katoshi.y = newWorld.map.start[from].y
     CTDLGAME.katoshi.protection = 24
   }
+  if (CTDLGAME.bitcoinLabrador) {
+    CTDLGAME.katoshi.x = newWorld.map.start[from].x
+    CTDLGAME.katoshi.y = newWorld.map.start[from].y
+  } else {
+    CTDLGAME.bitcoinLabrador = CTDLGAME.objects.find(obj => obj.id === 'bitcoinLabrador')
+    CTDLGAME.objects.push(CTDLGAME.bitcoinLabrador)
+  }
 
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
   updateViewport()

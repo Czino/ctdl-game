@@ -35,6 +35,10 @@ export const updateViewport = () => {
     CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
     CTDLGAME.hodlonaut.protection = 16
   }
+  if (CTDLGAME.bitcoinLabrador && canTeleport(CTDLGAME.bitcoinLabrador)) {
+    CTDLGAME.bitcoinLabrador.x = CTDLGAME.SELECTEDCHARACTER.x
+    CTDLGAME.bitcoinLabrador.y = CTDLGAME.SELECTEDCHARACTER.y
+  }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)
   CTDLGAME.viewport.x = Math.min(CTDLGAME.world.w - constants.WIDTH, CTDLGAME.viewport.x)
