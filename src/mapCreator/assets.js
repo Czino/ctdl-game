@@ -11,7 +11,8 @@ import grasslands from '../sprites/grasslands.png'
 import czinosCitadel from '../sprites/czinosCitadel.png'
 import mtGox from '../sprites/mtGox.png'
 import capitalCity from '../sprites/capitalCity.png'
-// // import citadel from '../sprites/citadel.png'
+import cityUnderground from '../sprites/cityUnderground.png'
+import citadel from '../sprites/citadel.png'
 import miningFarm from '../sprites/miningFarm.png'
 // // import moon from '../sprites/moon.png'
 import craigsStage from '../sprites/craigsStage.png'
@@ -29,7 +30,8 @@ export const assets = {
   czinosCitadel,
   mtGox,
   capitalCity,
-  // citadel,
+  cityUnderground,
+  citadel,
   miningFarm,
   // moon,
   craigsStage

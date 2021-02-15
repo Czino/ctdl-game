@@ -23,20 +23,11 @@ const follows = new Task({
 const seesFriend = new Task({
   run: agent => agent.sensedFriends.length > 0 ? SUCCESS : FAILURE
 })
-const doesNotTouchEnemy = new Task({
-  run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const touchesEnemy = new Task({
   run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
-})
-const moveToClosestEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
 })
 const moveToFriend = new Task({
   run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
@@ -45,7 +36,7 @@ const moveToFriend = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    lookAtEnemy,
+    'lookAtEnemy',
     touchesEnemy,
     'attack'
   ]
@@ -55,10 +46,10 @@ const attackEnemy = new Sequence({
 const goToEnemy = new Sequence({
   nodes: [
     'seesEnemy',
-    doesNotTouchEnemy,
+    'doesNotTouchEnemy',
     new Selector({
       nodes: [
-        moveToClosestEnemy,
+        'moveToClosestEnemy',
         'jump',
         duck
       ]
@@ -114,7 +105,6 @@ class Character extends Agent {
     this.oneHitWonder = options.oneHitWonder
   }
 
-  says = []
   w = 16
   h = 30
 

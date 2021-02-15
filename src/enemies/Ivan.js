@@ -1,8 +1,8 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import ivan from '../sprites/ivan'
 import { CTDLGAME } from '../gameUtils'
-import { moveObject, intersects, getClosest } from '../geometryUtils'
+import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import { addTextToQueue, setTextQueue } from '../textUtils';
 import { playSound } from '../sounds';
@@ -14,9 +14,6 @@ import Item from '../Item';
 import Shitcoin from '../objects/Shitcoin'
 import Candle from '../objects/Candle'
 
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const lookAtItem = new Task({
   run: agent => agent.closestItem && agent.lookAt.condition(agent.closestItem) ? agent.lookAt.effect(agent.closestItem) : FAILURE
 })
@@ -32,14 +29,14 @@ const endScene = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    lookAtEnemy,
+    'lookAtEnemy',
     'attack'
   ]
 })
 // Sequence: runs each node until fail
 const attack2Enemy = new Sequence({
   nodes: [
-    lookAtEnemy,
+    'lookAtEnemy',
     'attack2'
   ]
 })
@@ -110,7 +107,6 @@ class Ivan extends Agent {
   }
 
   enemy = true
-  says = []
   w = 16
   h = 30
 
@@ -278,7 +274,6 @@ class Ivan extends Agent {
     }
 
     this.applyPhysics()
-    if (this.status === 'fall' && this.id === 'ivan') CTDLGAME.lightningTorch = null
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
     if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
@@ -345,10 +340,6 @@ class Ivan extends Agent {
     }
 
     this.draw()
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   thingsToSay = [

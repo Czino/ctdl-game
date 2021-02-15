@@ -3,8 +3,15 @@ const h = 30
 
 export default {
   right: {
-    idle: [
+    normal: [
       { x: 0 * w, y: 0 * h, w, h }
+    ],
+    idle: [
+      { x: 0 * w, y: 2 * h, w, h },
+      { x: 0 * w, y: 4 * h, w, h }
+    ],
+    hurt: [
+      { x: 0 * w, y: 4 * h, w, h }
     ],
     exhausted: [
       { x: 1 * w, y: 0 * h, w, h },
@@ -45,11 +52,24 @@ export default {
       { x: 4 * w, y: 3 * h, w, h },
       { x: 3 * w, y: 3 * h, w, h },
       { x: 2 * w, y: 3 * h, w, h },
+    ],
+    rekt: [
+      { x: 71 * w, y: 120 * h, w: 29, h },
+    ],
+    shell: [
+      { x: 5 * w, y: 4 * h, w, h }
     ]
   },
   left: {
-    idle: [
+    normal: [
       { x: (6 + 0) * w, y: 0 * h, w, h }
+    ],
+    idle: [
+      { x: (6 + 0) * w, y: 2 * h, w, h },
+      { x: (6 + 0) * w, y: 4 * h, w, h }
+    ],
+    hurt: [
+      { x: (6 + 0) * w, y: 4 * h, w, h }
     ],
     exhausted: [
       { x: (6 + 1) * w, y: 0 * h, w, h },
@@ -90,6 +110,12 @@ export default {
       { x: (6 + 4) * w, y: 3 * h, w, h },
       { x: (6 + 3) * w, y: 3 * h, w, h },
       { x: (6 + 2) * w, y: 3 * h, w, h },
+    ],
+    rekt: [
+      { x: 71 * w, y: 120 * h, w: 29, h },
+    ],
+    shell: [
+      { x: (6 + 5) * w, y: 4 * h, w, h }
     ]
   }
 }

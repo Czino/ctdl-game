@@ -8,18 +8,29 @@ import { canDrawOn } from './performanceUtils'
 import GameObject from './GameObject'
 import { write } from './font'
 
+BehaviorTree.register('log', new Task({
+  run: agent => {
+    console.log(agent)
+    return SUCCESS
+  }
+}))
+
 BehaviorTree.register('seesItem', new Task({
   run: agent => agent.sensedItems.length > 0 ? SUCCESS : FAILURE
 }))
 BehaviorTree.register('lookAtEnemy', new Task({
   run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
 }))
+
 BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
 }))
+
+// TODO rename and restructure this
 BehaviorTree.register('touchesEnemy', new Task({
-  run: agent => agent.attack.condition() ? SUCCESS : FAILURE
+  run: agent => agent.attack.condition() || agent.attack2.condition() ? SUCCESS : FAILURE
 }))
+
 BehaviorTree.register('doesNotTouchEnemy', new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 }))
@@ -125,6 +136,7 @@ class Agent extends GameObject {
   h = 30
   dmgs = []
   heals = []
+  says = []
 
   bTree = new BehaviorTree({
     tree,

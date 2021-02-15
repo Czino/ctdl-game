@@ -131,7 +131,6 @@ class BitcoinLabrador extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  says = []
   w = 25
   h = 14
   applyGravity = true

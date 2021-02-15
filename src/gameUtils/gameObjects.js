@@ -10,6 +10,7 @@ import Bear from '../enemies/Bear'
 import Ivan from '../enemies/Ivan'
 import Brian from '../enemies/Brian'
 import Craig from '../enemies/Craig'
+import Lagarde from '../enemies/Lagarde'
 import PoliceForce from '../enemies/PoliceForce'
 import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
@@ -46,6 +47,7 @@ export const gameObjects = {
     Prophetoshi,
     Bear,
     Ivan,
+    Lagarde,
     Item,
     Shitcoin,
     Candle,

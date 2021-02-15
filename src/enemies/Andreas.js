@@ -30,9 +30,6 @@ const touchesEnemy = new Task({
     return intersects(attackBox, agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
   }
 })
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
 })
@@ -43,7 +40,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    lookAtEnemy,
+    'lookAtEnemy',
     touchesEnemy,
     'attack'
   ]
@@ -88,7 +85,6 @@ class Andreas extends Human {
     this.protection = 0
   }
 
-  says = []
   w = 16
   h = 30
 
@@ -336,10 +332,6 @@ class Andreas extends Human {
 
 
     this.draw()
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   thingsToSay = [

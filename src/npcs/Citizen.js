@@ -64,9 +64,6 @@ const touchesEnemy = new Task({
     return intersects(attackBox, agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
   }
 })
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const isUnhappy = new Task({
   run: agent => agent.isUnhappy ? SUCCESS : FAILURE
 })
@@ -93,7 +90,7 @@ const regularBehaviour = new Selector({
 const protest = new Sequence({
   nodes: [
     isUnhappy,
-    lookAtEnemy,
+    'lookAtEnemy',
     touchesEnemy,
     'attack'
   ]
@@ -145,7 +142,6 @@ class Citizen extends Human {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  says = []
   w = 16
   h = 30
 
@@ -400,10 +396,6 @@ class Citizen extends Human {
     if (this.removeTimer === 0) this.remove = true
 
     this.draw()
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   thingsToSay = [

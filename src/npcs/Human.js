@@ -49,7 +49,6 @@ class Human extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  says = []
   w = 16
   h = 30
 
@@ -195,10 +194,6 @@ class Human extends Agent {
           addTextToQueue(text)
         }
       })
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   getBoundingBox = () =>this.status !== 'rekt'

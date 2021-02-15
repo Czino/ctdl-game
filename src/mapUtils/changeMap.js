@@ -62,11 +62,12 @@ export const changeMap = async (id, from) => {
     CTDLGAME.katoshi.y = newWorld.map.start[from].y
     CTDLGAME.katoshi.protection = 24
   }
-  if (CTDLGAME.bitcoinLabrador) {
-    CTDLGAME.katoshi.x = newWorld.map.start[from].x
-    CTDLGAME.katoshi.y = newWorld.map.start[from].y
-  } else {
+  if (!CTDLGAME.bitcoinLabrador) {
     CTDLGAME.bitcoinLabrador = CTDLGAME.objects.find(obj => obj.id === 'bitcoinLabrador')
+  }
+  if (CTDLGAME.bitcoinLabrador && CTDLGAME.bitcoinLabrador.follow) {
+    CTDLGAME.bitcoinLabrador.x = newWorld.map.start[from].x
+    CTDLGAME.bitcoinLabrador.y = newWorld.map.start[from].y
     CTDLGAME.objects.push(CTDLGAME.bitcoinLabrador)
   }
 

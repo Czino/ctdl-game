@@ -1,7 +1,9 @@
 export const maps = [
   'city',
   'building',
+  'building2',
   'forest',
+  'rainbowLand',
   'rabbitHole',
   'mempool',
   'endOfTheRabbitHole',
@@ -10,6 +12,8 @@ export const maps = [
   'czinosCitadel',
   'mtGox',
   'capitalCity',
+  'cityUnderground',
+  'wideRivercitadel',
   'citadel',
   'miningFarm',
   'moon',

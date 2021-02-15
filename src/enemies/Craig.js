@@ -27,9 +27,6 @@ const touchesEnemy = new Task({
     return intersects(attackBox, agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
   }
 })
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const lookAtItem = new Task({
   run: agent => agent.closestItem && agent.lookAt.condition(agent.closestItem) ? agent.lookAt.effect(agent.closestItem) : FAILURE
 })
@@ -40,7 +37,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    lookAtEnemy,
+    'lookAtEnemy',
     touchesEnemy,
     'attack'
   ]
@@ -100,7 +97,6 @@ class Craig extends Agent {
     this.hitsToSuckUp = options.hitsToSuckUp || 0
   }
 
-  says = []
   w = 16
   h = 30
 
@@ -314,10 +310,6 @@ class Craig extends Agent {
     }
 
     this.draw()
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   thingsToSay = [

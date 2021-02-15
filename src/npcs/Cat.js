@@ -101,7 +101,6 @@ class Cat extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  says = []
   w = 15
   h = 9
   applyGravity = true
@@ -280,10 +279,6 @@ class Cat extends Agent {
           y: say.y - 1
         }
       })
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   getBoundingBox = () => ({ // rekt

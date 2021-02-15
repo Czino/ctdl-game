@@ -82,7 +82,6 @@ class HodlTarantula extends Agent {
     this.goal = options.goal
   }
 
-  says = []
   w = 39
   h = 34
 
