@@ -326,7 +326,7 @@ class Agent extends GameObject {
   heal = heal => {
     if (/rekt/.test(this.status)) return
     let maxHeal = this.maxHealth - this.health
-    if (maxHeal < heal) heal = maxHeal
+    if (maxHeal < heal) heal = Math.floor(maxHeal)
 
     if (heal) {
       this.heals.push({y: -8, heal})
