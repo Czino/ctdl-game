@@ -11,6 +11,7 @@ import brian from './brian'
 import bear from './bear'
 import ivan from './ivan'
 import lagarde from './lagarde'
+import babyLizard from './babyLizard'
 import craig from './craig'
 import des from './des'
 import hodlTarantula from './hodlTarantula'
@@ -41,6 +42,7 @@ export default {
     bear,
     ivan,
     lagarde,
+    babyLizard,
     craig,
     craigWithArmor: craig,
     goldbugs,

@@ -53,8 +53,11 @@ export default {
       { x: 3 * w, y: 3 * h, w, h },
       { x: 2 * w, y: 3 * h, w, h },
     ],
+    layEgg: [
+      { x: 1 * w, y: 4 * h, w, h }
+    ],
     rekt: [
-      { x: 71 * w, y: 120 * h, w: 29, h },
+      { x: 71, y: 120, w: 29, h },
     ],
     shell: [
       { x: 5 * w, y: 4 * h, w, h }
@@ -111,8 +114,11 @@ export default {
       { x: (6 + 3) * w, y: 3 * h, w, h },
       { x: (6 + 2) * w, y: 3 * h, w, h },
     ],
+    layEgg: [
+      { x: (6 + 1) * w, y: 4 * h, w, h }
+    ],
     rekt: [
-      { x: 71 * w, y: 120 * h, w: 29, h },
+      { x: 71, y: 120, w: 29, h },
     ],
     shell: [
       { x: (6 + 5) * w, y: 4 * h, w, h }

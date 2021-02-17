@@ -1,25 +1,18 @@
 import stage from './stage/cityUnderground'
 
-import constants from '../../constants'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
-import GameObject from '../../GameObject'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
-import { addTextToQueue, setTextQueue } from '../../textUtils'
-import { easeInOut, makeBoundary } from '../../geometryUtils'
+import { CTDLGAME } from '../../gameUtils'
+import {  makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
-import darken from '../darken'
-import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
-import Citizen from '../../npcs/Citizen'
-import Prophetoshi from '../../npcs/Prophetoshi'
-import PoliceForce from '../../enemies/PoliceForce'
-import Car from '../../objects/Car'
 
 import cityUnderground from '../../sprites/cityUnderground.png'
-import lagarde from '../../sprites/lagarde.png'
 import Lagarde from '../../enemies/Lagarde'
+
+import lagarde from '../../sprites/lagarde.png'
+import babyLizard from '../../sprites/babyLizard.png'
 
 const worldWidth = 128
 const worldHeight = 64
@@ -46,15 +39,6 @@ const lights = {
     radius: 128
   }
 }
-const doors = [
-  [3, 124],
-  [30, 124],
-  [44, 124, character => { CTDLGAME.showShop = character}],
-  [113, 124],
-  [216, 124],
-  [229, 124],
-  [251, 124],
-]
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
 let objects = []
@@ -102,7 +86,8 @@ export default {
   events,
   assets: {
     cityUnderground,
-    lagarde
+    lagarde,
+    babyLizard
   },
   track: () => 'underground',
   canSetBlocks: false,

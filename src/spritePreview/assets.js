@@ -22,6 +22,7 @@ import brian from '../sprites/brian.png'
 import bear from '../sprites/bear.png'
 import ivan from '../sprites/ivan.png'
 import lagarde from '../sprites/lagarde.png'
+import babyLizard from '../sprites/babyLizard.png'
 import craig from '../sprites/craig.png'
 import craigWithArmor from '../sprites/craigWithArmor.png'
 import goldbugs from '../sprites/goldbugs.png'
@@ -58,6 +59,7 @@ export const assets = {
     bear,
     ivan,
     lagarde,
+    babyLizard,
     craig,
     craigWithArmor,
     goldbugs,

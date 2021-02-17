@@ -28,7 +28,7 @@ BehaviorTree.register('seesEnemy', new Task({
 
 // TODO rename and restructure this
 BehaviorTree.register('touchesEnemy', new Task({
-  run: agent => agent.attack.condition() || agent.attack2.condition() ? SUCCESS : FAILURE
+  run: agent => agent.attack.condition() || (agent.attack2 && agent.attack2.condition()) ? SUCCESS : FAILURE
 }))
 
 BehaviorTree.register('doesNotTouchEnemy', new Task({

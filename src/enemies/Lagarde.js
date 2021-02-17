@@ -1,19 +1,21 @@
-import { BehaviorTree, Selector, Sequence, SUCCESS } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import lagarde from '../sprites/lagarde'
-import { CTDLGAME } from '../gameUtils'
+import { addHook, CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
+import { addTextToQueue, setTextQueue } from '../textUtils';
 import { playSound } from '../sounds';
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
+import BabyLizard from './BabyLizard'
+import Item from '../Item'
 
-// TODO make her lay eggs and say "Lagarde: You shouldn't lay put all your eggs in one basket"
-// TODO add egg that hatches baby lizards
-
+const layEgg = new Task({
+  run: agent => agent.layEgg.condition() ? agent.layEgg.effect() : FAILURE
+})
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -39,6 +41,7 @@ const goToEnemy = new Selector({
 })
 const tree = new Selector({
   nodes: [
+    layEgg,
     attackEnemy,
     attack2Enemy,
     goToEnemy,
@@ -58,7 +61,7 @@ class Lagarde extends Agent {
     this.maxHealth = 394
     this.health = options.health ?? 394
     this.usd = options.usd || Math.round(Math.random() * 8000000)
-    this.item = { id: 'pizza' }
+    this.item = { id: 'phoenix' }
     this.strength = 5
     this.attackRange = 4
     this.senseRadius = 50
@@ -67,6 +70,7 @@ class Lagarde extends Agent {
     this.canMove = options.hadIntro || false
     this.walkingSpeed = 2
     this.transformed = options.transformed
+    this.eggCountdown = options.eggCountdown || 128
   }
 
   enemy = true
@@ -81,10 +85,13 @@ class Lagarde extends Agent {
   attack = {
     condition: () => {
       if (!this.closestEnemy || this.attackStyle === 'attack2') return false
-
-      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return false
-
-      return true
+      const attackBox = {
+        x: this.getBoundingBox().x - this.attackRange,
+        y: this.getBoundingBox().y,
+        w: this.getBoundingBox().w + this.attackRange * 2,
+        h: this.getBoundingBox().h
+      }
+      return intersects(attackBox, this.closestEnemy.getBoundingBox())
     },
     effect: () => {
       if (this.status === 'attack' && this.frame === 4) {
@@ -103,10 +110,13 @@ class Lagarde extends Agent {
   attack2 = {
     condition: () => {
       if (!this.closestEnemy || this.attackStyle === 'attack1') return false
-
-      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return false
-
-      return true
+      const attackBox = {
+        x: this.getBoundingBox().x - this.attackRange,
+        y: this.getBoundingBox().y,
+        w: this.getBoundingBox().w + this.attackRange * 2,
+        h: this.getBoundingBox().h
+      }
+      return intersects(attackBox, this.closestEnemy.getBoundingBox())
     },
     effect: () => {
       if (this.status === 'attack2' && this.frame === 4) {
@@ -123,9 +133,58 @@ class Lagarde extends Agent {
     }
   }
 
+  layEgg = {
+    condition: () => this.eggCountdown === 0,
+    effect: () => {
+      setTextQueue([])
+      addTextToQueue('Lagarde:\nYou shouldn\'t put all your\neggs in one basket!')
+
+      this.status = 'layEgg'
+      CTDLGAME.objects.push(new BabyLizard(
+        'babyLizard-' + CTDLGAME.frame,
+        {
+          x: this.x,
+          y: this.y
+        }
+      ))
+      this.eggCountdown = Math.round(Math.random() * 128)
+      return SUCCESS
+    }
+  }
+
   onHurt = () => {
     this.protection = 8
     playSound('creatureHurt')
+  }
+
+  die = () => {
+    this.status = 'hurt'
+    this.frame = 0
+    this.canMove = false
+
+    playSound('creatureHurt')
+    addHook(CTDLGAME.frame + 8, () => playSound('creatureHurt'))
+    addHook(CTDLGAME.frame + 16, () => playSound('creatureHurt'))
+    addHook(CTDLGAME.frame + 24, () => {
+      playSound('creatureHurt')
+      initSoundtrack('underground')
+      this.status = 'rekt'
+    })
+    if (this.usd) CTDLGAME.inventory.usd += this.usd
+    if (this.item) {
+      let item = new Item(
+        this.item.id,
+        {
+          x: this.x,
+          y: this.y,
+          vy: -8,
+          vx: Math.round((Math.random() - .5) * 10)
+        }
+      )
+      CTDLGAME.objects.push(item)
+    }
+
+    addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
   }
 
   drawShell = () => {
@@ -150,7 +209,7 @@ class Lagarde extends Agent {
     this.applyPhysics()
     if (this.status === 'fall' && this.vy === 0) this.status = 'idle'
 
-    if (this.status === 'hurt' && this.vx === 0 && this.vy === 0) {
+    if (this.status === 'hurt' && this.canMove && this.vx === 0 && this.vy === 0) {
       this.status = 'idle'
     }
 
@@ -193,8 +252,11 @@ class Lagarde extends Agent {
       this.transformed = true
       this.canMove = true
     }
+    if (this.status === 'layEgg' && Math.random() < .15) {
+      this.status = 'idle'
+    }
 
-    if (Math.abs(this.vy) < 3 && this.canMove && !/exhausted|transform|fall|rekt|hurt/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && this.canMove && !/layEgg|exhausted|transform|fall|rekt|hurt/.test(this.status)) {
       if (getSoundtrack() !== 'lagardesTheme') initSoundtrack('lagardesTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
@@ -203,13 +265,9 @@ class Lagarde extends Agent {
     }
 
     if (this.exhaustion) this.exhaustion--
-
+    if (this.eggCountdown > 0) this.eggCountdown--
     if (this.status !== 'idle' || Math.random() < .05) {
       this.frame++
-    }
-
-    if (this.frame >= this.spriteData[this.direction][this.status].length) {
-      this.frame = 0
     }
 
     this.draw()
@@ -219,7 +277,7 @@ class Lagarde extends Agent {
   }
 
   thingsToSay = [
-    ['Lagarde:\nBitcoin is a highly speculative asset which has conducted some funny business.'],
+    ['Lagarde:\nBitcoin\'s a highly speculative asset which has conducted some funny business.'],
     ['Lagarde:\nI will show you that I am in no way guilty of negligence.']
   ]
 
@@ -250,10 +308,10 @@ class Lagarde extends Agent {
       })
     : ({ // rekt
       id: this.id,
-      x: this.x + 5,
-      y: this.y + 3,
-      w: this.w - 10,
-      h: this.h - 3
+      x: this.x,
+      y: this.y + 25,
+      w: this.w,
+      h: this.h - 25
     })
 
   getAnchor = () => this.status !== 'rekt'
