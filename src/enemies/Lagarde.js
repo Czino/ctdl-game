@@ -11,6 +11,9 @@ import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 
+// TODO make her lay eggs and say "Lagarde: You shouldn't lay put all your eggs in one basket"
+// TODO add egg that hatches baby lizards
+
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -66,7 +69,7 @@ class Lagarde extends Agent {
     this.transformed = options.transformed
   }
 
-  enemy = false
+  enemy = true
   w = 16
   h = 30
 
@@ -99,7 +102,6 @@ class Lagarde extends Agent {
   }
   attack2 = {
     condition: () => {
-      console.log('attack2')
       if (!this.closestEnemy || this.attackStyle === 'attack1') return false
 
       if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return false
@@ -123,7 +125,7 @@ class Lagarde extends Agent {
 
   onHurt = () => {
     this.protection = 8
-    playSound('enemyHurt')
+    playSound('creatureHurt')
   }
 
   drawShell = () => {
@@ -168,12 +170,14 @@ class Lagarde extends Agent {
     if (!this.hadIntro && this.sensedEnemies.length > 0) {
       CTDLGAME.lockCharacters = true
       skipCutSceneButton.active = true
+      if (getSoundtrack() !== 'lagardesIntro') initSoundtrack('lagardesIntro')
 
       addTextToQueue('Lagarde:\nYou\'re wasting your time\nwith Bitcoin!', () => {
         this.status = 'exhausted'
       })
       addTextToQueue('Lagarde:\nYou should be happier to\nhave a job than to have\nyour savings protected.')
       addTextToQueue('Lagarde:\nNow I have to hold you\naccountable so that you can be fully trusted.', () => {
+        if (getSoundtrack() !== 'lagardesTheme') initSoundtrack('lagardesTheme')
         this.status = 'transform'
         CTDLGAME.bossFight = true
         CTDLGAME.lockCharacters = false

@@ -390,6 +390,34 @@ const sounds = {
     pulseSynth.setNote('G7', present + dur / 2 * 1.5, .005)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
+  creatureHurt: () => {
+    const present = now()
+    const dur = .15
+
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+    noise2Synth.noise.type = 'brown'
+
+    noise2Synth.envelope.attack = .2
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .1)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    squareSynth.portamento = dur / 3
+    squareSynth.envelope.attack = dur
+    squareSynth.envelope.decay = .1
+    squareSynth.envelope.sustain = .3
+    squareSynth.envelope.release = .07
+
+    squareSynth.triggerAttack('G1', present + dur / 3, .2)
+    squareSynth.setNote('G0', present + dur / 2 * 1.5, .5)
+    squareSynth.triggerRelease(present + dur / 2 + dur)
+  },
   rumble: () => {
     const present = now()
     const dur = .2
