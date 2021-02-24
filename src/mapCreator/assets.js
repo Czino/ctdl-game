@@ -12,6 +12,7 @@ import czinosCitadel from '../sprites/czinosCitadel.png'
 import mtGox from '../sprites/mtGox.png'
 import capitalCity from '../sprites/capitalCity.png'
 import cityUnderground from '../sprites/cityUnderground.png'
+import pier from '../sprites/pier.png'
 import citadel from '../sprites/citadel.png'
 import miningFarm from '../sprites/miningFarm.png'
 // // import moon from '../sprites/moon.png'
@@ -31,6 +32,7 @@ export const assets = {
   mtGox,
   capitalCity,
   cityUnderground,
+  pier,
   citadel,
   miningFarm,
   // moon,

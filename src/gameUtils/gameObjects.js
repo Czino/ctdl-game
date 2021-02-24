@@ -21,6 +21,7 @@ import Des from '../npcs/Des'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
 import Car from '../objects/Car'
+import Ferry from '../objects/Ferry'
 import Item from '../Item'
 import Shitcoin from '../objects/Shitcoin'
 import Candle from '../objects/Candle'
@@ -58,6 +59,7 @@ export const gameObjects = {
     Doge,
     Elevator,
     Car,
+    Ferry,
     Wizard,
     Czino,
     Luma,

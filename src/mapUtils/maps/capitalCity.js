@@ -174,12 +174,24 @@ goToMtGox.touchEvent = () => {
 }
 events.push(goToMtGox)
 
+const goToPier = new GameObject('goToPier', {
+  x: 255 * tileSize,
+  y: 124 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+goToPier.touchEvent = () => {
+  changeMap('pier', 'capitalCity')
+}
+events.push(goToPier)
+
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'capitalCity', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 }
+    mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 },
+    pier: { x: 252 * tileSize, y: 124 * tileSize - 6 },
   },
   state: {
     protestScene: true,
