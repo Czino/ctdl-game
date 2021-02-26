@@ -46,13 +46,13 @@ class Item extends GameObject {
       }
     } else if (this.id === 'opendime') {
       let sats = Math.round(Math.random() * 13370)
-      addTextToQueue(`You found an opendime with\nś${sats}`, () => {
+      addTextToQueue(`You found an opendime with\nș${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
       playSound('item')
     } else if (this.id === 'coldcard') {
       let sats = Math.round(Math.random() * 615000)
-      addTextToQueue(`You found a coldcard with\nś${sats}`, () => {
+      addTextToQueue(`You found a coldcard with\nș${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
       playSound('item')

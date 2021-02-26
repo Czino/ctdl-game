@@ -7,7 +7,7 @@
 export const toCurrency = (value, currency) => {
     if (currency === 'BTC') {
         if (value <= 999999) {
-            return 'ś' + value
+            return 'ș' + value
         } else {
             return '₿' + Math.floor(value / 100000000 * 1000) / 1000
         }

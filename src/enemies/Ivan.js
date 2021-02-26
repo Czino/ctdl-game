@@ -206,7 +206,7 @@ class Ivan extends Agent {
 
       addTextToQueue('hodl_tarantula:\nThanks, because of you I\ncould finally catch this\nannoying brat.')
       addTextToQueue('hodl_tarantula:\nHe was good for nothing but he will make a great dinner.')
-      addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}\nand ś${this.sats}`)
+      addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}\nand ș${this.sats}`)
       if (this.usd) CTDLGAME.inventory.usd += this.usd
       if (this.sats) CTDLGAME.inventory.sats += this.sats
     } else {
