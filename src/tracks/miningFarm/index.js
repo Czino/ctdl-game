@@ -44,11 +44,15 @@ export default {
   },
   deinit: SNDTRCK => {
     SNDTRCK.devices.noiseSynth.envelope.attack = 0.005
-    SNDTRCK.devices.noiseSynth.envelope.release = 0.8
+    SNDTRCK.devices.noiseSynth.envelope.release = 0
+    SNDTRCK.devices.noiseSynth.envelope.sustain = .5
 
     SNDTRCK.devices.pulseSynth.envelope.attack = 0.005
+    SNDTRCK.devices.pulseSynth.envelope.sustain = .3
     SNDTRCK.devices.pulseSynth.envelope.release = 0.8
+
     SNDTRCK.devices.triangleSynth.envelope.attack = 0.005
+    SNDTRCK.devices.triangleSynth.envelope.sustain = .3
     SNDTRCK.devices.triangleSynth.envelope.release = 0.8
     SNDTRCK.devices.sineSynth.envelope.attack = 0.005
     SNDTRCK.devices.sineSynth.envelope.release = 0.8
