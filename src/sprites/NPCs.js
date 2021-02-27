@@ -4,6 +4,7 @@ import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import Explosion from '../Explosion'
 import { playSound } from '../sounds'
+import { intersects } from '../geometryUtils'
 
 export default {
   monk: {
@@ -143,6 +144,89 @@ export default {
       ['Roger:\nBitcoin is a peer-to-peer\nelectronic cash system...'],
       ['Roger:\nAll I want is Bitcoin to be\nused as cash...']
     ]
+  },
+  nakadai_mon: {
+    /* TODO
+      convert into actual character
+
+      It's J0E007, the big bear whale! We might see strong volatility ahead. You have to brace yourself and HODL no matter what happens, if you want to survive. Find your Bitcoin Zen.
+      The sword is the soul. Study the soul to know the sword. Evil mind, evil sword.
+      *nakadai joins the battle*
+    */
+    frames: [
+      { x: 79, y: 54, w: 11, h: 17 }
+    ],
+    select: npc => {
+      const talkRadius = npc.getBoundingBox()
+      talkRadius.x -= 16
+      talkRadius.w += 32
+
+      if (CTDLGAME.inventory.citadelOneMembership) {
+        if (CTDLGAME.world.id === 'pier') {
+          addTextToQueue('nakadai.MONARCH:\nLFG!', () => {
+            const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
+
+            if (CTDLGAME.hodlonaut.selected) {
+              CTDLGAME.katoshi.x = CTDLGAME.hodlonaut.x + 8
+              CTDLGAME.katoshi.y = CTDLGAME.hodlonaut.y
+            }
+            if (CTDLGAME.katoshi.selected) {
+              CTDLGAME.hodlonaut.x = CTDLGAME.katoshi.x + 8
+              CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
+            }
+            ferry.drive(1)
+            npc.isSelected = false
+          })
+        } else {
+          addTextToQueue('nakadai.MONARCH:\nYou have a heart like Bitcoin. Don\'t let them take it from you.', () => {
+            npc.isSelected = false
+          })
+        }
+        return
+      }
+
+      if (!intersects(window.SELECTEDCHARACTER.getBoundingBox(), talkRadius)) {
+        addTextToQueue('nakadai.MONARCH:\nI can\'t here you from over\nthere! Come closer!')
+        return
+      }
+      addTextToQueue('nakadai.MONARCH:\nI can take you to\nCitadel One, yes...')
+      addTextToQueue('nakadai.MONARCH:\nBut first you must put skin in the game to become a\nmember.', () => {
+        CTDLGAME.prompt = {
+          text: 'nakadai.MONARCH:\nI need you to put ₿0.5 in our multisig address.\nWill you pay?',
+          payload: npc,
+          ok: npc => {
+            if (CTDLGAME.inventory.sats >= 50000000) {
+              CTDLGAME.inventory.sats -= 50000000
+              CTDLGAME.inventory.citadelOneMembership = true
+              addTextToQueue('nakadai.MONARCH:\nHappy to have you on board.\nLFG!', () => {
+                const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
+                ferry.drive(2)
+
+                if (CTDLGAME.hodlonaut.selected) {
+                  CTDLGAME.katoshi.x = CTDLGAME.hodlonaut.x + 8
+                  CTDLGAME.katoshi.y = CTDLGAME.hodlonaut.y
+                }
+                if (CTDLGAME.katoshi.selected) {
+                  CTDLGAME.hodlonaut.x = CTDLGAME.katoshi.x + 8
+                  CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
+                }
+
+                npc.isSelected = false
+              })
+            } else {
+              addTextToQueue('nakadai.MONARCH:\nCome back when\nyou have the money', () => {
+                npc.isSelected = false
+              })
+            }
+          },
+          cancel: npc => {
+            addTextToQueue('nakadai.MONARCH:\nCome back when\nyou are serious.', () => {
+              npc.isSelected = false
+            })
+          }
+        }
+      })
+    },
   },
   wyd_idk: {
     frames: [

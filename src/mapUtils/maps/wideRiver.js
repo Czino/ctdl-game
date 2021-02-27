@@ -1,4 +1,4 @@
-import stage from './stage/pier'
+import stage from './stage/wideRiver'
 
 import constants from '../../constants'
 import { changeMap } from '../changeMap'
@@ -13,15 +13,13 @@ import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import Ferry from '../../objects/Ferry'
-import FishingBoat from '../../objects/FishingBoat'
 
-import pier from '../../sprites/pier.png'
+import wideRiver from '../../sprites/wideRiver.png'
 import moon from '../../sprites/moon.png'
 import NPC from '../../sprites/NPCs.png'
 import ferry from '../../sprites/ferry.png'
-import fishingBoat from '../../sprites/fishingBoat.png'
 
-const worldWidth = 64
+const worldWidth = 128
 const worldHeight = 128
 const tileSize = 8
 
@@ -39,13 +37,7 @@ const solids = [
 const spawnPoints = [
   [0, 1], [1, 1]
 ].map(tile => tile.toString())
-const lights = {
-  '5_1': {
-    color: '#ebca09',
-    brightness: .4,
-    radius: 128
-  }
-}
+const lights = {}
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
 let objects = []
@@ -64,25 +56,13 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-
-const goToCapitalCity = new GameObject('goToCapitalCity', {
-  x: 1 * tileSize,
-  y: 121 * tileSize,
-  w: tileSize,
-  h: 3 * tileSize,
-})
-goToCapitalCity.touchEvent = () => {
-  changeMap('capitalCity', 'pier')
-}
-events.push(goToCapitalCity)
-
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'pier', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'wideRiver', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    capitalCity: { x: 4 * tileSize, y: 121 * tileSize - 6 },
-    wideRiver: { x: 16 * tileSize, y: 121 * tileSize - 6 }
+    pier: { x: 6 * tileSize, y: 121 * tileSize - 6 },
+    citadel: { x: (worldWidth - 6) * tileSize, y: 121 * tileSize - 6 }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
@@ -91,19 +71,16 @@ export default {
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
   lightSources,
   objects,
-  npcs: () => [
-    new FishingBoat('fishingBoat', { x: 46 * tileSize - 4, y: 118 * tileSize - 4, context: 'bgContext' })
-  ],
+  npcs: () => [],
   items: () => [],
   events,
   assets: {
-    pier,
+    wideRiver,
     moon,
     NPC,
-    ferry,
-    fishingBoat
+    ferry
   },
-  track: () => 'shore',
+  track: () => 'epiphin',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
 
@@ -111,27 +88,28 @@ export default {
       CTDLGAME.objects.push(new Ferry(
         'ferry',
         {
-          x: 9 * tileSize - 4,
+          x: from === 'pier' ? 1 * tileSize - 4 : (worldWidth - 11) * tileSize,
           y: 118 * tileSize - 4,
-          direction: 'right'
+          direction: from === 'pier' ? 'right' : 'left',
+          vx: from === 'pier' ? 2 : -2
         }
       ))
-    } else if (from) {
-      ferry.x = 9 * tileSize - 4
-      ferry.direction = 'right'
-      ferry.drive(0)
-      ferry.stop()
+    } else if (ferry && from) {
+      ferry.x = from === 'pier' ? 1 * tileSize - 4 : (worldWidth - 11) * tileSize,
+      ferry.drive(from === 'pier' ? 2 : -2)
+    } else if (ferry) {
+      ferry.drive(ferry.vx)
     }
   },
   update: () => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
 
     if (ferry && ferry.x > (worldWidth - 10) * tileSize) {
-      changeMap('wideRiver', 'pier')
+      changeMap('citadel', 'wideRiver')
+    } else if (ferry && ferry.x < 0 * tileSize) {
+      changeMap('pier', 'wideRiver')
     }
-    if (ferry && ferry.x > (worldWidth - 45) * tileSize) {
-      ferry.drive(2)
-    }
+
     drawWaterBody((worldHeight - 2) * tileSize - 6)
 
     // TODO make this global for overworld: true ?

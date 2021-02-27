@@ -14,7 +14,7 @@ export const changeMap = async (id, from) => {
   if (CTDLGAME.world && !CTDLGAME.world.ready) return
   // save state before changing
 
-  if (from !== 'newGame') await saveGame()
+  if (from !== 'newGame') await saveGame(true)
 
   // remove all objects but characters
   CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.getClass() === 'Character')
@@ -71,7 +71,7 @@ export const changeMap = async (id, from) => {
     CTDLGAME.objects.push(CTDLGAME.bitcoinLabrador)
   }
 
-  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
+  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init(from)
   updateViewport()
 
   initSoundtrack(newWorld.map.track())

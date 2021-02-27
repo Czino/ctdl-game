@@ -6,8 +6,9 @@ import { CTDLGAME } from './CTDLGAME'
 
 /**
  * @description Method to save game to database
+ * @param {Boolean} silent if true don't play sound
  */
-export const saveGame = async () => {
+export const saveGame = async silent => {
   if (CTDLGAME.gameOver) return
   if (CTDLGAME.startedNewGame) {
     CTDLGAME.startedNewGame = false
@@ -39,6 +40,7 @@ export const saveGame = async () => {
   await db.set('blockHeight', CTDLGAME.blockHeight)
   await db.set('inventory', CTDLGAME.inventory)
   await db.set('options', CTDLGAME.options)
-  playSound('select')
+
+  if (!silent) playSound('select')
   CTDLGAME.savedAt = CTDLGAME.frame
 }
