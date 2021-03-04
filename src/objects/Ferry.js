@@ -110,12 +110,29 @@ class Ferry extends GameObject {
       this.deckPushed = true
     }
 
+
+    let addX = this.vx ? 0 : Math.round(Math.sin(CTDLGAME.frame / 55 * 4) / 1.99)
+    let addY = Math.round(Math.cos(CTDLGAME.frame / 72 * 4) / 1.99)
+
+    this.x += addX
+    this.y += addY
+    ;['back', 'ramp', 'deck', 'handRail'].map(obj => {
+      this[obj].x += addX
+      this[obj].y += addY
+    })
+    CTDLGAME.objects
+      .filter(obj => obj.applyGravity)
+      .filter(obj => intersects(this.getBoundingBox('real'), obj.getBoundingBox()))
+      .map(obj => {
+        obj.x += addX
+        obj.y += addY
+      })
+
     if (this.vx) {
       this.x += this.vx
-      this.back.x += this.vx
-      this.ramp.x += this.vx
-      this.deck.x += this.vx
-      this.handRail.x += this.vx
+      ;['back', 'ramp', 'deck', 'handRail'].map(obj => {
+        this[obj].x += this.vx
+      })
       CTDLGAME.objects
         .filter(obj => obj.applyGravity)
         .filter(obj => intersects(this.getBoundingBox('real'), obj.getBoundingBox()))
