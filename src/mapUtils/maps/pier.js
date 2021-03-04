@@ -18,6 +18,7 @@ import FishingBoat from '../../objects/FishingBoat'
 import pier from '../../sprites/pier.png'
 import moon from '../../sprites/moon.png'
 import NPC from '../../sprites/NPCs.png'
+import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 import fishingBoat from '../../sprites/fishingBoat.png'
 
@@ -100,6 +101,7 @@ export default {
     pier,
     moon,
     NPC,
+    nakadaiMonarch,
     ferry,
     fishingBoat
   },

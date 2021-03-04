@@ -17,6 +17,7 @@ import Ferry from '../../objects/Ferry'
 import wideRiver from '../../sprites/wideRiver.png'
 import moon from '../../sprites/moon.png'
 import NPC from '../../sprites/NPCs.png'
+import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 
 const worldWidth = 128
@@ -78,6 +79,7 @@ export default {
     wideRiver,
     moon,
     NPC,
+    nakadaiMonarch,
     ferry
   },
   track: () => 'epiphin',

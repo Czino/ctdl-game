@@ -22,6 +22,7 @@ import bull from './bull'
 import cobra from './cobra'
 import cat from './cat'
 import bitcoinLabrador from './bitcoinLabrador'
+import nakadaiMonarch from './nakadaiMonarch'
 
 export default {
     hodlonaut,
@@ -53,5 +54,6 @@ export default {
     bisq: cat,
     crispy: cat,
     pita: cat,
-    bitcoinLabrador
+    bitcoinLabrador,
+    nakadaiMonarch
 }

@@ -7,6 +7,7 @@ import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 
 import citadel from '../../sprites/citadel.png'
+import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import bitcoinLabrador from '../../sprites/bitcoinLabrador.png'
 import shitcoiner from '../../sprites/shitcoiner.png'
 import bagholder from '../../sprites/bagholder.png'
@@ -84,6 +85,7 @@ export default {
   events,
   assets: {
     citadel,
+    nakadaiMonarch,
     bitcoinLabrador,
     shitcoiner,
     bagholder,

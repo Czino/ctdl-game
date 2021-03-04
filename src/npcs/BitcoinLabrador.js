@@ -4,7 +4,6 @@ import spriteData from '../sprites/bitcoinLabrador'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
 import { playSound } from '../sounds';
 import Agent from '../Agent'
 

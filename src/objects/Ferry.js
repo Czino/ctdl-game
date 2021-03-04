@@ -5,7 +5,7 @@ import Ramp from '../Ramp'
 import { Boundary } from '../geometryUtils/makeBoundary'
 import { intersects } from '../geometryUtils'
 import { playSound } from '../sounds'
-import NPC from '../npcs/NPC'
+import NakadaiMonarch from '../npcs/NakadaiMonarch'
 
 let rampHeightMapLeft = []
 for (var i = 11; i > 0; i--) {
@@ -23,7 +23,7 @@ class Ferry extends GameObject {
     this.context = options.context || 'fgContext'
     this.deckPushed = false
     this.direction = options.direction || 'right'
-    this.captain = new NPC(
+    this.captain = new NakadaiMonarch(
       'nakadai_mon',
       {
         x: this.direction === 'right' ? this.x + 38 : this.x + 98,
