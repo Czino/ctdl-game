@@ -23,6 +23,8 @@ import cobra from './cobra'
 import cat from './cat'
 import bitcoinLabrador from './bitcoinLabrador'
 import nakadaiMonarch from './nakadaiMonarch'
+import bearWhaleFin from './bearWhaleFin'
+import bearWhale from './bearWhale'
 
 export default {
     hodlonaut,
@@ -55,5 +57,7 @@ export default {
     crispy: cat,
     pita: cat,
     bitcoinLabrador,
-    nakadaiMonarch
+    nakadaiMonarch,
+    bearWhaleFin,
+    bearWhale
 }
