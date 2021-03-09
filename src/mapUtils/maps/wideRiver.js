@@ -13,12 +13,14 @@ import darken from '../darken'
 import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import Ferry from '../../objects/Ferry'
+import BearWhale from '../../enemies/BearWhale'
 
 import wideRiver from '../../sprites/wideRiver.png'
 import moon from '../../sprites/moon.png'
 import NPC from '../../sprites/NPCs.png'
 import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
+import bearWhale from '../../sprites/bearWhale.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -72,7 +74,15 @@ export default {
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
   lightSources,
   objects,
-  npcs: () => [],
+  npcs: () => [
+    new BearWhale(
+      'J0E007',
+      {
+        x: 70 * tileSize,
+        y: 120 * tileSize
+      }
+    )
+  ],
   items: () => [],
   events,
   assets: {
@@ -80,14 +90,15 @@ export default {
     moon,
     NPC,
     nakadaiMonarch,
-    ferry
+    ferry,
+    bearWhale
   },
   track: () => 'epiphin',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
 
     if (!ferry && from) {
-      CTDLGAME.objects.push(new Ferry(
+      CTDLGAME.objects.unshift(new Ferry(
         'ferry',
         {
           x: from === 'pier' ? 1 * tileSize - 4 : (worldWidth - 11) * tileSize,

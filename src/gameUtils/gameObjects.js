@@ -12,6 +12,7 @@ import Brian from '../enemies/Brian'
 import Craig from '../enemies/Craig'
 import Lagarde from '../enemies/Lagarde'
 import BabyLizard from '../enemies/BabyLizard'
+import BearWhale from '../enemies/BearWhale'
 import PoliceForce from '../enemies/PoliceForce'
 import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
@@ -52,6 +53,7 @@ export const gameObjects = {
     Ivan,
     Lagarde,
     BabyLizard,
+    BearWhale,
     Item,
     Shitcoin,
     Candle,

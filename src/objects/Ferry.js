@@ -20,7 +20,7 @@ let rampHeightMapRight = rampHeightMapLeft.map(row => JSON.parse(JSON.stringify(
 class Ferry extends GameObject {
   constructor(id, options) {
     super(id, options)
-    this.context = options.context || 'fgContext'
+    this.context = 'fgContext'
     this.deckPushed = false
     this.direction = options.direction || 'right'
     this.captain = new NakadaiMonarch(
@@ -34,7 +34,7 @@ class Ferry extends GameObject {
 
     this.back = new Boundary({
       id: 'back-ferry',
-      x: this.direction === 'right' ? this.x + 15 : this.x + this.w + 131,
+      x: this.direction === 'right' ? this.x : this.x + this.w + 146,
       y: this.y + 34,
       w: 3,
       h: 19

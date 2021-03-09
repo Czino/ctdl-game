@@ -34,7 +34,6 @@ import crispy from '../sprites/crispy.png'
 import pita from '../sprites/pita.png'
 import bitcoinLabrador from '../sprites/bitcoinLabrador.png'
 import nakadaiMonarch from '../sprites/nakadaiMonarch.png'
-import bearWhaleFin from '../sprites/bearWhaleFin.png'
 import bearWhale from '../sprites/bearWhale.png'
 
 export const assets = {
@@ -74,6 +73,5 @@ export const assets = {
     pita,
     bitcoinLabrador,
     nakadaiMonarch,
-    bearWhaleFin,
     bearWhale
 }

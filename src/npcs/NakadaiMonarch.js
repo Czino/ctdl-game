@@ -55,7 +55,7 @@ class NakadaiMonarch extends Agent {
     this.exhausted = options.exhausted
     this.status = options.status || 'sit'
     this.attackRange = 4
-    this.senseRadius = 40
+    this.senseRadius = 80
     this.walkingSpeed = options.walkingSpeed || 2
     this.protection = 0
   }
@@ -201,11 +201,5 @@ class NakadaiMonarch extends Agent {
       }
     })
   }
-
-  /* TODO
-    It's J0E007, the big bear whale! We might see strong volatility ahead. You have to brace yourself and HODL no matter what happens, if you want to survive. Find your Bitcoin Zen.
-    The sword is the soul. Study the soul to know the sword. Evil mind, evil sword.
-    *nakadai joins the battle*
-  */
 }
 export default NakadaiMonarch
