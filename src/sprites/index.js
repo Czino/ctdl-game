@@ -14,6 +14,7 @@ import lagarde from './lagarde'
 import babyLizard from './babyLizard'
 import craig from './craig'
 import des from './des'
+import soulexBoy from './soulexBoy'
 import hodlTarantula from './hodlTarantula'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
@@ -38,6 +39,7 @@ export default {
     vlad,
     everitt: citizen,
     des,
+    soulexBoy,
     hodlTarantula,
     shitcoiner,
     brian,

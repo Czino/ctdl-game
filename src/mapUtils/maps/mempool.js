@@ -16,13 +16,15 @@ import constants from '../../constants'
 import { random } from '../../arrayUtils'
 import { addTextToQueue } from '../../textUtils'
 import { playSound } from '../../sounds'
+import { intersects } from '../../geometryUtils'
+import Des from '../../npcs/Des'
+import SoulexBoy from '../../npcs/SoulexBoy'
 
 import mempool from '../../sprites/mempool.png'
 import citizen1 from '../../sprites/citizen-1.png'
 import everitt from '../../sprites/everitt.png'
 import des from '../../sprites/des.png'
-import { intersects } from '../../geometryUtils'
-import Des from '../../npcs/Des'
+import soulexBoy from '../../sprites/soulexBoy.png'
 
 const worldWidth = 76
 const worldHeight = 45
@@ -125,6 +127,7 @@ const jumpIntoThePool = new GameObject('jumpIntoThePool', {
 jumpIntoThePool.jumpEvent = char => {
   char.context = 'fgContext'
   addHook(CTDLGAME.frame + 80, () => {
+    playSound('splash')
     char.context = 'charContext'
   })
 }
@@ -306,6 +309,14 @@ export default {
         y: 24 * tileSize - 2
       }
     ),
+    new SoulexBoy(
+      'soulexBoy',
+      {
+        x: 61 * tileSize,
+        y: 26 * tileSize - 2,
+        direction: 'right'
+      }
+    ),
     new Human(
       'tbd-1',
       {
@@ -343,6 +354,7 @@ export default {
     mempool,
     everitt,
     des,
+    soulexBoy,
     citizen1
   },
   track: () => 'mempool',
@@ -435,10 +447,10 @@ export default {
         .filter(npc => intersects(npc, npcBarrier) || intersects(npc, npcBarrier2) || intersects(npc, npcBarrier3))
         .map(npc => npc.goal = null)
 
-      CTDLGAME.objects.filter(obj => /Character|Human/.test(obj.getClass()))
+      CTDLGAME.objects.filter(obj => /Character|Human|SoulexBoy/.test(obj.getClass()))
         .map(char => {
           if (char.y + 11 > poolTop + maxPoolHeight - poolHeight) {
-            char.y-=2
+            char.y -= 2
             if (char.vy > 2) char.vy = 0
             char.applyGravity = false
             char.swims = true

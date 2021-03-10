@@ -244,6 +244,20 @@ const sounds = {
     noise2Synth.triggerAttack(present, .4)
     noise2Synth.triggerRelease(present + dur)
   },
+  splash: () => {
+    const present = now()
+    const dur = .7
+
+    noise2Synth.noise.type = 'white'
+
+    noise2Synth.envelope.attack = .05
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = 1
+    noise2Synth.envelope.release = 3.3
+
+    noise2Synth.triggerAttack(present, .03)
+    noise2Synth.triggerRelease(present + dur)
+  },
   longNoise: () => {
     const present = now()
     const dur = .7

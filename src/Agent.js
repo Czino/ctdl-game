@@ -375,7 +375,7 @@ class Agent extends GameObject {
       constants[this.context].globalAlpha = this.protection % 2
     }
 
-    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
+    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + (this.strength || 1))) : this.x
     constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
