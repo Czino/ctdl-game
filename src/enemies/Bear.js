@@ -56,6 +56,7 @@ class Bear extends Agent {
   spriteId = 'bear'
   spriteData = bearSprite
   enemy = true
+  boss = true
   w = 27
   h = 28
   walkingSpeed = 2

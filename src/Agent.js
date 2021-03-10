@@ -306,7 +306,7 @@ class Agent extends GameObject {
     this.vy = -3
   }
 
-  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|block|burning/.test(this.status) && !this.protection
+  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|block|burning|dive/.test(this.status) && !this.protection
   hurt = (dmg, direction, agent) => {
     if (!this.hurtCondition(dmg, direction)) return
     if (this.status === 'exhausted') dmg *= 4

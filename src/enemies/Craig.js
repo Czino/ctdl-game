@@ -97,6 +97,7 @@ class Craig extends Agent {
     this.hitsToSuckUp = options.hitsToSuckUp || 0
   }
 
+  boss = true
   w = 16
   h = 30
 

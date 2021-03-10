@@ -1,4 +1,4 @@
-import { BehaviorTree, Sequence, Selector, SUCCESS } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Sequence, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import spriteData from '../sprites/nakadaiMonarch'
 import { CTDLGAME } from '../gameUtils'
@@ -6,6 +6,7 @@ import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
+import { playSound } from '../sounds'
 
 
 // Sequence: runs each node until fail
@@ -50,12 +51,12 @@ class NakadaiMonarch extends Agent {
     this.spriteData = spriteData
     this.maxHealth = options.maxHealth ?? 9999
     this.health = options.health ?? this.maxHealth
-    this.strength = 4
+    this.strength = 8
     this.exhaustion = options.exhaustion || 0
     this.exhausted = options.exhausted
     this.status = options.status || 'sit'
     this.attackRange = 4
-    this.senseRadius = 80
+    this.senseRadius = 110
     this.walkingSpeed = options.walkingSpeed || 2
     this.protection = 0
   }
@@ -77,7 +78,29 @@ class NakadaiMonarch extends Agent {
       return SUCCESS
     }
   }
+  attack = {
+    condition: () => {
+      if (!this.closestEnemy) return FAILURE
 
+      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return FAILURE // not in biting distance
+
+      return SUCCESS
+    },
+    effect: () => {
+      if (this.status === 'attack' && this.frame === 4) {
+        playSound('sword')
+
+        this.closestEnemy.hurt(this.strength || 1, this.direction === 'left' ? 'right' : 'left', this)
+        return SUCCESS
+      }
+      if (this.status === 'attack') return SUCCESS
+
+      this.frame = 0
+      this.status = 'attack'
+
+      return SUCCESS
+    }
+  }
 
   update = () => {
     if (CTDLGAME.lockCharacters) {

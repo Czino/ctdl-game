@@ -74,6 +74,7 @@ class Lagarde extends Agent {
   }
 
   enemy = true
+  boss = true
   w = 16
   h = 30
 

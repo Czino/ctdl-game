@@ -36,8 +36,12 @@ export const updateViewport = () => {
     CTDLGAME.hodlonaut.protection = 16
   }
   if (CTDLGAME.bitcoinLabrador && canTeleport(CTDLGAME.bitcoinLabrador)) {
-    CTDLGAME.bitcoinLabrador.x = CTDLGAME.SELECTEDCHARACTER.x
-    CTDLGAME.bitcoinLabrador.y = CTDLGAME.SELECTEDCHARACTER.y
+    CTDLGAME.bitcoinLabrador.x = window.SELECTEDCHARACTER.x
+    CTDLGAME.bitcoinLabrador.y = window.SELECTEDCHARACTER.y
+  }
+  if (CTDLGAME.nakadaiMonarch && canTeleport(CTDLGAME.nakadaiMonarch)) {
+    CTDLGAME.nakadaiMonarch.x = window.SELECTEDCHARACTER.x
+    CTDLGAME.nakadaiMonarch.y = window.SELECTEDCHARACTER.y
   }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)

@@ -12,6 +12,17 @@ import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import Item from '../Item'
 
+
+const isEmerged = new Task({
+  run: agent => agent.status !== 'spawn' && agent.y > agent.ferry.y + agent.ferry.getBoundingBox().h ? SUCCESS : FAILURE
+})
+const emerge = new Task({
+  run: agent => agent.spawn.condition() ? agent.spawn.effect() : FAILURE
+})
+const dive = new Task({
+  run: agent => agent.dive.condition() ? agent.dive.effect() : FAILURE
+})
+
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -23,6 +34,13 @@ const attackEnemy = new Sequence({
 // Sequence: runs each node until fail
 const attack2Enemy = new Sequence({
   nodes: [
+    'attack2'
+  ]
+})
+
+// Sequence: runs each node until fail
+const attack3Enemy = new Sequence({
+  nodes: [
     'touchesEnemy',
     'attack2'
   ]
@@ -32,7 +50,7 @@ const tree = new Selector({
   nodes: [
     attackEnemy,
     attack2Enemy,
-    'moveToPointX',
+    attack3Enemy,
     'idle'
   ]
 })
@@ -43,9 +61,10 @@ class BearWhale extends Agent {
     super(id, options)
     this.spriteData = bearWhale
     this.status = options.status || 'swim'
-    this.maxHealth = 394
-    this.health = options.health ?? 394
-    this.usd = options.usd || Math.round(Math.random() * 8000000)
+    this.maxHealth = 3940
+    this.dmgToChanceStrategy = options.dmgToChanceStrategy || Math.round(Math.random() * 200)
+    this.health = options.health ?? 3940
+    this.usd = options.usd || Math.round(9000000)
     this.item = { id: 'honeybadger' }
     this.context = 'fgContext'
     this.strength = 10
@@ -58,16 +77,68 @@ class BearWhale extends Agent {
     this.walkingSpeed = 2
   }
 
-  enemy = false
   applyGravity = false
-  w = 16
-  h = 30
+  boss = true
+  w = 75
+  h = 90
 
   bTree = new BehaviorTree({
     tree,
     blackboard: this
   })
 
+  spawn = {
+    condition: () => true,
+    effect: (side = 'right') => {
+      if (this.status !== 'spawn') this.frame = 0
+
+      if (this.frame === 0) {
+        this.direction = side === 'right' ? 'left' : 'right'
+        // move bearwhale in front of ferry
+        if (side === 'right') {
+          this.x = this.ferry.x + this.ferry.getBoundingBox().w - 18
+        } else {
+          this.x = this.ferry.x + 16 - this.getBoundingBox().w
+        }
+        this.y = this.ferry.y + this.ferry.getBoundingBox().h + 50
+        playSound('longNoise')
+      } else if (this.frame === 4) {
+        this.idle.effect()
+        return SUCCESS
+      } else {
+        this.y -= 21
+      }
+
+      if (this.status === 'spawn') return SUCCESS
+
+      this.status = 'spawn'
+
+      return SUCCESS
+    }
+  }
+  dive = {
+    condition: () => true,
+    effect: () => {
+      if (this.status !== 'dive') this.frame = 0
+
+      this.status = 'dive'
+      if (this.frame === 3) {
+        playSound('longNoise')
+      } else if (this.frame === 4) {
+        this.idle.effect()
+        return SUCCESS
+      } else {
+        this.y += 21
+      }
+
+      if (this.status === 'dive') return SUCCESS
+
+      this.frame = 0
+      this.status = 'dive'
+
+      return SUCCESS
+    }
+  }
   moveLeft = {
     condition: () => true,
     effect: () => {
@@ -78,7 +149,7 @@ class BearWhale extends Agent {
       this.x--
       if (this.frame >= 19) {
         this.frame = 19
-        this.y += 2
+        this.y += 3
       }
       return SUCCESS
     }
@@ -93,7 +164,7 @@ class BearWhale extends Agent {
       this.x++
       if (this.frame >= 19) {
         this.frame = 19
-        this.y += 2
+        this.y += 3
       }
         return SUCCESS
 
@@ -101,7 +172,7 @@ class BearWhale extends Agent {
   }
   attack = {
     condition: () => {
-      if (!this.closestEnemy || this.attackStyle === 'attack2') return false
+      if (!this.closestEnemy || this.strategy === 'attack2') return false
       const attackBox = {
         x: this.getBoundingBox().x - this.attackRange,
         y: this.getBoundingBox().y,
@@ -113,7 +184,7 @@ class BearWhale extends Agent {
     effect: () => {
       if (this.status === 'attack' && this.frame === 6) {
         this.closestEnemy.hurt(this.strength, this.direction === 'left' ? 'right' : 'left', this)
-        this.attackStyle = Math.random() < .9 ? 'attack1' : 'attack2'
+        this.strategy = Math.random() < .9 ? 'attack1' : 'attack2'
         return SUCCESS
       }
       if (this.status === 'attack') return SUCCESS
@@ -126,7 +197,7 @@ class BearWhale extends Agent {
   }
   attack2 = {
     condition: () => {
-      if (!this.closestEnemy || this.attackStyle === 'attack1') return false
+      if (!this.closestEnemy || this.strategy === 'attack1') return false
       const attackBox = {
         x: this.getBoundingBox().x - this.attackRange,
         y: this.getBoundingBox().y,
@@ -138,7 +209,7 @@ class BearWhale extends Agent {
     effect: () => {
       if (this.status === 'attack2' && this.frame === 4) {
         this.closestEnemy.hurt(this.strength, this.direction === 'left' ? 'right' : 'left', this)
-        this.attackStyle = Math.random() < .9 ? 'attack1' : 'attack2'
+        this.strategy = Math.random() < .9 ? 'attack1' : 'attack2'
         return SUCCESS
       }
       if (this.status === 'attack2') return SUCCESS
@@ -151,8 +222,22 @@ class BearWhale extends Agent {
   }
 
   onHurt = () => {
-    this.protection = 8
     playSound('creatureHurt')
+  }
+  hurt = (dmg, direction, agent) => {
+    if (!this.hurtCondition(dmg, direction)) return
+    this.dmgs.push({y: -8, dmg})
+    this.health = Math.max(this.health - dmg, 0)
+
+    if (Math.random() < .05) this.status = 'hurt'
+
+    this.protection = 2
+    if (this.health <= 0) {
+      this.health = 0
+      return this.die(agent)
+    }
+
+    return this.onHurt(agent)
   }
 
   die = () => {
@@ -187,6 +272,7 @@ class BearWhale extends Agent {
 
   update = () => {
     if (!this.sprite) this.sprite = CTDLGAME.assets.bearWhale
+    if (!this.ferry) this.ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
     if (CTDLGAME.lockCharacters) {
       this.frame++
       this.draw()
@@ -201,11 +287,20 @@ class BearWhale extends Agent {
       this.status = 'idle'
     }
 
+    if (this.dmgToChanceStrategy < 0) {
+      this.dmgToChanceStrategy = Math.round(Math.random() * 100)
+      this.strategy = Math.random() < .33
+        ? 'attack1'
+        : Math.random() < .5
+        ? 'attack2'
+        : 'attack3'
+      console.log(this.strategy)
+    }
+
     const senseBox = this.getSenseBox()
     this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
     const ferry = this.sensedObjects.find(obj => obj.id = 'ferry')
 
-    console.log(this.x - ferry.x)
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
       constants.charContext.rect(senseBox.x, senseBox.y, senseBox.w, senseBox.h)
@@ -218,39 +313,40 @@ class BearWhale extends Agent {
 
     if (!this.hadIntro && ferry && this.x - ferry.x < 130 && this.x - ferry.x > 0 && this.status !== 'spawn') {
       if (this.x - ferry.x >= 128) {
+        playSound('longNoise')
         addTextToQueue('nakadai.MONARCH:\nIt\'s J0E007, the big bear\nwhale! We might see strong volatility ahead.')
         addTextToQueue('nakadai.MONARCH:\nYou have to brace yourself and HODL no matter what, if you want to survive.')
       }
       this.moveLeft.effect()
     } else if (!this.hadIntro && ferry && (this.x - ferry.x < 0 || this.status === 'spawn')) {
       this.status = 'spawn'
-      if (this.frame === 0) {
-        // move bearwhale in front of ferry
-        this.x = ferry.x + ferry.getBoundingBox().w - 16
-      } else if (this.frame === 4) {
+      if (this.frame === 4) {
         ferry.stop()
         playSound('elevatorStop')
-        this.idle.effect()
         CTDLGAME.lockCharacters = true
         skipCutSceneButton.active = true
+        if (getSoundtrack() !== 'bearWhalesTheme') initSoundtrack('bearWhalesTheme')
   
         addTextToQueue('nakadai.MONARCH:\nThe sword is the soul. Study the soul to know the sword. Evil mind, evil sword.')
         addTextToQueue('*nakadai.MONARCH joins the battle*', () => {
-          if (getSoundtrack() !== 'bearWhalesTheme') initSoundtrack('bearWhalesTheme')
+          CTDLGAME.nakadaiMonarch = CTDLGAME.objects.find(obj => obj.id === 'nakadai_mon')
+          CTDLGAME.nakadaiMonarch.follow = true
           CTDLGAME.bossFight = true
           CTDLGAME.lockCharacters = false
           skipCutSceneButton.active = false
           this.enemy = true
+          this.canMove = true
         })
         this.hadIntro = true
-      } else {
-        this.y -= 17
       }
     }
 
     this.sensedFriends = []
 
-    if (Math.abs(this.vy) < 3 && this.canMove && !/exhausted|transform|fall|rekt|hurt/.test(this.status)) {
+    if (this.status === 'spawn') this.spawn.effect(this.direction === 'right' ? 'left' : 'right')
+    if (this.status === 'dive') this.dive.effect()
+
+    if (Math.abs(this.vy) < 3 && this.canMove && !/spawn|dive|fall|rekt|hurt/.test(this.status)) {
       if (getSoundtrack() !== 'bearWhalesTheme') initSoundtrack('bearWhalesTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
@@ -284,7 +380,7 @@ class BearWhale extends Agent {
     })
   }
 
-
+  // TODO check this
   getBoundingBox = () => this.status !== 'rekt'
     ? ({ // normal
         id: this.id,

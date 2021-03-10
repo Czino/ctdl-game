@@ -40,6 +40,13 @@ export default {
       { x: 3 * w, y: 0 * h, w , h },
       { x: 4 * w, y: 0 * h, w , h }
     ],
+    dive: [
+      { x: 4 * w, y: 0 * h, w , h },
+      { x: 3 * w, y: 0 * h, w , h },
+      { x: 2 * w, y: 0 * h, w , h },
+      { x: 1 * w, y: 0 * h, w , h },
+      { x: 0 * w, y: 0 * h, w , h },
+    ],
     idle: [
       { x: 0 * w, y: 1 * h, w , h },
       { x: 0 * w, y: 1 * h, w , h },
@@ -101,6 +108,13 @@ export default {
       { x: (5 + 2) * w, y: 0 * h, w , h },
       { x: (5 + 3) * w, y: 0 * h, w , h },
       { x: (5 + 4) * w, y: 0 * h, w , h }
+    ],
+    dive: [
+      { x: (5 + 4) * w, y: 0 * h, w , h },
+      { x: (5 + 3) * w, y: 0 * h, w , h },
+      { x: (5 + 2) * w, y: 0 * h, w , h },
+      { x: (5 + 1) * w, y: 0 * h, w , h },
+      { x: (5 + 0) * w, y: 0 * h, w , h }
     ],
     idle: [
       { x: (5 + 0) * w, y: 1 * h, w , h },

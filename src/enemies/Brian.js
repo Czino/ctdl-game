@@ -65,6 +65,7 @@ class Brian extends Agent {
   }
 
   enemy = true
+  boss = true
   spriteId = 'brian'
   spriteData = brianSprite
   w = 16

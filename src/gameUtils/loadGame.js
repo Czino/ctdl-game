@@ -68,6 +68,7 @@ export const loadGame = async () => {
   if (CTDLGAME.katoshi.selected) window.SELECTEDCHARACTER = CTDLGAME.katoshi
 
   CTDLGAME.bitcoinLabrador = CTDLGAME.objects.find(obj => obj.id === 'bitcoinLabrador')
+  CTDLGAME.nakadaiMon = CTDLGAME.objects.find(obj => obj.id === 'nakadai_mon')
 
   updateViewport()
 

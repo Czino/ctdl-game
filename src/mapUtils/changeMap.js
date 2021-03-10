@@ -70,6 +70,14 @@ export const changeMap = async (id, from) => {
     CTDLGAME.bitcoinLabrador.y = newWorld.map.start[from].y
     CTDLGAME.objects.push(CTDLGAME.bitcoinLabrador)
   }
+  if (!CTDLGAME.nakadaiMon) {
+    CTDLGAME.nakadaiMon = CTDLGAME.objects.find(obj => obj.id === 'nakadai_mon')
+  }
+  if (CTDLGAME.nakadaiMon && CTDLGAME.nakadaiMon.follow) {
+    CTDLGAME.nakadaiMon.x = newWorld.map.start[from].x
+    CTDLGAME.nakadaiMon.y = newWorld.map.start[from].y
+    CTDLGAME.objects.push(CTDLGAME.nakadaiMon)
+  }
 
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init(from)
   updateViewport()
