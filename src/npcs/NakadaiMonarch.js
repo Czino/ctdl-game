@@ -49,7 +49,7 @@ class NakadaiMonarch extends Agent {
     super(id, options)
     this.spriteId = 'nakadaiMonarch'
     this.spriteData = spriteData
-    this.maxHealth = options.maxHealth ?? 9999
+    this.maxHealth = options.maxHealth ?? 99999
     this.health = options.health ?? this.maxHealth
     this.strength = 8
     this.exhaustion = options.exhaustion || 0
@@ -104,12 +104,13 @@ class NakadaiMonarch extends Agent {
 
   update = () => {
     if (CTDLGAME.lockCharacters) {
-
       this.draw()
       return
     }
 
     this.applyPhysics()
+
+    if (/stun|hurt/.test(this.status) && this.vx === 0 && this.vy === 0) this.status = 'idle'
 
     this.exhaustion = Math.max(0, this.exhaustion)
 

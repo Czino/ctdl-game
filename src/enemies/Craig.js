@@ -186,7 +186,11 @@ class Craig extends Agent {
 
     if (!lostFullPoint) return
 
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.status = 'hurt'
     let impulse = this.hasArmor ? 2 : 5
     this.vx = direction === 'left' ? impulse : -impulse

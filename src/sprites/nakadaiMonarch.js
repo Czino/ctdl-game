@@ -21,6 +21,9 @@ export default {
     hurt: [
       { x: 1 * w, y: 3 * h, w , h }
     ],
+    stun: [
+      { x: 1 * w, y: 3 * h, w , h }
+    ],
     attack: [
       { x: 3 * w, y: 2 * h, w , h },
       { x: 4 * w, y: 2 * h, w , h },
@@ -55,6 +58,9 @@ export default {
       { x: (6 + 1) * w, y: 3 * h, w , h }
     ],
     hurt: [
+      { x: (6 + 1) * w, y: 3 * h, w , h }
+    ],
+    stun: [
       { x: (6 + 1) * w, y: 3 * h, w , h }
     ],
     attack: [

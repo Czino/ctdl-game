@@ -313,7 +313,11 @@ class Agent extends GameObject {
   hurt = (dmg, direction, agent) => {
     if (!this.hurtCondition(dmg, direction)) return
     if (this.status === 'exhausted') dmg *= 4
-    this.dmgs.push({y: -8, dmg})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
     this.vx = direction === 'left' ? 2 : -2
@@ -332,7 +336,10 @@ class Agent extends GameObject {
     if (maxHeal < heal) heal = Math.floor(maxHeal)
 
     if (heal) {
-      this.heals.push({y: -8, heal})
+      this.heals.push({
+        x: Math.round((Math.random() - .5) * 8),
+        y: -8, heal
+      })
       this.health = Math.min(this.health + heal, this.maxHealth)
     }
     return heal > 0
@@ -397,7 +404,7 @@ class Agent extends GameObject {
       .filter(dmg => dmg.y > -24)
       .map(dmg => {
         write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 24,
+          x: this.getCenter().x - 24 + dmg.x,
           y: this.y + dmg.y,
           w: 48
         }, 'center', false, 8, true, '#F00')
@@ -411,7 +418,7 @@ class Agent extends GameObject {
       .filter(heal => heal.y > -24)
       .map(heal => {
         write(constants.charContext, `+${heal.heal}`, {
-          x: this.getCenter().x - 24,
+          x: this.getCenter().x - 24 + heal.x,
           y: this.y + heal.y,
           w: 48
         }, 'center', false, 8, true, '#0F0')

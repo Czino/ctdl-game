@@ -97,7 +97,11 @@ class Human extends Agent {
 
     if (!lostFullPoint) return
 
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.status = 'hurt'
     this.vx = direction === 'left' ? 5 : -5
     this.vy = -3

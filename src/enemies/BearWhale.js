@@ -11,11 +11,9 @@ import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import Item from '../Item'
+import Wave from '../objects/Wave'
 
 
-const isEmerged = new Task({
-  run: agent => agent.status !== 'spawn' && agent.y > agent.ferry.y + agent.ferry.getBoundingBox().h ? SUCCESS : FAILURE
-})
 const emerge = new Task({
   run: agent => agent.spawn.condition() ? agent.spawn.effect() : FAILURE
 })
@@ -65,6 +63,7 @@ class BearWhale extends Agent {
     this.status = options.status || 'swim'
     this.maxHealth = 3940
     this.dmgToChangeStrategy = options.dmgToChangeStrategy || Math.round(Math.random() * 200)
+    this.stayUnderWaterCounter = options.stayUnderWaterCounter || 0
     this.strategy = options.strategy || 'attack1'
     this.currentStrategy = options.currentStrategy || 'attack1'
     this.health = options.health ?? 3940
@@ -100,16 +99,16 @@ class BearWhale extends Agent {
   }
   spawn = {
     condition: () => /swim|spawn/.test(this.status) && /attack1|attack3/.test(this.currentStrategy),
-    effect: (side = 'right') => {
+    effect: side => {
       if (this.status !== 'spawn') {
         this.status = 'spawn'
         this.frame = 0
       }
 
       if (this.frame === 0) {
-        this.direction = side === 'right' ? 'left' : 'right'
+        if (side) this.direction = side === 'right' ? 'left' : 'right'
         // move bearwhale in front of ferry
-        if (side === 'right') {
+        if (this.direction === 'left') {
           this.x = this.ferry.x + this.ferry.getBoundingBox().w - 18
         } else {
           this.x = this.ferry.x - 50
@@ -141,6 +140,8 @@ class BearWhale extends Agent {
       } else if (this.frame === 4) {
         this.currentStrategy = this.strategy
         this.status = 'swim'
+        this.direction = Math.random() < .5 ? 'left' : 'right'
+        this.stayUnderWaterCounter = 10 + Math.round(Math.random() * 20)
         return SUCCESS
       } else {
         this.y += 21
@@ -197,8 +198,17 @@ class BearWhale extends Agent {
       return intersects(attackBox, this.closestEnemy.getBoundingBox())
     },
     effect: () => {
+      const attackBox = {
+        x: this.getBoundingBox().x - this.attackRange,
+        y: this.getBoundingBox().y,
+        w: this.getBoundingBox().w + this.attackRange * 2,
+        h: this.getBoundingBox().h
+      }
       if (this.status === 'attack' && this.frame === 6) {
         this.closestEnemy.hurt(this.strength, this.direction === 'left' ? 'right' : 'left', this)
+        this.sensedEnemies
+          .filter(enemy => enemy.id !== this.closestEnemy.id && Math.random() < .5 && intersects(attackBox, enemy.getBoundingBox()))
+          .forEach(enemy => enemy.hurt(this.strength, this.direction === 'left' ? 'right' : 'left', this))
         return SUCCESS
       }
       if (this.status === 'attack') return SUCCESS
@@ -224,8 +234,17 @@ class BearWhale extends Agent {
         this.applyGravity = true
         playSound('longNoise')
       }
-      if (this.y > water && this.y < water + 14) {
+      if (this.y > water && this.y < water + 15) {
         playSound('longNoise')
+        CTDLGAME.objects.push(new Wave(
+          'wave',
+          {
+            x: this.x,
+            y: water,
+            vx: -16,
+            vy: -6
+          }
+        ))
       }
       if (this.y > CTDLGAME.world.h) {
         this.applyGravity = false
@@ -270,12 +289,17 @@ class BearWhale extends Agent {
 
   onHurt = () => {
     playSound('creatureHurt')
+    if (Math.random() < .1) playSound('bearGrowl')
   }
 
   hurtCondition = (dmg, direction) => !/attack2|dive|swim|spawn|hurt|rekt|dive/.test(this.status) && !this.protection
   hurt = (dmg, direction, agent) => {
     if (!this.hurtCondition(dmg, direction)) return
-    this.dmgs.push({y: -8, dmg})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 16),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.health = Math.max(this.health - dmg, 0)
 
     this.dmgToChangeStrategy -= dmg
@@ -346,7 +370,6 @@ class BearWhale extends Agent {
       this.status = 'idle'
     }
 
-    console.log(this.dmgToChangeStrategy, this.currentStrategy, this.strategy, this.status, this.x, this.y)
     if (this.dmgToChangeStrategy < 0) {
       this.dmgToChangeStrategy = Math.round(Math.random() * 100)
       this.strategy = Math.random() < .33
@@ -367,7 +390,7 @@ class BearWhale extends Agent {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.getClass() === 'Character' && enemy.health > 0)
+      .filter(enemy => /Character|NakadaiMonarch/.test(enemy.getClass()) && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (!this.hadIntro && ferry && this.x - ferry.x < 130 && this.x - ferry.x > 0 && this.status !== 'spawn') {
@@ -385,7 +408,7 @@ class BearWhale extends Agent {
         CTDLGAME.lockCharacters = true
         skipCutSceneButton.active = true
         if (getSoundtrack() !== 'bearWhalesTheme') initSoundtrack('bearWhalesTheme')
-  
+
         addTextToQueue('nakadai.MONARCH:\nThe sword is the soul. Study the soul to know the sword. Evil mind, evil sword.')
         addTextToQueue('*nakadai.MONARCH joins the battle*', () => {
           CTDLGAME.nakadaiMonarch = CTDLGAME.objects.find(obj => obj.id === 'nakadai_mon')
@@ -406,7 +429,9 @@ class BearWhale extends Agent {
     if (this.status === 'dive') this.dive.effect()
     if (this.status === 'attack2') this.attack2.effect()
 
-    if (Math.abs(this.vy) < 3 && this.canMove && !/attack2|spawn|dive|fall|rekt|hurt/.test(this.status)) {
+    if (this.stayUnderWaterCounter > 0) this.stayUnderWaterCounter--
+    if (this.stayUnderWaterCounter === 6) playSound('bearGrowl')
+    if (Math.abs(this.vy) < 3 && this.canMove && this.stayUnderWaterCounter === 0 && !/attack2|spawn|dive|fall|rekt|hurt/.test(this.status)) {
       if (getSoundtrack() !== 'bearWhalesTheme') {
         ferry.stop(true)
         // TODO make this loading from savestate

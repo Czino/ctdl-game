@@ -21,6 +21,7 @@ import NPC from '../../sprites/NPCs.png'
 import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 import bearWhale from '../../sprites/bearWhale.png'
+import wave from '../../sprites/wave.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -91,7 +92,8 @@ export default {
     NPC,
     nakadaiMonarch,
     ferry,
-    bearWhale
+    bearWhale,
+    wave
   },
   track: () => 'epiphin',
   init: from => {

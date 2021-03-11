@@ -9,7 +9,7 @@ export const senseCharacters = enemy => {
       w: enemy.w + enemy.senseRadius * 2,
       h: enemy.h + enemy.senseRadius
     })
-    .filter(obj => obj && /Character|Human/.test(obj.getClass()) && obj.status !== 'rekt')
+    .filter(obj => obj && /Character|Human|NakadaiMonarch/.test(obj.getClass()) && obj.status !== 'rekt')
     .filter(character => Math.abs(character.getCenter().x - enemy.getCenter().x) <= enemy.senseRadius)
 
   return characters

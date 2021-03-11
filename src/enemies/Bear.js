@@ -159,7 +159,11 @@ class Bear extends Agent {
       return
     }
 
-    this.dmgs.push({y: -8, dmg})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.health = Math.max(this.health - dmg, 0)
 
     if (dmg > 2 && Math.random() < .5) {

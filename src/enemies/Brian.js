@@ -172,7 +172,11 @@ class Brian extends Agent {
   hurt = dmg => {
     if (/hurt|rekt/.test(this.status)) return
 
-    this.dmgs.push({y: -12, dmg})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -12,
+      dmg: Math.ceil(dmg)
+    })
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
     this.hurtAttackCounter = 6
