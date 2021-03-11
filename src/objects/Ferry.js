@@ -88,16 +88,16 @@ class Ferry extends GameObject {
     this.direction = velocity >= 0 ? 'right' : 'left'
 
     this.captain.x = velocity >= 0 ? this.x + 38 : this.x + 98
-    this.back.x = velocity >= 0 ? this.x + 15 : this.x + 131
+    this.back.x = velocity >= 0 ? this.x : this.x + 146
     this.ramp.x = velocity >= 0 ? this.x + 110 : this.x + 2 + 3 + 29
     this.ramp.heightMap = velocity >= 0 ? rampHeightMapRight : rampHeightMapLeft
     this.deck.x = velocity >= 0 ? this.x + 110 + 11 : this.x + 2 + 3
     this.handRail.x = velocity >= 0 ? this.x + 110 + 11 + 26 : this.x + 2
   }
 
-  stop = () => {
+  stop = backSolid => {
     this.vx = 0
-    this.back.isSolid = false
+    this.back.isSolid = backSolid || false
   }
 
   update = () => {

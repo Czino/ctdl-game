@@ -14,7 +14,6 @@ export default {
   loop: true,
   tracks: {
     triangle: square,
-    brownNoise: triangle,
     square: triangle,
     pulse: sine,
     sine: pulse,

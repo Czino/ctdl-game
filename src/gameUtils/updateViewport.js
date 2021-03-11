@@ -77,6 +77,11 @@ export const updateViewport = () => {
   }
   CTDLGAME.objects
     .map(obj => {
+      if (obj.boss && obj.hadIntro) {
+        obj.inViewport = true
+        return obj
+      }
+
       if (/Boundary|Ramp/.test(obj.getClass())) {
         obj.inViewport = intersects(extraExtendedViewport, obj.getBoundingBox('whole'))
       } else {

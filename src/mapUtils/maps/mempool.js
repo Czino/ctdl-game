@@ -129,6 +129,7 @@ jumpIntoThePool.jumpEvent = char => {
   char.context = 'fgContext'
   addHook(CTDLGAME.frame + 80, () => {
     playSound('splash')
+    // TODO add visual splash effect
     char.context = 'charContext'
   })
 }

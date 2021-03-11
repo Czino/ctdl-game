@@ -188,7 +188,7 @@ function tick() {
 
   // update objects that shall update and are in viewport
   CTDLGAME.objects
-    .filter(obj => obj.update && obj.inViewport || (obj.boss && obj.hadIntro))
+    .filter(obj => obj.update && obj.inViewport)
     .forEach(obj => obj.update())
 
   if (CTDLGAME.world.map.update) CTDLGAME.world.map.update()
