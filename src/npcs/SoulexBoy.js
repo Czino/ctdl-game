@@ -26,6 +26,7 @@ const moveLeftAndJump = new Task({
 })
 const moveRandomAndJump = new Task({
   run: agent => {
+    if (!CTDLGAME.mempool || CTDLGAME.mempool.vsize < 40000000) return FAILURE
     if (agent.strategy !== 'moveRandomAndJump' || agent.sensedFriends.length === 0 || Math.random() < .95) return FAILURE
     agent.direction = Math.random() < .5 ? 'right' : 'left'
     return agent.jump.effect()
@@ -171,6 +172,16 @@ class SoulexBoy extends Agent {
           addTextToQueue(text)
         }
       })
+  }
+
+  touchEvent = () => {
+    if (this.touched) return
+    this.touched = true
+    if (CTDLGAME.mempool && CTDLGAME.mempool.vsize < 40000000) {
+      addTextToQueue('SoulexBoy:\nThe mempool is almost\nempty...', () => {
+        this.touched = false
+      })
+    }
   }
 
   applyGravity = false

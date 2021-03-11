@@ -97,7 +97,7 @@ export const checkMempool = callback => {
       }, {})
       if (callback) callback()
     })
-    .catch(() => {
+    .then(() => {
       CTDLGAME.mempool = mempoolDummy
       if (callback) callback()
     })

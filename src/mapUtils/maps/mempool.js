@@ -125,6 +125,7 @@ const jumpIntoThePool = new GameObject('jumpIntoThePool', {
 })
 
 jumpIntoThePool.jumpEvent = char => {
+  if (CTDLGAME.mempool.vsize < 40000000) return
   char.context = 'fgContext'
   addHook(CTDLGAME.frame + 80, () => {
     playSound('splash')
@@ -259,7 +260,7 @@ const updateBucket = () => {
   constants.fgContext.drawImage(
     CTDLGAME.assets.mempool,
     64, 72, bucket.w, bucket.h,
-    bucket.x, Math.min(bucket.y - bucket.h, 37*tileSize) - bucketOffset, bucket.w, bucket.h
+    bucket.x, Math.min(bucket.y - bucket.h, 37 * tileSize) - bucketOffset, bucket.w, bucket.h
   )
   for (let i = 0; i < bucket.y - bucket.h; i+=8) {
     constants.fgContext.drawImage(
@@ -271,7 +272,8 @@ const updateBucket = () => {
 }
 
 const mempoolCallback = () => {
-  bucket.y = Math.round(poolTop + (1 - CTDLGAME.mempool.vsize / mempoolSize) * (maxPoolHeight - 3 * tileSize))
+  bucket.y = Math.round(poolTop + (1 - Math.min(CTDLGAME.mempool.vsize, mempoolSize) / mempoolSize) * (maxPoolHeight - 3 * tileSize))
+  if (CTDLGAME.mempool.vsize > mempoolSize / 10) bucket.y += 2
 }
 
 export default {
