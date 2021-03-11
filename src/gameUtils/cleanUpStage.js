@@ -7,8 +7,8 @@ import { CTDLGAME } from './CTDLGAME'
 export const cleanUpStage = () => {
   CTDLGAME.objects = CTDLGAME.objects
     .filter(obj => {
-      // remove objects that have obviously fallen into the abyss
-      return obj.y < CTDLGAME.world.h * 2
+      // remove objects that have obviously fallen into the abyss except bosses
+      return obj.boss || obj.y < CTDLGAME.world.h * 2
     })
     .filter(obj => obj && !obj.remove && obj.y < 2048) // remove objects that are marked for removal
 

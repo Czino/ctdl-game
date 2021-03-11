@@ -71,6 +71,42 @@ export default {
     ],
     attack2: [
       { x: 6 * w, y: 2 * h, w: 3 * w , h }
+    ],
+    attack3Spawn: [
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+    ],
+    attack3Dive: [
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+    ],
+    attack3Idle: [
+      { x: 0 * w, y: 4 * h, w , h },
+    ],
+    attack3Left: [
+      { x: 2 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 2 * w, y: 4 * h, w , h },
+      { x: 3 * w, y: 4 * h, w , h }
+    ],
+    attack3Right: [
+      { x: 5 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 5 * w, y: 4 * h, w , h },
+      { x: 6 * w, y: 4 * h, w , h }
     ]
   },
   left: {
@@ -140,6 +176,42 @@ export default {
     ],
     attack2: [
       { x: 6 * w, y: 2 * h, w: 3 * w , h }
+    ],
+    attack3Spawn: [
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+    ],
+    attack3Dive: [
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+      { x: 0 * w, y: 4 * h, w , h },
+    ],
+    attack3Idle: [
+      { x: 0 * w, y: 4 * h, w , h },
+    ],
+    attack3Left: [
+      { x: 2 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 1 * w, y: 4 * h, w , h },
+      { x: 2 * w, y: 4 * h, w , h },
+      { x: 3 * w, y: 4 * h, w , h }
+    ],
+    attack3Right: [
+      { x: 5 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 4 * w, y: 4 * h, w , h },
+      { x: 5 * w, y: 4 * h, w , h },
+      { x: 6 * w, y: 4 * h, w , h }
     ]
   },
 }

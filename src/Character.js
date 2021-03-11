@@ -33,6 +33,8 @@ const moveToFriend = new Task({
   run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
 })
 
+// TODO duck if selected character ducks as well
+
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -195,7 +197,7 @@ class Character extends Agent {
     condition: () => true,
     effect: () => {
       if (!/attack/i.test(this.status)) this.frame = 0
-      this.status = /duck/.test(this.status) ? 'duckAttack': 'attack'
+      this.status = /duck/i.test(this.status) ? 'duckAttack': 'attack'
 
       if (this.id === 'katoshi' && this.frame !== 3) return SUCCESS
       this.makeDamage(1)
@@ -209,7 +211,7 @@ class Character extends Agent {
       const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
-        this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
+        this.status = /duck/i.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
         return SUCCESS
@@ -224,7 +226,7 @@ class Character extends Agent {
 
       const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
-        this.status = /duck/.test(this.status) ? 'duckMoveAttack': 'moveAttack'
+        this.status = /duck/i.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
         return SUCCESS
@@ -306,7 +308,7 @@ class Character extends Agent {
   }
 
   canStandUp = () => {
-    if (!/duck/.test(this.status)) return true
+    if (!/duck/i.test(this.status)) return true
     let standUpTo = this.getBoundingBox()
       standUpTo.y -= 6
       // standUpTo.x += this.direction === 'right' ? 2 : -2 // do not stand up if you face obstacle
@@ -609,7 +611,7 @@ class Character extends Agent {
     window.SELECTEDCHARACTER = null
   }
 
-  getBoundingBox = () => /duck/.test(this.status)
+  getBoundingBox = () => /duck/i.test(this.status)
     ? ({ // ducking
       id: this.id,
       x: this.x + 6,

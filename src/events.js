@@ -277,7 +277,7 @@ export const startScreenHandler = async (e) => {
     CTDLGAME.touchScreen = true
 
     constants.BUTTONS
-      .filter(button => /moveLeft|moveRight|jump|duck|switch|attack/.test(button.action))
+      .filter(button => /moveLeft|moveRight|jump|duck|switch|attack/i.test(button.action))
       .forEach(button => button.active = true)
   }
 }
