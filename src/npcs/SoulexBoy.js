@@ -9,7 +9,7 @@ import { random } from '../arrayUtils'
 import { addTextToQueue } from '../textUtils'
 
 const jump = new Task({
-  run: agent => agent.strategy === 'jump' && agent.sensedFriends.length > 0 ? agent.jump.effect() : FAILURE
+  run: agent => agent.strategy === 'jump' ? agent.jump.effect() : FAILURE
 })
 const moveRight = new Task({
   run: agent => agent.strategy === 'moveRight' ? agent.moveRight.effect() : FAILURE
@@ -19,8 +19,15 @@ const moveLeft = new Task({
 })
 const moveLeftAndJump = new Task({
   run: agent => {
-    if (agent.strategy !== 'moveLeftAndJump' || agent.sensedFriends.length === 0) return FAILURE
+    if (agent.strategy !== 'moveLeftAndJump') return FAILURE
     agent.direction = 'left'
+    return agent.jump.effect()
+  }
+})
+const moveRandomAndJump = new Task({
+  run: agent => {
+    if (agent.strategy !== 'moveRandomAndJump' || agent.sensedFriends.length === 0 || Math.random() < .95) return FAILURE
+    agent.direction = Math.random() < .5 ? 'right' : 'left'
     return agent.jump.effect()
   }
 })
@@ -31,6 +38,7 @@ const tree = new Selector({
     moveRight,
     moveLeft,
     moveLeftAndJump,
+    moveRandomAndJump,
     'idle'
   ]
 })
@@ -47,7 +55,7 @@ class SoulexBoy extends Agent {
     this.thingsToSaySelect = [['SoulexBoy:\nEvery day is a great day!']]
     this.checkpoints = [
       new Boundary({
-        id: 'jump',
+        id: 'moveRandomAndJump',
         x: 26 * 8,
         y: 20 * 8,
         w: 8,

@@ -69,9 +69,19 @@ export const updateViewport = () => {
     w: CTDLGAME.viewport.w + 32,
     h: CTDLGAME.viewport.h + 256
   }
+  const extraExtendedViewport = {
+    x: CTDLGAME.viewport.x - 32,
+    y: CTDLGAME.viewport.y - 144,
+    w: CTDLGAME.viewport.w + 64,
+    h: CTDLGAME.viewport.h + 288
+  }
   CTDLGAME.objects
     .map(obj => {
-      obj.inViewport = intersects(extendedViewport, obj.getBoundingBox('whole'))
+      if (/Boundary|Ramp/.test(obj.getClass())) {
+        obj.inViewport = intersects(extraExtendedViewport, obj.getBoundingBox('whole'))
+      } else {
+        obj.inViewport = intersects(extendedViewport, obj.getBoundingBox('whole'))
+      }
       return obj
     })
 }
