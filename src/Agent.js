@@ -79,9 +79,6 @@ BehaviorTree.register('attack2', new Task({
 BehaviorTree.register('attack3', new Task({
   run: agent => agent.attack3.condition() ? agent.attack3.effect() : FAILURE
 }))
-BehaviorTree.register('moveTo', new Task({
-  run: agent => agent.moveTo.condition() ? agent.moveTo.effect() : FAILURE
-}))
 BehaviorTree.register('hasLowHealth', new Task({
   run: agent => agent.health / agent.maxHealth < .2 ? SUCCESS : FAILURE
 }))
@@ -158,7 +155,7 @@ class Agent extends GameObject {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -221,7 +218,10 @@ class Agent extends GameObject {
     }
   }
   moveTo = {
-    condition: ({ other }) => other && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+    condition: ({ other }) => {
+      const senseBox = this.getSenseBox()
+      return other && intersects(senseBox, other.getBoundingBox())
+    },
     effect: ({ other, distance }) => {
       const ducks = /duck/i.test(this.status)
       let action = ducks ? 'duck' : 'idle'

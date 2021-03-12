@@ -63,7 +63,7 @@ class Human extends Agent {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'run'

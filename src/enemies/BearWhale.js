@@ -109,7 +109,7 @@ class BearWhale extends Agent {
         if (side) this.direction = side === 'right' ? 'left' : 'right'
         // move bearwhale in front of ferry
         if (this.currentStrategy === 'attack3') {
-          this.x = window.SELECTEDCHARACTER.x - this.getCenter().x
+          this.x = window.SELECTEDCHARACTER.x - 25
           this.context = 'bgContext'
           this.status = 'attack3Spawn'
         } else if (this.direction === 'left') {
@@ -145,6 +145,7 @@ class BearWhale extends Agent {
         playSound('longNoise')
       } else if (this.frame === 4) {
         this.currentStrategy = this.strategy
+        console.log(this.currentStrategy, this.status)
         this.status = 'swim'
         this.direction = Math.random() < .5 ? 'left' : 'right'
         this.stayUnderWaterCounter = 10 + Math.round(Math.random() * 20)
@@ -291,11 +292,17 @@ class BearWhale extends Agent {
         h: boundingBox.h
       }
       if (!/attack3Left|attack3Right/i.test(this.status)) {
-        this.status = intersects(attackBoxLeft, this.closestEnemy) ?
-          'attack3Left'
-          : intersects(attackBoxRight, this.closestEnemy)
-          ? 'attack3Right'
-          : 'attack3Idle'
+        const canAttackLeft = this.sensedEnemies.some(enemy => intersects(attackBoxLeft, enemy))
+        const canAttackRight = this.sensedEnemies.some(enemy => intersects(attackBoxRight, enemy))
+        if (canAttackLeft && canAttackRight) {
+          this.status = Math.random() < .5 ? 'attack3Left' : 'attack3Right'
+        } else {
+          this.status = canAttackLeft ?
+            'attack3Left'
+            : intersects(attackBoxRight, this.closestEnemy)
+            ? 'attack3Right'
+            : 'attack3Idle'
+        }
       }
       if (this.status === 'attack3Left' && this.frame === 6) {
         this.closestEnemy.hurt(this.strength, 'left', this)
@@ -336,7 +343,7 @@ class BearWhale extends Agent {
     this.health = Math.max(this.health - dmg, 0)
 
     this.dmgToChangeStrategy -= dmg
-    if (Math.random() < .05) this.status = 'hurt'
+    if (Math.random() < .05 && this.status !== 'attack2') this.status = 'hurt'
 
     this.protection = 2
     if (this.health <= 0) {

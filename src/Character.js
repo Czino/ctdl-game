@@ -29,6 +29,9 @@ const touchesEnemy = new Task({
 const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
 })
+const standUp = new Task({
+  run: agent => agent.standUp.condition() ? agent.standUp.effect() : FAILURE
+})
 const friendDucks = new Task({
   run: () => /duck/i.test(window.SELECTEDCHARACTER.status)
 })
@@ -92,7 +95,7 @@ const duckSequence = new Sequence({
 })
 const standingSequnce = new Sequence({
   nodes: [
-    'idle',
+    standUp,
     new Selector({
       nodes: [
         attackEnemy,
@@ -153,12 +156,14 @@ class Character extends Agent {
   moveLeft = {
     condition: () => true,
     effect: () => {
+      console.log('st', !this.canStandUp() && this.duckMoveLeft.condition())
       if (!this.canStandUp() && this.duckMoveLeft.condition()) return this.duckMoveLeft.effect()
 
       this.direction = 'left'
 
       const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
+      console.log(hasMoved)
       if (hasMoved) {
         this.status = 'move'
         return SUCCESS
@@ -190,6 +195,19 @@ class Character extends Agent {
       return FAILURE
     }
   }
+  standUp = {
+    condition: () => this.canStandUp(),
+    effect: () => {
+      if (/attack/i.test(this.status)) {
+        this.status = 'attack'
+      } else if (/move/i.test(this.status)) {
+        this.status = 'move'
+      } else {
+        this.status = 'idle'
+      }
+      return SUCCESS
+    }
+  }
   duck = {
     condition: () => true,
     effect: () => {
@@ -206,7 +224,7 @@ class Character extends Agent {
       this.checkDownEvents()
 
       const hasMoved = !moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
-      return hasMoved
+      return hasMoved ? SUCCESS : FAILURE
     }
   }
   duckMoveRight = {
@@ -217,7 +235,7 @@ class Character extends Agent {
       this.checkDownEvents()
 
       const hasMoved = !moveObject(this, { x: this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
-      return hasMoved
+      return hasMoved ? SUCCESS : FAILURE
     }
   }
   attack = {
@@ -546,11 +564,11 @@ class Character extends Agent {
 
     this.sensedEnemies = this.sensedObjects
       .filter(enemy => enemy.enemy && enemy.status !== 'rekt' && enemy.health > 0)
-      .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
+      .filter(enemy => intersects(senseBox, enemy))
 
     this.sensedFriends = this.sensedObjects
       .filter(friend => friend.getClass() === 'Character' && friend.status !== 'rekt')
-      .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
+      .filter(friend => intersects(senseBox, friend))
 
     this.touchedObjects = CTDLGAME.quadTree
       .query(boundingBox)
