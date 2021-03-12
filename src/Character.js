@@ -156,14 +156,12 @@ class Character extends Agent {
   moveLeft = {
     condition: () => true,
     effect: () => {
-      console.log('st', !this.canStandUp() && this.duckMoveLeft.condition())
       if (!this.canStandUp() && this.duckMoveLeft.condition()) return this.duckMoveLeft.effect()
 
       this.direction = 'left'
 
       const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
-      console.log(hasMoved)
       if (hasMoved) {
         this.status = 'move'
         return SUCCESS

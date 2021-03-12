@@ -27,7 +27,7 @@ class Ferry extends GameObject {
       'nakadai_mon',
       {
         x: this.direction === 'right' ? this.x + 38 : this.x + 98,
-        y: this.y + 36
+        y: this.y + 16
       }
     )
     this.captain.toJSON = null // this NPC does not need to be stored in the DB

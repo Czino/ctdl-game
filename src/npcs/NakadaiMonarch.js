@@ -1,4 +1,4 @@
-import { BehaviorTree, Sequence, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Sequence, Task, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import spriteData from '../sprites/nakadaiMonarch'
 import { CTDLGAME } from '../gameUtils'
@@ -8,7 +8,9 @@ import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
 import { playSound } from '../sounds'
 
-
+const sit = new Task({
+  run: agent => agent.sit.condition() ? agent.sit.effect() : FAILURE
+})
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -39,6 +41,7 @@ const regularBehaviour = new Selector({
 
 const tree = new Selector({
   nodes: [
+    sit,
     'survive',
     regularBehaviour
   ]
@@ -75,6 +78,14 @@ class NakadaiMonarch extends Agent {
     effect: () => {
       this.status = 'idle'
       this.exhaustion -= .5
+      return SUCCESS
+    }
+  }
+  sit = {
+    condition: () => !this.follow,
+    effect: () => {
+      this.status = 'sit'
+      this.exhaustion -= 1
       return SUCCESS
     }
   }
@@ -121,6 +132,7 @@ class NakadaiMonarch extends Agent {
       .query(this.getBoundingBox())
       .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
 
+    this.sensedObjects = CTDLGAME.quadTree.query(senseBox)
 
     if (window.DRAWSENSORS) {
       constants.charContext.beginPath()
@@ -129,12 +141,13 @@ class NakadaiMonarch extends Agent {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemy && enemy.health && enemy.health > 0)
-      .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
+      .filter(enemy => enemy.enemy && enemy.status !== 'rekt' && enemy.health > 0)
+      .filter(enemy => intersects(senseBox, enemy))
 
+    
     this.sensedFriends = this.sensedObjects
       .filter(friend => /Character/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
-      .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
+      .filter(friend => intersects(senseBox, friend))
 
     if (Math.abs(this.vy) < 3 && !/fall/.test(this.status)) {
       this.closestEnemy = getClosest(this, this.sensedEnemies)
@@ -148,7 +161,6 @@ class NakadaiMonarch extends Agent {
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {
       this.frame = 0
-      if (/action/.test(this.status)) this.status = 'idle'
     }
 
     this.draw()

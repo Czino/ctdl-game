@@ -145,7 +145,6 @@ class BearWhale extends Agent {
         playSound('longNoise')
       } else if (this.frame === 4) {
         this.currentStrategy = this.strategy
-        console.log(this.currentStrategy, this.status)
         this.status = 'swim'
         this.direction = Math.random() < .5 ? 'left' : 'right'
         this.stayUnderWaterCounter = 10 + Math.round(Math.random() * 20)
@@ -236,6 +235,7 @@ class BearWhale extends Agent {
         this.vy = -12
         this.vx = -16
         this.applyGravity = true
+        this.context = 'fgContext'
         playSound('longNoise')
       }
       if (this.y > water && this.y < water + 15) {
@@ -434,7 +434,7 @@ class BearWhale extends Agent {
       }
       this.moveLeft.effect()
     } else if (!this.hadIntro && ferry && (this.x - ferry.x < 0 || this.status === 'spawn')) {
-      this.status = 'spawn'
+      this.spawn.effect('right')
       if (this.frame === 4) {
         ferry.stop(true)
         playSound('elevatorStop')
