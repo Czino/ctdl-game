@@ -88,5 +88,6 @@ export const moveObject = (object, vector, tree) => {
   if (hasCollided && isVertical) {
     object.vy = 0
   }
+
   return hasCollided
 }

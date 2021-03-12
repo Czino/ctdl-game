@@ -75,7 +75,7 @@ class Bear extends Agent {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -91,7 +91,7 @@ class Bear extends Agent {
       this.direction = 'right'
       this.isMoving = 'right'
 
-      const hasMoved = moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
         if (this.frame % 5 === 0) playSound('drop')

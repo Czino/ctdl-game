@@ -29,11 +29,13 @@ const touchesEnemy = new Task({
 const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
 })
+const friendDucks = new Task({
+  run: () => /duck/i.test(window.SELECTEDCHARACTER.status)
+})
 const moveToFriend = new Task({
   run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
 })
 
-// TODO duck if selected character ducks as well
 
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
@@ -75,14 +77,39 @@ const goToFriend = new Sequence({
   ]
 })
 
+const duckSequence = new Sequence({
+  nodes: [
+    friendDucks,
+    duck,
+    new Selector({
+      nodes: [
+        attackEnemy,
+        goToEnemy,
+        goToFriend
+      ]
+    })
+  ]
+})
+const standingSequnce = new Sequence({
+  nodes: [
+    'idle',
+    new Selector({
+      nodes: [
+        attackEnemy,
+        goToEnemy,
+        goToFriend,
+        'moveRandom',
+        'idle'
+      ]
+    })
+  ]
+})
+
 const tree = new Selector({
   nodes: [
     'survive',
-    attackEnemy,
-    goToEnemy,
-    goToFriend,
-    'moveRandom',
-    'idle'
+    duckSequence,
+    standingSequnce,
   ]
 })
 
@@ -178,7 +205,7 @@ class Character extends Agent {
       this.status = 'duckMove'
       this.checkDownEvents()
 
-      const hasMoved = moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.duckSpeed, y: 0 }, CTDLGAME.quadTree)
       return hasMoved
     }
   }
@@ -277,6 +304,7 @@ class Character extends Agent {
     }
   }
   checkDownEvents = () => {
+    if (!this.selected) return
     const boundingBox = this.getBoundingBox()
     const eventObject =  CTDLGAME.quadTree.query(boundingBox)
       .filter(obj => obj.downEvent)

@@ -37,7 +37,7 @@ class Wave extends GameObject {
 
     this.sensedEnemies = CTDLGAME.quadTree.query(this.getBoundingBox())
       .filter(obj => obj && /Character|Human|NakadaiMonarch/.test(obj.getClass()) && obj.status !== 'rekt')
-      .filter(obj => /duck/.test(obj.status))
+      .filter(obj => !/duck/i.test(obj.status))
       .filter(enemy => intersects(enemy, this.getBoundingBox()))
       .map(enemy => {
         enemy.stun(this.vx < 0 ? 'right' : 'left', 4)

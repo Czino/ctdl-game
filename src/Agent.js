@@ -201,11 +201,11 @@ class Agent extends GameObject {
   }
   attack = {
     condition: () => {
-      if (!this.closestEnemy) return FAILURE
+      if (!this.closestEnemy) return false
 
-      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return FAILURE // not in biting distance
+      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return false // not in biting distance
 
-      return SUCCESS
+      return true
     },
     effect: () => {
       if (this.status === 'attack' && this.frame === 3) {
@@ -223,13 +223,15 @@ class Agent extends GameObject {
   moveTo = {
     condition: ({ other }) => other && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
     effect: ({ other, distance }) => {
-      let action = 'idle'
+      const ducks = /duck/i.test(this.status)
+      let action = ducks ? 'duck' : 'idle'
 
       if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-        action = 'moveLeft'
+        action = ducks ? 'duckMoveLeft' : 'moveLeft'
       } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-        action = 'moveRight'
+        action = ducks ? 'duckMoveRight' : 'moveRight'
       }
+
       if (this[action].condition()) return this[action].effect()
       return FAILURE
     }
