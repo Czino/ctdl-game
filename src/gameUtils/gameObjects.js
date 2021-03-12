@@ -19,6 +19,7 @@ import Citizen from '../npcs/Citizen'
 import Prophetoshi from '../npcs/Prophetoshi'
 import NPC from '../npcs/NPC'
 import Des from '../npcs/Des'
+import Soulexporter from '../npcs/Soulexporter'
 import SoulexBoy from '../npcs/SoulexBoy'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
@@ -60,6 +61,7 @@ export const gameObjects = {
     Candle,
     NPC,
     Des,
+    Soulexporter,
     SoulexBoy,
     Doge,
     Elevator,

@@ -18,12 +18,14 @@ import { addTextToQueue } from '../../textUtils'
 import { playSound } from '../../sounds'
 import { intersects } from '../../geometryUtils'
 import Des from '../../npcs/Des'
+import Soulexporter from '../../npcs/Soulexporter'
 import SoulexBoy from '../../npcs/SoulexBoy'
 
 import mempool from '../../sprites/mempool.png'
 import citizen1 from '../../sprites/citizen-1.png'
 import everitt from '../../sprites/everitt.png'
 import des from '../../sprites/des.png'
+import soulexporter from '../../sprites/soulexporter.png'
 import soulexBoy from '../../sprites/soulexBoy.png'
 
 const worldWidth = 76
@@ -312,10 +314,18 @@ export default {
         y: 24 * tileSize - 2
       }
     ),
+    new Soulexporter(
+      'soulexporter',
+      {
+        x: 38 * tileSize -2,
+        y: 18 * tileSize -2,
+        context: 'fgContext'
+      }
+    ),
     new SoulexBoy(
       'soulexBoy',
       {
-        x: 61 * tileSize,
+        x: 59 * tileSize,
         y: 26 * tileSize - 2,
         direction: 'right'
       }
@@ -357,6 +367,7 @@ export default {
     mempool,
     everitt,
     des,
+    soulexporter,
     soulexBoy,
     citizen1
   },
