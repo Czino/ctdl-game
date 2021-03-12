@@ -225,5 +225,21 @@ class NakadaiMonarch extends Agent {
       }
     })
   }
+
+  getBoundingBox = () => this.status !== 'rekt'
+    ? ({ // normal
+        id: this.id,
+        x: this.x + 6,
+        y: this.y + 6,
+        w: this.w - 12,
+        h: this.h - 6
+      })
+    : ({ // rekt
+      id: this.id,
+      x: this.x + 5,
+      y: this.y + 3,
+      w: this.w - 10,
+      h: this.h - 3
+    })
 }
 export default NakadaiMonarch
