@@ -77,7 +77,7 @@ export default {
   objects,
   npcs: () => [
     new BearWhale(
-      'J0E007',
+      'bearWhale',
       {
         x: 70 * tileSize,
         y: 120 * tileSize

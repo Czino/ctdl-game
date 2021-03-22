@@ -12,9 +12,8 @@ import Item from '../Item'
 import Wave from '../objects/Wave'
 import { addTextToQueue } from '../textUtils'
 
-
 const emerge = new Task({
-  run: agent => agent.spawn.condition() ? agent.spawn.effect() : FAILURE
+  run: agent => agent.spawn.condition() ? agent.spawn.effect(agent.health <= 1 ? 'right' : null) : FAILURE
 })
 const dive = new Task({
   run: agent => agent.dive.condition() ? agent.dive.effect() : FAILURE
@@ -66,9 +65,13 @@ class BearWhale extends Agent {
     this.attackCounter = options.attackCounter || 0
     this.strategy = options.strategy || 'attack1'
     this.currentStrategy = options.currentStrategy || 'attack1'
-    this.health = options.health ?? 3940
-    this.usd = options.usd || Math.round(9000000)
-    this.item = { id: 'honeybadger' }
+    this.health = options.health ?? 8 * 300
+    this.usd = options.usd || Math.round(34410 * 300)
+    this.item = [
+      { id: 'honeybadger' },
+      { id: 'honeybadger' },
+      { id: 'phoenix' }
+    ]
     this.context = options.context || 'fgContext'
     this.strength = 8
     this.enemy = options.enemy
@@ -281,13 +284,13 @@ class BearWhale extends Agent {
       const attackBoxLeft = {
         x: boundingBox.x - this.attackRange * 2,
         y: boundingBox.y,
-        w: this.attackRange * 4,
+        w: boundingBox.w / 2 + this.attackRange * 2,
         h: boundingBox.h
       }
       const attackBoxRight = {
-        x: boundingBox.x + boundingBox.w - this.attackRange * 2,
+        x: boundingBox.x + boundingBox.w / 2,
         y: boundingBox.y,
-        w: this.attackRange * 4,
+        w: boundingBox.w / 2 + this.attackRange * 2,
         h: boundingBox.h
       }
       if (!/attack3Left|attack3Right/i.test(this.status)) {
@@ -354,33 +357,44 @@ class BearWhale extends Agent {
   }
 
   die = () => {
-    this.status = 'hurt'
-    this.frame = 0
-    this.canMove = false
-
-    playSound('creatureHurt')
-    addHook(CTDLGAME.frame + 8, () => playSound('creatureHurt'))
-    addHook(CTDLGAME.frame + 16, () => playSound('creatureHurt'))
-    addHook(CTDLGAME.frame + 24, () => {
-      playSound('creatureHurt')
-      initSoundtrack('epiphin')
-      this.status = 'rekt'
-    })
-    if (this.usd) CTDLGAME.inventory.usd += this.usd
-    if (this.item) {
-      let item = new Item(
-        this.item.id,
-        {
-          x: this.x,
-          y: this.y,
-          vy: -8,
-          vx: Math.round((Math.random() - .5) * 10)
-        }
-      )
-      CTDLGAME.objects.push(item)
+    this.health = 1
+    if (this.status === 'attack2') return
+    if (this.direction !== 'left' || /attack3/.test(this.status)) {
+      this.strategy = 'attack1'
+      return this.dive.effect()
     }
 
-    addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
+    this.health = 0
+    const ferry = this.sensedObjects.find(obj => obj.id = 'ferry')
+    this.status = 'rekt'
+    this.frame = 0
+    this.canMove = false
+    this.applyGravity = true
+
+    playSound('creatureHurt')
+    addHook(CTDLGAME.frame + 16, () => playSound('creatureHurt'))
+    addHook(CTDLGAME.frame + 32, () => playSound('creatureHurt'))
+    addHook(CTDLGAME.frame + 48, () => {
+      initSoundtrack('epiphin')
+      if (this.usd) CTDLGAME.inventory.usd += this.usd
+  
+      this.item.forEach((item, index) => {
+        CTDLGAME.objects.push(new Item(
+          item.id,
+          {
+            x: ferry.x + 40 + index * 20,
+            y: ferry.y,
+            vy: -8,
+            vx: 0
+          }
+        ))
+      })
+
+      addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
+      addTextToQueue('nakadai.MONARCH:\nWow, what a beast! I can\'t wait to tell the others at\nthe citadel.', () => {
+        ferry.drive(3)
+      })
+    })
   }
 
   applyPhysics = () => {
@@ -428,7 +442,7 @@ class BearWhale extends Agent {
     if (!this.hadIntro && ferry && this.x - ferry.x < 130 && this.x - ferry.x > 0 && this.status !== 'spawn') {
       if (this.x - ferry.x >= 128) {
         playSound('longNoise')
-        addTextToQueue('nakadai.MONARCH:\nIt\'s J0E007, the big bear\nwhale! We might see strong volatility ahead.')
+        addTextToQueue('nakadai.MONARCH:\nIt\'s the big bear\nwhale! We might see strong volatility ahead.')
         addTextToQueue('nakadai.MONARCH:\nYou have to brace yourself and HODL no matter what, if you want to survive.')
       }
       this.moveLeft.effect()
@@ -500,35 +514,20 @@ class BearWhale extends Agent {
     })
   }
 
-  // TODO check this
-  getBoundingBox = () => this.status !== 'rekt'
-    ? ({ // normal
-        id: this.id,
-        x: this.x + 6,
-        y: this.y + 6,
-        w: this.w - 6,
-        h: this.h - 6
-      })
-    : ({ // rekt
-      id: this.id,
-      x: this.x,
-      y: this.y + 25,
-      w: this.w,
-      h: this.h - 25
-    })
-
-  getAnchor = () => this.status !== 'rekt'
+  getBoundingBox = () => this.direction === 'left'
     ? ({
-        x: this.getBoundingBox().x + 2,
-        y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-        w: this.getBoundingBox().w - 4,
-        h: 1
-    })
+        id: this.id,
+        x: this.x,
+        y: this.y,
+        w: this.w - 6,
+        h: this.h
+      })
     : ({
-      x: this.getBoundingBox().x,
-      y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
-      w: this.getBoundingBox().w,
-      h: 1
-  })
+      id: this.id,
+      x: this.x + 6,
+      y: this.y,
+      w: this.w - 6,
+      h: this.h
+    })
 }
 export default BearWhale

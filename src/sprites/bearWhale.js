@@ -57,6 +57,9 @@ export default {
     hurt: [
       { x: 2 * w, y: 1 * h, w , h }
     ],
+    rekt: [
+      { x: (5 + 1) * w, y: 2 * h, w , h }
+    ],
     attack: [
       { x: 3 * w, y: 1 * h, w , h },
       { x: 2 * w, y: 1 * h, w , h },
@@ -70,7 +73,7 @@ export default {
       { x: 4 * w, y: 1 * h, w , h }
     ],
     attack2: [
-      { x: 6 * w, y: 2 * h, w: 3 * w , h }
+      { x: 6 * w, y: 3 * h, w: 3 * w , h }
     ],
     attack3Spawn: [
       { x: 0 * w, y: 4 * h, w , h },
@@ -162,6 +165,9 @@ export default {
     hurt: [
       { x: (5 + 2) * w, y: 1 * h, w , h },
     ],
+    rekt: [
+      { x: (5 + 1) * w, y: 2 * h, w , h }
+    ],
     attack: [
       { x: (5 + 3) * w, y: 1 * h, w , h },
       { x: (5 + 2) * w, y: 1 * h, w , h },
@@ -175,7 +181,7 @@ export default {
       { x: (5 + 4) * w, y: 1 * h, w , h }
     ],
     attack2: [
-      { x: 6 * w, y: 2 * h, w: 3 * w , h }
+      { x: 6 * w, y: 3 * h, w: 3 * w , h }
     ],
     attack3Spawn: [
       { x: 0 * w, y: 4 * h, w , h },
