@@ -2,9 +2,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 
 import bearWhale from '../sprites/bearWhale'
 import { addHook, CTDLGAME } from '../gameUtils'
-import { intersects, getClosest, moveObject } from '../geometryUtils'
-import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils';
+import { intersects, getClosest } from '../geometryUtils'
 import { playSound } from '../sounds';
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
@@ -12,6 +10,7 @@ import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import Item from '../Item'
 import Wave from '../objects/Wave'
+import { addTextToQueue } from '../textUtils'
 
 
 const emerge = new Task({
@@ -332,7 +331,7 @@ class BearWhale extends Agent {
     if (Math.random() < .1) playSound('bearGrowl')
   }
 
-  hurtCondition = (dmg, direction) => !/dive|swim|spawn|hurt|rekt/i.test(this.status) && !this.protection
+  hurtCondition = () => !/dive|swim|spawn|hurt|rekt/i.test(this.status) && !this.protection
   hurt = (dmg, direction, agent) => {
     if (!this.hurtCondition(dmg, direction)) return
     this.dmgs.push({

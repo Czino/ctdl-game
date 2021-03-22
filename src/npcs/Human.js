@@ -3,7 +3,6 @@ import { BehaviorTree, Selector, SUCCESS, FAILURE } from '../../node_modules/beh
 import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils';
 import { playSound } from '../sounds';

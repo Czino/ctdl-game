@@ -4,7 +4,6 @@ import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import Explosion from '../Explosion'
 import { playSound } from '../sounds'
-import { intersects } from '../geometryUtils'
 
 export default {
   monk: {

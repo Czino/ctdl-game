@@ -3,7 +3,6 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } fro
 import shitcoiner from '../sprites/shitcoiner'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import constants from '../constants'
 import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
