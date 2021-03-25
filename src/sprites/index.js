@@ -15,6 +15,8 @@ import babyLizard from './babyLizard'
 import craig from './craig'
 import des from './des'
 import soulexBoy from './soulexBoy'
+import soulexporter from './soulexporter'
+import wiz from './wiz'
 import hodlTarantula from './hodlTarantula'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
@@ -40,6 +42,8 @@ export default {
     everitt: citizen,
     des,
     soulexBoy,
+    soulexporter,
+    wiz,
     hodlTarantula,
     shitcoiner,
     brian,

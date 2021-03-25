@@ -15,6 +15,8 @@ import vlad from '../sprites/vlad.png'
 import everitt from '../sprites/everitt.png'
 import des from '../sprites/des.png'
 import soulexBoy from '../sprites/soulexBoy.png'
+import soulexporter from '../sprites/soulexporter.png'
+import wiz from '../sprites/wiz.png'
 import hodlTarantula from '../sprites/hodlTarantula.png'
 import hodlonaut from '../sprites/hodlonaut.png'
 import katoshi from '../sprites/katoshi.png'
@@ -55,6 +57,8 @@ export const assets = {
     everitt,
     des,
     soulexBoy,
+    soulexporter,
+    wiz,
     hodlTarantula,
     hodlonaut,
     katoshi,

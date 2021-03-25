@@ -21,6 +21,7 @@ import NPC from '../npcs/NPC'
 import Des from '../npcs/Des'
 import Soulexporter from '../npcs/Soulexporter'
 import SoulexBoy from '../npcs/SoulexBoy'
+import Wiz from '../npcs/Wiz'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
 import Car from '../objects/Car'
@@ -63,6 +64,7 @@ export const gameObjects = {
     Des,
     Soulexporter,
     SoulexBoy,
+    Wiz,
     Doge,
     Elevator,
     Car,

@@ -23,10 +23,13 @@ import SoulexBoy from '../../npcs/SoulexBoy'
 
 import mempool from '../../sprites/mempool.png'
 import citizen1 from '../../sprites/citizen-1.png'
+import wiz from '../../sprites/wiz.png'
 import everitt from '../../sprites/everitt.png'
 import des from '../../sprites/des.png'
 import soulexporter from '../../sprites/soulexporter.png'
 import soulexBoy from '../../sprites/soulexBoy.png'
+import Wiz from '../../npcs/Wiz'
+import { hexToRgb } from '../../stringUtils'
 
 const worldWidth = 76
 const worldHeight = 45
@@ -331,22 +334,25 @@ export default {
       }
     ),
     new Human(
-      'tbd-1',
+      'softsimon',
       {
         spriteId: 'citizen1',
         x: 43 * tileSize,
         y: 18 * tileSize - 4,
         walkingSpeed: 2,
-        business: 0.04
+        business: 0.04,
+        hair: hexToRgb('#3C354A'),
+        skin: hexToRgb('#DEAEC2'),
+        clothes: [hexToRgb('#00193B'), hexToRgb('#050D29')]
       }
     ),
-    new Human(
-      'tbd-2',
+    new Wiz(
+      'wiz',
       {
-        spriteId: 'citizen1',
+        spriteId: 'wiz',
         x: 43 * tileSize,
         y: 18 * tileSize - 4,
-        walkingSpeed: 2,
+        walkingSpeed: 1,
         business: 0.04
       }
     ),
@@ -369,16 +375,17 @@ export default {
     des,
     soulexporter,
     soulexBoy,
-    citizen1
+    citizen1,
+    wiz
   },
   track: () => 'mempool',
   bgColor: () => '#250d07',
   init: () => {
     const everitt = CTDLGAME.objects.find(obj => obj.id === 'everitt')
-    const tbd1 = CTDLGAME.objects.find(obj => obj.id === 'tbd-1')
-    const tbd2 = CTDLGAME.objects.find(obj => obj.id === 'tbd-2')
+    const softsimon = CTDLGAME.objects.find(obj => obj.id === 'softsimon')
+    const wiz = CTDLGAME.objects.find(obj => obj.id === 'wiz')
     const tbd3 = CTDLGAME.objects.find(obj => obj.id === 'tbd-3')
-    if (!tbd1) return
+    if (!softsimon) return
 
     everitt.thingsToSay = [
       ['Jack THNDR:\nI know at least 100,000\npeople who are interested in the Lightning Network.'],
@@ -399,8 +406,12 @@ export default {
       ]
     ]
 
-    tbd1.select = () => {
-      if (tbd1.isTouched) return
+    softsimon.hair = hexToRgb('#3C354A')
+    softsimon.skin = hexToRgb('#DEAEC2')
+    softsimon.clothes = [hexToRgb('#00193B'), hexToRgb('#050D29')]
+
+    softsimon.select = () => {
+      if (softsimon.isTouched) return
       let recommendation
       if (CTDLGAME.recommendedFees) {
         recommendation = Math.random() < .5
@@ -409,15 +420,15 @@ export default {
       } else {
         recommendation = 'I like to watch the mempool.'
       }
-      tbd1.isTouched = true
+      softsimon.isTouched = true
 
-      addTextToQueue('tbd1:\n' + recommendation, () => {
-        tbd1.isTouched = false
+      addTextToQueue('softsimon:\n' + recommendation, () => {
+        softsimon.isTouched = false
       })
     }
 
-    tbd2.select = () => {
-      if (tbd2.isTouched) return
+    wiz.select = () => {
+      if (wiz.isTouched) return
       let recommendation
       if (CTDLGAME.mempool) {
         recommendation = Math.random() < .5
@@ -426,10 +437,10 @@ export default {
       } else {
         recommendation = 'I like to watch the mempool.'
       }
-      tbd2.isTouched = true
+      wiz.isTouched = true
 
-      addTextToQueue('tbd2:\n' + recommendation, () => {
-        tbd2.isTouched = false
+      addTextToQueue('wiz:\n' + recommendation, () => {
+        wiz.isTouched = false
       })
     }
 
@@ -457,7 +468,7 @@ export default {
 
       // prevent NPCs from falling down and collecting in the pool
       CTDLGAME.objects
-        .filter(obj => /Human/.test(obj.getClass()))
+        .filter(obj => /Human|Wiz/.test(obj.getClass()))
         .filter(npc => intersects(npc, npcBarrier) || intersects(npc, npcBarrier2) || intersects(npc, npcBarrier3))
         .map(npc => npc.goal = null)
 
