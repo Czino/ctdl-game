@@ -17,6 +17,8 @@ import des from './des'
 import soulexBoy from './soulexBoy'
 import soulexporter from './soulexporter'
 import wiz from './wiz'
+import blueMoon from './blueMoon'
+import chappie from './chappie'
 import hodlTarantula from './hodlTarantula'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
@@ -44,6 +46,8 @@ export default {
     soulexBoy,
     soulexporter,
     wiz,
+    blueMoon,
+    chappie,
     hodlTarantula,
     shitcoiner,
     brian,
