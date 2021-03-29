@@ -44,7 +44,7 @@ class Ferry extends GameObject {
     this.ramp = new Ramp(
       'ramp-ferry',
         constants.bgContext, {
-          x: this.direction === 'right' ? this.x + 110 : this.x + this.w + 39,
+          x: this.direction === 'right' ? this.x + 110 : this.x + 28,
           y: this.y + 52 - 11,
           w: 11,
           h: 11,
@@ -56,14 +56,14 @@ class Ferry extends GameObject {
     )
     this.deck = new Boundary({
       id: 'deck-ferry',
-      x: this.direction === 'right' ? this.x + 110 + 11 : this.x + this.w + 39 - 11,
+      x: this.direction === 'right' ? this.x + 110 + 11 : this.x  + 12 - 11,
       y: this.y + 52 - 11,
       w: 29,
       h: 11
     })
     this.handRail = new Boundary({
       id: 'handRail-ferry',
-      x: this.direction === 'right' ? this.x + 110 + 11 + 26 : this.x + this.w + 39 - 11 - 26,
+      x: this.direction === 'right' ? this.x + 110 + 11 + 26 : this.x + 1,
       y: this.y + 52 - 11 - 16,
       w: 3,
       h: 16

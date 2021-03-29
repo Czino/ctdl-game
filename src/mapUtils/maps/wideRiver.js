@@ -66,7 +66,7 @@ export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     pier: { x: 6 * tileSize, y: 121 * tileSize - 6 },
-    citadel: { x: (worldWidth - 6) * tileSize, y: 121 * tileSize - 6 }
+    citadelBeach: { x: (worldWidth - 6) * tileSize, y: 121 * tileSize - 6 }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
@@ -115,6 +115,8 @@ export default {
     } else if (ferry) {
       ferry.drive(ferry.vx)
     }
+
+    CTDLGAME.nakadaiMon.follow = false
   },
   update: () => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')

@@ -124,6 +124,8 @@ export default {
       ferry.drive(0)
       ferry.stop()
     }
+
+    if (ferry.vx !== 0 || !CTDLGAME.inventory.citadelOneMembership) CTDLGAME.nakadaiMon.follow = false
   },
   update: () => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')

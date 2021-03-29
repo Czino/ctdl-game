@@ -34,6 +34,7 @@ const regularBehaviour = new Selector({
   nodes: [
     attackEnemy,
     goToEnemy,
+    'goToFriend',
     'idle'
   ]
 })
@@ -62,11 +63,14 @@ class NakadaiMonarch extends Agent {
     this.senseRadius = 110
     this.walkingSpeed = options.walkingSpeed || 2
     this.protection = 0
+
+    CTDLGAME.nakadaiMon = this
   }
 
   w = 20
   h = 30
   applyGravity = true
+  follow = true
 
   bTree = new BehaviorTree({
     tree,

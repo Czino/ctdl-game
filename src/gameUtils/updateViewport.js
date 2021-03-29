@@ -39,6 +39,10 @@ export const updateViewport = () => {
     CTDLGAME.bitcoinLabrador.x = window.SELECTEDCHARACTER.x
     CTDLGAME.bitcoinLabrador.y = window.SELECTEDCHARACTER.y
   }
+  if (CTDLGAME.nakadaiMon && canTeleport(CTDLGAME.nakadaiMon)) {
+    CTDLGAME.nakadaiMon.x = window.SELECTEDCHARACTER.x
+    CTDLGAME.nakadaiMon.y = window.SELECTEDCHARACTER.y
+  }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)
   CTDLGAME.viewport.x = Math.min(CTDLGAME.world.w - constants.WIDTH, CTDLGAME.viewport.x)

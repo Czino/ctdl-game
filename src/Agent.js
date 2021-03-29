@@ -87,6 +87,7 @@ BehaviorTree.register('runAwayFromClosestEnemy', new Task({
     ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
     : FAILURE
 }))
+
 BehaviorTree.register('moveToClosestEnemy', new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 })
     ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 })
@@ -96,6 +97,28 @@ BehaviorTree.register('moveToClosestFriend', new Task({
   run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: -1 })
     ? agent.moveTo.effect({ other: agent.closestFriend, distance: -1 })
     : FAILURE
+}))
+
+
+BehaviorTree.register('follows', new Task({
+  run: agent => agent.follow ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('seesFriend', new Task({
+  run: agent => agent.sensedFriends.length > 0 ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('moveToFriend', new Task({
+  run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
+}))
+BehaviorTree.register('goToFriend', new Sequence({
+  nodes: [
+    'follows',
+    'seesFriend',
+    new Selector({
+      nodes: [
+        'moveToFriend'
+      ]
+    })
+  ]
 }))
 
 BehaviorTree.register('survive', new Sequence({

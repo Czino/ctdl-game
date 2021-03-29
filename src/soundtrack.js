@@ -259,6 +259,10 @@ export const stopMusic = () => {
   if (drumPart) drumPart.stop(0)
 }
 
+/**
+ * @description Method to change the musiv volume
+ * @param {value} value 0-1
+ */
 export const changeVolume = value => {
   SNDTRCK.devices.gain.gain.rampTo(value, 0)
 }

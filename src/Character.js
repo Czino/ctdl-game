@@ -17,12 +17,6 @@ const sprites = {
   katoshi
 }
 
-const follows = new Task({
-  run: agent => agent.follow ? SUCCESS : FAILURE
-})
-const seesFriend = new Task({
-  run: agent => agent.sensedFriends.length > 0 ? SUCCESS : FAILURE
-})
 const touchesEnemy = new Task({
   run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
@@ -34,9 +28,6 @@ const standUp = new Task({
 })
 const friendDucks = new Task({
   run: () => /duck/i.test(window.SELECTEDCHARACTER.status)
-})
-const moveToFriend = new Task({
-  run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
 })
 
 
@@ -68,11 +59,11 @@ const goToEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToFriend = new Sequence({
   nodes: [
-    follows,
-    seesFriend,
+    'follows',
+    'seesFriend',
     new Selector({
       nodes: [
-        moveToFriend,
+        'moveToFriend',
         'jump',
         duck
       ]

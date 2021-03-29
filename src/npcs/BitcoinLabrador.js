@@ -128,6 +128,8 @@ class BitcoinLabrador extends Agent {
 
     this.goal = options.goal
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
+
+    CTDLGAME.bitcoinLabrador = this
   }
 
   w = 25
