@@ -6,6 +6,8 @@ import policeForce from './policeForce'
 import policeForceWithShield from './policeForceWithShield'
 import citizen from './citizen'
 import vlad from './vlad'
+import glennHodl from './glennHodl'
+import chrisWhodl from './chrisWhodl'
 import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
@@ -41,6 +43,8 @@ export default {
     czino: citizen,
     luma: citizen,
     vlad,
+    glennHodl,
+    chrisWhodl,
     everitt: citizen,
     des,
     soulexBoy,

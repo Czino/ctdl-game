@@ -15,6 +15,8 @@ import parseLightSources from '../parseLightSources'
 import Ferry from '../../objects/Ferry'
 import BlueMoon from '../../npcs/BlueMoon'
 import Chappie from '../../npcs/Chappie'
+import GlennHodl from '../../npcs/GlennHodl'
+import ChrisWhodl from '../../npcs/ChrisWhodl'
 
 import citadelBeach from '../../sprites/citadelBeach.png'
 import moon from '../../sprites/moon.png'
@@ -23,7 +25,10 @@ import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 import blueMoon from '../../sprites/blueMoon.png'
 import chappie from '../../sprites/chappie.png'
+import glennHodl from '../../sprites/glennHodl.png'
+import chrisWhodl from '../../sprites/chrisWhodl.png'
 import { changeVolume } from '../../soundtrack'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -147,6 +152,22 @@ export default {
         y: 120 * tileSize,
         context: 'fgContext'
       }
+    ),
+    new GlennHodl(
+      'glennHodl',
+      {
+        x: 89 * tileSize,
+        y: 117 * tileSize + 4,
+        context: 'bgContext'
+      }
+    ),
+    new ChrisWhodl(
+      'chrisWhodl',
+      {
+        x: 91 * tileSize,
+        y: 117 * tileSize + 4,
+        context: 'bgContext'
+      }
     )
   ],
   items: () => [],
@@ -158,12 +179,61 @@ export default {
     nakadaiMonarch,
     ferry,
     blueMoon,
-    chappie
+    chappie,
+    glennHodl,
+    chrisWhodl
   },
-  track: () => 'lambada',
+  track: () => 'diamondLights',
+  // track: () => 'lambada',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
+    const glennHodl = CTDLGAME.objects.find(obj => obj.id === 'glennHodl')
+    const chrisWhodl = CTDLGAME.objects.find(obj => obj.id === 'chrisWhodl')
+    let lyricsDiamondLights = [
+      'Glenn and Chris:\nEyes that freeze like ice',
+      'Glenn and Chris:\nCold electric blue those\nlaser eyes',
+      'Glenn and Chris:\nYou are hard as stone',
+      'Glenn and Chris:\nSolid stone',
+      'Glenn and Chris:\nfor me',
+      'Glenn and Chris:\nThe money change rearrange my life',
+      'Glenn and Chris:\nCan\'t explain so pumped\ntonight',
+      'Glenn and Chris:\nDarling I love you,\n(the shades come off)',
+      'Glenn and Chris:\nI\'ll always want you',
+      'Glenn and Chris:\nDarling I love you,\n(laser ray until 100K)',
+      'Glenn and Chris:\nI\'ll always need you',
+      'Glenn and Chris:\nOh darling',
+      'Glenn and Chris:\nLaser, laser eyes',
+      'Glenn and Chris:\nStanding in the rain',
+      'Glenn and Chris:\nCold electric sky\nno laser eyes',
+      'Glenn and Chris:\nNow I\'m on my own',
+      'Glenn and Chris:\nSo alone',
+      'Glenn and Chris:\noh darling',
 
+      'Glenn and Chris:\nLaser eyes',
+      'Glenn and Chris:\ncold as ice to me ',
+      'Glenn and Chris:\nLaser eyes',
+      'Glenn and Chris:\ncold as ice to me',
+
+      'Glenn and Chris:\nDarling I love you,\n(my laser eyes)',
+      'Glenn and Chris:\nI\'ll always want you',
+      'Glenn and Chris:\nDarling I love you,\n(my laser eyes)',
+      'Glenn and Chris:\nI\'ll always need you',
+      'Glenn and Chris:\noh darling',
+
+      'Glenn and Chris:\nLaser eyes',
+      'Glenn and Chris:\ncold as ice to me\n(cold as ice to me',
+      'Glenn and Chris:\nLaser eyes',
+      'Glenn and Chris:\ncold as ice to me\n(cold as ice to me',
+
+      'Glenn and Chris:\nDarling I love you,\n(my laser eyes)',
+      'Glenn and Chris:\nI\'ll always need you',
+      'Glenn and Chris:\nDarling I love you,\n(my laser eyes)',
+      'Glenn and Chris:\nI\'ll always need you',
+      'Glenn and Chris:\nDarling I love you,\n(my laser eyes)',
+      'Glenn and Chris:\nI\'ll always want you',
+      'Glenn and Chris:\nDarling I love you,\n(my laser eyes)',
+      'Glenn and Chris:\nI\'ll always need you'
+    ]
     if (!ferry && from) {
       CTDLGAME.objects.unshift(new Ferry(
         'ferry',
@@ -178,11 +248,29 @@ export default {
     } else {
       CTDLGAME.objects = CTDLGAME.objects.sort(a => a.id === 'ferry' ? 1 : -1)
     }
+
+    window.addEventListener('toggleSoundtrack', () => {
+      glennHodl.status = 'idle'
+      chrisWhodl.status = 'idle'
+      if (lyricsDiamondLights.length > 0) {
+        setTextQueue([])
+        lyricsDiamondLights = []
+      }
+    })
+    window.addEventListener('diamondLights', e => {
+      if (glennHodl.status === 'idle') return
+      glennHodl.status = e.detail
+      chrisWhodl.status = e.detail
+      if (e.detail === 'move' && lyricsDiamondLights.length > 0) {
+        setTextQueue([])
+        addTextToQueue(lyricsDiamondLights.shift())
+      }
+    })
   },
   update: () => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
 
-    if (ferry.vx && ferry.x < -6 * tileSize) {
+    if (ferry && ferry.vx && ferry.x < -6 * tileSize) {
       changeMap('wideRiver', 'citadelBeach')
     }
 

@@ -93,6 +93,7 @@ let sinePart = new Part()
 let noisePart = new Part()
 let brownNoisePart = new Part()
 let drumPart = new Part()
+let eventPart = new Part()
 
 
 export const initSoundtrack = async id => {
@@ -165,6 +166,18 @@ export const initSoundtrack = async id => {
   Transport.loopStart = 0
   Transport.loopEnd = SNDTRCK.song.length
 
+  if (SNDTRCK.song.tracks.event) {
+    eventPart = new Part((time, note) => {
+      const event = new CustomEvent(getSoundtrack(), { detail: note.event })
+      window.dispatchEvent(event)
+    }, parseNotes(SNDTRCK.song.tracks.event))
+  }
+
+  if (!enabled && Transport.state !== 'started') {
+    // only start the events
+    return startMusic()
+  }
+
   if (SNDTRCK.song.tracks.pulse) {
     pulsePart = new Part((time, note) => {
       SNDTRCK.devices.pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
@@ -175,25 +188,21 @@ export const initSoundtrack = async id => {
       SNDTRCK.devices.pulse2Synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.pulse2))
   }
-
   if (SNDTRCK.song.tracks.square) {
     squarePart = new Part((time, note) => {
       SNDTRCK.devices.squareSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.square))
   }
-
   if (SNDTRCK.song.tracks.triangle) {
     trianglePart = new Part((time, note) => {
       SNDTRCK.devices.triangleSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.triangle))
   }
-
   if (SNDTRCK.song.tracks.sine) {
     sinePart = new Part((time, note) => {
       SNDTRCK.devices.sineSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.sine))
   }
-
   if (SNDTRCK.song.tracks.noise) {
     noisePart = new Part((time, note) => {
       SNDTRCK.devices.noiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
@@ -210,6 +219,7 @@ export const initSoundtrack = async id => {
       SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.01, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.drum))
   }
+
 
   if (enabled && Transport.state !== 'started') {
     startMusic()
@@ -232,9 +242,20 @@ export const toggleSoundtrack = enable => {
 }
 
 export const startMusic = async () => {
-  if (!SNDTRCK.song || !enabled) return
+  if (!SNDTRCK.song || !enabled) {
+    if (SNDTRCK.song.tracks.event) {
+      await Transport.start('+.1', 0)
+      eventPart.start(0)
+    }
+    return
+  }
+
+  const event = new CustomEvent('toggleSoundtrack', { detail: true })
+  window.dispatchEvent(event)
 
   await Transport.start('+.1', 0)
+
+  if (SNDTRCK.song.tracks.event) eventPart.start(0)
   if (SNDTRCK.song.tracks.pulse) pulsePart.start(0)
   if (SNDTRCK.song.tracks.pulse2) pulse2Part.start(0)
   if (SNDTRCK.song.tracks.square) squarePart.start(0)
@@ -248,6 +269,8 @@ export const startMusic = async () => {
 export const stopMusic = () => {
   if (!SNDTRCK.song) return
 
+  const event = new CustomEvent('toggleSoundtrack', { detail: false })
+  window.dispatchEvent(event)
   Transport.stop()
   if (pulsePart) pulsePart.stop(0)
   if (pulse2Part) pulse2Part.stop(0)
@@ -257,6 +280,7 @@ export const stopMusic = () => {
   if (noisePart) noisePart.stop(0)
   if (brownNoisePart) brownNoisePart.stop(0)
   if (drumPart) drumPart.stop(0)
+  if (eventPart) eventPart.stop(0)
 }
 
 /**
@@ -272,6 +296,7 @@ function parseNotes(notes) {
     time: note[0],
     duration: note[1],
     name: note[2],
-    velocity: note[3]
+    velocity: note[3],
+    event: note[4]
   }))
 }
