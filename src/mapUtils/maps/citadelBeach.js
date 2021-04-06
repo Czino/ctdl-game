@@ -8,6 +8,8 @@ import GameObject from '../../GameObject'
 import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import { easeInOut, makeBoundary } from '../../geometryUtils'
 import { drawCrispSine, drawSine } from '../../geometryUtils/drawSineWave'
+import { changeVolume } from '../../soundtrack'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
 import getHitBoxes from '../getHitBoxes'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
@@ -17,6 +19,7 @@ import BlueMoon from '../../npcs/BlueMoon'
 import Chappie from '../../npcs/Chappie'
 import GlennHodl from '../../npcs/GlennHodl'
 import ChrisWhodl from '../../npcs/ChrisWhodl'
+import HODLvirus from '../../npcs/HODLvirus'
 
 import citadelBeach from '../../sprites/citadelBeach.png'
 import moon from '../../sprites/moon.png'
@@ -27,8 +30,7 @@ import blueMoon from '../../sprites/blueMoon.png'
 import chappie from '../../sprites/chappie.png'
 import glennHodl from '../../sprites/glennHodl.png'
 import chrisWhodl from '../../sprites/chrisWhodl.png'
-import { changeVolume } from '../../soundtrack'
-import { addTextToQueue, setTextQueue } from '../../textUtils'
+import hodlVirus from '../../sprites/hodlVirus.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -153,6 +155,14 @@ export default {
         context: 'fgContext'
       }
     ),
+    new HODLvirus(
+      'hodlVirus',
+      {
+        x: 66 * tileSize,
+        y: 123 * tileSize,
+        context: 'fgContext'
+      }
+    ),
     new GlennHodl(
       'glennHodl',
       {
@@ -181,10 +191,10 @@ export default {
     blueMoon,
     chappie,
     glennHodl,
-    chrisWhodl
+    chrisWhodl,
+    hodlVirus
   },
-  track: () => 'diamondLights',
-  // track: () => 'lambada',
+  track: () => 'lambada',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
     const glennHodl = CTDLGAME.objects.find(obj => obj.id === 'glennHodl')

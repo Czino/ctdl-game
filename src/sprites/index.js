@@ -8,6 +8,7 @@ import citizen from './citizen'
 import vlad from './vlad'
 import glennHodl from './glennHodl'
 import chrisWhodl from './chrisWhodl'
+import hodlVirus from './hodlVirus'
 import shitcoiner from './shitcoiner'
 import brian from './brian'
 import bear from './bear'
@@ -45,6 +46,7 @@ export default {
     vlad,
     glennHodl,
     chrisWhodl,
+    hodlVirus,
     everitt: citizen,
     des,
     soulexBoy,

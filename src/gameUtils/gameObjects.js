@@ -26,6 +26,7 @@ import BlueMoon from '../npcs/BlueMoon'
 import Chappie from '../npcs/Chappie'
 import GlennHodl from '../npcs/GlennHodl'
 import ChrisWhodl from '../npcs/ChrisWhodl'
+import HODLvirus from '../npcs/HODLvirus'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
 import Car from '../objects/Car'
@@ -73,6 +74,7 @@ export const gameObjects = {
     Chappie,
     GlennHodl,
     ChrisWhodl,
+    HODLvirus,
     Doge,
     Elevator,
     Car,

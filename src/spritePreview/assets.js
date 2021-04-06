@@ -14,6 +14,7 @@ import citizen6 from '../sprites/citizen-6.png'
 import vlad from '../sprites/vlad.png'
 import glennHodl from '../sprites/glennHodl.png'
 import chrisWhodl from '../sprites/chrisWhodl.png'
+import hodlVirus from '../sprites/hodlVirus.png'
 import everitt from '../sprites/everitt.png'
 import des from '../sprites/des.png'
 import soulexBoy from '../sprites/soulexBoy.png'
@@ -60,6 +61,7 @@ export const assets = {
     vlad,
     glennHodl,
     chrisWhodl,
+    hodlVirus,
     everitt,
     des,
     soulexBoy,
