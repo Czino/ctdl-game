@@ -24,6 +24,7 @@ import SoulexBoy from '../npcs/SoulexBoy'
 import Wiz from '../npcs/Wiz'
 import BlueMoon from '../npcs/BlueMoon'
 import Chappie from '../npcs/Chappie'
+import Vlad from '../npcs/Vlad'
 import GlennHodl from '../npcs/GlennHodl'
 import ChrisWhodl from '../npcs/ChrisWhodl'
 import HODLvirus from '../npcs/HODLvirus'
@@ -72,6 +73,7 @@ export const gameObjects = {
     Wiz,
     BlueMoon,
     Chappie,
+    Vlad,
     GlennHodl,
     ChrisWhodl,
     HODLvirus,

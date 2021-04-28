@@ -10,7 +10,7 @@ import { write } from './font'
 
 BehaviorTree.register('log', new Task({
   run: agent => {
-    console.log(agent)
+    console.info(agent)
     return SUCCESS
   }
 }))
@@ -143,6 +143,7 @@ class Agent extends GameObject {
   constructor(id, options) {
     super(id, options)
     this.health = options.health ?? 5
+    this.maxHealth = 5
     this.usd = options.usd ?? 0
     this.status = options.status || 'idle'
     this.direction = options.direction || 'left'

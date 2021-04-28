@@ -5,6 +5,7 @@ import pulse2 from './pulse2'
 import square from './square'
 import triangle from './triangle'
 import sine from './sine'
+import event from './event'
 
 export default {
   id: 'johnnyBGoode',
@@ -18,5 +19,6 @@ export default {
     triangle,
     square,
     sine,
+    event,
   }
 }

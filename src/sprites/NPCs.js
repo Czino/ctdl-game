@@ -375,16 +375,7 @@ export default {
     thingsToSaySelect: [
       ['RD_btc:\nHODL!']
     ]
-  },
-  vlad: {
-    // make him play a red Gibson ES 335 or a Fender Telecaster
-    frames: [
-      { x: 79, y: 28, w: 8, h: 8 }
-    ],
-    thingsToSaySelect: [
-      ['Vlad:\nDon’t forget that you were born free. This is a powerful thought that will one day break all chains!']
-    ]
-  },
+  }
   // Just converted my dads retirement fnd into $link
   // A homeless man once told me he could tell the state of the economy based on the length of the cigarette butts that people throw on the ground
 }

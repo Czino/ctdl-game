@@ -20,6 +20,7 @@ import Chappie from '../../npcs/Chappie'
 import GlennHodl from '../../npcs/GlennHodl'
 import ChrisWhodl from '../../npcs/ChrisWhodl'
 import HODLvirus from '../../npcs/HODLvirus'
+import Vlad from '../../npcs/Vlad'
 
 import citadelBeach from '../../sprites/citadelBeach.png'
 import moon from '../../sprites/moon.png'
@@ -31,6 +32,7 @@ import chappie from '../../sprites/chappie.png'
 import glennHodl from '../../sprites/glennHodl.png'
 import chrisWhodl from '../../sprites/chrisWhodl.png'
 import hodlVirus from '../../sprites/hodlVirus.png'
+import vlad from '../../sprites/vlad.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -163,22 +165,30 @@ export default {
         context: 'fgContext'
       }
     ),
-    new GlennHodl(
-      'glennHodl',
+    new Vlad(
+      'vlad',
       {
         x: 89 * tileSize,
-        y: 117 * tileSize + 4,
+        y: 118 * tileSize - 4,
         context: 'bgContext'
       }
     ),
-    new ChrisWhodl(
-      'chrisWhodl',
-      {
-        x: 91 * tileSize,
-        y: 117 * tileSize + 4,
-        context: 'bgContext'
-      }
-    )
+    // new GlennHodl(
+    //   'glennHodl',
+    //   {
+    //     x: 89 * tileSize,
+    //     y: 117 * tileSize + 4,
+    //     context: 'bgContext'
+    //   }
+    // ),
+    // new ChrisWhodl(
+    //   'chrisWhodl',
+    //   {
+    //     x: 91 * tileSize,
+    //     y: 117 * tileSize + 4,
+    //     context: 'bgContext'
+    //   }
+    // )
   ],
   items: () => [],
   events,
@@ -192,13 +202,16 @@ export default {
     chappie,
     glennHodl,
     chrisWhodl,
-    hodlVirus
+    hodlVirus,
+    vlad
   },
-  track: () => 'lambada',
+  track: () => 'johnnyBGoode',
+  // track: () => 'lambada',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
     const glennHodl = CTDLGAME.objects.find(obj => obj.id === 'glennHodl')
     const chrisWhodl = CTDLGAME.objects.find(obj => obj.id === 'chrisWhodl')
+    const vlad = CTDLGAME.objects.find(obj => obj.id === 'vlad')
     let lyricsDiamondLights = [
       'Glenn and Chris:\nEyes that freeze like ice',
       'Glenn and Chris:\nCold electric blue those\nlaser eyes',
@@ -275,6 +288,12 @@ export default {
         setTextQueue([])
         addTextToQueue(lyricsDiamondLights.shift())
       }
+    })
+    window.addEventListener('johnnyBGoode', e => {
+      if (vlad.status === 'idle') return
+      if (!e.detail) return
+      vlad.direction = e.detail.direction
+      vlad.status = e.detail.status
     })
   },
   update: () => {
