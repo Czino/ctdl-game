@@ -43,6 +43,7 @@ export default {
     citizen,
     czino: citizen,
     luma: citizen,
+    badders: citizen,
     vlad,
     glennHodl,
     chrisWhodl,

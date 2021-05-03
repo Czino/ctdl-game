@@ -215,8 +215,9 @@ export const initSoundtrack = async id => {
   }
   if (SNDTRCK.song.tracks.drum) {
     drumPart = new Part((time, note) => {
-      SNDTRCK.devices.drumSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-      SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.01, note.velocity)
+      SNDTRCK.devices.drumSynth.setNote('D4', time)
+      SNDTRCK.devices.drumSynth.triggerAttackRelease(note.name, note.duration, time + 0.01, note.velocity)
+      SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.02, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.drum))
   }
 

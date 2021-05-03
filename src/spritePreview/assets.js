@@ -12,6 +12,7 @@ import citizen4 from '../sprites/citizen-4.png'
 import citizen5 from '../sprites/citizen-5.png'
 import citizen6 from '../sprites/citizen-6.png'
 import vlad from '../sprites/vlad.png'
+import badders from '../sprites/badders.png'
 import glennHodl from '../sprites/glennHodl.png'
 import chrisWhodl from '../sprites/chrisWhodl.png'
 import hodlVirus from '../sprites/hodlVirus.png'
@@ -59,6 +60,7 @@ export const assets = {
     citizen5,
     citizen6,
     vlad,
+    badders,
     glennHodl,
     chrisWhodl,
     hodlVirus,
