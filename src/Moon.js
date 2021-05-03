@@ -21,7 +21,7 @@ class Moon extends GameObject {
     this.w = this.h = Math.max(14, (1 - (CTDLGAME.viewport.y + constants.HEIGHT) / CTDLGAME.world.h) * 110)
 
     if (timeOfDay >= 6 && timeOfDay < 18) return
-    if (timeOfDay > 18 && timeOfDay < 19) {
+    if (timeOfDay >= 18 && timeOfDay < 19) {
       this.y += (19 - timeOfDay) * constants.HEIGHT
     }
     if (timeOfDay > 5 && timeOfDay < 6) {
