@@ -10,7 +10,7 @@ export const init = dbg => {
   debug = dbg
 
   return new Promise((resolve, reject) => {
-    let dbRequest = indexedDB.open('ctdl-game' + constants.SLOT, 1000)
+    let dbRequest = indexedDB.open('ctdl-game-mempool' + constants.SLOT, 1000)
     dbRequest.onerror = event => {
       if (debug) console.log('Database error code: ', event)
       reject(event)

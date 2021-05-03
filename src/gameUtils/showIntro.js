@@ -8,40 +8,10 @@ import { stopMusic } from '../soundtrack'
  */
 export const showIntro = () => {
   addTextToQueue([
-    'In a not so distant',
-    'alternative universe,',
-    'katoshi and hodlonaut found',
-    'themselves in a transitional',
-    'world.'
-  ].join('\n'), null, true)
-  addTextToQueue([
-    'Governments around the',
-    'globe have been clinging to',
-    'their last straws',
-    'to maintain power.'
-  ].join('\n'), null, true)
-  addTextToQueue([
-    'The global economy is',
-    'collapsing while all the',
-    'money rapidly loses',
-    'its value.'
-  ].join('\n'), null, true)
-  addTextToQueue([
-    'Many people fell victim',
-    'to the collapse, others',
-    'became viciously desperate',
-    'while only the strong and',
-    'few maintain a good life.'
-  ].join('\n'), null, true)
-  addTextToQueue([
-    'Just when the situation',
-    'seemed hopeless...'
-  ].join('\n'), null, true)
-  addTextToQueue([
-    'Through a miracle,',
-    'the two cats discovered',
-    'the magic internet money',
-    'we know as Bitcoin.'
+    'Welcome to the\nmempool-spa experience!',
+    'The water is\ncomfortably hot.',
+    'The mood\'s great down here.',
+    'Enjoy your stay!'
   ].join('\n'), () => {
     stopMusic()
     newGame()

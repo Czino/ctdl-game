@@ -1,5 +1,5 @@
 import { CTDLGAME } from './CTDLGAME'
-import { addTextToQueue } from '../textUtils'
+import { setTextQueue, addTextToQueue } from '../textUtils'
 import { playSound } from '../sounds'
 import { textQueue } from '../textUtils/textQueue'
 
@@ -11,12 +11,10 @@ import { textQueue } from '../textUtils/textQueue'
 const addBlockToInventory = block => {
   if (CTDLGAME.blockHeight >= block.height && block.height !== 0) return
 
-  if (textQueue.some(text => !/Found a new block/.test(text))) {
+  if (textQueue.length === 0 || textQueue.some(text => !/Found a new block/.test(text))) {
     playSound('blockFound')
   }
 
-  textQueue = textQueue.filter(text => !/Found a new block/.test(text))
-  addTextToQueue(`Found a new block: ${block.height}`)
   CTDLGAME.blockHeight = block.height
   CTDLGAME.inventory.blocks.push({
     height: block.height,
@@ -24,6 +22,9 @@ const addBlockToInventory = block => {
     size: block.size,
     tx_count: block.tx_count
   })
+
+  setTextQueue(textQueue.filter(text => !/Found a new block/i.test(text.text)))
+  addTextToQueue(`Found a new block: ${block.height}`)
 }
 
 const feeMap = {

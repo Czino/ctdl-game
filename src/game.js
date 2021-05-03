@@ -23,7 +23,6 @@ import {
   showShop, showSettings, executeHooks
 } from './gameUtils'
 import { addTextToQueue, prompt, writeMenu } from './textUtils'
-import Wizard from './npcs/Wizard'
 import { applyGravity } from './physicsUtils'
 import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'

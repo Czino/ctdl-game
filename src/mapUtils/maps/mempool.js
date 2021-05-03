@@ -16,7 +16,7 @@ import constants from '../../constants'
 import { random } from '../../arrayUtils'
 import { addTextToQueue } from '../../textUtils'
 import { playSound } from '../../sounds'
-import { intersects } from '../../geometryUtils'
+import { intersects, makeBoundary } from '../../geometryUtils'
 import Des from '../../npcs/Des'
 import Soulexporter from '../../npcs/Soulexporter'
 import SoulexBoy from '../../npcs/SoulexBoy'
@@ -30,6 +30,7 @@ import soulexporter from '../../sprites/soulexporter.png'
 import soulexBoy from '../../sprites/soulexBoy.png'
 import Wiz from '../../npcs/Wiz'
 import { hexToRgb } from '../../stringUtils'
+import NPC from '../../npcs/NPC'
 
 const worldWidth = 76
 const worldHeight = 45
@@ -105,21 +106,19 @@ let lightSources = parseLightSources(lights, stage.bg, tileSize)
 let events = []
 let objects = []
 
+const makeConsolidatedBoundary = (x, y, w, h, tileSize) => {
+  objects.push(makeBoundary({
+    x: x * tileSize,
+    y: y * tileSize,
+    w: w * tileSize,
+    h: h * tileSize,
+  }))
+}
+makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
+
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'mempool', tileSize))
 
 objects.find(obj => obj.id === 'ramp-1_3-63_27').makeToggle(false)
-
-const goToRabbitHole = new GameObject('goToRabbitHole', {
-  x: 76 * tileSize,
-  y: 26 * tileSize,
-  w: tileSize,
-  h: 3 * tileSize,
-})
-
-goToRabbitHole.touchEvent = () => {
-  changeMap('rabbitHole', 'mempool')
-}
-events.push(goToRabbitHole)
 
 
 const jumpIntoThePool = new GameObject('jumpIntoThePool', {
@@ -351,19 +350,16 @@ export default {
       {
         spriteId: 'wiz',
         x: 43 * tileSize,
-        y: 18 * tileSize - 4,
+        y: 18 * tileSize - 6,
         walkingSpeed: 1,
         business: 0.04
       }
     ),
-    new Human(
-      'tbd-3',
+    new NPC(
+      'wizardWithNoMoney',
       {
-        spriteId: 'citizen1',
-        x: 43 * tileSize,
-        y: 27 * tileSize,
-        walkingSpeed: 1,
-        business: 0.3
+        x: 5 * tileSize,
+        y: 23 * tileSize + 4
       }
     )
   ],
@@ -384,7 +380,6 @@ export default {
     const everitt = CTDLGAME.objects.find(obj => obj.id === 'everitt')
     const softsimon = CTDLGAME.objects.find(obj => obj.id === 'softsimon')
     const wiz = CTDLGAME.objects.find(obj => obj.id === 'wiz')
-    const tbd3 = CTDLGAME.objects.find(obj => obj.id === 'tbd-3')
     if (!softsimon) return
 
     everitt.thingsToSay = [
@@ -392,17 +387,6 @@ export default {
       [
         'Jack THNDR:\nOne of my no-coiner friends asked me to let him know if bitcoin',
         'Jack THNDR:\ngoes back to 5k so he can\nbuy. How do I break it\nto him?'
-      ]
-    ]
-    tbd3.thingsToSay = [
-      [
-        'tbd3:\nPeople say that there is a\ntreasure hidden in the\nmempool.',
-        'tbd3:\nI am trying to find it.'
-      ],
-      ['tbd3:\nEach drop in this pool\nrepresents a byte waiting\nto be confirmed.'],
-      [
-        'tbd3:\nDid you know?, there is no\n"the mempool". Each node\nhas their own mempool.',
-        'tbd3:\nWhat you see here is just\na metaphor.'
       ]
     ]
 
