@@ -90,6 +90,7 @@ class PoliceForce extends Agent {
   constructor(id, options) {
     super(id, options)
     this.health = options.health ?? Math.round(Math.random() * 7 + 10)
+    this.maxHealth = options.maxHealth ?? this.health
     this.usd = options.usd ?? Math.round(Math.random() * 400 + 1)
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = Math.round(Math.random() * 50) + 30
