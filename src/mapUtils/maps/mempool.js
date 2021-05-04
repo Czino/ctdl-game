@@ -233,17 +233,7 @@ const bucket = new GameObject('bucket', {
   w: tileSize,
   h: 2 * tileSize
 })
-bucket.backEvent = () => {
-  if (timeOfDay > 18 && timeOfDay < 22 || timeOfDay > 5 && timeOfDay < 9) return
 
-  CTDLGAME.hodlonaut.y = 0
-  CTDLGAME.hodlonaut.applyGravity = true
-  CTDLGAME.hodlonaut.swims = false
-  CTDLGAME.katoshi.y = 0
-  CTDLGAME.katoshi.applyGravity = true
-  CTDLGAME.katoshi.swims = false
-  changeMap('city', 'mempool')
-}
 events.push(bucket)
 
 
