@@ -227,7 +227,7 @@ export default {
     policeForceWithShield,
     explosion
   },
-  track: () => 'aNewHope',
+  track: () => 'capitalCity',
   init: () => {
     if (!CTDLGAME.world.map.state.protestScene) {
       CTDLGAME.objects
