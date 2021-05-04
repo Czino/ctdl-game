@@ -375,7 +375,7 @@ class BearWhale extends Agent {
     addHook(CTDLGAME.frame + 16, () => playSound('creatureHurt'))
     addHook(CTDLGAME.frame + 32, () => playSound('creatureHurt'))
     addHook(CTDLGAME.frame + 48, () => {
-      initSoundtrack('epiphin')
+      initSoundtrack('surferJim')
       if (this.usd) CTDLGAME.inventory.usd += this.usd
   
       this.item.forEach((item, index) => {

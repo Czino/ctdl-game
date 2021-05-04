@@ -22,6 +22,7 @@ import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 import bearWhale from '../../sprites/bearWhale.png'
 import wave from '../../sprites/wave.png'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -95,7 +96,7 @@ export default {
     bearWhale,
     wave
   },
-  track: () => 'epiphin',
+  track: () => 'surferJim',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
 
@@ -117,6 +118,12 @@ export default {
     }
 
     CTDLGAME.nakadaiMon.follow = false
+
+    window.addEventListener('surferJim', e => {
+      if (!e.detail) return
+      setTextQueue([])
+      addTextToQueue(e.detail)
+    })
   },
   update: () => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
