@@ -21,8 +21,5 @@ export default {
   },
   init: SNDTRCK => {
     SNDTRCK.devices.noiseSynth.envelope.release = 0
-  },
-  deinit: SNDTRCK => {
-    SNDTRCK.devices.noiseSynth.envelope.release = .8
   }
 }

@@ -17,10 +17,5 @@ export default {
     SNDTRCK.devices.triangleSynth.envelope.release = 16
     SNDTRCK.devices.sineSynth.envelope.release = 16
     SNDTRCK.devices.pulseSynth.envelope.release = 16
-  },
-  deinit: SNDTRCK => {
-    SNDTRCK.devices.triangleSynth.envelope.release = 0.07
-    SNDTRCK.devices.sineSynth.envelope.release = 0.07
-    SNDTRCK.devices.pulseSynth.envelope.release = 0.07
   }
 }

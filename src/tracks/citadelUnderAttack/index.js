@@ -66,20 +66,7 @@ export default {
     SNDTRCK.devices.autoFilter2.start()
   },
   deinit: SNDTRCK => {
-    SNDTRCK.devices.noiseSynth.envelope.attack = 0.005
-    SNDTRCK.devices.noiseSynth.envelope.release = 0.8
-
-    SNDTRCK.devices.pulseSynth.envelope.attack = 0.005
-    SNDTRCK.devices.pulseSynth.envelope.release = 0.8
-    SNDTRCK.devices.triangleSynth.envelope.attack = 0.005
-    SNDTRCK.devices.triangleSynth.envelope.release = 0.8
-    SNDTRCK.devices.sineSynth.envelope.attack = 0.005
-    SNDTRCK.devices.sineSynth.envelope.release = 0.8
     SNDTRCK.devices.autoFilter.stop()
     SNDTRCK.devices.autoFilter2.stop()
-
-    SNDTRCK.devices.noiseSynth.envelope.attack = 0.005
-    SNDTRCK.devices.noiseSynth.envelope.release = 0.8
-    SNDTRCK.devices.noiseSynth.noise.type = 'white'
   }
 }

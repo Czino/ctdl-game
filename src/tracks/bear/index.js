@@ -31,8 +31,6 @@ export default {
     SNDTRCK.devices.noiseSynth.noise.type = 'pink'
   },
   deinit: SNDTRCK => {
-    SNDTRCK.devices.sineSynth.envelope.attack = 0.005
-    SNDTRCK.devices.sineSynth.envelope.release = 0.8
     SNDTRCK.devices.autoFilter.stop()
 
     SNDTRCK.devices.noiseSynth.noise.type = 'white'

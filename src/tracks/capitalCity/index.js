@@ -48,7 +48,6 @@ export default {
     )
   },
   deinit: SNDTRCK => {
-    SNDTRCK.devices.noiseSynth.envelope.release = .8
     SNDTRCK.devices.autoFilter.stop()
   }
 }

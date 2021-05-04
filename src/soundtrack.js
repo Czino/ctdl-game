@@ -63,9 +63,8 @@ const SNDTRCK = {
     drumSynth: new Synth(sineOptions),
     noiseSynth: new NoiseSynth(),
     brownNoiseSynth: new NoiseSynth()
-  },
+  }
 }
-
 
 SNDTRCK.devices.drumSynth.portamento = .1
 SNDTRCK.devices.brownNoiseSynth.noise.type = 'brown'
@@ -81,7 +80,7 @@ SNDTRCK.synths = [
   SNDTRCK.devices.brownNoiseSynth
 ]
 
-SNDTRCK.synths .map(synth => synth.volume.value = -19)
+SNDTRCK.synths.map(synth => synth.volume.value = -19)
 
 let enabled
 
@@ -95,9 +94,35 @@ let brownNoisePart = new Part()
 let drumPart = new Part()
 let eventPart = new Part()
 
+/**
+ * @description Method to reset soundtrack settings to initial state
+ */
+const deinit = () => {
+  SNDTRCK.synths.map(synth => {
+    synth.envelope.attack = 0.005
+    synth.envelope.decay = .1
+    synth.envelope.sustain = 0.3
+    synth.envelope.release = 0.07
+    synth.portamento = 0
+  })
+  SNDTRCK.devices.sineSynth.envelope.sustain = .8
+  SNDTRCK.devices.sineSynth.envelope.release = .8
+  SNDTRCK.devices.noiseSynth.envelope.attack = 0.01
+  SNDTRCK.devices.noiseSynth.envelope.sustain = 0
+  SNDTRCK.devices.noiseSynth.envelope.release = 1
+  SNDTRCK.devices.noiseSynth.noise.type = 'white'
+  SNDTRCK.devices.brownNoiseSynth.envelope.attack = 0.01
+  SNDTRCK.devices.brownNoiseSynth.envelope.sustain = 0
+  SNDTRCK.devices.brownNoiseSynth.envelope.release = 1
+  SNDTRCK.devices.brownNoiseSynth.noise.type = 'brown'
+  SNDTRCK.devices.drumSynth.portamento = .1
+  SNDTRCK.devices.drumSynth.envelope.sustain = .8
+  SNDTRCK.devices.drumSynth.envelope.release = .8
+}
 
 export const initSoundtrack = async id => {
   if (SNDTRCK.song?.deinit) SNDTRCK.song.deinit(SNDTRCK)
+  deinit()
   let song = await import(
     /* webpackMode: "lazy" */
     `./tracks/${id}/index.js`

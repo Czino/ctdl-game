@@ -27,14 +27,5 @@ export default {
     SNDTRCK.devices.noiseSynth.envelope.release = 16
     SNDTRCK.devices.brownNoiseSynth.envelope.release = 16
     SNDTRCK.devices.drumSynth.envelope.release = 4
-  },
-  deinit: SNDTRCK => {
-    SNDTRCK.devices.sineSynth.envelope.attack = 0.005
-    SNDTRCK.devices.sineSynth.envelope.release = .8
-    SNDTRCK.devices.squareSynth.envelope.release = .8
-    SNDTRCK.devices.triangleSynth.envelope.release = .8
-    SNDTRCK.devices.noiseSynth.envelope.release = .8
-    SNDTRCK.devices.brownNoiseSynth.envelope.release = .8
-    SNDTRCK.devices.drumSynth.envelope.release = .8
   }
 }
