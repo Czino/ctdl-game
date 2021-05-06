@@ -34,6 +34,7 @@ import lagarde from '../sprites/lagarde.png'
 import babyLizard from '../sprites/babyLizard.png'
 import craig from '../sprites/craig.png'
 import craigWithArmor from '../sprites/craigWithArmor.png'
+import limburgert from '../sprites/limburgert.png'
 import goldbugs from '../sprites/goldbugs.png'
 import rabbit from '../sprites/rabbit.png'
 import andreas from '../sprites/andreas.png'
@@ -82,6 +83,7 @@ export const assets = {
     babyLizard,
     craig,
     craigWithArmor,
+    limburgert,
     goldbugs,
     rabbit,
     andreas,

@@ -89,7 +89,7 @@ class Czino extends Human {
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character|Human/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Human/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {

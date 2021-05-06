@@ -6,6 +6,7 @@ import Cobra from '../enemies/Cobra'
 import Goldbugs from '../enemies/Goldbugs'
 import Andreas from '../enemies/Andreas'
 import HodlTarantula from '../npcs/HodlTarantula'
+import Limburgert from '../npcs/Limburgert'
 import Bear from '../enemies/Bear'
 import Ivan from '../enemies/Ivan'
 import Brian from '../enemies/Brian'
@@ -58,6 +59,7 @@ export const gameObjects = {
     Human,
     Citizen,
     Prophetoshi,
+    Limburgert,
     Bear,
     Ivan,
     Lagarde,

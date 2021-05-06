@@ -8,6 +8,7 @@ import GameObject from '../../GameObject'
 import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../enemies/Bear'
 import NPC from '../../npcs/NPC'
+import Limburgert from '../../npcs/Limburgert'
 import getHitBoxes from '../getHitBoxes'
 
 import forest from '../../sprites/forest.png'
@@ -15,6 +16,7 @@ import rabbit from '../../sprites/rabbit.png'
 import goldbugs from '../../sprites/goldbugs.png'
 import cobra from '../../sprites/cobra.png'
 import bear from '../../sprites/bear.png'
+import limburgert from '../../sprites/limburgert.png'
 import moon from '../../sprites/moon.png'
 
 const worldWidth = 256
@@ -152,6 +154,13 @@ export default {
         y: 124 * tileSize + 1
       }
     ),
+    new Limburgert(
+      'l1mburg3rt',
+      {
+        x: 73 * tileSize,
+        y: 124 * tileSize - 4
+      }
+    ),
     new NPC(
       'leprikon',
       {
@@ -182,6 +191,7 @@ export default {
     cobra,
     goldbugs,
     bear,
+    limburgert,
     moon
   },
   track: () => 'santaMaria',

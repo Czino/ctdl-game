@@ -23,6 +23,7 @@ import wiz from './wiz'
 import blueMoon from './blueMoon'
 import chappie from './chappie'
 import hodlTarantula from './hodlTarantula'
+import limburgert from './limburgert'
 import goldbugs from './goldbugs'
 import rabbit from './rabbit'
 import andreas from './andreas'
@@ -64,6 +65,7 @@ export default {
     babyLizard,
     craig,
     craigWithArmor: craig,
+    limburgert,
     goldbugs,
     rabbit,
     andreas,
