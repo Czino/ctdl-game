@@ -17,10 +17,11 @@ import parseLightSources from '../parseLightSources'
 import Ferry from '../../objects/Ferry'
 import BlueMoon from '../../npcs/BlueMoon'
 import Chappie from '../../npcs/Chappie'
+import HODLvirus from '../../npcs/HODLvirus'
 import GlennHodl from '../../npcs/GlennHodl'
 import ChrisWhodl from '../../npcs/ChrisWhodl'
-import HODLvirus from '../../npcs/HODLvirus'
 import Vlad from '../../npcs/Vlad'
+import Bitdov from '../../npcs/Bitdov'
 
 import citadelBeach from '../../sprites/citadelBeach.png'
 import moon from '../../sprites/moon.png'
@@ -29,9 +30,10 @@ import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 import blueMoon from '../../sprites/blueMoon.png'
 import chappie from '../../sprites/chappie.png'
+import hodlVirus from '../../sprites/hodlVirus.png'
+import bitdov from '../../sprites/bitdov.png'
 import glennHodl from '../../sprites/glennHodl.png'
 import chrisWhodl from '../../sprites/chrisWhodl.png'
-import hodlVirus from '../../sprites/hodlVirus.png'
 import vlad from '../../sprites/vlad.png'
 
 const worldWidth = 128
@@ -165,14 +167,22 @@ export default {
         context: 'fgContext'
       }
     ),
-    new Vlad(
-      'vlad',
+    new Bitdov(
+      'bitdov',
       {
-        x: 89 * tileSize,
-        y: 118 * tileSize - 4,
-        context: 'bgContext'
+        x: 70 * tileSize,
+        y: 121 * tileSize,
+        context: 'fgContext'
       }
     ),
+    // new Vlad(
+    //   'vlad',
+    //   {
+    //     x: 89 * tileSize,
+    //     y: 118 * tileSize - 4,
+    //     context: 'bgContext'
+    //   }
+    // ),
     // new GlennHodl(
     //   'glennHodl',
     //   {
@@ -200,13 +210,13 @@ export default {
     ferry,
     blueMoon,
     chappie,
+    hodlVirus,
+    bitdov,
     glennHodl,
     chrisWhodl,
-    hodlVirus,
     vlad
   },
-  track: () => 'johnnyBGoode',
-  // track: () => 'lambada',
+  track: () => 'lambada',
   init: from => {
     const ferry = CTDLGAME.objects.find(obj => obj.id === 'ferry')
     const glennHodl = CTDLGAME.objects.find(obj => obj.id === 'glennHodl')

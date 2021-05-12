@@ -23,6 +23,7 @@ import soulexporter from '../sprites/soulexporter.png'
 import wiz from '../sprites/wiz.png'
 import blueMoon from '../sprites/blueMoon.png'
 import chappie from '../sprites/chappie.png'
+import bitdov from '../sprites/bitdov.png'
 import hodlTarantula from '../sprites/hodlTarantula.png'
 import hodlonaut from '../sprites/hodlonaut.png'
 import katoshi from '../sprites/katoshi.png'
@@ -72,6 +73,7 @@ export const assets = {
     wiz,
     blueMoon,
     chappie,
+    bitdov,
     hodlTarantula,
     hodlonaut,
     katoshi,

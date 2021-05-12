@@ -22,6 +22,7 @@ import soulexporter from './soulexporter'
 import wiz from './wiz'
 import blueMoon from './blueMoon'
 import chappie from './chappie'
+import bitdov from './bitdov'
 import hodlTarantula from './hodlTarantula'
 import limburgert from './limburgert'
 import goldbugs from './goldbugs'
@@ -56,6 +57,7 @@ export default {
     wiz,
     blueMoon,
     chappie,
+    bitdov,
     hodlTarantula,
     shitcoiner,
     brian,
