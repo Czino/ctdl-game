@@ -9,8 +9,7 @@ import getHitBoxes from '../getHitBoxes'
 import citadel from '../../sprites/citadel.png'
 import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import bitcoinLabrador from '../../sprites/bitcoinLabrador.png'
-import shitcoiner from '../../sprites/shitcoiner.png'
-import bagholder from '../../sprites/bagholder.png'
+import blockchain from '../../sprites/blockchain.png'
 import moon from '../../sprites/moon.png'
 
 const worldWidth = 20
@@ -65,7 +64,7 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'ci
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    wideRiver: { x: 5 * tileSize, y: 124 * tileSize - 4}
+    citadelBeach: { x: 5 * tileSize, y: 124 * tileSize - 4}
   },
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
   bg: stage.bg.map(tile => mapTile(tile, tileSize)),
@@ -87,15 +86,13 @@ export default {
     citadel,
     nakadaiMonarch,
     bitcoinLabrador,
-    shitcoiner,
-    bagholder,
+    blockchain,
     moon
   },
   track: () => 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: false,
   overworld: true,
   spawnRates: {
-    shitcoiner: .1,
-    bagholder: .1
+    blockchain: .01
   }
 }

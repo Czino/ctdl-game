@@ -4,6 +4,7 @@ import Bagholder from '../enemies/Bagholder'
 import Rabbit from '../enemies/Rabbit'
 import Cobra from '../enemies/Cobra'
 import Goldbugs from '../enemies/Goldbugs'
+import Blockchain from '../enemies/Blockchain'
 import Andreas from '../enemies/Andreas'
 import HodlTarantula from '../npcs/HodlTarantula'
 import Limburgert from '../npcs/Limburgert'
@@ -52,6 +53,7 @@ export const gameObjects = {
     Rabbit,
     Cobra,
     Goldbugs,
+    Blockchain,
     Andreas,
     HodlTarantula,
     Brian,

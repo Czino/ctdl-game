@@ -131,9 +131,6 @@ class BabyLizard extends Agent {
 
     this.frame++
 
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     this.draw()
   }
 

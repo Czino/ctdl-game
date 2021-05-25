@@ -237,9 +237,6 @@ class Citizen extends Human {
       if (/action/.test(this.status)) this.status = 'idle'
     }
 
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     this.draw()
   }
 

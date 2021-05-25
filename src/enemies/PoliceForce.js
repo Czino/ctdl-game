@@ -238,10 +238,6 @@ class PoliceForce extends Agent {
       this.status = 'idle'
     }
 
-    // TODO refactor into global update
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     this.draw()
   }
 

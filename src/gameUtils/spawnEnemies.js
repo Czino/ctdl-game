@@ -11,6 +11,7 @@ import Bull from '../objects/Bull'
 import PoliceForce from '../enemies/PoliceForce'
 import Bagholder from '../enemies/Bagholder'
 import Cobra from '../enemies/Cobra'
+import Blockchain from '../enemies/Blockchain'
 
 
 /**
@@ -64,7 +65,7 @@ export const spawnAgent = agent => {
  */
 export const spawnEnemies = () => {
   if (CTDLGAME.isNight && Math.random() < CTDLGAME.world.map.spawnRates.shitcoiner) {
-    spawnAgent(new Shitcoiner(
+    return spawnAgent(new Shitcoiner(
       'shitcoiner-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
@@ -74,7 +75,7 @@ export const spawnEnemies = () => {
     ))
   }
   if (Math.random() < CTDLGAME.world.map.spawnRates.rabbit) {
-    spawnAgent(new Rabbit(
+    return spawnAgent(new Rabbit(
       'rabbit-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
@@ -84,7 +85,7 @@ export const spawnEnemies = () => {
     ))
   }
   if (Math.random() < CTDLGAME.world.map.spawnRates.goldbugs) {
-    spawnAgent(new Goldbugs(
+    return spawnAgent(new Goldbugs(
       'goldbugs-' + Math.random(),
       {
         x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
@@ -94,7 +95,7 @@ export const spawnEnemies = () => {
     ))
   }
   if (Math.random() < CTDLGAME.world.map.spawnRates.cobra) {
-    spawnAgent(new Cobra(
+    return spawnAgent(new Cobra(
       'cobra-' + Math.random(),
       {
         x: Math.random() < .5
@@ -106,7 +107,7 @@ export const spawnEnemies = () => {
     ))
   }
   if (Math.random() < CTDLGAME.world.map.spawnRates.bagholder) {
-    spawnAgent(new Bagholder(
+    return spawnAgent(new Bagholder(
       'bagholder-' + Math.random(),
       {
         x: Math.random() < .5
@@ -120,7 +121,7 @@ export const spawnEnemies = () => {
   if (Math.random() < CTDLGAME.world.map.spawnRates.citizen) {
     let doors = CTDLGAME.quadTree.query(CTDLGAME.viewport).filter(obj => /door/.test(obj.id))
     let door = random(doors)
-    spawnAgent(new Citizen(
+    return spawnAgent(new Citizen(
       'citizen-' + Math.random(),
       {
         x: door && Math.random() < .2
@@ -136,7 +137,7 @@ export const spawnEnemies = () => {
   if (Math.random() < CTDLGAME.world.map.spawnRates.policeForce && !CTDLGAME.world.map.state.protestScene) {
     let doors = CTDLGAME.quadTree.query(CTDLGAME.viewport).filter(obj => /door/.test(obj.id))
     let door = random(doors)
-    spawnAgent(new PoliceForce(
+    return spawnAgent(new PoliceForce(
       'policeForce-' + Math.random(),
       {
         x: door && Math.random() < .2
@@ -151,8 +152,17 @@ export const spawnEnemies = () => {
       }
     ))
   }
+  if (Math.random() < CTDLGAME.world.map.spawnRates.blockchain) {
+    return spawnAgent(new Blockchain(
+      'blockchain-' + Math.random(),
+      {
+        x: CTDLGAME.viewport.x + Math.round(Math.random() * constants.WIDTH),
+        y: CTDLGAME.viewport.y + constants.HEIGHT - 1
+      }
+    ))
+  }
   if (Math.random() < CTDLGAME.world.map.spawnRates.car && !CTDLGAME.world.map.state.protestScene) {
-    spawnAgent(new Car(
+    return spawnAgent(new Car(
       'car-' + Math.random(),
       {
         x: Math.random() < .5 ? CTDLGAME.viewport.x - 75 : CTDLGAME.viewport.x + constants.WIDTH,
@@ -163,7 +173,7 @@ export const spawnEnemies = () => {
     ))
   }
   if (Math.random() < CTDLGAME.world.map.spawnRates.bull) {
-    spawnAgent(new Bull(
+    return spawnAgent(new Bull(
       'bull-' + Math.random(),
       {
         x: CTDLGAME.viewport.x - 47,

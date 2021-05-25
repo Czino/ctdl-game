@@ -81,9 +81,6 @@ class Cobra extends Agent {
       this.bTree.step()
     }
 
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     if (!/rekt|idle/.test(this.status)) this.frame++
     if (/idle/.test(this.status) && (this.frame > 0 || Math.random() < .2)) this.frame++
     if (/rekt/.test(this.status) && this.frame < 3) this.frame++

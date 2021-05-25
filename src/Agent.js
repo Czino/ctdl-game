@@ -376,6 +376,7 @@ class Agent extends GameObject {
     this.frame = 0
 
     if (this.usd) CTDLGAME.inventory.usd += this.usd
+    if (this.sats) CTDLGAME.inventory.sats += this.sats
     if (this.item) {
       let item = new Item(
         this.item.id,
