@@ -42,19 +42,19 @@ let time
 
 init()
 
+let assetsLoaded = 0
+let initialAssetCount = Object.keys(CTDLGAME.assets).length
+
 /**
  * @description Method to init the game
  * @returns {void}
  */
 async function init() {
-  let i = 0
-  let len = Object.keys(CTDLGAME.assets).length
   for (let key in CTDLGAME.assets) {
-    CTDLGAME.assets[key] = await loadAsset(CTDLGAME.assets[key])
-    constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-
-    showProgressBar(i / (len - 1))
-    i++
+    loadAsset(CTDLGAME.assets[key]).then(asset => {
+      CTDLGAME.assets[key] = asset
+      assetsLoaded++
+    })
   }
 
   await db.init(constants.debug)
@@ -88,6 +88,13 @@ async function init() {
  */
 function tick() {
   CTDLGAME.frame++
+
+  if (!CTDLGAME.loaded) {
+    clearCanvas()
+    showProgressBar(assetsLoaded / initialAssetCount)
+    CTDLGAME.loaded = assetsLoaded === initialAssetCount
+    return window.requestAnimationFrame(tick)
+  }
   if (CTDLGAME.startScreen) {
     clearCanvas()
 

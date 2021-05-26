@@ -8,4 +8,8 @@ export const loadAsset = asset => new Promise(resolve => {
     resolve(newImg)
   }
   newImg.src = asset
+
+  if (newImg.complete) {
+    resolve(newImg)
+  }
 })
