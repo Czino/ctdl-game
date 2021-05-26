@@ -19,7 +19,7 @@ import moon from '../../sprites/moon.png'
 import parseLightSources from '../parseLightSources'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
-import Item from '../../Item'
+import Item from '../../objects/Item'
 
 const worldWidth = 64
 const worldHeight = 64

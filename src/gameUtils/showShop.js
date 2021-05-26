@@ -3,7 +3,7 @@ import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
 import itemSpriteData from '../sprites/items'
 import { addTextToQueue } from '../textUtils'
-import Item from '../Item'
+import Item from '../objects/Item'
 import { canDrawOn } from '../performanceUtils'
 
 // TODO prize items (add inflation, lol)

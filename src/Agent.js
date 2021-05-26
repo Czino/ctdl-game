@@ -1,5 +1,5 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
-import Item from './Item'
+import Item from './objects/Item'
 import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects } from './geometryUtils'
 import { addTextToQueue } from './textUtils'

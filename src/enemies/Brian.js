@@ -1,7 +1,7 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
 
 import brianSprite from '../sprites/brian'
-import Item from '../Item'
+import Item from '../objects/Item'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import { addTextToQueue, setTextQueue } from '../textUtils'

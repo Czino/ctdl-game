@@ -11,7 +11,7 @@ import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import BabyLizard from './BabyLizard'
-import Item from '../Item'
+import Item from '../objects/Item'
 
 const layEgg = new Task({
   run: agent => agent.layEgg.condition() ? agent.layEgg.effect() : FAILURE

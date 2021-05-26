@@ -10,7 +10,7 @@ import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
-import Item from '../Item';
+import Item from '../objects/Item';
 import Shitcoin from '../objects/Shitcoin'
 import Candle from '../objects/Candle'
 

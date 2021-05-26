@@ -4,13 +4,13 @@ import craig from '../sprites/craig'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
-import Item from '../Item';
+import Item from '../objects/Item'
 
 const doesNotTouchEnemy = new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE

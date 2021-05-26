@@ -14,7 +14,7 @@ import parseLightSources from '../parseLightSources'
 import getHitBoxes from '../getHitBoxes'
 
 import NPC from '../../npcs/NPC'
-import Item from '../../Item'
+import Item from '../../objects/Item'
 import Andreas from '../../enemies/Andreas'
 import HodlTarantula from '../../npcs/HodlTarantula'
 import Ivan from '../../enemies/Ivan'

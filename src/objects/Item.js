@@ -1,12 +1,11 @@
-import constants from './constants'
-import { CTDLGAME } from './gameUtils'
-import { moveObject } from './geometryUtils'
-import spriteData from './sprites/items'
-import { playSound } from './sounds'
-import { addTextToQueue } from './textUtils'
-import GameObject from './GameObject'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { moveObject } from '../geometryUtils'
+import spriteData from '../sprites/items'
+import { playSound } from '../sounds'
+import { addTextToQueue } from '../textUtils'
+import GameObject from '../GameObject'
 
-// TODO move to /objects
 class Item extends GameObject {
   constructor(id, options) {
     super(id, options)

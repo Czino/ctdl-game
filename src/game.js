@@ -29,7 +29,7 @@ import { isSoundLoaded, toggleSounds } from './sounds'
 import { toggleSoundtrack } from './soundtrack'
 import { changeMap } from './mapUtils'
 import { showButtons, showFrameRate } from './debugUtils'
-import Item from './Item'
+import Item from './objects/Item'
 
 // import { playSound } from './sounds'
 // playSound('bark')
