@@ -6,8 +6,8 @@ import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects, getClosest } from './geometryUtils'
 import { capitalize } from './stringUtils'
 import constants from './constants'
-import { addTextToQueue } from './textUtils';
-import { playSound } from './sounds';
+import { addTextToQueue } from './textUtils'
+import { playSound } from './sounds'
 import { duckButton, backButton } from './events'
 import Agent from './Agent'
 import { canDrawOn } from './performanceUtils'

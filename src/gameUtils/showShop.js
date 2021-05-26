@@ -42,7 +42,7 @@ export const showShop = () => {
       w: 60
     },
     'left'
-  );
+  )
 
   if (CTDLGAME.menuItem > stock.length) CTDLGAME.menuItem = 0
   if (CTDLGAME.menuItem < 0) CTDLGAME.menuItem = stock.length

@@ -1,5 +1,5 @@
 import constants from '../constants'
-import { canDrawOn } from '../performanceUtils';
+import { canDrawOn } from '../performanceUtils'
 import { CTDLGAME } from './CTDLGAME'
 
 /**

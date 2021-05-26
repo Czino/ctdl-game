@@ -29,7 +29,7 @@ export const changeMap = async (id, from) => {
   if (CTDLGAME.world) CTDLGAME.world.ready = false
   setWorld(newWorld)
 
-  if (worldState) CTDLGAME.world.map.state = worldState;
+  if (worldState) CTDLGAME.world.map.state = worldState
 
   if (objects && objects.length > 0) {
     // we have saved objects, let's initialize them

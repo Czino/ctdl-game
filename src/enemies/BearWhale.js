@@ -3,7 +3,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 import bearWhale from '../sprites/bearWhale'
 import { addHook, CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { playSound } from '../sounds';
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'

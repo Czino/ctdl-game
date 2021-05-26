@@ -4,7 +4,7 @@ const gain = new Gain(1).toDestination()
 const crusher = new BitCrusher({
   bits: 8,
   wet: 1
-});
+})
 
 const pulseOptions = {
   oscillator: {

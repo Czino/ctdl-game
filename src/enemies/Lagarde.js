@@ -4,8 +4,8 @@ import lagarde from '../sprites/lagarde'
 import { addHook, CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'

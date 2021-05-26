@@ -92,7 +92,7 @@ export const remove = (key) => {
 export const get = key => {
   return new Promise(resolve => {
     let state = db.transaction(['state'], 'readonly').objectStore('state')
-    let request = state.get(key);
+    let request = state.get(key)
     request.onerror = () => {
       resolve(null)
     }

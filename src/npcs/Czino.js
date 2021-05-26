@@ -4,7 +4,7 @@ import spriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
+import { addTextToQueue } from '../textUtils'
 import Human from './Human'
 
 // Selector: runs until one node calls success

@@ -82,7 +82,7 @@ const dieSynths = [
   // 'brownNoiseSynth'
 ]
 
-const recorder = new Recorder();
+const recorder = new Recorder()
 SNDTRCK.synths.map(synth =>
   synth.disconnect() && synth.chain(SNDTRCK.devices.gain, recorder)
 )
@@ -90,7 +90,7 @@ setTimeout(async () => {
 
   for (let synth of dieSynths) {
     for (let note of notes) {
-      recorder.start();
+      recorder.start()
 
       if (synth === 'drumSynth') {
         SNDTRCK.devices.drumSynth.triggerAttackRelease(note, .10, now(), 1)
@@ -103,18 +103,18 @@ setTimeout(async () => {
       await sleep(1000)
       SNDTRCK.devices[synth].triggerRelease()
       // the recorded audio is returned as a blob
-      const recording = await recorder.stop();
+      const recording = await recorder.stop()
       // download the recording by creating an anchor element and blob url
-      const url = URL.createObjectURL(recording);
-      const anchor = document.createElement("a");
-      anchor.download = `${synth}-${note}.webm`;
-      anchor.href = url;
-      anchor.click();
+      const url = URL.createObjectURL(recording)
+      const anchor = document.createElement("a")
+      anchor.download = `${synth}-${note}.webm`
+      anchor.href = url
+      anchor.click()
     }
   }
 
   return
-}, 1000);
+}, 1000)
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))

@@ -1,9 +1,9 @@
 import NPCSprite from '../sprites/NPCs'
-import { CTDLGAME } from "../gameUtils"
-import constants from '../constants';
+import { CTDLGAME } from '../gameUtils'
+import constants from '../constants'
 import Agent from '../Agent'
-import { addTextToQueue } from '../textUtils';
-import { random } from '../arrayUtils';
+import { addTextToQueue } from '../textUtils'
+import { random } from '../arrayUtils'
 
 class NPC extends Agent {
   constructor(id, options) {

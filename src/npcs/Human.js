@@ -4,10 +4,10 @@ import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue } from '../textUtils'
+import { playSound } from '../sounds'
 import Agent from '../Agent'
-import { random } from '../arrayUtils';
+import { random } from '../arrayUtils'
 import { hexToRgb } from '../stringUtils'
 
 const colorOverrides = {
@@ -176,7 +176,7 @@ class Human extends Agent {
       )
 
       // pull the entire image into an array of pixel data
-      let imageData = constants.helperContext.getImageData(0, 0, this.sprite.width, this.sprite.height);
+      let imageData = constants.helperContext.getImageData(0, 0, this.sprite.width, this.sprite.height)
 
       // examine every pixel,
       // change any old rgb to the new-rgb

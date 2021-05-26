@@ -3,9 +3,9 @@ import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/ind
 import spriteData from '../sprites/wiz'
 import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
+import { addTextToQueue } from '../textUtils'
 import Agent from '../Agent'
-import { random } from '../arrayUtils';
+import { random } from '../arrayUtils'
 
 
 // Selector: runs until one node calls success

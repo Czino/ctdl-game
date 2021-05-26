@@ -4,13 +4,13 @@ import ivan from '../sprites/ivan'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../events'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
-import Item from '../objects/Item';
+import Item from '../objects/Item'
 import Shitcoin from '../objects/Shitcoin'
 import Candle from '../objects/Candle'
 

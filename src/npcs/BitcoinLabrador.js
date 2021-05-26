@@ -4,7 +4,7 @@ import spriteData from '../sprites/bitcoinLabrador'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds';
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 
 // TODO add attack

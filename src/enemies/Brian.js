@@ -7,7 +7,7 @@ import { intersects, getClosest } from '../geometryUtils'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
 import { playSound } from '../sounds'
-import { getSoundtrack, initSoundtrack } from '../soundtrack';
+import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { skipCutSceneButton } from '../events'

@@ -3,10 +3,10 @@ import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from '../../node_modul
 import catSpriteData from '../sprites/cat'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
+import { write } from '../font'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue } from '../textUtils'
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 

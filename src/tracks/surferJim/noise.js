@@ -1,5 +1,3 @@
-import { makeBoundary } from "../../geometryUtils";
-
 export default [
   [0, 2.1, "G3", 0.15],
   [7, 3.1, "G3", 0.15],

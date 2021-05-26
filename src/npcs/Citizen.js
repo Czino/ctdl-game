@@ -4,7 +4,7 @@ import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
+import { addTextToQueue } from '../textUtils'
 import Human from './Human'
 import { random } from '../arrayUtils'
 

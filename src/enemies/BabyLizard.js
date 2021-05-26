@@ -4,7 +4,7 @@ import babyLizard from '../sprites/babyLizard'
 import { CTDLGAME } from '../gameUtils'
 import { getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds';
+import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
 

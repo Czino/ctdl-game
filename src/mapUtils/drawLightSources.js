@@ -57,8 +57,7 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
       }
     })
 
-  ;
-  [
+  ;[
     constants.skyContext,
     constants.bgContext,
     constants.fgContext,
