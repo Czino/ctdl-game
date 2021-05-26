@@ -71,6 +71,7 @@ const goToShop = new GameObject('goToShop', {
 })
 
 goToShop.backEvent = character => {
+  CTDLGAME.menuItem = 0
   CTDLGAME.showShop = character
 }
 

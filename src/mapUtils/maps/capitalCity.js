@@ -59,7 +59,10 @@ const lights = {
 const doors = [
   [3, 124],
   [30, 124],
-  [44, 124, character => { CTDLGAME.showShop = character}],
+  [44, 124, character => {
+    CTDLGAME.menuItem = 0
+    CTDLGAME.showShop = character
+  }],
   [113, 124],
   [216, 124],
   [229, 124],

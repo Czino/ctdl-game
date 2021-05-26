@@ -68,10 +68,13 @@ export const showStartScreen = () => {
   showSettings()
 
   if (!canDrawOn('menuContext')) return // do net render menu yet
+  if (CTDLGAME.menuItem > 1) CTDLGAME.menuItem = 0
+  if (CTDLGAME.menuItem < 0) CTDLGAME.menuItem = 1
+
   if (newGameButton.active) {
     write(
       constants.menuContext,
-        CTDLGAME.newGameSelected
+        CTDLGAME.menuItem === 0
         ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
           ? '~ new game'
           :'new game'
@@ -88,8 +91,8 @@ export const showStartScreen = () => {
   if (!CTDLGAME.newGame && loadGameButton.active) {
     write(
       constants.menuContext,
-      !CTDLGAME.newGameSelected
-        ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
+      CTDLGAME.menuItem === 1
+      ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
           ? '~ resume game'
           :'resume game'
         : 'resume game',

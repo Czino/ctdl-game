@@ -44,9 +44,23 @@ export const showShop = () => {
     'left'
   );
 
+  if (CTDLGAME.menuItem > stock.length) CTDLGAME.menuItem = 0
+  if (CTDLGAME.menuItem < 0) CTDLGAME.menuItem = stock.length
+
   stock.map((item, i) => {
     let spriteData = itemSpriteData[item]
 
+    if (i === CTDLGAME.menuItem) {
+      write(
+        constants.menuContext,
+        `>`, {
+          x: CTDLGAME.viewport.x + 10,
+          y: CTDLGAME.viewport.y + 80 + i * 15,
+          w: 10
+        },
+        'left'
+      )
+    }
     if (CTDLGAME.inventory.usd - priceList[item] < 0) constants.menuContext.globalAlpha = .5
     constants.menuContext.drawImage(
       CTDLGAME.assets.items,
@@ -89,6 +103,18 @@ export const showShop = () => {
   })
 
 
+  if (CTDLGAME.menuItem === stock.length){
+    write(
+      constants.menuContext,
+      '>',
+      {
+        x: CTDLGAME.viewport.x + 10,
+        y: CTDLGAME.viewport.y + constants.HEIGHT - constants.MENU.h - 20,
+        w: 10
+      },
+      'left'
+    )
+  }
   write(
     constants.menuContext,
     'Exit shop',
@@ -98,7 +124,7 @@ export const showShop = () => {
       w: 100
     },
     'left'
-  );
+  )
   if (!eventsAdded) {
     CTDLGAME.eventButtons.push({
       action: 'exitShop',

@@ -72,7 +72,7 @@ async function init() {
       CTDLGAME.newGame = true
     } else {
       loadGameButton.active = true
-      CTDLGAME.newGameSelected = false
+      CTDLGAME.menuItem = 1
     }
 
     initEvents(CTDLGAME.startScreen)

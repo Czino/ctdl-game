@@ -11,7 +11,7 @@ import { textQueue } from './textUtils/textQueue'
 
 window.KEYS = []
 window.BUTTONS = []
-CTDLGAME.newGameSelected = true
+CTDLGAME.menuItem = 0
 
 let buttonClicked
 
@@ -335,6 +335,20 @@ export const initEvents = startScreen => {
     if (key === 'tab') {
       switchCharacter()
     }
+    if (CTDLGAME.showShop) {
+      if (/[sk]|arrowdown/.test(key)) {
+        playSound('select')
+        CTDLGAME.menuItem++
+      }
+      if (/[wi]|arrowup/.test(key)) {
+        playSound('select')
+        CTDLGAME.menuItem--
+      }
+      if (key === 'enter' && CTDLGAME.eventButtons[CTDLGAME.menuItem]) {
+        CTDLGAME.eventButtons[CTDLGAME.menuItem].onclick()
+      }
+    }
+
     if (window.KEYS.indexOf(key) !== -1) return
     if (key === 'd' && window.KEYS.indexOf('a') !== -1) window.KEYS = window.KEYS.filter(key => key !== 'a')
     if (key === 'a' && window.KEYS.indexOf('d') !== -1) window.KEYS = window.KEYS.filter(key => key !== 'd')
@@ -365,17 +379,21 @@ function handleStartScreenKeyEvents (e) {
   e.preventDefault()
 
   if (loadGameButton.active) {
-    if (/[ws]|arrowup|arrowdown/.test(key)) {
+    if (/[sk]|arrowdown/.test(key)) {
       playSound('select')
-      CTDLGAME.newGameSelected = !CTDLGAME.newGameSelected
+      CTDLGAME.menuItem++
+    }
+    if (/[wi]|arrowup/.test(key)) {
+      playSound('select')
+      CTDLGAME.menuItem--
     }
   }
-  if (/[ad]|arrowleft|arrowright/.test(key)) {
+  if (/[adjl]|arrowleft|arrowright/.test(key)) {
     playSound('select')
     CTDLGAME.multiPlayer = !CTDLGAME.multiPlayer
   }
   if (key === 'enter') {
-    CTDLGAME.newGameSelected ? newGameButton.onclick() : loadGameButton.onclick()
+    CTDLGAME.menuItem === 0 ? newGameButton.onclick() : loadGameButton.onclick()
   }
 }
 
