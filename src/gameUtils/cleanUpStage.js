@@ -22,7 +22,7 @@ export const cleanUpStage = () => {
 
     if (obj.status !== 'rekt' && obj.status !== 'burning') return true
 
-    obj.status = 'burning'
+    if (obj.class === 'Shitcoiner' && !CTDLGAME.isNight) obj.status = 'burning'
     return true
   })
 }

@@ -16,6 +16,7 @@ class NPC extends Agent {
       this.thingsToSayTouch = this.spriteData.thingsToSayTouch
       this.thingsToSaySelect = this.spriteData.thingsToSaySelect
       if (this.spriteData.select) this.select = this.spriteData.select
+      if (this.spriteData.backEvent) this.backEvent = this.spriteData.backEvent
       if (this.spriteData.touch) this.touch = this.spriteData.touch
     }
 

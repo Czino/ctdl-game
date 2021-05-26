@@ -5,6 +5,57 @@ import constants from '../constants'
 import Explosion from '../Explosion'
 import { playSound } from '../sounds'
 
+const mircoEvent = npc => {
+  CTDLGAME.prompt = {
+    text: 'Mirco:\nGive me one Bitcoin and\nI will tell you the truth',
+    payload: npc,
+    ok: npc => {
+      if (CTDLGAME.inventory.sats >= 100000000) {
+        CTDLGAME.inventory.sats -= 100000000
+        addTextToQueue('Mirco:\nThe truth is, you just lost\none Bitcoin', () => {
+          npc.isSelected = false
+          npc.remove = true
+          playSound('magic')
+          CTDLGAME.objects.push(new Explosion(constants.gameContext, { x: npc.getCenter().x, y: npc.getCenter().y }))
+        })
+      } else {
+        addTextToQueue('Mirco:\nCome back when\nyou have the money', () => {
+          npc.isSelected = false
+        })
+      }
+    },
+    cancel: npc => {
+      addTextToQueue('Mirco:\nCome back when\nyou have the money', () => {
+        npc.isSelected = false
+      })
+    }
+  }
+}
+
+const wizardWithNoMoneyEvent = npc => {
+  npc.frame = window.SELECTEDCHARACTER.getCenter().x > npc.getCenter().x ? 1 : 0
+  addTextToQueue('Wizard with no money:\nI wish I could use my magic\nto create bitcoin.')
+  addTextToQueue('Wizard with no money:\nBut by Merlin\'s beard...\nit\'s impossible!', () => {
+    npc.isSelected = false
+  })
+}
+
+const elonEvent = npc => {
+  if (npc.isSelected) return
+  npc.isSelected = true
+  if (CTDLGAME.isNight) {
+    npc.frame = 1
+    addTextToQueue('Elon:\nMoOOooOOon', () => {
+      npc.isSelected = false
+      npc.frame = 0
+    })
+  } else {
+    addTextToQueue('Elon:\nMoon?', () => {
+      npc.isSelected = false
+    })
+  }
+}
+
 export default {
   monk: {
     frames: [
@@ -89,32 +140,8 @@ export default {
     frames: [
       { x: 0, y: 55, w: 17, h: 32 }
     ],
-    select: npc => {
-      CTDLGAME.prompt = {
-        text: 'Mirco:\nGive me one Bitcoin and\nI will tell you the truth',
-        payload: npc,
-        ok: npc => {
-          if (CTDLGAME.inventory.sats >= 100000000) {
-            CTDLGAME.inventory.sats -= 100000000
-            addTextToQueue('Mirco:\nThe truth is, you just lost\none Bitcoin', () => {
-              npc.isSelected = false
-              npc.remove = true
-              playSound('magic')
-              CTDLGAME.objects.push(new Explosion(constants.gameContext, { x: npc.getCenter().x, y: npc.getCenter().y }))
-            })
-          } else {
-            addTextToQueue('Mirco:\nCome back when\nyou have the money', () => {
-              npc.isSelected = false
-            })
-          }
-        },
-        cancel: npc => {
-          addTextToQueue('Mirco:\nCome back when\nyou have the money', () => {
-            npc.isSelected = false
-          })
-        }
-      }
-    },
+    select: mircoEvent,
+    backEvent: mircoEvent,
   },
   wizardWithNoMoney: {
     frames: [
@@ -122,13 +149,8 @@ export default {
       { x: 66, y: 0, w: 13, h: 28 }
     ],
     static: true,
-    select: npc => {
-      npc.frame = window.SELECTEDCHARACTER.getCenter().x > npc.getCenter().x ? 1 : 0
-      addTextToQueue('Wizard with no money:\nI wish I could use my magic\nto create bitcoin.')
-      addTextToQueue('Wizard with no money:\nBut by Merlin\'s beard...\nit\'s impossible!', () => {
-        npc.isSelected = false
-      })
-    }
+    select: wizardWithNoMoneyEvent,
+    backEvent: wizardWithNoMoneyEvent
   },
   roger: {
     frames: [
@@ -163,37 +185,8 @@ export default {
       { x: 48, y: 32, w: 28, h: 54 }
     ],
     static: true,
-    select: npc => {
-      if (npc.isSelected) return
-      npc.isSelected = true
-      if (CTDLGAME.isNight) {
-        npc.frame = 1
-        addTextToQueue('Elon:\nMoOOooOOon', () => {
-          npc.isSelected = false
-          npc.frame = 0
-        })
-      } else {
-        addTextToQueue('Elon:\nMoon?', () => {
-          npc.isSelected = false
-        })
-      }
-    },
-    touch: npc => {
-      if (npc.isTouched) return
-      npc.isTouched = true
-
-      if (CTDLGAME.isNight) {
-        npc.frame = 1
-        addTextToQueue('Elon:\nMoOOooOOon', () => {
-          npc.isTouched = false
-          npc.frame = 0
-        })
-      } else {
-        addTextToQueue('Elon:\nMoon?', () => {
-          npc.isTouched = false
-        })
-      }
-    }
+    select: elonEvent,
+    touch: elonEvent
   },
   leprikon: {
     frames: [
