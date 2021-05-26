@@ -336,16 +336,20 @@ export const initEvents = startScreen => {
       switchCharacter()
     }
     if (CTDLGAME.showShop) {
-      if (/[sk]|arrowdown/.test(key)) {
+      if (/^[sk]|arrowdown$/.test(key)) {
         playSound('select')
         CTDLGAME.menuItem++
       }
-      if (/[wi]|arrowup/.test(key)) {
+      if (/^[wi]|arrowup$/.test(key)) {
         playSound('select')
         CTDLGAME.menuItem--
       }
       if (key === 'enter' && CTDLGAME.eventButtons[CTDLGAME.menuItem]) {
         CTDLGAME.eventButtons[CTDLGAME.menuItem].onclick()
+      }
+      if (key === 'escape' ) {
+        playSound('select')
+        CTDLGAME.eventButtons[CTDLGAME.eventButtons.length - 1].onclick()
       }
     }
 
@@ -379,16 +383,16 @@ function handleStartScreenKeyEvents (e) {
   e.preventDefault()
 
   if (loadGameButton.active) {
-    if (/[sk]|arrowdown/.test(key)) {
+    if (/^[sk]|arrowdown$/.test(key)) {
       playSound('select')
       CTDLGAME.menuItem++
     }
-    if (/[wi]|arrowup/.test(key)) {
+    if (/^[wi]|arrowup$/.test(key)) {
       playSound('select')
       CTDLGAME.menuItem--
     }
   }
-  if (/[adjl]|arrowleft|arrowright/.test(key)) {
+  if (/^[adjl]|arrowleft|arrowright$/.test(key)) {
     playSound('select')
     CTDLGAME.multiPlayer = !CTDLGAME.multiPlayer
   }
