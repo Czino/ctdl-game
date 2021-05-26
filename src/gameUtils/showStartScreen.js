@@ -71,7 +71,11 @@ export const showStartScreen = () => {
   if (newGameButton.active) {
     write(
       constants.menuContext,
-      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4 ? '~ new game' : 'new game',
+        CTDLGAME.newGameSelected
+        ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
+          ? '~ new game'
+          :'new game'
+        : 'new game',
       {
         x: CTDLGAME.viewport.x + newGameButton.x - 10,
         y: CTDLGAME.viewport.y + newGameButton.y,
@@ -84,7 +88,11 @@ export const showStartScreen = () => {
   if (!CTDLGAME.newGame && loadGameButton.active) {
     write(
       constants.menuContext,
-      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4 ? '~ resume game' : 'resume game',
+      !CTDLGAME.newGameSelected
+        ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
+          ? '~ resume game'
+          :'resume game'
+        : 'resume game',
       {
         x: CTDLGAME.viewport.x + loadGameButton.x - 10,
         y: CTDLGAME.viewport.y + loadGameButton.y,

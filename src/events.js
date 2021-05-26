@@ -11,6 +11,7 @@ import { textQueue } from './textUtils/textQueue'
 
 window.KEYS = []
 window.BUTTONS = []
+CTDLGAME.newGameSelected = true
 
 let buttonClicked
 
@@ -293,6 +294,7 @@ export const initEvents = startScreen => {
   } catch (e) {
     CTDLGAME.touchScreen = false
   }
+  window.removeEventListener('keydown', handleStartScreenKeyEvents)
 
   if (startScreen) {
     window.removeEventListener('mousedown', click)
@@ -304,6 +306,7 @@ export const initEvents = startScreen => {
     window.removeEventListener('touchstart', zoomHandler)
     window.removeEventListener('touchmove', zoomHandler)
     window.addEventListener('resize', resize)
+    window.addEventListener('keydown', handleStartScreenKeyEvents)
 
     constants.BUTTONS
       .filter(button => /newGame|loadGame/.test(button.action))
@@ -355,6 +358,25 @@ function resize () {
   constants.canvases.forEach(canvas => {
     canvas.style.height = (Math.round(window.innerHeight / 2) * 2) + 'px'
   })
+}
+
+function handleStartScreenKeyEvents (e) {
+  let key = e.key.toLowerCase()
+  e.preventDefault()
+
+  if (loadGameButton.active) {
+    if (/[ws]|arrowup|arrowdown/.test(key)) {
+      playSound('select')
+      CTDLGAME.newGameSelected = !CTDLGAME.newGameSelected
+    }
+  }
+  if (/[ad]|arrowleft|arrowright/.test(key)) {
+    playSound('select')
+    CTDLGAME.multiPlayer = !CTDLGAME.multiPlayer
+  }
+  if (key === 'enter') {
+    CTDLGAME.newGameSelected ? newGameButton.onclick() : loadGameButton.onclick()
+  }
 }
 
 function mouseMoveHandler (e) {
