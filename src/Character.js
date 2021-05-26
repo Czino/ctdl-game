@@ -8,7 +8,7 @@ import { capitalize } from './stringUtils'
 import constants from './constants'
 import { addTextToQueue } from './textUtils'
 import { playSound } from './sounds'
-import { duckButton, backButton } from './events'
+import { duckButton, backButton } from './eventUtils'
 import Agent from './Agent'
 import { canDrawOn } from './performanceUtils'
 

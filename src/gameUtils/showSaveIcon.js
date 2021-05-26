@@ -3,7 +3,7 @@ import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
 import { canDrawOn } from '../performanceUtils'
 import { write } from '../font'
-import { saveButton } from '../events'
+import { saveButton } from '../eventUtils'
 
 /**
  * @description Method to show save icon

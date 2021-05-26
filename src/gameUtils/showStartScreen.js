@@ -5,7 +5,7 @@ import { canDrawOn } from '../performanceUtils'
 import { showSettings } from './showSettings'
 import { playSound } from '../sounds'
 import { initSoundtrack } from '../soundtrack'
-import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../events'
+import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../eventUtils'
 
 const velocity = 4
 let logoOffsetTop = -100

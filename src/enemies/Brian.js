@@ -10,7 +10,7 @@ import { playSound } from '../sounds'
 import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
-import { skipCutSceneButton } from '../events'
+import { skipCutSceneButton } from '../eventUtils'
 
 const items = [
   { id: 'pizza', chance: 0.01 },

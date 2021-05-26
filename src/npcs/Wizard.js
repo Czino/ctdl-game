@@ -4,7 +4,7 @@ import { addTextToQueue } from '../textUtils'
 import { playSound } from '../sounds'
 import Explosion from '../Explosion'
 import Agent from '../Agent'
-import { skipCutSceneButton } from '../events'
+import { skipCutSceneButton } from '../eventUtils'
 
 class Wizard extends Agent {
   constructor(id, options) {

@@ -3,7 +3,7 @@ import Character from '../Character'
 import { changeMap } from '../mapUtils'
 import { setTextQueue } from '../textUtils'
 import { getEmptyInventory } from './getEmptyInventory'
-import { saveButton } from '../events'
+import { saveButton } from '../eventUtils'
 
 /**
  * @description Method to prepare new game

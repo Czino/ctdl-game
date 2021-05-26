@@ -7,7 +7,7 @@ import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { gameObjects } from './gameObjects'
 import { loadMap } from '../mapUtils'
-import { saveButton } from '../events'
+import { saveButton } from '../eventUtils'
 
 /**
  * @description Method to load game

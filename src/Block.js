@@ -2,7 +2,7 @@ import blockSprite from './sprites/block'
 import { CTDLGAME } from './gameUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants'
-import { setButtonClicked } from './events'
+import { setButtonClicked } from './eventUtils'
 import GameObject from './GameObject'
 
 class Block extends GameObject {

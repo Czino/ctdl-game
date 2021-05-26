@@ -1,7 +1,7 @@
 import constants from '../constants'
 import { write } from '../font'
 import { CTDLGAME } from '../gameUtils'
-import { yesButton, nahButton } from '../events'
+import { yesButton, nahButton } from '../eventUtils'
 
 /**
  * @description Method to write text from queue to the textbox

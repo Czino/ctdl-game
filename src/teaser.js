@@ -1,5 +1,5 @@
 import * as db from './db'
-import { initEvents, loadGameButton, newGameButton } from './events'
+import { initEvents, loadGameButton, newGameButton } from './eventUtils'
 import constants from './constants'
 import {
   CTDLGAME,

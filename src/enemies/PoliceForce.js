@@ -171,7 +171,7 @@ class PoliceForce extends Agent {
     :  !/hurt|rekt/.test(this.status) && this.protection === 0
 
   onHurt = () => {
-    playSound('policeForceHurt') // TODO add sound
+    playSound('policeForceHurt')
   }
   onDie = () => {
     this.removeTimer = 64

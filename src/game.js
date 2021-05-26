@@ -1,5 +1,5 @@
 import * as db from './db'
-import { initEvents, loadGameButton, initGameButton } from './events'
+import { initEvents, loadGameButton, initGameButton, buttons } from './eventUtils'
 import constants from './constants'
 import {
   CTDLGAME,
@@ -50,6 +50,7 @@ let initialAssetCount = Object.keys(CTDLGAME.assets).length
  * @returns {void}
  */
 async function init() {
+  constants.BUTTONS = constants.BUTTONS.concat(buttons)
   for (let key in CTDLGAME.assets) {
     loadAsset(CTDLGAME.assets[key]).then(asset => {
       CTDLGAME.assets[key] = asset

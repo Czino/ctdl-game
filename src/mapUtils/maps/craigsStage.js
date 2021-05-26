@@ -21,7 +21,7 @@ import constants from '../../constants'
 import Character from '../../Character'
 import { addTextToQueue } from '../../textUtils'
 import Item from '../../objects/Item'
-import { skipCutSceneButton } from '../../events'
+import { skipCutSceneButton } from '../../eventUtils'
 import { playSound } from '../../sounds'
 import { initSoundtrack } from '../../soundtrack'
 

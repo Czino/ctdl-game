@@ -2,7 +2,7 @@ import * as db from '../db'
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { initSoundtrack, stopMusic, changeVolume } from '../soundtrack'
-import { loadGameButton, newGameButton, saveButton } from '../events'
+import { loadGameButton, newGameButton, saveButton } from '../eventUtils'
 import { setTextQueue } from '../textUtils'
 
 let deathCounter = 64

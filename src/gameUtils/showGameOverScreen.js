@@ -2,7 +2,7 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
 import { canDrawOn } from '../performanceUtils'
-import { loadGameButton, newGameButton } from '../events'
+import { loadGameButton, newGameButton } from '../eventUtils'
 
 /**
  * @description Method to display progress bar
