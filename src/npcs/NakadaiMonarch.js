@@ -15,7 +15,7 @@ const sit = new Task({
 const attackEnemy = new Sequence({
   nodes: [
     'lookAtEnemy',
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })

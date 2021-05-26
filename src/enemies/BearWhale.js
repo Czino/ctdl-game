@@ -22,7 +22,7 @@ const dive = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -37,7 +37,7 @@ const attack2Enemy = new Sequence({
 // Sequence: runs each node until fail
 const attack3Enemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack3'
   ]
 })

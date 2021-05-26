@@ -26,9 +26,12 @@ BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
 }))
 
-// TODO rename and restructure this
-BehaviorTree.register('touchesEnemy', new Task({
+BehaviorTree.register('canAttackEnemy', new Task({
   run: agent => agent.attack.condition() || (agent.attack2 && agent.attack2.condition()) || (agent.attack3 && agent.attack3.condition()) ? SUCCESS : FAILURE
+}))
+
+BehaviorTree.register('touchesEnemy', new Task({
+  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 }))
 
 BehaviorTree.register('doesNotTouchEnemy', new Task({

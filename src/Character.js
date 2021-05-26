@@ -17,9 +17,6 @@ const sprites = {
   katoshi
 }
 
-const touchesEnemy = new Task({
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
 })
@@ -35,7 +32,7 @@ const friendDucks = new Task({
 const attackEnemy = new Sequence({
   nodes: [
     'lookAtEnemy',
-    touchesEnemy,
+    'touchesEnemy',
     'attack'
   ]
 })

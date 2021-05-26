@@ -9,10 +9,6 @@ import Agent from '../Agent'
 
 const items = []
 
-const touchesEnemy = new Task({
-   // in biting distance
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -5 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -5 }) : FAILURE
 })
@@ -20,7 +16,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     'attack'
   ]
 })
@@ -28,7 +24,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     moveToClosestEnemy
   ]
 })

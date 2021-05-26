@@ -12,9 +12,6 @@ import { addTextToQueue } from '../textUtils'
 
 const items = []
 
-const touchesEnemy = new Task({
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -5 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -5 }) : FAILURE
 })
@@ -44,7 +41,7 @@ const getInLine = new Task({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     moveToClosestEnemy
   ]
 })
@@ -52,7 +49,7 @@ const goToEnemy = new Selector({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     'attack'
   ]
 })

@@ -19,7 +19,7 @@ const layEgg = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -27,7 +27,7 @@ const attackEnemy = new Sequence({
 // Sequence: runs each node until fail
 const attack2Enemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack2'
   ]
 })
@@ -35,7 +35,7 @@ const attack2Enemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'moveToClosestEnemy'
   ]
 })

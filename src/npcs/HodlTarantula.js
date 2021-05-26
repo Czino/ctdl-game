@@ -35,7 +35,7 @@ const hang = new Task({
 // Sequence: runs each node until fail
 const killIvan = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })

@@ -15,7 +15,7 @@ const items = [
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })

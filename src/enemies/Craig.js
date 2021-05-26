@@ -15,7 +15,7 @@ import Item from '../Item';
 const doesNotTouchEnemy = new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
-const touchesEnemy = new Task({
+const canAttackEnemy = new Task({
   run: agent => {
     if (!agent.closestEnemy) return FAILURE
     const attackBox = {
@@ -38,7 +38,7 @@ const moveToClosestEnemy = new Task({
 const attackEnemy = new Sequence({
   nodes: [
     'lookAtEnemy',
-    touchesEnemy,
+    canAttackEnemy,
     'attack'
   ]
 })

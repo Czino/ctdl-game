@@ -19,10 +19,6 @@ const isGood = new Task({
   run: agent => !agent.isEvil ? SUCCESS : FAILURE
 })
 
-const touchesEnemy = new Task({
-  // in biting distance
-  run: agent => agent.attack.condition() ? SUCCESS : FAILURE
-})
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
 })
@@ -45,7 +41,7 @@ const disappear = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -53,7 +49,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    'canAttackEnemy',
     moveToClosestEnemy,
     'jump'
   ]

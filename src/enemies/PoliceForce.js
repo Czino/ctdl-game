@@ -17,9 +17,6 @@ const items = [
   { id: 'taco', chance: 0.02 }
 ]
 
-const touchesEnemy = new Task({
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const holdPositionOrder = new Task({
   run: () => CTDLGAME.world.map.state.protestScene ? SUCCESS : FAILURE
 })
@@ -40,8 +37,6 @@ const push = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
-    'attack'
   ]
 })
 
@@ -49,16 +44,12 @@ const attackEnemy = new Sequence({
 const pushEnemy = new Sequence({
   nodes: [
     hasShield,
-    touchesEnemy,
-    push
   ]
 })
 
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
-    moveToClosestEnemy,
     'jump'
   ]
 })

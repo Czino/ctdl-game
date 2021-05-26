@@ -17,7 +17,7 @@ const items = [
   { id: 'taco', chance: 0.02 }
 ]
 
-const touchesEnemy = new Task({
+const canAttackEnemy = new Task({
   run: agent => agent.status === 'attack' || agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
 const moveToClosestEnemy = new Task({
@@ -27,7 +27,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    canAttackEnemy,
     'attack'
   ]
 })
@@ -35,7 +35,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    canAttackEnemy,
     moveToClosestEnemy
   ]
 })
