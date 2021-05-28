@@ -1,6 +1,6 @@
 import stage from './stage/conbase'
 
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
+import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
@@ -8,7 +8,7 @@ import GameObject from '../../GameObject'
 import Brian from '../../enemies/Brian'
 import Shitcoiner from '../../enemies/Shitcoiner'
 import Bagholder from '../../enemies/Bagholder'
-import { easeInOut, makeBoundary } from '../../geometryUtils'
+import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 
 import conbase from '../../sprites/conbase.png'
@@ -17,8 +17,6 @@ import bagholder from '../../sprites/bagholder.png'
 import brian from '../../sprites/brian.png'
 import moon from '../../sprites/moon.png'
 import parseLightSources from '../parseLightSources'
-import darken from '../darken'
-import drawLightSources from '../drawLightSources'
 import Item from '../../objects/Item'
 
 const worldWidth = 64
@@ -178,20 +176,6 @@ export default {
     bagholder,
     brian,
     moon
-  },
-  update: () => {
-    let timeOfDay = getTimeOfDay()
-    let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
-
-    if (timeOfDay >= 4 && timeOfDay <= 6) {
-      y = 1 - easeInOut((4 - timeOfDay) / -2, 3)
-    } else if (timeOfDay >= 17 && timeOfDay <= 20) {
-      y = easeInOut((timeOfDay - 17) / 3, 3)
-    }
-    if (y > 0) {
-      darken(y / 2, y / 2, '#212121')
-      drawLightSources(lightSources, 'conbase', tileSize, y, false)
-    }
   },
   track: () => 'imperayritzDeLaCiutatIoyosa',
   canSetBlocks: false,

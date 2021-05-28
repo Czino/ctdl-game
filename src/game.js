@@ -204,6 +204,8 @@ function tick() {
 
   executeHooks()
 
+  CTDLGAME.world.applyShaders()
+
   updateViewport()
 
   CTDLGAME.quadTree.clear()
@@ -229,6 +231,8 @@ function tick() {
   }
 
   showFrameRate()
+
+
   return window.requestAnimationFrame(tick)
 }
 

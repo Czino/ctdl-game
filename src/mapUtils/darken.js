@@ -32,6 +32,8 @@ export const darken = (darkness, darkness2, color) => {
     ].map(context => {
         context.fillStyle = color
         context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+        context.globalAlpha = 1
+        context.globalCompositeOperation = 'source-over'
     })
 }
 

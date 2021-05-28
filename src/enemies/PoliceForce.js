@@ -23,9 +23,6 @@ const holdPositionOrder = new Task({
 const hasShield = new Task({
   run: agent => agent.hasShield ? SUCCESS : FAILURE
 })
-const moveToClosestEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
-})
 const throwFlashbang = new Task({
   run: agent => agent.closestEnemy && agent.throwFlashbang.condition() ? agent.throwFlashbang.effect() : FAILURE
 })
@@ -44,6 +41,7 @@ const attackEnemy = new Sequence({
 const pushEnemy = new Sequence({
   nodes: [
     hasShield,
+    push
   ]
 })
 

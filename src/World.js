@@ -1,9 +1,10 @@
 import constants from './constants'
-import { CTDLGAME, loadAsset, showProgressBar } from './gameUtils'
-import { intersects } from './geometryUtils'
+import { CTDLGAME, getTimeOfDay, loadAsset, showProgressBar } from './gameUtils'
+import { easeInOut, intersects } from './geometryUtils'
 import { canDrawOn } from './performanceUtils'
 import Moon from './Moon'
 import Sun from './Sun'
+import { darken, drawLightSources } from './mapUtils'
 
 const sun = new Sun({
   x: CTDLGAME.viewport.x + constants.WIDTH / 2,
@@ -20,6 +21,7 @@ class World {
     this.map = map
     this.w = this.map.world.w
     this.h = this.map.world.h
+    this.tileSize = this.map.world.tileSize || 8
     CTDLGAME.objects = CTDLGAME.objects.concat(this.map.events)
     CTDLGAME.lightSources = this.map.lightSources
 
@@ -115,6 +117,21 @@ class World {
             tile.x, tile.y, tile.w, tile.h
           )
         })
+    }
+  }
+  applyShaders = () => {
+    if (this.map.overworld) {
+      let timeOfDay = getTimeOfDay()
+      let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
+      if (timeOfDay >= 4 && timeOfDay <= 6) {
+        y = 1 - easeInOut((4 - timeOfDay) / -2, 3)
+      } else if (timeOfDay >= 17 && timeOfDay <= 20) {
+        y = easeInOut((timeOfDay - 17) / 3, 3)
+      }
+      if (y > 0) {
+        darken(y / 2, y / 2, '#212121')
+        drawLightSources(CTDLGAME.lightSources, this.id, this.tileSize, y)
+      }
     }
   }
 }

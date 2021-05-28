@@ -4,13 +4,10 @@ import constants from '../../constants'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
-import GameObject from '../../GameObject'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
-import { easeInOut, makeBoundary } from '../../geometryUtils'
+import { CTDLGAME } from '../../gameUtils'
+import { makeBoundary } from '../../geometryUtils'
 import { drawCrispSine, drawSine } from '../../geometryUtils/drawSineWave'
 import getHitBoxes from '../getHitBoxes'
-import darken from '../darken'
-import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import Ferry from '../../objects/Ferry'
 import BearWhale from '../../enemies/BearWhale'
@@ -135,20 +132,6 @@ export default {
     }
 
     drawWaterBody((worldHeight - 2) * tileSize - 6)
-
-    // TODO make this global for overworld: true ?
-    let timeOfDay = getTimeOfDay()
-    let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
-
-    if (timeOfDay >= 4 && timeOfDay <= 6) {
-      y = 1 - easeInOut((4 - timeOfDay) / -2, 3)
-    } else if (timeOfDay >= 17 && timeOfDay <= 20) {
-      y = easeInOut((timeOfDay - 17) / 3, 3)
-    }
-    if (y > 0) {
-      darken(y / 2, y / 2, '#212121')
-      drawLightSources(lightSources, 'pier', tileSize, y)
-    }
   },
   canSetBlocks: false,
   overworld: true,

@@ -5,12 +5,10 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
+import { CTDLGAME } from '../../gameUtils'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
-import { easeInOut, makeBoundary } from '../../geometryUtils'
+import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
-import darken from '../darken'
-import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import Citizen from '../../npcs/Citizen'
 import Prophetoshi from '../../npcs/Prophetoshi'
@@ -240,20 +238,6 @@ export default {
 
     if (CTDLGAME.world.map.state.protestSceneActivated && !CTDLGAME.world.map.state.protestSceneEscalated) {
       activateProtestScene()
-    }
-  },
-  update: () => {
-    let timeOfDay = getTimeOfDay()
-    let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
-
-    if (timeOfDay >= 4 && timeOfDay <= 6) {
-      y = 1 - easeInOut((4 - timeOfDay) / -2, 3)
-    } else if (timeOfDay >= 17 && timeOfDay <= 20) {
-      y = easeInOut((timeOfDay - 17) / 3, 3)
-    }
-    if (y > 0) {
-      darken(y / 2, y / 2, '#212121')
-      drawLightSources(lightSources, 'capitalCity', tileSize, y)
     }
   },
   canSetBlocks: false,

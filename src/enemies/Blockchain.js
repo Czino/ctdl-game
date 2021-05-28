@@ -86,7 +86,7 @@ class Blockchain extends Agent {
     this.business = .1
     this.type = options.type || (Math.random() > .5 ? 'queue' : 'mined')
     this.blockHeight = options.blockHeight || Math.round(Math.random() * CTDLGAME.blockHeight) + (this.type === 'mined' ? 0 : CTDLGAME.blockHeight)
-    this.sats = options.sats ?? getBlockSubsidy(this.blockHeight) / 1000000
+    this.sats = options.sats ?? getBlockSubsidy(this.blockHeight + CTDLGAME.timePassed * 144 * 24 / 365) / 1000000
     this.item = options.item || items.find(item => item.chance >= Math.random())
 
     this.health = options.health ?? Math.round(this.blockHeight / 21000)
