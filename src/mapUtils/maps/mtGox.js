@@ -9,6 +9,7 @@ import getHitBoxes from '../getHitBoxes'
 
 import mtGox from '../../sprites/mtGox.png'
 import moon from '../../sprites/moon.png'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -82,8 +83,20 @@ goToDogeCoinMine.touchEvent = () => {
 }
 events.push(goToDogeCoinMine)
 
+const toCapitalCitySign = new GameObject('toCapitalCitySign', {
+  x: 80 * tileSize,
+  y: 109 * tileSize,
+  w: 3 * tileSize,
+  h: 3 * tileSize,
+})
+toCapitalCitySign.backEvent = () => {
+  if (toCapitalCitySign.reading) return
+  toCapitalCitySign.reading = true
+  setTextQueue([])
+  addTextToQueue('Capital City 2km -->', () => toCapitalCitySign.reading = false)
+}
+events.push(toCapitalCitySign)
 
-// TODO add event for sign to read "capital city"
 const goToCapitalCity = new GameObject('goToCapitalCity', {
   x: 127 * tileSize,
   y: 118 * tileSize,
