@@ -440,7 +440,7 @@ class Agent extends GameObject {
       .map(dmg => {
         let dmgVal = this.maxHealth ? Math.round(Math.min(dmg.dmg, this.maxHealth) / this.maxHealth * 1000) / 10 : dmg.dmg
         let dmgText = this.maxHealth ? `-${dmgVal}%` : `-${dmgVal}`
-        write(constants.fgContext, dmgText, {
+        write(constants.overlayContext, dmgText, {
           x: this.getCenter().x - 24 + dmg.x,
           y: this.y + dmg.y,
           w: 48
@@ -456,7 +456,7 @@ class Agent extends GameObject {
       .map(heal => {
         let healVal = this.maxHealth ? Math.round(Math.min(heal.heal, this.maxHealth) / this.maxHealth * 1000) / 10 : heal.heal
         let healText = this.maxHealth ? `+${healVal}%` : `+${heal.heal}`
-        write(constants.fgContext, healText, {
+        write(constants.overlayContext, healText, {
           x: this.getCenter().x - 24 + heal.x,
           y: this.y + heal.y,
           w: 48
@@ -476,7 +476,7 @@ class Agent extends GameObject {
     this.says = this.says
       .filter(say => say.y > -24)
       .map(say => {
-        write(constants.fgContext, say.say, {
+        write(constants.overlayContext, say.say, {
           x: this.getCenter().x - 50,
           y: this.y + say.y,
           w: 100

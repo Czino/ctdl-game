@@ -7,8 +7,6 @@ import { touches, intersects, sharpLine } from '../geometryUtils'
  * @description Method to render overlay layer, typically to display block placement and zoom
  */
 export const showOverlay = () => {
-  constants.overlayContext.clearRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
-
   if (Math.abs(window.SELECTEDCHARACTER.getCenter().x - (CTDLGAME.viewport.x + CTDLGAME.cursor.x)) > 30) return
   if (Math.abs(window.SELECTEDCHARACTER.getCenter().y - (CTDLGAME.viewport.y + CTDLGAME.cursor.y)) > 30) return
 
