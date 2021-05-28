@@ -34,6 +34,8 @@ const push = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
+    'canAttackEnemy',
+    'attack'
   ]
 })
 
@@ -41,6 +43,7 @@ const attackEnemy = new Sequence({
 const pushEnemy = new Sequence({
   nodes: [
     hasShield,
+    'canAttackEnemy',
     push
   ]
 })
@@ -48,6 +51,8 @@ const pushEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
+    'canAttackEnemy',
+    'moveToClosestEnemy',
     'jump'
   ]
 })
