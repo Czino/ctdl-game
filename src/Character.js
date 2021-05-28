@@ -383,32 +383,19 @@ class Character extends Agent {
     if (this.oneHitWonder) this.remove = true
   }
 
-  hurt = (dmg, direction, agent) => {
-    if (!this.hurtCondition(dmg, direction)) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
-
-    if (!lostFullPoint) return
-
+  onHurt = (dmg, direction, agent) => {
     if (agent) agent.enemy = true
 
-    this.dmgs.push({
-      x: Math.round((Math.random() - .5) * 8),
-      y: -8,
-      dmg: Math.ceil(dmg)
-    })
-    this.status = 'hurt'
+    this.protection = 8
+
     this.vx = direction === 'left' ? 5 : -5
     this.vy = -3
-    this.protection = 8
-    playSound('playerHurt')
+
     if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      return this.die() // :(
-    }
-    return this.onHurt()
+
+    playSound('playerHurt')
   }
+
 
   stun = (direction, impact = 1) => {
     this.status = 'stun'

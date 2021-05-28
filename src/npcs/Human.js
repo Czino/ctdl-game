@@ -127,30 +127,17 @@ class Human extends Agent {
     }
   }
 
-  // TODO compare to Agent and Character class
-  hurt = (dmg, direction) => {
-    if (!this.hurtCondition(dmg, direction)) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
+  onHurt = (dmg, direction, agent) => {
+    if (agent) agent.enemy = true
 
-    if (!lostFullPoint) return
+    this.protection = 8
 
-    this.dmgs.push({
-      x: Math.round((Math.random() - .5) * 8),
-      y: -8,
-      dmg: Math.ceil(dmg)
-    })
-    this.status = 'hurt'
     this.vx = direction === 'left' ? 5 : -5
     this.vy = -3
-    this.protection = 8
-    playSound('playerHurt')
+
     if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      return this.die()
-    }
-    return this.onHurt()
+
+    playSound('playerHurt')
   }
 
   die = () => {

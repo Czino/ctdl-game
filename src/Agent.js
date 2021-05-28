@@ -342,21 +342,26 @@ class Agent extends GameObject {
   hurt = (dmg, direction, agent) => {
     if (!this.hurtCondition(dmg, direction)) return
     if (this.status === 'exhausted') dmg *= 4
+
+    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
+    this.health = Math.max(this.health - dmg, 0)
+
+    if (!lostFullPoint) return
+
     this.dmgs.push({
       x: Math.round((Math.random() - .5) * 8),
       y: -8,
       dmg: Math.ceil(dmg)
     })
-    this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
     this.vx = direction === 'left' ? 2 : -2
     this.protection = 4
     if (this.health <= 0) {
       this.health = 0
-      return this.die(agent)
+      return this.die(agent) // :(
     }
 
-    return this.onHurt(agent)
+    return this.onHurt(dmg, direction, agent)
   }
 
   heal = heal => {
