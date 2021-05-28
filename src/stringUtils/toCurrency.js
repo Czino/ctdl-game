@@ -14,7 +14,7 @@ export const toCurrency = (value, currency) => {
     }
 
     if (value <= 9999) {
-        return '$' + value
+        return '$' + Math.round(value * 100) / 100
     } else if (value <= 999999) {
         return '$' + (Math.floor(value / 1000)) + 'k'
     } else if (value <= 999999999) {

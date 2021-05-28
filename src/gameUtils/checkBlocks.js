@@ -9,6 +9,7 @@ import { setTextQueue, textQueue } from '../textUtils/textQueue'
  * @returns {void}
  */
 const addBlockToInventory = block => {
+  CTDLGAME.timePassed++
   if (CTDLGAME.blockHeight >= block.height && block.height !== 0) return
 
   if (textQueue.length === 0 || textQueue.some(text => !/Found a new block/.test(text))) {

@@ -118,6 +118,7 @@ export default {
     menuContext: 8
   },
   GRAVITY: 2,
+  INFLATIONRATE: 1.02,
   canvases: [
     skyCanvas,
     parallaxCanvas,

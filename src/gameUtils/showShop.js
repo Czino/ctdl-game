@@ -5,14 +5,18 @@ import itemSpriteData from '../sprites/items'
 import { addTextToQueue } from '../textUtils'
 import Item from '../objects/Item'
 import { canDrawOn } from '../performanceUtils'
+import { toCurrency } from '../stringUtils'
+import getInflation from './getInflation'
+import getBTCPrice from './getBTCPrice'
+import getFiatPrice from './getFiatPrice'
 
-// TODO prize items (add inflation, lol)
 const priceList = {
   pizza: 6,
   taco: 11,
   steak: 30
 }
 const stock = ['pizza', 'taco', 'steak']
+const threshold = 1500000
 
 /**
  * @description Method to display progress bar
@@ -23,6 +27,9 @@ export const showShop = () => {
 
   const eventsAdded = CTDLGAME.eventButtons.length > 0
   const shopFor = CTDLGAME.showShop
+  const inflation = getInflation()
+  const currency = inflation < threshold ? 'USD' : 'BTC'
+
   constants.menuContext.globalAlpha = 1
   constants.menuContext.fillStyle = '#212121'
 
@@ -35,13 +42,13 @@ export const showShop = () => {
 
   write(
     constants.menuContext,
-    'Spaeti',
+    inflation < threshold ? 'USD accepted here!' : 'BTC accepted here!',
     {
-      x: CTDLGAME.viewport.x + 30,
+      x: CTDLGAME.viewport.x,
       y: CTDLGAME.viewport.y + 60,
-      w: 60
+      w: constants.WIDTH
     },
-    'left'
+    'center'
   )
 
   if (CTDLGAME.menuItem > stock.length) CTDLGAME.menuItem = 0
@@ -49,6 +56,7 @@ export const showShop = () => {
 
   stock.map((item, i) => {
     let spriteData = itemSpriteData[item]
+    const price = inflation < threshold ? getFiatPrice(priceList[item]) : getBTCPrice(priceList[item])
 
     if (i === CTDLGAME.menuItem) {
       write(
@@ -61,7 +69,7 @@ export const showShop = () => {
         'left'
       )
     }
-    if (CTDLGAME.inventory.usd - priceList[item] < 0) constants.menuContext.globalAlpha = .5
+    if (CTDLGAME.inventory.usd - price < 0) constants.menuContext.globalAlpha = .5
     constants.menuContext.drawImage(
       CTDLGAME.assets.items,
       spriteData.x, spriteData.y, spriteData.w, spriteData.h,
@@ -72,7 +80,7 @@ export const showShop = () => {
 
     write(
       constants.menuContext,
-      `- $${priceList[item]}`, {
+      `- ${toCurrency(price, currency)}`, {
         x: CTDLGAME.viewport.x + 40,
         y: CTDLGAME.viewport.y + 80 + i * 15,
         w: 60
@@ -90,9 +98,20 @@ export const showShop = () => {
         h: 15,
         active: true,
         onclick: () => {
-          if (CTDLGAME.inventory.usd - priceList[item] < 0) return addTextToQueue('Not enough fiat!')
+          const inflation = getInflation()
+          const price = inflation < threshold ? getFiatPrice(priceList[item]) : getBTCPrice(priceList[item])
 
-          CTDLGAME.inventory.usd -= priceList[item]
+          if (inflation < threshold) {
+            if (CTDLGAME.inventory.usd - price < 0) {
+              return addTextToQueue('Not enough fiat!')
+            }
+            CTDLGAME.inventory.usd -= price
+          } else {
+            if (CTDLGAME.inventory.sats - price < 0) {
+              return addTextToQueue('Not enough sats!')
+            }
+            CTDLGAME.inventory.sats -= price
+          }
           const itm =  new Item(item, {})
           itm.touch(shopFor)
 

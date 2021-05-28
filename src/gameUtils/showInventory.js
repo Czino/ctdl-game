@@ -58,7 +58,7 @@ export const showInventory = inventory => {
 
   write(
     constants.menuContext,
-    toCurrency(inventory.sats, 'BTC') + '\n' + toCurrency(inventory.usd, 'USD'), {
+    toCurrency(Math.round(inventory.sats), 'BTC') + '\n' + toCurrency(inventory.usd, 'USD'), {
       x: CTDLGAME.viewport.x + 2,
       y: pos.y + 1,
       w: 40

@@ -19,6 +19,7 @@ export const saveGame = async silent => {
     for (let map in maps) {
       await db.remove(`objects-${map}`)
     }
+    await db.remove('timePassed')
     await db.remove('blockHeight')
     await db.remove('inventory')
     await db.remove('options')
@@ -37,6 +38,7 @@ export const saveGame = async silent => {
         return obj.toJSON()
       }))
   }
+  await db.set('timePassed', CTDLGAME.timePassed)
   await db.set('blockHeight', CTDLGAME.blockHeight)
   await db.set('inventory', CTDLGAME.inventory)
   await db.set('options', CTDLGAME.options)

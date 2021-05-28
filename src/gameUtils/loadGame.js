@@ -21,6 +21,7 @@ export const loadGame = async () => {
   let katoshi = await db.get('katoshi')
   let objects = await db.get(`objects-${worldId}`)
   let worldState = await db.get(`worldState-${worldId}`)
+  let timePassed = await db.get('timePassed')
   let blockHeight = await db.get('blockHeight')
   let inventory = await db.get('inventory')
   let options = await db.get('options')
@@ -46,6 +47,7 @@ export const loadGame = async () => {
   }
   if (worldState) CTDLGAME.world.map.state = worldState
 
+  CTDLGAME.timePassed = timePassed || 0
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
   if (options) CTDLGAME.options = options

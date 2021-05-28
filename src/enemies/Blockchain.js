@@ -1,7 +1,7 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
 import blockchain from '../sprites/blockchain'
-import { CTDLGAME } from '../gameUtils'
+import { CTDLGAME, getBlockSubsidy } from '../gameUtils'
 import { intersects, getClosest, moveObject, sharpLine } from '../geometryUtils'
 import { playSound } from '../sounds'
 import { sense, senseCharacters } from './enemyUtils'
@@ -81,13 +81,14 @@ const tree = new Selector({
 class Blockchain extends Agent {
   constructor(id, options) {
     super(id, options)
-    this.sats = options.sats ?? Math.round(Math.random() * 100 + 1)
-    this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = 100
     this.walkingSpeed = 7
     this.business = .1
     this.type = options.type || (Math.random() > .5 ? 'queue' : 'mined')
     this.blockHeight = options.blockHeight || Math.round(Math.random() * CTDLGAME.blockHeight) + (this.type === 'mined' ? 0 : CTDLGAME.blockHeight)
+    this.sats = options.sats ?? getBlockSubsidy(this.blockHeight) / 1000000
+    this.item = options.item || items.find(item => item.chance >= Math.random())
+
     this.health = options.health ?? Math.round(this.blockHeight / 21000)
     this.maxHealth = options.maxHealth ?? Math.round(this.blockHeight / 21000)
 
