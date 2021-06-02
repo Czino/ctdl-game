@@ -17,10 +17,25 @@ export default {
     'squareSynth',
     'sineSynth'
   ],
+  lfo: ['squareSynth'],
   tracks: {
     triangle,
     square,
     sine,
-    pulse,
+    pulse
+  },
+  init: SNDTRCK => {
+    SNDTRCK.devices.autoFilter = new SNDTRCK.constructor.AutoFilter(.05)
+    SNDTRCK.devices.triangleSynth.chain(
+      SNDTRCK.devices.autoFilter,
+      SNDTRCK.devices.gain
+    )
+    SNDTRCK.devices.squareSynth.chain(
+      SNDTRCK.devices.autoFilter,
+      SNDTRCK.devices.gain
+    )
+  },
+  deinit: SNDTRCK => {
+    SNDTRCK.devices.autoFilter.stop()
   }
 }
