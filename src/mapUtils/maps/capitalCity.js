@@ -55,16 +55,19 @@ const lights = {
   }
 }
 const doors = [
-  [3, 124],
-  [30, 124],
-  [44, 124, character => {
+  [3, 124, 1, 3],
+  [30, 124, 1, 3],
+  [44, 124, 1, 3, character => {
     CTDLGAME.menuItem = 0
     CTDLGAME.showShop = character
   }],
-  [113, 124],
-  [216, 124],
-  [229, 124],
-  [251, 124],
+  [77, 124, 3, 3, () => {
+    changeMap('centralBank', 'capitalCity')
+  }],
+  [113, 124, 1, 3],
+  [216, 124, 1, 3],
+  [229, 124, 1, 3],
+  [251, 124, 1, 3],
 ]
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
@@ -155,10 +158,10 @@ doors.map(door => {
   const doorEvent = new GameObject(`door-${door[0]}-${door[1]}`, {
     x: door[0] * tileSize,
     y: door[1] * tileSize,
-    w: tileSize,
-    h: 3 * tileSize,
+    w: door[2] * tileSize,
+    h: door[3] * tileSize,
   })
-  doorEvent.backEvent = door[2] ? door[2] : () => {
+  doorEvent.backEvent = door[4] ? door[4] : () => {
     addTextToQueue('You cannot enter here')
   }
   events.push(doorEvent)
@@ -192,6 +195,7 @@ export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
     mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 },
+    centralBank: { x: 77 * tileSize, y: 124 * tileSize - 6 },
     pier: { x: 252 * tileSize, y: 124 * tileSize - 6 },
   },
   state: {

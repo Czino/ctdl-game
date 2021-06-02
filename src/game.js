@@ -177,6 +177,8 @@ function tick() {
 
   spawnEnemies()
 
+
+  // TODO reactivate wizard
   // if (CTDLGAME.wizardCountdown === 0) {
   //   CTDLGAME.wizardCountdown = null
   //   CTDLGAME.objects.push(new Wizard(

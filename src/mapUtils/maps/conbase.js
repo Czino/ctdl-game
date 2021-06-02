@@ -50,7 +50,7 @@ const lights = {
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
   .map(light => ({
     ...light,
-    y: light.y + tileSize
+    y: light.y
   }))
 
 let objects = []

@@ -33,6 +33,7 @@ import GlennHodl from '../npcs/GlennHodl'
 import ChrisWhodl from '../npcs/ChrisWhodl'
 import Doge from '../npcs/Doge'
 import Elevator from '../objects/Elevator'
+import ModernElevator from '../objects/ModernElevator'
 import Car from '../objects/Car'
 import Ferry from '../objects/Ferry'
 import FishingBoat from '../objects/FishingBoat'
@@ -85,6 +86,7 @@ export const gameObjects = {
     Bitdov,
     Doge,
     Elevator,
+    ModernElevator,
     Car,
     Ferry,
     FishingBoat,

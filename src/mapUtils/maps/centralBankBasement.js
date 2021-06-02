@@ -1,4 +1,4 @@
-import stage from './stage/cityUnderground'
+import stage from './stage/centralBankBasement'
 
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
@@ -8,7 +8,7 @@ import {  makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
 import parseLightSources from '../parseLightSources'
 
-import cityUnderground from '../../sprites/cityUnderground.png'
+import centralBankBasement from '../../sprites/centralBankBasement.png'
 import Lagarde from '../../enemies/Lagarde'
 
 import lagarde from '../../sprites/lagarde.png'
@@ -57,7 +57,7 @@ makeConsolidatedBoundary(0, 0, worldWidth, 1, tileSize)
 makeConsolidatedBoundary(worldWidth, 0, 1, worldHeight, tileSize)
 makeConsolidatedBoundary(0, 0, 1, worldHeight, tileSize)
 
-objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'cityUnderground', tileSize))
+objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'centralBankBasement', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
@@ -72,20 +72,12 @@ export default {
   lightSources,
   objects,
   npcs: () => [
-    new Lagarde(
-      'lagarde',
-      {
-          x: 170,
-          y: 60 * tileSize - 4,
-          status: 'normal',
-          direction: 'left'
-      }
-    )
+    
   ],
   items: () => [],
   events,
   assets: {
-    cityUnderground,
+    centralBankBasement,
     lagarde,
     babyLizard
   },

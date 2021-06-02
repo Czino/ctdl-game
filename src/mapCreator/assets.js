@@ -11,7 +11,8 @@ import grasslands from '../sprites/grasslands.png'
 import czinosCitadel from '../sprites/czinosCitadel.png'
 import mtGox from '../sprites/mtGox.png'
 import capitalCity from '../sprites/capitalCity.png'
-import cityUnderground from '../sprites/cityUnderground.png'
+import centralBank from '../sprites/centralBank.png'
+import centralBankBasement from '../sprites/centralBankBasement.png'
 import pier from '../sprites/pier.png'
 import citadelBeach from '../sprites/citadelBeach.png'
 import citadel from '../sprites/citadel.png'
@@ -32,7 +33,8 @@ export const assets = {
   czinosCitadel,
   mtGox,
   capitalCity,
-  cityUnderground,
+  centralBank,
+  centralBankBasement,
   pier,
   citadelBeach,
   citadel,
