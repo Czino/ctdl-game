@@ -10,10 +10,16 @@ import parseLightSources from '../parseLightSources'
 import GameObject from '../../GameObject'
 import AmericanHodl from '../../npcs/AmericanHodl'
 import MrsAmericanHodl from '../../npcs/MrsAmericanHodl'
+import Vlad from '../../npcs/Vlad'
+import GlennHodl from '../../npcs/GlennHodl'
+import ChrisWhodl from '../../npcs/ChrisWhodl'
 
 import funeral from '../../sprites/funeral.png'
 import americanHodl from '../../sprites/americanHodl.png'
 import mrsAmericanHodl from '../../sprites/mrsAmericanHodl.png'
+import vlad from '../../sprites/vlad.png'
+import glennHodl from '../../sprites/glennHodl.png'
+import chrisWhodl from '../../sprites/chrisWhodl.png'
 
 const worldWidth = 25
 const worldHeight = 24
@@ -33,7 +39,7 @@ let touched = false
 const backEvents = [
   [11, 18, 3, 6, () => {
     if (touched) return
-    addTextToQueue('      American Hodl 21 \n         March 2021 \n      Beloved Husband \n       and shitposter ', () => touched = false)
+    addTextToQueue('      American Hodl 21 \n       April 18th 2021 \n      Beloved Husband \n       and shitposter ', () => touched = false)
     touched = true
   }]
 ]
@@ -101,6 +107,24 @@ export default {
       x: 17 * tileSize,
       y: 19 * tileSize - 4,
       context: 'bgContext'
+    }),
+    new Vlad('vlad-funeral', {
+      x: 17 * tileSize,
+      y: 20 * tileSize - 2,
+      status: 'idle',
+      direction: 'left'
+    }),
+    new ChrisWhodl('chrisWhodl-funeral', {
+      x: 5 * tileSize,
+      y: 20 * tileSize - 2,
+      status: 'idle',
+      direction: 'right'
+    }),
+    new GlennHodl('glennHodl-funeral', {
+      x: 6 * tileSize,
+      y: 20 * tileSize - 2,
+      status: 'idle',
+      direction: 'right'
     })
   ],
   items: () => [],
@@ -108,7 +132,10 @@ export default {
   assets: {
     funeral,
     americanHodl,
-    mrsAmericanHodl
+    mrsAmericanHodl,
+    vlad,
+    glennHodl,
+    chrisWhodl
   },
   track: () => 'funeral',
   spawnRates: {}

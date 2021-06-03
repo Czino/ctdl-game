@@ -55,6 +55,8 @@ class Vlad extends Agent {
   constructor(id, options) {
     super(id, options)
     this.spriteData = spriteData
+    this.direction = options.direction || 'right'
+    this.status = options.status ||  'attack'
     this.startX = options.startX || this.x + 3
     this.startY = options.startY || this.y + 6
     this.finishedPlaying = options.finishedPlaying
@@ -63,12 +65,8 @@ class Vlad extends Agent {
     this.w = this.spriteData[this.direction][this.status][0].w
     this.h = this.spriteData[this.direction][this.status][0].h
     this.thingsToSayTouch = []
-    this.thingsToSaySelect = []
+    this.thingsToSaySelect = id === 'vlad-funeral' ? [] : []
   }
-
-  direction = 'right'
-  status = 'attack'
-
 
   bTree = new BehaviorTree({
     tree,
@@ -76,6 +74,7 @@ class Vlad extends Agent {
   })
 
   drawMic = () => {
+    if (!CTDLGAME.assets.citadelBeach) return
     constants[this.context].drawImage(
       CTDLGAME.assets.citadelBeach,
       11 * 8, 4 * 8, 8, 3 * 8,
@@ -103,8 +102,7 @@ class Vlad extends Agent {
     this.applyPhysics()
     if (this.status === 'fall') this.status = 'idle'
 
-
-    if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {
+    if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status) && this.id !== 'vlad-funeral') {
       this.bTree.step()
     }
 
