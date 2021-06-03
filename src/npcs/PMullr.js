@@ -61,7 +61,8 @@ class PMullr extends NPC {
         'P.M.:\nwhich means you\'re kind of\nliving in the future too',
         'P.M.:\nbut since there is no\npresent your past creates\nyour future thoughts',
         'P.M.:\nKind of fkd up'
-      ]
+      ],
+      ['petalik:\nOk guys could you please\nstop inflating your national currencies']
     ]
   }
 
