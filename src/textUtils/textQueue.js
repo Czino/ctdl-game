@@ -6,6 +6,8 @@ export let textQueue = []
  * @returns {void}
  */
 export const setTextQueue = newTextQueue => {
-    textQueue.forEach(text => text.callback())
+    textQueue
+        .filter(text => text.callback)
+        .forEach(text => text.callback())
     textQueue = newTextQueue
 }

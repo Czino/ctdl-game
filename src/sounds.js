@@ -629,6 +629,21 @@ const sounds = {
     noiseSynth.triggerRelease(time + dur)
     triangleSynth.triggerRelease(time + dur)
   },
+  deepMagic: ({ volume }) => {
+    const dur = .9
+    if (volume > 1) volume = 1
+    if (volume < 0) volume = 0
+    let time = now()
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .4
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .07
+
+    triangleSynth.triggerAttack('C1', time, .5 * volume)
+    triangleSynth.triggerRelease(time + dur)
+  },
   burn: () => {
     const present = now()
     const dur = .3
@@ -684,9 +699,9 @@ export const toggleSounds = enable => {
   enabled = enable
 }
 
-export const playSound = id => {
+export const playSound = (id, options) => {
   try {
-    if (enabled) sounds[id]()
+    if (enabled) sounds[id](options)
   } catch(e) {
     if (window.DEBUG) console.log(e)
     // do nothing

@@ -6,10 +6,12 @@ import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
 import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
+import Pmullr from '../../npcs/PMullr'
 
 import mtGox from '../../sprites/mtGox.png'
 import moon from '../../sprites/moon.png'
-import { addTextToQueue, setTextQueue } from '../../textUtils'
+import pmullr from '../../sprites/pmullr.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -125,12 +127,18 @@ export default {
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
   objects,
   npcs: () => [
+    new Pmullr('pmullr',
+    {
+      x: 107.5 * tileSize,
+      y: 114.25 * tileSize
+    })
   ],
   items: () => [],
   events,
   assets: {
     mtGox,
-    moon
+    moon,
+    pmullr
   },
   track: () => 'stellaSplendence',
   canSetBlocks: false,

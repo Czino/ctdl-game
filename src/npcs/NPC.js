@@ -48,15 +48,15 @@ class NPC extends Agent {
     this.isSelected = true
 
     let whatToSay = random(this.thingsToSaySelect)
-      whatToSay.map((text, index) => {
-        if (index === whatToSay.length - 1) {
-          addTextToQueue(text, () => {
-            this.isSelected = false
-          })
-        } else {
-          addTextToQueue(text)
-        }
-      })
+    whatToSay.map((text, index) => {
+      if (index === whatToSay.length - 1) {
+        addTextToQueue(text, () => {
+          this.isSelected = false
+        })
+      } else {
+        addTextToQueue(text)
+      }
+    })
   }
 
   touch = () => {

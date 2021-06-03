@@ -45,6 +45,7 @@ import Czino from '../npcs/Czino'
 import Luma from '../npcs/Luma'
 import Cat from '../npcs/Cat'
 import BitcoinLabrador from '../npcs/BitcoinLabrador'
+import PMullr from '../npcs/PMullr'
 import AmericanHodl from '../npcs/AmericanHodl'
 import MrsAmericanHodl from '../npcs/MrsAmericanHodl'
 
@@ -97,6 +98,7 @@ export const gameObjects = {
     Luma,
     Cat,
     BitcoinLabrador,
+    PMullr,
     AmericanHodl,
     MrsAmericanHodl
 }
