@@ -42,7 +42,7 @@ export const showStartScreen = () => {
     playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) initSoundtrack('collapse')
+  if (musicStart === velocity) initSoundtrack('funeral')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,

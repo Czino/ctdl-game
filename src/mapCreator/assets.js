@@ -16,6 +16,7 @@ import centralBankBasement from '../sprites/centralBankBasement.png'
 import pier from '../sprites/pier.png'
 import citadelBeach from '../sprites/citadelBeach.png'
 import citadel from '../sprites/citadel.png'
+import funeral from '../sprites/funeral.png'
 import miningFarm from '../sprites/miningFarm.png'
 // // import moon from '../sprites/moon.png'
 import craigsStage from '../sprites/craigsStage.png'
@@ -38,6 +39,7 @@ export const assets = {
   pier,
   citadelBeach,
   citadel,
+  funeral,
   miningFarm,
   // moon,
   craigsStage
