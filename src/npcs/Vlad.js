@@ -65,7 +65,7 @@ class Vlad extends Agent {
     this.w = this.spriteData[this.direction][this.status][0].w
     this.h = this.spriteData[this.direction][this.status][0].h
     this.thingsToSayTouch = []
-    this.thingsToSaySelect = id === 'vlad-funeral' ? [] : []
+    this.thingsToSaySelect = id === 'vlad-funeral' ? [['Vlad:\n6.15 is the friends we made along the way']] : []
   }
 
   bTree = new BehaviorTree({

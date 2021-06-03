@@ -13,8 +13,8 @@ class ChrisWhodl extends NPC {
     this.h = this.spriteData[this.direction][this.status][0].h
     this.direction = options.direction || 'right'
     this.status = options.status || 'move'
-    this.thingsToSayTouch = id === 'chrisWhodl-funeral' ? [['Chris Whodl:\ntbdtbdtbd']] : [['Chris Whodl:\ntbdtbdtbd']]
-    this.thingsToSaySelect = id === 'chrisWhodl-funeral' ? [['Chris Whodl:\ntbdtbdtbd']] : [['Chris Whodl:\ntbdtbdtbd']]
+    this.thingsToSayTouch = id === [[]]
+    this.thingsToSaySelect = id === 'chrisWhodl-funeral' ? [['Chris Whodl:\nBye American HODL, I\'m sure we will see thee on the\nother side']] : [[]]
   }
 
   drawMic = () => {

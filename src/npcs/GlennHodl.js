@@ -15,8 +15,8 @@ class GlennHodl extends NPC {
     this.thingsToSaySelect = [['Glenn Hodl:\ntbdtbdtbd']]
     this.direction = options.direction || 'right'
     this.status = options.status || 'move'
-    this.thingsToSayTouch = id === 'chrisWhodl-funeral' ? [['Chris Whodl:\ntbdtbdtbd']] : [['Chris Whodl:\ntbdtbdtbd']]
-    this.thingsToSaySelect = id === 'chrisWhodl-funeral' ? [['Chris Whodl:\ntbdtbdtbd']] : [['Chris Whodl:\ntbdtbdtbd']]
+    this.thingsToSayTouch = id === 'glennHodl-funeral' ? [['Glenn Hodl:\ntbdtbdtbd']] : [['Glenn Hodl:\ntbdtbdtbd']]
+    this.thingsToSaySelect = id === 'glennHodl-funeral' ? [['Glenn Hodl:\ntbdtbdtbd']] : [['Glenn Hodl:\ntbdtbdtbd']]
   }
 
   drawMic = () => {
