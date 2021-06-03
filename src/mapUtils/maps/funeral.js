@@ -8,8 +8,12 @@ import { addTextToQueue } from '../../textUtils'
 import getHitBoxes from '../getHitBoxes'
 import parseLightSources from '../parseLightSources'
 import GameObject from '../../GameObject'
+import AmericanHodl from '../../npcs/AmericanHodl'
+import MrsAmericanHodl from '../../npcs/MrsAmericanHodl'
 
 import funeral from '../../sprites/funeral.png'
+import americanHodl from '../../sprites/americanHodl.png'
+import mrsAmericanHodl from '../../sprites/mrsAmericanHodl.png'
 
 const worldWidth = 25
 const worldHeight = 24
@@ -29,7 +33,7 @@ let touched = false
 const backEvents = [
   [11, 18, 3, 6, () => {
     if (touched) return
-    addTextToQueue('RIP American Hodl', () => touched = false)
+    addTextToQueue('      American Hodl 21 \n         March 2021 \n      Beloved Husband \n       and shitposter ', () => touched = false)
     touched = true
   }]
 ]
@@ -87,11 +91,24 @@ export default {
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
   lightSources,
   objects,
-  npcs: () => [],
+  npcs: () => [
+    new MrsAmericanHodl('mrsAmericanHodl', {
+      x: 16 * tileSize,
+      y: 19 * tileSize -4,
+      context: 'bgContext'
+    }),
+    new AmericanHodl('americanHodl', {
+      x: 17 * tileSize,
+      y: 19 * tileSize - 4,
+      context: 'bgContext'
+    })
+  ],
   items: () => [],
   events,
   assets: {
     funeral,
+    americanHodl,
+    mrsAmericanHodl
   },
   track: () => 'funeral',
   spawnRates: {}
