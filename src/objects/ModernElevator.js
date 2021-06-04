@@ -3,6 +3,7 @@ import constants from '../constants'
 import { intersects } from '../geometryUtils'
 import { playSound } from '../sounds'
 import GameObject from '../GameObject'
+import { addTextToQueue } from '../textUtils'
 
 class ModernElevator extends GameObject {
   constructor(id, options) {
@@ -10,10 +11,11 @@ class ModernElevator extends GameObject {
     this.ys = typeof options.ys === 'string' ? JSON.parse(options.ys) : options.ys.sort()
     this.y = this.ys[0]
     this.carY = options.carY || this.y
-    this.h = this.ys[this.ys.length - 1] - this.y
+    this.h = this.ys[this.ys.length - 1] - this.y + this.spriteData.h
     this.action = options.action || 'stop'
     this.doorsOpen = options.doorsOpen ? JSON.parse(options.doorsOpen) : this.ys.map(() => 0)
     this.moveTo = options.moveTo
+    this.locked = options.locked
   }
 
   controls = {
@@ -75,6 +77,8 @@ class ModernElevator extends GameObject {
   doorsCompletelyOpen = () => this.doorsOpen.some(door => door === 12)
 
   update = () => {
+    if (this.locked) return this.draw()
+
     let move = 0
     this.ys.forEach((y, i) => {
       const boundingBox = {
@@ -160,6 +164,13 @@ class ModernElevator extends GameObject {
       })
 
     this.draw()
+  }
+
+  backEvent = () => {
+    if (this.locked && !this.touched) {
+      addTextToQueue('The elevator does not\nrespond', () => this.touched = false)
+      this.touched = true
+    }
   }
 
   senseControls = () => {

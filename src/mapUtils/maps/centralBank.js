@@ -121,7 +121,8 @@ export default {
         ys: [
           96 * tileSize,
           123 * tileSize
-        ]
+        ],
+        locked: true
       }
     )
   ],
