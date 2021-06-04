@@ -156,9 +156,10 @@ class Agent extends GameObject {
     this.senseRadius = 30
     this.protection = 0
     this.business = options.business || 1
+    this.applyGravity = options.applyGravity ?? true
+
   }
 
-  applyGravity = true
   w = 16
   h = 30
   dmgs = []

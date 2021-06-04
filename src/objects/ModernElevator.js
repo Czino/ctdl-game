@@ -1,6 +1,6 @@
 import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
-import { intersects, moveObject } from '../geometryUtils'
+import { intersects } from '../geometryUtils'
 import { playSound } from '../sounds'
 import GameObject from '../GameObject'
 
@@ -9,8 +9,11 @@ class ModernElevator extends GameObject {
     super(id, options)
     this.ys = typeof options.ys === 'string' ? JSON.parse(options.ys) : options.ys.sort()
     this.y = this.ys[0]
+    this.carY = options.carY || this.y
     this.h = this.ys[this.ys.length - 1] - this.y
+    this.action = options.action || 'stop'
     this.doorsOpen = options.doorsOpen ? JSON.parse(options.doorsOpen) : this.ys.map(() => 0)
+    this.moveTo = options.moveTo
   }
 
   controls = {
@@ -18,7 +21,6 @@ class ModernElevator extends GameObject {
     s: 'down',
     i: 'up',
     k: 'down',
-    escape: 'stop'
   }
   spriteData = {
     x: 9 * 8,
@@ -54,22 +56,23 @@ class ModernElevator extends GameObject {
       constants.bgContext.drawImage(
         CTDLGAME.assets.centralBank,
         this.bgData.x, this.bgData.y, this.bgData.w, this.bgData.h,
-        this.x + 1, y + 1, this.bgData.w, this.bgData.h
+        this.x + 1, y + 3, this.bgData.w, this.bgData.h
       )
       constants[doorContext].drawImage(
         CTDLGAME.assets.centralBank,
         this.doorLeft.x + doorOpen, this.doorLeft.y, this.doorLeft.w - doorOpen, this.doorLeft.h,
-        this.x, y, this.doorLeft.w - doorOpen, this.doorLeft.h
+        this.x, y + 2, this.doorLeft.w - doorOpen, this.doorLeft.h
       )
       constants[doorContext].drawImage(
         CTDLGAME.assets.centralBank,
         this.doorRight.x, this.doorRight.y, this.doorRight.w - doorOpen, this.doorRight.h,
-        this.x + 12 + doorOpen, y, this.doorRight.w - doorOpen, this.doorRight.h
+        this.x + 12 + doorOpen, y + 2, this.doorRight.w - doorOpen, this.doorRight.h
       )
     })
   }
 
   anyDoorOpen = () => this.doorsOpen.some(door => door > 0)
+  doorsCompletelyOpen = () => this.doorsOpen.some(door => door === 12)
 
   update = () => {
     let move = 0
@@ -79,38 +82,81 @@ class ModernElevator extends GameObject {
         w: this.w, h: this.spriteData.h
       }
       if (intersects(boundingBox, window.SELECTEDCHARACTER.getBoundingBox())) {
-        if (this.doorsOpen[i] < 12)  {
+        if (this.doorsOpen[i] < 12 && /opening|stop/.test(this.action)) {
           this.doorsOpen[i]++
           return
         }
+
+        if (!this.anyDoorOpen()) return
+
         let action = this.senseControls()
+        if (i === 0 && action === 'up') action = null
+        if (i === this.ys.length - 1 && action === 'down') action = null
+        if (action) {
+          [CTDLGAME.hodlonaut, CTDLGAME.katoshi].map(character => {
+            character.locked = true
+            character.context = 'bgContext'
+            character.applyGravity = false
+            character.y = y + 4
+          })
+          CTDLGAME.hodlonaut.x = this.x
+          CTDLGAME.katoshi.x = this.x + 8
+          this.action = action
+          this.carY = y
+          if (action === 'up') this.moveTo = this.ys[i - 1]
+          if (action === 'down') this.moveTo = this.ys[i + 1]
+        }
       } else if (this.doorsOpen[i] > 0) {
         this.doorsOpen[i]--
         return
       }
     })
 
-    if (this.action === 'up' && !this.anyDoorOpen()) {
-      move = -3
-      playSound('elevator')
-    } else if (this.action === 'down') {
-      move = 3
-      playSound('elevator')
+    // going to drive but doors are still open, close them
+    if (!/opening|stop/.test(this.action) && this.anyDoorOpen()) {
+      this.ys.forEach((y, i) => {
+        if (this.doorsOpen[i] > 0) this.doorsOpen[i]--
+      })
+      this.draw()
+      return
     }
-    if (move === 0 && this.action !== 'stop') {
-      playSound('elevatorStop')
+
+    // has stopped and doors are open, set default character options
+    if (this.action === 'opening' && this.doorsCompletelyOpen()) {
+      [CTDLGAME.hodlonaut, CTDLGAME.katoshi].map(character => {
+        character.locked = false
+        character.context = 'charContext'
+        character.applyGravity = true
+      })
       this.action = 'stop'
     }
 
-    CTDLGAME.objects
-      .filter(obj => obj.applyGravity)
-      .filter(obj => intersects(this.getBoundingBox('real'), obj.getBoundingBox()))
-      .map(obj => {
-        if (this.action === 'down') {
-          moveObject(obj, { x: 0, y: move }, CTDLGAME.quadTree)
-        } else {
-          obj.y += move
-        }
+    if (this.action === 'up' && !this.anyDoorOpen()) {
+      move = -4
+      playSound('elevator')
+    } else if (this.action === 'down' && !this.anyDoorOpen()) {
+      move = 4
+      playSound('elevator')
+    }
+
+    if (this.carY === this.moveTo) move = 0
+    if (move === 0 && !/stop|opening/.test(this.action)) {
+      [CTDLGAME.hodlonaut, CTDLGAME.katoshi].map(character => {
+        character.context = 'bgContext'
+      })
+      this.action = 'opening'
+      playSound('ding')
+      this.draw()
+      return
+    }
+
+    if (move === 0) return this.draw()
+
+    this.carY += move
+    ;[CTDLGAME.hodlonaut, CTDLGAME.katoshi]
+      .map(character => {
+        character.context = 'parallaxContext'
+        character.y += move
       })
 
     this.draw()
@@ -126,34 +172,16 @@ class ModernElevator extends GameObject {
     if (action) {
       window.SELECTEDCHARACTER.action.effect()
     }
-    this.action = action || this.action
     return action
   }
 
-  getBoundingBox = type => type === 'whole'
-    ? ({
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      w: this.w,
-      h: this.h
-    })
-    : type === 'real'
-    ? ({
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      w: this.w,
-      h: this.h
-    })
-    : ({
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      w: this.w,
-      h: 2
-    })
-
+  getBoundingBox = () => ({
+    id: this.id,
+    x: this.x,
+    y: this.y,
+    w: this.w,
+    h: this.h
+  })
   getAnchor = () => ({
       x: this.getBoundingBox().x + 2,
       y: this.getBoundingBox().y + this.getBoundingBox().h - 1,

@@ -24,7 +24,7 @@ class PMullr extends NPC {
       ['the p:\nRight now at this very\nmoment I\'m still bullish'],
       ['the mullr:\nKeep an eye out'],
       [
-        'Peter:\ncraigs lawsuits are like a blockchain,\nlawyer fees are the incentive',
+        'Peter:\ncraigs lawsuits are like a\nblockchain, lawyer fees are the incentive',
         'Peter:\nkleiman case is the\ngenesis lawsuit'
       ],
       ['iron mullr:\nJust realized that iron will moon too', 'iron mullr:\nI\'m made of iron'],

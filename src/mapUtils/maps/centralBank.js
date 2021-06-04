@@ -66,8 +66,9 @@ goToCapitalCity.touchEvent = () => {
 events.push(goToCapitalCity)
 
 const fogsOfWar = [
-  { x: 0, y: 101, w: 64, h: 8},
-  { x: 0, y: 109, w: 64, h: 8},
+  { x: 0, y: 89.5, w: 64, h: 11},
+  { x: 0, y: 100.5, w: 64, h: 9},
+  { x: 0, y: 109.5, w: 64, h: 8},
   { x: 0, y: 117.5, w: 64, h: 11},
 ].map((fogOfWar, i) => new GameObject(`fogOfWar-${i}`, {
   x: fogOfWar.x * tileSize,
@@ -92,7 +93,7 @@ const fogsOfWar = [
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    capitalCity: { x: 2 * tileSize, y: 124 * tileSize - 6 }
+    capitalCity: { x: 3 * tileSize, y: 124 * tileSize - 6 }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
@@ -102,16 +103,24 @@ export default {
   lightSources,
   objects,
   npcs: () => [
-    // 5, 123
-    // 59, 123
     new ModernElevator(
       'elevator-1',
       {
         x: 5 * tileSize,
         ys: [
-          106 * tileSize + 2,
-          113 * tileSize + 2,
-          123 * tileSize + 2
+          105 * tileSize,
+          113 * tileSize,
+          123 * tileSize
+        ]
+      }
+    ),
+    new ModernElevator(
+      'elevator-2',
+      {
+        x: 59 * tileSize,
+        ys: [
+          96 * tileSize,
+          123 * tileSize
         ]
       }
     )

@@ -123,6 +123,7 @@ class Character extends Agent {
     this.protection = 0
     this.rektIn = options.rektIn
     this.oneHitWonder = options.oneHitWonder
+    this.locked = options.locked
   }
 
   w = 16
@@ -513,7 +514,7 @@ class Character extends Agent {
 
     this.applyPhysics()
 
-    if (CTDLGAME.lockCharacters) {
+    if (CTDLGAME.lockCharacters || this.locked) {
       this.frame = 0
 
       this.draw()

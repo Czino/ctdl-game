@@ -244,6 +244,19 @@ const sounds = {
     noise2Synth.triggerAttack(present, .4)
     noise2Synth.triggerRelease(present + dur)
   },
+  ding: () => {
+    const present = now()
+    const dur = .005
+
+    squareSynth.portamento = 0
+    squareSynth.envelope.attack = .005
+    squareSynth.envelope.decay = .1
+    squareSynth.envelope.sustain = .3
+    squareSynth.envelope.release = 1.7
+
+    squareSynth.triggerAttack('B4', present + dur / 2, .2)
+    squareSynth.triggerRelease(present + dur / 2 + dur)
+  },
   splash: () => {
     const present = now()
     const dur = .7
