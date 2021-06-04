@@ -12,6 +12,7 @@ import GameObject from '../../GameObject'
 import centralBank from '../../sprites/centralBank.png'
 import constants from '../../constants'
 import ModernElevator from '../../objects/ModernElevator'
+import { addTextToQueue } from '../../textUtils'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -26,7 +27,7 @@ const solids = [
   [1, 0], [2, 0], [3, 0],
   [0, 1], [1, 1],
   [0, 2], [1, 2],
-  [1, 8], [2, 8]
+  [1, 8], [0, 8], [2, 8]
 ].map(tile => tile.toString())
 const spawnPoints = [
   [0, 1], [1, 1]
@@ -81,13 +82,51 @@ const fogsOfWar = [
   return fogOfWar
 })
 
-// TODO add events for banking clerks
+;[
+  [30, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'],
+  [32, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how can I help you?'],
+  [38, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'],
+  [44, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?']
+].map((clerk, i) => {
+  let bankingClerk = new GameObject(`clerk-${i}`, {
+    x: clerk[0] * tileSize,
+    y: clerk[1] * tileSize,
+    w: 2 * tileSize,
+    h: 4 * tileSize
+  })
 
-// 30, 124
-// 32, 124
-// 38, 124
-// 42, 124
-// 44, 124
+  bankingClerk.line = clerk[2]
+  bankingClerk.backEvent = function() {
+    if (!this.touched) {
+      addTextToQueue(this.line, () => this.touched = false)
+      this.touched = true
+    }
+  }
+  events.push(bankingClerk)
+})
+
+
+let underCoverClerk = new GameObject(`underCoverClerk`, {
+  x: 42 * tileSize,
+  y: 124 * tileSize,
+  w: 2 * tileSize,
+  h: 4 * tileSize
+})
+
+underCoverClerk.backEvent = function() {
+  if (!this.touched) {
+    let willHelp = CTDLGAME.world.map.state.underCoverClerkHelps // TODO connect event
+    let line = willHelp ? 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?': 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'
+    addTextToQueue(line, () => {
+      this.touched = false
+      if (willHelp) {
+        // give item
+      }
+    })
+    this.touched = true
+  }
+}
+events.push(underCoverClerk)
 
 
 export default {
