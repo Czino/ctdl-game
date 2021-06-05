@@ -4,6 +4,7 @@ import doge from './doge'
 import bagholder from './bagholder'
 import policeForce from './policeForce'
 import policeForceWithShield from './policeForceWithShield'
+import snakeBitken from './snakeBitken'
 import citizen from './citizen'
 import vlad from './vlad'
 import glennHodl from './glennHodl'
@@ -42,6 +43,7 @@ export default {
     bagholder,
     policeForce,
     policeForceWithShield,
+    snakeBitken,
     citizen,
     czino: citizen,
     luma: citizen,

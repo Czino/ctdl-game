@@ -16,6 +16,7 @@ import Lagarde from '../enemies/Lagarde'
 import BabyLizard from '../enemies/BabyLizard'
 import BearWhale from '../enemies/BearWhale'
 import PoliceForce from '../enemies/PoliceForce'
+import SnakeBitken from '../npcs/SnakeBitken'
 import Human from '../npcs/Human'
 import Citizen from '../npcs/Citizen'
 import Prophetoshi from '../npcs/Prophetoshi'
@@ -63,6 +64,7 @@ export const gameObjects = {
     Brian,
     Craig,
     PoliceForce,
+    SnakeBitken,
     Human,
     Citizen,
     Prophetoshi,

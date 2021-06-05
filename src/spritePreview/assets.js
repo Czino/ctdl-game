@@ -5,6 +5,7 @@ import bull from '../sprites/bull.png'
 import bagholder from '../sprites/bagholder.png'
 import policeForceWithShield from '../sprites/policeForceWithShield.png'
 import policeForce from '../sprites/policeForce.png'
+import snakeBitken from '../sprites/snakeBitken.png'
 import citizen1 from '../sprites/citizen-1.png'
 import citizen2 from '../sprites/citizen-2.png'
 import citizen3 from '../sprites/citizen-3.png'
@@ -55,6 +56,7 @@ export const assets = {
     bagholder,
     policeForceWithShield,
     policeForce,
+    snakeBitken,
     citizen1,
     citizen2,
     citizen3,
