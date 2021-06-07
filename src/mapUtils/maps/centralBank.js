@@ -166,6 +166,10 @@ export default {
     )
   ],
   items: () => [],
+  init: () => {
+    // move elevators to the beginning to avoid drawing over characters
+    CTDLGAME.objects = CTDLGAME.objects.sort(a => a.getClass() === 'ModernElevator' ? -1 : 0)
+  },
   update: () => {
     constants.fgContext.fillStyle = '#212121'
     fogsOfWar
