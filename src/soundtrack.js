@@ -141,6 +141,11 @@ export const initSoundtrack = async id => {
   SNDTRCK.synths.map(synth =>
     synth.disconnect() && synth.connect(SNDTRCK.devices.gain)
   )
+
+  Transport.loop = SNDTRCK.song.loop
+  Transport.loopStart = 0
+  Transport.loopEnd = SNDTRCK.song.length
+
   if (SNDTRCK.song.reverbs) {
     SNDTRCK.devices.reverb = new Reverb({
       decay: 7,
@@ -187,22 +192,6 @@ export const initSoundtrack = async id => {
 
   if (SNDTRCK.song.init) SNDTRCK.song.init(SNDTRCK)
 
-  Transport.loop = SNDTRCK.song.loop
-  Transport.loopStart = 0
-  Transport.loopEnd = SNDTRCK.song.length
-
-  if (SNDTRCK.song.tracks.event) {
-    eventPart = new Part((time, note) => {
-      const event = new CustomEvent(getSoundtrack(), { detail: note.event })
-      window.dispatchEvent(event)
-    }, parseNotes(SNDTRCK.song.tracks.event))
-  }
-
-  if (!enabled && Transport.state !== 'started') {
-    // only start the events
-    return startMusic()
-  }
-
   if (SNDTRCK.song.tracks.pulse) {
     pulsePart = new Part((time, note) => {
       SNDTRCK.devices.pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
@@ -246,6 +235,12 @@ export const initSoundtrack = async id => {
     }, parseNotes(SNDTRCK.song.tracks.drum))
   }
 
+  if (SNDTRCK.song.tracks.event) {
+    eventPart = new Part((time, note) => {
+      const event = new CustomEvent(getSoundtrack(), { detail: note.event })
+      window.dispatchEvent(event)
+    }, parseNotes(SNDTRCK.song.tracks.event))
+  }
 
   if (enabled && Transport.state !== 'started') {
     startMusic()
@@ -262,17 +257,18 @@ export const toggleSoundtrack = enable => {
   enabled = enable
   if (!enabled) {
     stopMusic()
-  } else if (enabled && SNDTRCK.song) {
+  } else if (SNDTRCK.song) {
     startMusic()
   }
 }
 
 export const startMusic = async () => {
-  if (!SNDTRCK.song || !enabled) {
-    if (SNDTRCK.song.tracks.event) {
-      await Transport.start('+.1', 0)
-      eventPart.start(0)
-    }
+  if ((!SNDTRCK.song || !enabled) && SNDTRCK.song.tracks.event) {
+    // start event part even if generally music is disabled
+    await Transport.start('+.1', 0)
+    eventPart.start(0)
+    return
+  } else if (!SNDTRCK.song || !enabled) {
     return
   }
 
