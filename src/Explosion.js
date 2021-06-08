@@ -12,6 +12,8 @@ class Explosion {
   h = 48
   frame = 0
 
+  getClass = () => this.constructor.name
+
   update = () => {
     if (this.remove) return
 

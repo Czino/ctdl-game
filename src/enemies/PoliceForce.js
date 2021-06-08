@@ -89,7 +89,7 @@ class PoliceForce extends Agent {
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = Math.round(Math.random() * 50) + 30
     this.flashbangs = options.flashbangs ?? (Math.random() > .8 ? 1 : 0)
-    this.enemy = options.enemy
+    this.enemy = !!options.enemy
     this.sensedCriminals = options.sensedCriminals || []
     this.hasShield = options.hasShield ?? (Math.random() > .8)
     this.spriteData = this.hasShield ? spritePoliceForceWithShield : spritePoliceForce
@@ -98,7 +98,6 @@ class PoliceForce extends Agent {
   }
 
   class = 'PoliceForce'
-  enemy = false
   w = 16
   h = 30
 
@@ -169,9 +168,11 @@ class PoliceForce extends Agent {
     }
   }
 
-  hurtCondition = (dmg, direction) => this.hasShield && direction === this.direction
-    ? !/hurt|rekt/.test(this.status) && this.protection === 0 && /attack/.test(this.status) && Math.random() > .5
-    :  !/hurt|rekt/.test(this.status) && this.protection === 0
+  hurtCondition = (dmg, direction) => !/hurt|rekt/.test(this.status) && this.protection === 0
+    ? this.hasShield && direction === this.direction
+      ? /attack/.test(this.status) && Math.random() > .5
+      : true
+    : false
 
   onHurt = () => {
     playSound('policeForceHurt')
@@ -214,7 +215,7 @@ class PoliceForce extends Agent {
         .forEach(enemy => this.sensedCriminals.push(enemy.id))
 
       if (this.sensedCriminals.length > 0) {
-        this.sensedCriminals = this.sensedCriminals
+        this.sensedCriminals = this.sensedCriminals.filter(unique())
         this.sensedFriends.forEach(friend => {
           friend.sensedCriminals = friend.sensedCriminals.concat(this.sensedCriminals).filter(unique())
         })

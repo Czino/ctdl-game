@@ -5,14 +5,21 @@ import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import { CTDLGAME } from '../../gameUtils'
 import {  intersects, makeBoundary } from '../../geometryUtils'
+import constants from '../../constants'
 import getHitBoxes from '../getHitBoxes'
 import parseLightSources from '../parseLightSources'
 import GameObject from '../../GameObject'
+import SnakeBitken from '../../npcs/SnakeBitken'
+import { addTextToQueue } from '../../textUtils'
+import ModernElevator from '../../objects/ModernElevator'
+import BankRobot from '../../enemies/BankRobot'
 
 import centralBank from '../../sprites/centralBank.png'
-import constants from '../../constants'
-import ModernElevator from '../../objects/ModernElevator'
-import { addTextToQueue } from '../../textUtils'
+import snakeBitken from '../../sprites/snakeBitken.png'
+import bankRobot from '../../sprites/bankRobot.png'
+import policeForce from '../../sprites/policeForce.png'
+import policeForceWithShield from '../../sprites/policeForceWithShield.png'
+import explosion from '../../sprites/explosion.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -65,6 +72,19 @@ goToCapitalCity.touchEvent = () => {
   changeMap('capitalCity', 'centralBank')
 }
 events.push(goToCapitalCity)
+
+const startClosingBank = new GameObject('startClosingBank', {
+  x: 45 * tileSize,
+  y: 105 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+startClosingBank.touchEvent = () => {
+  if (CTDLGAME.world.map.state.bankingHoursAlert || CTDLGAME.world.map.state.bankingHoursOver) return
+  CTDLGAME.world.map.state.bankingHoursAlert = true
+  CTDLGAME.world.map.state.secondsUntilClose = 60
+}
+events.push(startClosingBank)
 
 const fogsOfWar = [
   { x: 0, y: 89.5, w: 64, h: 11},
@@ -163,6 +183,22 @@ export default {
         ],
         locked: true
       }
+    ),
+    new SnakeBitken(
+      'snakeBitken',
+      {
+        x: 2 * tileSize,
+        y: 105 * tileSize,
+        context: 'parallaxContext'
+      }
+    ),
+    new BankRobot(
+      'bankrobot-1',
+      {
+        x: 45 * tileSize,
+        y: 105 * tileSize,
+        direction: 'right'
+      }
     )
   ],
   items: () => [],
@@ -189,10 +225,30 @@ export default {
         constants.fgContext.fillRect(fogOfWar.x, fogOfWar.y + 2, fogOfWar.w, fogOfWar.h)
       })
     constants.fgContext.globalAlpha = 1
+
+    if (CTDLGAME.world.map.state.codeRed && !CTDLGAME.world.map.state.codeRedCalled) {
+      addTextToQueue('Voice com:\nAttention! Code red! A bank robbery is in progress.')
+      addTextToQueue('Voice com:\nAll security personel to code red stations')
+      CTDLGAME.world.map.state.codeRedCalled = true
+    }
+    if (CTDLGAME.world.map.state.bankingHoursAlert) {
+      CTDLGAME.world.map.state.secondsUntilClose -= 0.125
+      if (CTDLGAME.world.map.state.secondsUntilClose === 0) {
+        CTDLGAME.world.map.state.bankingHoursAlert = false
+        CTDLGAME.world.map.state.bankingHoursOver = true
+        addTextToQueue('Voice com:\nThe bank and its employees whish to thank you for allowing us to serve you.')
+        addTextToQueue('Voice com:\nBanking hours are now\nover.')
+      }
+    }
   },
   events,
   assets: {
     centralBank,
+    snakeBitken,
+    bankRobot,
+    policeForce,
+    policeForceWithShield,
+    explosion
   },
   track: () => 'centralBank',
   spawnRates: {}

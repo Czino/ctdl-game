@@ -1,15 +1,37 @@
-import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from 'behaviortree'
+import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
-import constants from '../constants'
-import { CTDLGAME } from '../gameUtils'
 import spriteData from '../sprites/vlad'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
+import { senseCharacters } from '../enemies/enemyUtils'
 
-let justPlay = new Task({
+let isOutside = new Task({
+  run: agent => agent.context !== 'parallaxContext' ? SUCCESS : FAILURE
+})
+let seesCharacters = new Task({
+  run: agent => agent.sensedCharacters.length > 0 ? SUCCESS : FAILURE
+})
+
+let talk = new Task({
   run: agent => {
-    if (agent.status !== 'attack') return FAILURE
-    return agent.attack.condition() ? agent.attack.effect() : FAILURE
+    if (agent.hasTalked) return SUCCESS
+    agent.hasTalked = true
+    addTextToQueue('Snake ₿itken:\n', () => agent.moveToElevator = true)
+  }
+})
+let moveToElevator = new Task({
+  run: agent => {
+    if (agent.movedToElevator) return SUCCESS
+    
+    if (agent.x > 6 * 8) agent.movedToElevator = true
+    return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
+  }
+})
+let pressButton = new Task({
+  run: agent => {
+    if (agent.pressedButton) return SUCCESS
+    
+    return agent.action.condition() ? agent.action.effect() : FAILURE
   }
 })
 
@@ -20,10 +42,20 @@ const regularBehaviour = new Selector({
   ]
 })
 
+const robberyScene = new Sequence({
+  nodes: [
+    isOutside,
+    seesCharacters,
+    talk,
+    moveToElevator,
+    pressButton
+  ]
+})
 
 const tree = new Selector({
   nodes: [
-    regularBehaviour
+    regularBehaviour,
+    robberyScene
   ]
 })
 
@@ -36,6 +68,9 @@ class SnakeBitken extends Agent {
     this.status = options.status ||  'idle'
     this.w = this.spriteData[this.direction][this.status][0].w
     this.h = this.spriteData[this.direction][this.status][0].h
+    this.hasTalked = options.hasTalked
+    this.moveToElevator = options.moveToElevator
+    this.movedToElevator = options.movedToElevator
   }
 
   bTree = new BehaviorTree({
@@ -46,12 +81,15 @@ class SnakeBitken extends Agent {
 
   update = () => {
     this.applyPhysics()
+    let sensedCharacters = senseCharacters(this)
 
-    if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status) && this.context !== 'parallaxContext') {
-      this.bTree.step()
-    }
+    this.bTree.step()
 
     this.draw()
+
+    if (this.gone) {
+      CTDLGAME.world.map.state.codeRed = true
+    }
   }
 
   applyGravity = false

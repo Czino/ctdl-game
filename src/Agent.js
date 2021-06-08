@@ -264,6 +264,15 @@ class Agent extends GameObject {
       return FAILURE
     }
   }
+  action = {
+    condition: () => this.canStandUp(),
+    effect: () => {
+      this.frame = 0
+      this.status = 'action'
+      return SUCCESS
+    }
+  }
+
   lookAt = {
     condition: obj => obj,
     effect: obj => {
@@ -301,6 +310,26 @@ class Agent extends GameObject {
     let obstacles = CTDLGAME.quadTree.query(jumpTo)
       .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp|Boundary/.test(obj.getClass()))
       .filter(obj => intersects(obj, jumpTo))
+
+    return obstacles.length === 0
+  }
+
+  canStandUp = () => {
+    if (!/duck/i.test(this.status)) return true
+    let standUpTo = this.getBoundingBox()
+      standUpTo.y -= 6
+      // standUpTo.x += this.direction === 'right' ? 2 : -2 // do not stand up if you face obstacle
+      standUpTo.h = 6
+
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.globalAlpha = .5
+      constants.overlayContext.fillStyle = 'green'
+      constants.overlayContext.fillRect(standUpTo.x, standUpTo.y, standUpTo.w, standUpTo.h)
+      constants.overlayContext.globalAlpha = 1
+    }
+    let obstacles = CTDLGAME.quadTree.query(standUpTo)
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
+      .filter(obj => intersects(obj, standUpTo))
 
     return obstacles.length === 0
   }

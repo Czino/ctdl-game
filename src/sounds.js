@@ -257,6 +257,78 @@ const sounds = {
     squareSynth.triggerAttack('B4', present + dur / 2, .2)
     squareSynth.triggerRelease(present + dur / 2 + dur)
   },
+  sonar: (vol = 1) => {
+    const notes = ['C4', 'D4', 'E4', 'G4', 'C4', 'A5']
+    const dur = .015
+    let time = now()
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .01
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .005
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .15)
+      time += dur
+    })
+    time += dur
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .1)
+      time += dur
+    })
+    time += dur * 2
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .05)
+      time += dur
+    })
+    time += dur * 3
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .025)
+      time += dur
+    })
+    triangleSynth.triggerRelease(time + dur)
+  },
+  alarm: (vol = 1) => {
+    const notes = ['G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5']
+    const dur = .3
+    let time = now()
+
+    triangleSynth.portamento = dur / 10
+    triangleSynth.envelope.attack = 0.005
+    triangleSynth.envelope.decay = 1
+    triangleSynth.envelope.sustain = 1
+    triangleSynth.envelope.release = .005
+
+    triangleSynth.triggerAttack('A6', time, vol * .1)
+    notes.forEach(note => {
+      time += dur
+      triangleSynth.setNote(note, time)
+    })
+    time += dur
+    triangleSynth.triggerRelease(time)
+  },
+  robotRekt: (vol = 1) => {
+    const dur = 8
+    let time = now()
+    triangleSynth.dispose()
+    triangleSynth = new Synth(triangleOptions).connect(gain)
+
+    triangleSynth.portamento = dur
+    triangleSynth.envelope.attack = 0.005
+    triangleSynth.envelope.decay = dur
+    triangleSynth.envelope.sustain = 0
+    triangleSynth.envelope.release = 0
+
+    triangleSynth.triggerAttack('G3', time, vol * .1)
+    time += 0.01
+    triangleSynth.setNote('G1', time)
+    time += dur
+    triangleSynth.triggerRelease(time)
+  },
   splash: () => {
     const present = now()
     const dur = .7

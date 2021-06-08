@@ -63,6 +63,9 @@ class PMullr extends NPC {
         'P.M.:\nKind of fkd up'
       ],
       ['petalik:\nOk guys could you please\nstop inflating your national currencies']
+      // TODO check this: ['peternacci:\ncame home, entered the door and found 4 bowls in different sizes from small to big neatly arranged in a fibonacci pattern laying on the floor im scared']
+      // TODO check this: ['PMR:\nWow man i still can't believe police cracked sha-265 using a banana']
+      // TODO check this: ['Petrus:\nBitcoin is literally the only money you can take with you to the afterlife\nNobody realized this yet']
     ]
   }
 

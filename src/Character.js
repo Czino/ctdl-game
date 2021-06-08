@@ -300,14 +300,7 @@ class Character extends Agent {
       return SUCCESS
     }
   }
-  action = {
-    condition: () => this.canStandUp(),
-    effect: () => {
-      this.frame = 0
-      this.status = 'action'
-      return SUCCESS
-    }
-  }
+
   checkDownEvents = () => {
     if (!this.selected) return
     const boundingBox = this.getBoundingBox()
@@ -340,30 +333,11 @@ class Character extends Agent {
     return obstacles.length === 0
   }
 
-  canStandUp = () => {
-    if (!/duck/i.test(this.status)) return true
-    let standUpTo = this.getBoundingBox()
-      standUpTo.y -= 6
-      // standUpTo.x += this.direction === 'right' ? 2 : -2 // do not stand up if you face obstacle
-      standUpTo.h = 6
-
-    if (window.DRAWSENSORS) {
-      constants.overlayContext.globalAlpha = .5
-      constants.overlayContext.fillStyle = 'green'
-      constants.overlayContext.fillRect(standUpTo.x, standUpTo.y, standUpTo.w, standUpTo.h)
-      constants.overlayContext.globalAlpha = 1
-    }
-    let obstacles = CTDLGAME.quadTree.query(standUpTo)
-      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
-      .filter(obj => intersects(obj, standUpTo))
-
-    return obstacles.length === 0
-  }
-
   makeDamage = multiplier => {
     if (this.id === 'hodlonaut') playSound('lightningTorch')
     if (this.id === 'katoshi') playSound('sword')
     const boundingBox = this.getBoundingBox()
+    let direction = this.direction === 'left' ? 'right' : 'left'
 
     this.sensedEnemies
       .filter(enemy =>
@@ -378,7 +352,7 @@ class Character extends Agent {
         let dmg = Math.round(this.strength * (1 + Math.random() / 4))
         if (/hodlonaut/.test(this.id)) dmg *= (1 + CTDLGAME.inventory.sats / 100000000)
 
-        enemy.hurt(Math.round(dmg * multiplier), this.direction === 'left' ? 'right' : 'left', this)
+        enemy.hurt(Math.round(dmg * multiplier), direction, this)
       })
 
     if (this.oneHitWonder) this.remove = true
