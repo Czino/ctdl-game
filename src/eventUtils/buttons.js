@@ -133,10 +133,7 @@ export const buttons = [
     onclick: () => {
       playSound('select')
 
-      setTextQueue([])
-      stopMusic()
-      CTDLGAME.cutScene = false
-      newGame()
+      setTextQueue([]) // last text in textqueue will call callback to start game
 
       constants.BUTTONS
         .filter(button => /skipIntro/.test(button.action))

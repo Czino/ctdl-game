@@ -42,8 +42,8 @@ export const loadGame = async () => {
   } else {
     // we already have objects, only get tiles and ramps
     CTDLGAME.world.map.objects
-    .filter(obj => /Tile|Ramp|Boundary/.test(obj.getClass()))
-    .map(obj => CTDLGAME.objects.push(obj))
+      .filter(obj => /Tile|Ramp|Boundary/.test(obj.getClass()))
+      .map(obj => CTDLGAME.objects.push(obj))
   }
   if (worldState) CTDLGAME.world.map.state = worldState
 

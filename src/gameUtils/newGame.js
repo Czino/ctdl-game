@@ -14,7 +14,7 @@ export const newGame = async () => {
 
   CTDLGAME.inventory = getEmptyInventory()
   CTDLGAME.blockHeight = -1 // set blockHeight to -1 to enable fetching genesis block
-  setTextQueue([])
+  setTextQueue([], true)
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
