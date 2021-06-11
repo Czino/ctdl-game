@@ -1,27 +1,34 @@
-import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from 'behaviortree'
+import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 import { CTDLGAME } from '../gameUtils'
 
 import spriteData from '../sprites/vic'
+import { addTextToQueue } from '../textUtils'
 import NPC from './NPC'
 
 
-const getUpWhenFriendIsNear = new Task({
-  run: agent => agent.spawn.condition() ? agent.spawn.effect() : FAILURE
+const sleep = new Task({
+  run: agent => agent.sleep.condition() ? agent.sleep.effect() : FAILURE
 })
 
-const stand = new Task({
-  run: agent => agent.stand.condition() ? agent.stand.effect() : FAILURE
+const close = new Task({
+  run: agent => agent.close.condition() ? agent.close.effect() : FAILURE
 })
 
-const leaveWhenFriendIsGone = new Task({
-  run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
+const open = new Task({
+  run: agent => agent.open.condition() ? agent.open.effect() : FAILURE
 })
+
+const happy = new Task({
+  run: agent => agent.happy.condition() ? agent.happy.effect() : FAILURE
+})
+
 const tree = new Selector({
   nodes: [
     'idle',
-    leaveWhenFriendIsGone,
-    stand,
-    getUpWhenFriendIsNear
+    sleep,
+    open,
+    close,
+    happy
   ]
 })
 
@@ -33,20 +40,17 @@ class Vic extends NPC {
     this.w = this.spriteData[this.direction][this.status][0].w
     this.h = this.spriteData[this.direction][this.status][0].h
     this.senseRadius = 30
+    this.status = options.status || 'sleep'
+    this.awake = options.awake
 
-    this.thingsToSayTouch = [
-      ['L1mburg3rt:\nHFSP!'],
-      ['L1mburg3rt:\nOnly bitcoin matters!'],
-      ['L1mburg3rt:\nFuck your shit coin!']
+    this.thingsToSayTouchSleep = [
+      'vicariousdrama:\nCan you give me a\nlittle tug?',
+      'vicariousdrama:\nI need to open up\nand sun my balls!'
     ]
-    this.thingsToSaySelect = [
-      ['L1mburg3rt:\nCome at me!'],
-      ['L1mburg3rt:\nFix The Money, Fix The World!']
-    ]
+    this.thingsToSaySelect = [[]]
   }
 
-  direction = 'left'
-  status = 'idle'
+  direction = 'right'
 
   bTree = new BehaviorTree({
     tree,
@@ -54,30 +58,52 @@ class Vic extends NPC {
   })
 
   idle = {
-    condition: () => this.sensedFriends.length === 0 && (/idle/.test(this.status) || (/duck/.test(this.status) && this.frame === 6)) ,
+    condition: () => this.status === 'idle',
     effect: () => {
       this.status = 'idle'
       return SUCCESS
     }
   }
-  spawn = {
-    condition: () => /idle|spawn/.test(this.status) && this.sensedFriends.length > 0,
+  sleep = {
+    condition: () => this.status === 'sleep',
     effect: () => {
-      this.status = 'spawn'
+      this.status = 'sleep'
       return SUCCESS
     }
   }
-  stand = {
-    condition: () => /spawn/.test(this.status) && this.frame === 6,
+  open = {
+    condition: () => /sleep|open/.test(this.status),
     effect: () => {
-      this.status = 'stand'
+      this.status = 'open'
+      let spriteData = this.spriteData[this.direction][this.status]
+
+      if (this.frame === spriteData.length) {
+        this.status = 'idle'
+      }
       return SUCCESS
     }
   }
-  duck = {
-    condition: () => /stand|duck/.test(this.status) && this.sensedFriends.length === 0,
+  close = {
+    condition: () => /idle|close/.test(this.status),
     effect: () => {
-      this.status = 'duck'
+      this.status = 'close'
+      let spriteData = this.spriteData[this.direction][this.status]
+
+      if (this.frame === spriteData.length) {
+        this.status = 'sleep'
+      }
+      return SUCCESS
+    }
+  }
+  happy = {
+    condition: () => /happy/.test(this.status),
+    effect: () => {
+      this.status = 'happy'
+      let spriteData = this.spriteData[this.direction][this.status]
+
+      if (this.frame === spriteData.length) {
+        this.status = 'idle'
+      }
       return SUCCESS
     }
   }
@@ -93,6 +119,34 @@ class Vic extends NPC {
 
     this.draw()
     this.frame++
+  }
+
+  select = () => {
+    if (this.status === 'sleep') this.status = 'open'
+    if (/idle|happy/.test(this.status)) this.status = 'close'
+  }
+
+  touch = () => {
+    let whatToSay = this.thingsToSayTouchSleep
+
+    if (/happy|idle/.test(this.status)) {
+      this.frame = 0
+      this.status = 'happy'
+      return
+    }
+
+    if (this.isTouched) return
+
+    this.isTouched = true
+    whatToSay.map((text, index) => {
+      if (index === whatToSay.length - 1) {
+        addTextToQueue(text, () => {
+          this.isTouched = false
+        })
+      } else {
+        addTextToQueue(text)
+      }
+    })
   }
 
   applyGravity = false

@@ -35,6 +35,7 @@ import cat from './cat'
 import bitcoinLabrador from './bitcoinLabrador'
 import nakadaiMonarch from './nakadaiMonarch'
 import bearWhale from './bearWhale'
+import vic from './vic'
 
 export default {
     hodlonaut,
@@ -80,5 +81,6 @@ export default {
     pita: cat,
     bitcoinLabrador,
     nakadaiMonarch,
-    bearWhale
+    bearWhale,
+    vic
 }

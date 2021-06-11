@@ -53,7 +53,7 @@ class PMullr extends NPC {
       [
         'P.M.:\nDid you know that there is no present?',
         'P.M.:\nEvery thought you have\ncame from the past',
-        'P.M.:\nNo really, the time\ndifference isn\'t as high that you\'d notice, ',
+        'P.M.:\nNo really, the time\ndifference isn\'t as high that you\'d notice,',
         'P.M.:\nbut your thoughts are\nliterally older than you\nliterally think',
         'P.M.:\nBasically you\'re lagging\nbehind all the time',
         'P.M.:\nIf you really think about it\nyou\'re living in the past,\ni mean literally',
@@ -66,6 +66,7 @@ class PMullr extends NPC {
       // TODO check this: ['peternacci:\ncame home, entered the door and found 4 bowls in different sizes from small to big neatly arranged in a fibonacci pattern laying on the floor im scared']
       // TODO check this: ['PMR:\nWow man i still can't believe police cracked sha-265 using a banana']
       // TODO check this: ['Petrus:\nBitcoin is literally the only money you can take with you to the afterlife\nNobody realized this yet']
+      // TODO check this: ['Planet Mullr:\nYou are now aware that you're standing on a giant rotating rock that revolves around a giant ball of gas with no destination in sight']
     ]
   }
 

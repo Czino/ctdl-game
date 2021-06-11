@@ -47,6 +47,7 @@ import pita from '../sprites/pita.png'
 import bitcoinLabrador from '../sprites/bitcoinLabrador.png'
 import nakadaiMonarch from '../sprites/nakadaiMonarch.png'
 import bearWhale from '../sprites/bearWhale.png'
+import vic from '../sprites/vic.png'
 
 export const assets = {
     czino,
@@ -97,5 +98,6 @@ export const assets = {
     pita,
     bitcoinLabrador,
     nakadaiMonarch,
-    bearWhale
+    bearWhale,
+    vic
 }
