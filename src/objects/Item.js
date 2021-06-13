@@ -75,6 +75,10 @@ class Item extends GameObject {
         CTDLGAME.inventory.phoenix++
         playSound('honeyBadger')
       }
+    } else if (this.id === 'securityCard') {
+      addTextToQueue('You found a security card')
+      CTDLGAME.inventory.securityCard = 1
+      playSound('item')
     }
   }
   update = () => {
@@ -95,7 +99,7 @@ class Item extends GameObject {
         this.vy = 0
       }
     }
-    constants.gameContext.drawImage(
+    constants.fgContext.drawImage(
       CTDLGAME.assets.items,
       this.spriteData.x, this.spriteData.y, this.spriteData.w, this.spriteData.h,
       this.x, this.y + Math.round(Math.sin(CTDLGAME.frame / 16)), this.w, this.h

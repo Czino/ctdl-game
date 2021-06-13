@@ -1,45 +1,72 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
-import spriteData from '../sprites/vlad'
+import spriteData from '../sprites/snakeBitken'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
 import { senseCharacters } from '../enemies/enemyUtils'
+import { addHook, CTDLGAME } from '../gameUtils'
+import Item from '../objects/Item'
 
-let isOutside = new Task({
+const isOutside = new Task({
   run: agent => agent.context !== 'parallaxContext' ? SUCCESS : FAILURE
 })
-let seesCharacters = new Task({
+const seesCharacters = new Task({
   run: agent => agent.sensedCharacters.length > 0 ? SUCCESS : FAILURE
 })
 
-let talk = new Task({
+const talk = new Task({
   run: agent => {
-    if (agent.hasTalked) return SUCCESS
-    agent.hasTalked = true
-    addTextToQueue('Snake ₿itken:\n', () => agent.moveToElevator = true)
+    if (agent.moveToElevator) return SUCCESS
+    if (!agent.hasTalked) {
+      CTDLGAME.focusViewport = agent
+      CTDLGAME.lockCharacters = true
+      addTextToQueue('Snake ₿itken:\nTime to disappear.', () => agent.moveToElevator = true)
+      agent.hasTalked = true
+    }
+    return FAILURE
   }
 })
-let moveToElevator = new Task({
+const moveToElevator = new Task({
   run: agent => {
-    if (agent.movedToElevator) return SUCCESS
-    
-    if (agent.x > 6 * 8) agent.movedToElevator = true
-    return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
-  }
-})
-let pressButton = new Task({
-  run: agent => {
-    if (agent.pressedButton) return SUCCESS
-    
-    return agent.action.condition() ? agent.action.effect() : FAILURE
+    if (!agent.movedToElevator && agent.moveRight.condition()) {
+      agent.moveRight.effect()
+    }
+    if (agent.x > 5 * 8) agent.movedToElevator = true
+    return agent.movedToElevator ? SUCCESS : FAILURE
   }
 })
 
-// Selector: runs until one node calls success
-const regularBehaviour = new Selector({
-  nodes: [
-    'idle'
-  ]
+
+const throwItem = new Task({
+  run: agent => {
+    if (agent.threwItem) return SUCCESS
+    if (agent.status === 'stand' && !agent.threwItem) return FAILURE
+    agent.status = 'stand'
+    addTextToQueue('Snake ₿itken:\nI have no use for\nthis anymore.\nKnock yourself out.', () => {
+      agent.threwItem = true
+      CTDLGAME.objects.push(new Item(
+        'securityCard',
+        {
+          x: agent.x,
+          y: agent.y,
+          vy: -4,
+          vx: 6
+        }
+      ))
+    })
+
+    return FAILURE
+  }
+})
+const pressButton = new Task({
+  run: agent => {
+    if (agent.pressedButton) return SUCCESS
+
+    window.KEYS = ['npc']
+    agent.pressedButton = true
+
+    return SUCCESS
+  }
 })
 
 const robberyScene = new Sequence({
@@ -48,14 +75,14 @@ const robberyScene = new Sequence({
     seesCharacters,
     talk,
     moveToElevator,
-    pressButton
+    throwItem,
+    pressButton,
   ]
 })
 
 const tree = new Selector({
   nodes: [
-    regularBehaviour,
-    robberyScene
+    robberyScene,
   ]
 })
 
@@ -65,30 +92,52 @@ class SnakeBitken extends Agent {
     this.spriteData = spriteData
     this.spriteId = 'snakeBitken'
     this.direction = options.direction || 'right'
-    this.status = options.status ||  'idle'
+    this.status = options.status || 'idle'
     this.w = this.spriteData[this.direction][this.status][0].w
     this.h = this.spriteData[this.direction][this.status][0].h
-    this.hasTalked = options.hasTalked
-    this.moveToElevator = options.moveToElevator
-    this.movedToElevator = options.movedToElevator
+    this.senseRadius = 60
+    // this.hasTalked = options.hasTalked
+    // this.moveToElevator = options.moveToElevator
+    // this.movedToElevator = options.movedToElevator
+    // this.threwItem = options.threwItem
   }
+
+  applyGravity = true
 
   bTree = new BehaviorTree({
     tree,
     blackboard: this
   })
 
-
   update = () => {
     this.applyPhysics()
-    let sensedCharacters = senseCharacters(this)
+    this.sensedCharacters = senseCharacters(this)
 
-    this.bTree.step()
+    if (!this.pressedButton) {
+      this.bTree.step()
+    } else {
+      let spriteData = this.spriteData[this.direction].action
+      CTDLGAME.focusViewport = null
+      
+      window.KEYS = window.KEYS.filter(key => key !== 'npc')
+      if (this.frame === spriteData.length) {
+        this.frame = 0
+        this.status = 'stand'
+        addHook(CTDLGAME.frame + 42 * 8, () => {
+          CTDLGAME.lockCharacters = false
+          this.remove = true
+          CTDLGAME.world.map.state.codeRed = true
+        })
+      }
+    }
 
     this.draw()
-
+    this.frame++
+    
     if (this.gone) {
       CTDLGAME.world.map.state.codeRed = true
+      CTDLGAME.world.map.spawnRates.policeForce = 0.01
+      CTDLGAME.world.map.spawnRates.citizen = 0
     }
   }
 

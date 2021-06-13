@@ -125,9 +125,7 @@ export const initEvents = startScreen => {
     if (e.key.toLowerCase() === 'enter') {
       skipText()
     }
-    window.KEYS = window.KEYS.filter(key => {
-      return key !== e.key.toLowerCase()
-    })
+    window.KEYS = window.KEYS.filter(key => key !== e.key.toLowerCase())
   })
 }
 

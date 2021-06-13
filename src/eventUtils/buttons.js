@@ -2,7 +2,7 @@ import * as db from '../db'
 import { start } from 'tone'
 
 import constants from '../constants'
-import { CTDLGAME, loadGame, newGame, saveGame, saveStateExists, showIntro } from '../gameUtils'
+import { CTDLGAME, loadGame, saveGame, saveStateExists, showIntro } from '../gameUtils'
 import { isSoundLoaded, playSound, toggleSounds } from '../sounds'
 import { stopMusic, toggleSoundtrack } from '../soundtrack'
 import startScreenHandler from './startScreenHandler'
@@ -16,6 +16,7 @@ export let buttonClicked
 
 export const setButtonClicked = button => buttonClicked = button
 
+// TODO make button class
 export const buttons = [
   {
     action: 'initGame',

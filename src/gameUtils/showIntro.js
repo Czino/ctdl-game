@@ -2,11 +2,13 @@ import { CTDLGAME } from './CTDLGAME'
 import { addTextToQueue } from '../textUtils'
 import { newGame } from './newGame'
 import { stopMusic } from '../soundtrack'
+import { newGameButton } from '../eventUtils'
 
 /**
  * @description Method to prepare new game
  */
 export const showIntro = () => {
+  newGameButton.active = false
   addTextToQueue([
     'In a not so distant',
     'alternative universe,',

@@ -42,7 +42,7 @@ export const showStartScreen = () => {
     playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) initSoundtrack('moon')
+  if (musicStart === velocity) initSoundtrack('centralBankAlert')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,

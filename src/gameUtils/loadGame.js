@@ -7,13 +7,14 @@ import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { gameObjects } from './gameObjects'
 import { loadMap } from '../mapUtils'
-import { saveButton } from '../eventUtils'
+import { loadGameButton, saveButton } from '../eventUtils'
 
 /**
  * @description Method to load game
  * @returns {void}
  */
 export const loadGame = async () => {
+  loadGameButton.active = false
   let time = await db.get('time')
   let worldId = await db.get('worldId')
 

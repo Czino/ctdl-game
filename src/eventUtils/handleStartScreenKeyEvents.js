@@ -27,7 +27,13 @@ export const handleStartScreenKeyEvents = e => {
     CTDLGAME.menuItemX++
   }
   if (key === 'enter') {
-    CTDLGAME.menuItem === 0 ? newGameButton.onclick() : loadGameButton.onclick()
+    CTDLGAME.menuItem === 0
+      ? newGameButton.active
+        ? newGameButton.onclick()
+        : null
+      : loadGameButton.active
+        ? loadGameButton.onclick()
+        : null
   }
 }
 

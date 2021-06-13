@@ -100,7 +100,6 @@ class BankRobot extends Agent {
     this.alarmCoolDown = null
   }
 
-  enemy = true
   w = 16
   h = 8
 
@@ -119,10 +118,12 @@ class BankRobot extends Agent {
       return
     }
 
+    this.enemy = CTDLGAME.world.map.state.bankingHoursOver
+
     this.applyPhysics()
     if (this.status === 'fall') this.status = 'idle'
 
-    
+
     if (Math.abs(this.vy) < 3 && this.status !== 'rekt') {
       this.sensedEnemies = senseCharacters(this)
       this.closestEnemy = getClosest(this, this.sensedEnemies)

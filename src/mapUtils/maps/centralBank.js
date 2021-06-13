@@ -15,11 +15,18 @@ import ModernElevator from '../../objects/ModernElevator'
 import BankRobot from '../../enemies/BankRobot'
 
 import centralBank from '../../sprites/centralBank.png'
+import citizen1 from '../../sprites/citizen-1.png'
+import citizen2 from '../../sprites/citizen-2.png'
+import citizen3 from '../../sprites/citizen-3.png'
+import citizen4 from '../../sprites/citizen-4.png'
+import citizen5 from '../../sprites/citizen-5.png'
+import citizen6 from '../../sprites/citizen-6.png'
 import snakeBitken from '../../sprites/snakeBitken.png'
 import bankRobot from '../../sprites/bankRobot.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
 import explosion from '../../sprites/explosion.png'
+import { getSoundtrack, initSoundtrack } from '../../soundtrack'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -74,15 +81,15 @@ goToCapitalCity.touchEvent = () => {
 events.push(goToCapitalCity)
 
 const startClosingBank = new GameObject('startClosingBank', {
-  x: 45 * tileSize,
-  y: 105 * tileSize,
+  x: 55 * tileSize,
+  y: 106 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
 startClosingBank.touchEvent = () => {
   if (CTDLGAME.world.map.state.bankingHoursAlert || CTDLGAME.world.map.state.bankingHoursOver) return
   CTDLGAME.world.map.state.bankingHoursAlert = true
-  CTDLGAME.world.map.state.secondsUntilClose = 60
+  CTDLGAME.world.map.state.secondsUntilClose = 30
 }
 events.push(startClosingBank)
 
@@ -187,8 +194,8 @@ export default {
     new SnakeBitken(
       'snakeBitken',
       {
-        x: 2 * tileSize,
-        y: 105 * tileSize,
+        x: 1 * tileSize,
+        y: 105 * tileSize + 4,
         context: 'parallaxContext'
       }
     ),
@@ -205,6 +212,14 @@ export default {
   init: () => {
     // move elevators to the beginning to avoid drawing over characters
     CTDLGAME.objects = CTDLGAME.objects.sort(a => a.getClass() === 'ModernElevator' ? -1 : 0)
+
+    if (CTDLGAME.world.map.state.codeRed) {
+      CTDLGAME.world.map.spawnRates.policeForce = 0.01
+      CTDLGAME.world.map.spawnRates.citizen = 0
+    } else {
+      CTDLGAME.world.map.spawnRates.policeForce = 0
+      CTDLGAME.world.map.spawnRates.citizen = 0.01
+    }
   },
   update: () => {
     constants.fgContext.fillStyle = '#212121'
@@ -226,11 +241,6 @@ export default {
       })
     constants.fgContext.globalAlpha = 1
 
-    if (CTDLGAME.world.map.state.codeRed && !CTDLGAME.world.map.state.codeRedCalled) {
-      addTextToQueue('Voice com:\nAttention! Code red! A bank robbery is in progress.')
-      addTextToQueue('Voice com:\nAll security personel to code red stations')
-      CTDLGAME.world.map.state.codeRedCalled = true
-    }
     if (CTDLGAME.world.map.state.bankingHoursAlert) {
       CTDLGAME.world.map.state.secondsUntilClose -= 0.125
       if (CTDLGAME.world.map.state.secondsUntilClose === 0) {
@@ -238,18 +248,37 @@ export default {
         CTDLGAME.world.map.state.bankingHoursOver = true
         addTextToQueue('Voice com:\nThe bank and its employees whish to thank you for allowing us to serve you.')
         addTextToQueue('Voice com:\nBanking hours are now\nover.')
+        CTDLGAME.objects.find(obj => obj.id === 'snakeBitken').context = 'gameContext'
       }
+    }
+
+    if (CTDLGAME.world.map.state.codeRed && getSoundtrack() !== 'centralBankAlert') initSoundtrack('centralBankAlert')
+
+    if (CTDLGAME.world.map.state.codeRed && !CTDLGAME.world.map.state.codeRedCalled) {
+      initSoundtrack('centralBankAlert')
+      addTextToQueue('Voice com:\nAttention! Code red!\nA bank robbery is in progress.')
+      addTextToQueue('Voice com:\nAll security personel to code red stations')
+      CTDLGAME.world.map.state.codeRedCalled = true
     }
   },
   events,
   assets: {
     centralBank,
+    citizen1,
+    citizen2,
+    citizen3,
+    citizen4,
+    citizen5,
+    citizen6,
     snakeBitken,
     bankRobot,
     policeForce,
     policeForceWithShield,
     explosion
   },
-  track: () => 'centralBank',
-  spawnRates: {}
+  track: () => 'centralBankOpen',
+  spawnRates: {
+    citizen: 0.01,
+    policeForce: 0.01
+  }
 }

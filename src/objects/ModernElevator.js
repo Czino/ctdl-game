@@ -23,6 +23,7 @@ class ModernElevator extends GameObject {
     s: 'down',
     i: 'up',
     k: 'down',
+    npc: 'down'
   }
   spriteData = {
     x: 9 * 8,
@@ -80,12 +81,23 @@ class ModernElevator extends GameObject {
     if (this.locked) return this.draw()
 
     let move = 0
+
+    this.sensedCharacters = CTDLGAME.quadTree.query(this.getBoundingBox())
+      .filter(obj => /Character|SnakeBitken/.test(obj.getClass()))
+      .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
+
+    if (this.sensedCharacters.some(char => char.getClass() === 'SnakeBitken')) {
+      this.sensedCharacter = this.sensedCharacters.find(char => char.getClass() === 'SnakeBitken')
+    } else {
+      this.sensedCharacter = this.sensedCharacters.find(char => char.id === window.SELECTEDCHARACTER.id)
+    }
+
     this.ys.forEach((y, i) => {
       const boundingBox = {
         x: this.x, y,
         w: this.w, h: this.spriteData.h
       }
-      if (intersects(boundingBox, window.SELECTEDCHARACTER.getBoundingBox())) {
+      if (this.sensedCharacter && intersects(boundingBox, this.sensedCharacter.getBoundingBox())) {
         if (this.doorsOpen[i] < 12 && /opening|stop/.test(this.action)) {
           this.doorsOpen[i]++
           return
@@ -93,22 +105,32 @@ class ModernElevator extends GameObject {
 
         if (!this.anyDoorOpen()) return
 
-        let action = this.senseControls()
-        if (i === 0 && action === 'up') action = null
-        if (i === this.ys.length - 1 && action === 'down') action = null
-        if (action) {
-          [CTDLGAME.hodlonaut, CTDLGAME.katoshi].map(character => {
-            character.locked = true
-            character.context = 'bgContext'
-            character.applyGravity = false
-            character.y = y + 4
-          })
-          CTDLGAME.hodlonaut.x = this.x
-          CTDLGAME.katoshi.x = this.x + 8
-          this.action = action
+        this.triggeredAction = this.senseControls() || this.triggeredAction
+        let spriteData = this.sensedCharacter.spriteData[this.sensedCharacter.direction][this.sensedCharacter.status]
+
+        if (this.sensedCharacter.frame !== spriteData.length - 1) return
+
+        if (i === 0 && this.triggeredAction === 'up') this.triggeredAction = null
+        if (i === this.ys.length - 1 && this.triggeredAction === 'down') this.triggeredAction = null
+        if (this.triggeredAction) {
+          if (this.sensedCharacter.getClass() !== 'SnakeBitken') {
+            [CTDLGAME.hodlonaut, CTDLGAME.katoshi].map(character => {
+              character.locked = true
+              character.context = 'bgContext'
+              character.applyGravity = false
+              character.status = 'idle'
+              character.y = y + 4
+            })
+            CTDLGAME.hodlonaut.x = this.x
+            CTDLGAME.katoshi.x = this.x + 8
+          } else {
+            this.sensedCharacter.context = 'bgContext'
+          }
+          this.action = this.triggeredAction
+          this.triggeredAction = null
           this.carY = y
-          if (action === 'up') this.moveTo = this.ys[i - 1]
-          if (action === 'down') this.moveTo = this.ys[i + 1]
+          if (this.action === 'up') this.moveTo = this.ys[i - 1]
+          if (this.action === 'down') this.moveTo = this.ys[i + 1]
         }
       } else if (this.doorsOpen[i] > 0) {
         this.doorsOpen[i]--
@@ -145,7 +167,7 @@ class ModernElevator extends GameObject {
 
     if (this.carY === this.moveTo) move = 0
     if (move === 0 && !/stop|opening/.test(this.action)) {
-      [CTDLGAME.hodlonaut, CTDLGAME.katoshi].map(character => {
+      this.sensedCharacters.map(character => {
         character.context = 'bgContext'
       })
       this.action = 'opening'
@@ -157,7 +179,7 @@ class ModernElevator extends GameObject {
     if (move === 0) return this.draw()
 
     this.carY += move
-    ;[CTDLGAME.hodlonaut, CTDLGAME.katoshi]
+    this.sensedCharacters
       .map(character => {
         character.context = 'parallaxContext'
         character.y += move
@@ -181,7 +203,7 @@ class ModernElevator extends GameObject {
       .pop()
 
     if (action) {
-      window.SELECTEDCHARACTER.action.effect()
+      this.sensedCharacter.action.effect()
     }
     return action
   }
@@ -193,6 +215,7 @@ class ModernElevator extends GameObject {
     w: this.w,
     h: this.h
   })
+
   getAnchor = () => ({
       x: this.getBoundingBox().x + 2,
       y: this.getBoundingBox().y + this.getBoundingBox().h - 1,
