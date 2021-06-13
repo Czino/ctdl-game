@@ -81,7 +81,7 @@ goToCapitalCity.touchEvent = () => {
 events.push(goToCapitalCity)
 
 const startClosingBank = new GameObject('startClosingBank', {
-  x: 55 * tileSize,
+  x: 45 * tileSize,
   y: 106 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
@@ -89,7 +89,7 @@ const startClosingBank = new GameObject('startClosingBank', {
 startClosingBank.touchEvent = () => {
   if (CTDLGAME.world.map.state.bankingHoursAlert || CTDLGAME.world.map.state.bankingHoursOver) return
   CTDLGAME.world.map.state.bankingHoursAlert = true
-  CTDLGAME.world.map.state.secondsUntilClose = 30
+  CTDLGAME.world.map.state.secondsUntilClose = 60
 }
 events.push(startClosingBank)
 
@@ -202,9 +202,9 @@ export default {
     new BankRobot(
       'bankrobot-1',
       {
-        x: 45 * tileSize,
+        x: 55 * tileSize,
         y: 105 * tileSize,
-        direction: 'right'
+        direction: 'left'
       }
     )
   ],
@@ -242,11 +242,11 @@ export default {
     constants.fgContext.globalAlpha = 1
 
     if (CTDLGAME.world.map.state.bankingHoursAlert) {
-      CTDLGAME.world.map.state.secondsUntilClose -= 0.125
+      CTDLGAME.world.map.state.secondsUntilClose -= 0.5
       if (CTDLGAME.world.map.state.secondsUntilClose === 0) {
         CTDLGAME.world.map.state.bankingHoursAlert = false
         CTDLGAME.world.map.state.bankingHoursOver = true
-        addTextToQueue('Voice com:\nThe bank and its employees whish to thank you for allowing us to serve you.')
+        addTextToQueue('Voice com:\nThe bank and its employees whish to thank you for\nallowing us to serve you.')
         addTextToQueue('Voice com:\nBanking hours are now\nover.')
         CTDLGAME.objects.find(obj => obj.id === 'snakeBitken').context = 'gameContext'
       }
@@ -256,8 +256,8 @@ export default {
 
     if (CTDLGAME.world.map.state.codeRed && !CTDLGAME.world.map.state.codeRedCalled) {
       initSoundtrack('centralBankAlert')
-      addTextToQueue('Voice com:\nAttention! Code red!\nA bank robbery is in progress.')
-      addTextToQueue('Voice com:\nAll security personel to code red stations')
+      addTextToQueue('Voice com:\nAttention! Code red!\nA bank robbery is\nin progress.')
+      addTextToQueue('Voice com:\nAll security personnel to code red stations')
       CTDLGAME.world.map.state.codeRedCalled = true
     }
   },

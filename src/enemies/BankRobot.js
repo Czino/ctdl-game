@@ -48,7 +48,7 @@ const informSecurity = new Task({
 
     for (let i = 4; i > 0; i--) {
       CTDLGAME.objects.push(new PoliceForce(`policeForce-${Math.random()}`, {
-        x: window.SELECTEDCHARACTER.x > 18 * 8 ? CTDLGAME.viewport.x -  40 + i * 4 : CTDLGAME.viewport.x + constants.WIDTH + i * 4,
+        x: window.SELECTEDCHARACTER.x > 18 * 8 ? CTDLGAME.viewport.x - 40 - i * 10 : CTDLGAME.viewport.x + constants.WIDTH + i * 10,
         y: window.SELECTEDCHARACTER.y,
         enemy: true,
         sensedCriminals: ['hodlonaut', 'katoshi']
@@ -66,7 +66,7 @@ const informCustomer = new Task({
       let seconds = Math.round(CTDLGAME.world.map.state.secondsUntilClose / 10) * 10
       agent.talks = true
       addTextToQueue(`Security Robot:\nAttention! Banking hours are over, lockup begins in\n${seconds} seconds.`)
-      addTextToQueue('Security Robot:\nAll personell must leave the blue coded areas\nimmediately. Thank you.', () => agent.talks = false)
+      addTextToQueue('Security Robot:\nAll personnel must leave the blue coded areas\nimmediately. Thank you.', () => agent.talks = false)
     } else if (!CTDLGAME.world.map.state.bankingHoursAlert && agent.sensedEnemies.length > 0) {
       agent.talks = true
       addTextToQueue('Security Robot:\nWelcome to Ripam Centralis, how may I help you?', () => agent.talks = false)
