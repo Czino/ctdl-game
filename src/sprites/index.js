@@ -36,6 +36,7 @@ import bitcoinLabrador from './bitcoinLabrador'
 import nakadaiMonarch from './nakadaiMonarch'
 import bearWhale from './bearWhale'
 import vic from './vic'
+import bitcoinPoet from './bitcoinPoet'
 
 export default {
     hodlonaut,
@@ -82,5 +83,6 @@ export default {
     bitcoinLabrador,
     nakadaiMonarch,
     bearWhale,
-    vic
+    vic,
+    bitcoinPoet
 }
