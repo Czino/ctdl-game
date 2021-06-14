@@ -368,6 +368,18 @@ export default {
     thingsToSaySelect: [
       ['RD_btc:\nHODL!']
     ]
+  },
+  cryptoCrab: {
+    frames: [
+      { x: 78, y: 54, w: 17, h: 6 }
+    ],
+    thingsToSaySelect: [
+      ['Crypto 69 Crab 420:\nFeeling crabby'],
+      ['Crypto 69 Crab 420:\nIf drugs, alcohol, and violence don\'t work, try alt coins.'],
+      ['Crypto 69 Crab 420:\nI would help you but I\'m late for my appointment at the claw salon.'],
+      ['Crypto 69 Crab 420:\nHello I am your crab friend.'],
+      ['Crypto 69 Crab 420:\nCome closer. I won\'t pinch']
+    ]
   }
   // Just converted my dads retirement fnd into $link
   // A homeless man once told me he could tell the state of the economy based on the length of the cigarette butts that people throw on the ground

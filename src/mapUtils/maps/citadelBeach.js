@@ -20,10 +20,10 @@ import GlennHodl from '../../npcs/GlennHodl'
 import ChrisWhodl from '../../npcs/ChrisWhodl'
 import Vlad from '../../npcs/Vlad'
 import Bitdov from '../../npcs/Bitdov'
+import NPC from '../../npcs/NPC'
 
 import citadelBeach from '../../sprites/citadelBeach.png'
 import moon from '../../sprites/moon.png'
-import NPC from '../../sprites/NPCs.png'
 import nakadaiMonarch from '../../sprites/nakadaiMonarch.png'
 import ferry from '../../sprites/ferry.png'
 import blueMoon from '../../sprites/blueMoon.png'
@@ -173,6 +173,14 @@ export default {
         context: 'fgContext'
       }
     ),
+    new NPC(
+      'cryptoCrab',
+      {
+        x: 53 * tileSize,
+        y: 125 * tileSize,
+        context: 'fgContext'
+      }
+    ),
     // new Vlad(
     //   'vlad',
     //   {
@@ -203,7 +211,6 @@ export default {
   assets: {
     citadelBeach,
     moon,
-    NPC,
     nakadaiMonarch,
     ferry,
     blueMoon,
