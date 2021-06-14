@@ -1,7 +1,6 @@
 import constants from '../constants'
 import { CTDLGAME, skipText } from '../gameUtils'
 import { contains } from '../geometryUtils'
-import { playSound } from '../sounds'
 
 export const click = e => {
   let canvas = e.target
@@ -63,7 +62,7 @@ export const click = e => {
 
   if (!object && CTDLGAME.ghostBlock && CTDLGAME.ghostBlock.status !== 'bad') {
     // TODO refactor into placeBlock method
-    playSound('block')
+    window.SOUND.playSound('block')
     CTDLGAME.ghostBlock.context = constants.gameContext
     CTDLGAME.ghostBlock.opacity = 1
     CTDLGAME.ghostBlock.isSolid = true

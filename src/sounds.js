@@ -793,4 +793,8 @@ export const playSound = (id, options) => {
   }
 }
 
-window.playSound = playSound
+window.SOUND = {
+  isSoundLoaded,
+  toggleSounds,
+  playSound
+}

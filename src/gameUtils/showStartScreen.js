@@ -3,8 +3,6 @@ import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
 import { canDrawOn } from '../performanceUtils'
 import { showSettings } from './showSettings'
-import { playSound } from '../sounds'
-import { initSoundtrack } from '../soundtrack'
 import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../eventUtils'
 
 const velocity = 4
@@ -32,17 +30,17 @@ export const showStartScreen = () => {
     shock(1, .5)
   }
    if (logoOffsetTop === -velocity && CTDLGAME.options.sound) {
-    playSound('drop')
+    window.SOUND.playSound('drop')
   }
   if (logoOffsetBottom > 0) logoOffsetBottom -= velocity
   if (logoOffsetBottom === velocity) {
     shock(-1, .5)
   }
   if (logoOffsetBottom === velocity && CTDLGAME.options.sound) {
-    playSound('drop')
+    window.SOUND.playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) initSoundtrack('centralBankAlert')
+  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('centralBankAlert')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,

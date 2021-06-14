@@ -1,5 +1,4 @@
 import { CTDLGAME } from '../gameUtils'
-import { playSound } from '../sounds'
 import { loadGameButton, newGameButton } from './buttons'
 
 export const handleStartScreenKeyEvents = e => {
@@ -8,21 +7,21 @@ export const handleStartScreenKeyEvents = e => {
 
   if (loadGameButton.active) {
     if (/^[sk]|arrowdown$/.test(key)) {
-      playSound('select')
+      window.SOUND.playSound('select')
       CTDLGAME.menuItem++
     }
     if (/^[wi]|arrowup$/.test(key)) {
-      playSound('select')
+      window.SOUND.playSound('select')
       CTDLGAME.menuItem--
     }
   }
   if (/^[aj]|arrowleft$/.test(key)) {
-    playSound('select')
+    window.SOUND.playSound('select')
     CTDLGAME.multiPlayer = !CTDLGAME.multiPlayer
     CTDLGAME.menuItemX--
   }
   if (/^[dl]|arrowright$/.test(key)) {
-    playSound('select')
+    window.SOUND.playSound('select')
     CTDLGAME.multiPlayer = !CTDLGAME.multiPlayer
     CTDLGAME.menuItemX++
   }

@@ -3,7 +3,6 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 import goldbugSprite from '../sprites/goldbugs'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 
@@ -80,7 +79,7 @@ class Goldbugs extends Agent {
     }
   }
 
-  onHurt = () => playSound('goldbugsHurt')
+  onHurt = () => window.SOUND.playSound('goldbugsHurt')
 
   update = () => {
     if (CTDLGAME.lockCharacters) {

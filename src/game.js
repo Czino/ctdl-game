@@ -25,15 +25,12 @@ import {
 import { addTextToQueue, prompt, writeMenu } from './textUtils'
 import Wizard from './npcs/Wizard'
 import { applyGravity } from './physicsUtils'
-import { isSoundLoaded, toggleSounds } from './sounds'
-import { toggleSoundtrack } from './soundtrack'
 import { changeMap } from './mapUtils'
 import { showButtons, showFrameRate } from './debugUtils'
 import Item from './objects/Item'
 
-// import { playSound } from './sounds'
-// playSound('robotRekt')
-// setInterval(() => playSound('robotRekt'), 5000)
+// window.SOUND.playSound('robotRekt')
+// setInterval(() => window.SOUND.playSound('robotRekt'), 5000)
 
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
@@ -62,10 +59,10 @@ async function init() {
 
   let options = await db.get('options')
   if (options) CTDLGAME.options = options
-  toggleSoundtrack(CTDLGAME.options.music)
-  toggleSounds(CTDLGAME.options.sound)
+  window.SNDTRCK.toggleSoundtrack(CTDLGAME.options.music)
+  window.SOUND.toggleSounds(CTDLGAME.options.sound)
 
-  CTDLGAME.isSoundLoaded = isSoundLoaded()
+  CTDLGAME.isSoundLoaded = window.SOUND.isSoundLoaded()
 
   if (CTDLGAME.isSoundLoaded) {
     initGameButton.active = false

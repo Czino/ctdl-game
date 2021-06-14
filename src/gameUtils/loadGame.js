@@ -3,7 +3,6 @@ import { CTDLGAME, setWorld } from './CTDLGAME'
 import World from '../World'
 import Character from '../Character'
 import { getTimeOfDay } from './getTimeOfDay'
-import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { gameObjects } from './gameObjects'
 import { loadMap } from '../mapUtils'
@@ -86,5 +85,5 @@ export const loadGame = async () => {
     CTDLGAME.isNight = false
   }
 
-  initSoundtrack(CTDLGAME.world.map.track())
+  window.SNDTRCK.initSoundtrack(CTDLGAME.world.map.track())
 }

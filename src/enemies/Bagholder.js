@@ -4,7 +4,6 @@ import bagholder from '../sprites/bagholder'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
@@ -124,12 +123,12 @@ class Bagholder extends Agent {
 
   onHurt = () => {
     this.protection = 8
-    playSound('shitcoinerHurt')
+    window.SOUND.playSound('shitcoinerHurt')
   }
   onDie = () => {
     addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
-    playSound('shitcoinerHurt')
-    playSound('burn')
+    window.SOUND.playSound('shitcoinerHurt')
+    window.SOUND.playSound('burn')
   }
 
   update = () => {

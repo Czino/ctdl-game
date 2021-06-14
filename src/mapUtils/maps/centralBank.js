@@ -26,7 +26,6 @@ import bankRobot from '../../sprites/bankRobot.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
 import explosion from '../../sprites/explosion.png'
-import { getSoundtrack, initSoundtrack } from '../../soundtrack'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -252,10 +251,10 @@ export default {
       }
     }
 
-    if (CTDLGAME.world.map.state.codeRed && getSoundtrack() !== 'centralBankAlert') initSoundtrack('centralBankAlert')
+    if (CTDLGAME.world.map.state.codeRed && window.SNDTRCK.getSoundtrack() !== 'centralBankAlert') window.SNDTRCK.initSoundtrack('centralBankAlert')
 
     if (CTDLGAME.world.map.state.codeRed && !CTDLGAME.world.map.state.codeRedCalled) {
-      initSoundtrack('centralBankAlert')
+      window.SNDTRCK.initSoundtrack('centralBankAlert')
       addTextToQueue('Voice com:\nAttention! Code red!\nA bank robbery is\nin progress.')
       addTextToQueue('Voice com:\nAll security personnel to code red stations')
       CTDLGAME.world.map.state.codeRedCalled = true

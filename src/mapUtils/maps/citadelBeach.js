@@ -8,7 +8,6 @@ import GameObject from '../../GameObject'
 import { CTDLGAME } from '../../gameUtils'
 import { makeBoundary } from '../../geometryUtils'
 import { drawCrispSine, drawSine } from '../../geometryUtils/drawSineWave'
-import { changeVolume } from '../../soundtrack'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
 import getHitBoxes from '../getHitBoxes'
 import parseLightSources from '../parseLightSources'
@@ -328,7 +327,7 @@ export default {
       end: 40 * tileSize
     })
 
-    changeVolume(
+    window.SNDTRCK.changeVolume(
       window.SELECTEDCHARACTER.x / (60 * tileSize)
     )
   },

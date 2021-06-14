@@ -5,7 +5,6 @@ import spritePoliceForceWithShield from '../sprites/policeForceWithShield'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import Flashbang from '../objects/Flashbang'
@@ -117,7 +116,7 @@ class PoliceForce extends Agent {
       }
 
       if (this.status === 'attack' && this.frame === 3) {
-        playSound('woosh')
+        window.SOUND.playSound('woosh')
         return this.closestEnemy.hurt(Math.round(Math.random() * 2) + 1, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack') return SUCCESS
@@ -175,11 +174,11 @@ class PoliceForce extends Agent {
     : false
 
   onHurt = () => {
-    playSound('policeForceHurt')
+    window.SOUND.playSound('policeForceHurt')
   }
   onDie = () => {
     this.removeTimer = 64
-    playSound('policeForceHurt')
+    window.SOUND.playSound('policeForceHurt')
     addTextToQueue(`Police Force got rekt,\nyou found $${this.usd}`)
   }
 

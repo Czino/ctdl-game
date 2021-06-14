@@ -3,7 +3,6 @@ import { random } from '../arrayUtils'
 import { addTextToQueue } from '../textUtils'
 import constants from '../constants'
 import Explosion from '../Explosion'
-import { playSound } from '../sounds'
 
 const mircoEvent = npc => {
   CTDLGAME.prompt = {
@@ -15,7 +14,7 @@ const mircoEvent = npc => {
         addTextToQueue('Mirco:\nThe truth is, you just lost\none Bitcoin', () => {
           npc.isSelected = false
           npc.remove = true
-          playSound('magic')
+          window.SOUND.playSound('magic')
           CTDLGAME.objects.push(new Explosion(constants.gameContext, { x: npc.getCenter().x, y: npc.getCenter().y }))
         })
       } else {

@@ -4,7 +4,6 @@ import babyLizard from '../sprites/babyLizard'
 import { CTDLGAME } from '../gameUtils'
 import { getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
 
@@ -70,7 +69,7 @@ class BabyLizard extends Agent {
     if (this.status === 'egg') return
 
     this.protection = 8
-    playSound('rabbitHurt')
+    window.SOUND.playSound('rabbitHurt')
   }
 
   onDie = () => {

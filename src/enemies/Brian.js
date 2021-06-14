@@ -6,8 +6,6 @@ import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
-import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { skipCutSceneButton } from '../eventUtils'
@@ -118,7 +116,7 @@ class Brian extends Agent {
       }
 
       if (this.status === 'attack' && this.frame === 3) {
-        playSound('woosh')
+        window.SOUND.playSound('woosh')
         return this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack' && this.frame < 4) return SUCCESS
@@ -137,7 +135,7 @@ class Brian extends Agent {
       attackBox.x -= this.attackRange
       attackBox.w += this.attackRange * 2
 
-      playSound('woosh')
+      window.SOUND.playSound('woosh')
 
       this.sensedEnemies
         .filter(enemy => intersects(attackBox, enemy.getBoundingBox()))
@@ -167,7 +165,7 @@ class Brian extends Agent {
     return obstacles.length === 0
   }
 
-  onHurt = () => playSound('shitcoinerHurt')
+  onHurt = () => window.SOUND.playSound('shitcoinerHurt')
 
   hurt = dmg => {
     if (/hurt|rekt/.test(this.status)) return
@@ -194,11 +192,11 @@ class Brian extends Agent {
     addTextToQueue('Brian:\nHow could this happen?', () => this.frame++)
     addTextToQueue('Brian:\nI am ruined..', () => {
       this.frame++
-      playSound('drop')
+      window.SOUND.playSound('drop')
     })
     addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
     addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
-      initSoundtrack(CTDLGAME.world.map.track())
+      window.SNDTRCK.initSoundtrack(CTDLGAME.world.map.track())
       CTDLGAME.objects.push(new Item(
         this.item.id,
         {
@@ -241,7 +239,7 @@ class Brian extends Agent {
     }
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/fall|rekt|hurt/.test(this.status)) {
-      if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
+      if (window.SNDTRCK.getSoundtrack() !== 'briansTheme') window.SNDTRCK.initSoundtrack('briansTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()

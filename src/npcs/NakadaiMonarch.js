@@ -6,7 +6,6 @@ import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
-import { playSound } from '../sounds'
 
 const sit = new Task({
   run: agent => agent.sit.condition() ? agent.sit.effect() : FAILURE
@@ -103,7 +102,7 @@ class NakadaiMonarch extends Agent {
     },
     effect: () => {
       if (this.status === 'attack' && this.frame === 4) {
-        playSound('sword')
+        window.SOUND.playSound('sword')
 
         this.closestEnemy.hurt(this.strength || 1, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS

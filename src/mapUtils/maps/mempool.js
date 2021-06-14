@@ -15,7 +15,6 @@ import { checkMempool } from '../../gameUtils/checkBlocks'
 import constants from '../../constants'
 import { random } from '../../arrayUtils'
 import { addTextToQueue } from '../../textUtils'
-import { playSound } from '../../sounds'
 import { intersects } from '../../geometryUtils'
 import Des from '../../npcs/Des'
 import Soulexporter from '../../npcs/Soulexporter'
@@ -133,7 +132,7 @@ jumpIntoThePool.jumpEvent = char => {
   if (CTDLGAME.mempool.vsize < 40000000) return
   char.context = 'fgContext'
   addHook(CTDLGAME.frame + 80, () => {
-    playSound('splash')
+    window.SOUND.playSound('splash')
     // TODO add visual splash effect
     char.context = 'charContext'
   })
@@ -174,9 +173,9 @@ const treasure = new GameObject('treasure', {
 
 treasure.select = () => {
   if (!CTDLGAME.world.map.state.hasCollectedTreasure && CTDLGAME.mempool.vsize < mempoolSize * .3) {
-    playSound('block')
-    playSound('clunk')
-    playSound('honeyBadger')
+    window.SOUND.playSound('block')
+    window.SOUND.playSound('clunk')
+    window.SOUND.playSound('honeyBadger')
     CTDLGAME.world.map.state.hasCollectedTreasure = true
     CTDLGAME.objects.push(new Item(
       'honeybadger',

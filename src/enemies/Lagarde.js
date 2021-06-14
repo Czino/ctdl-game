@@ -5,11 +5,9 @@ import { addHook, CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import { addTextToQueue, setTextQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../eventUtils'
-import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import BabyLizard from './BabyLizard'
 import Item from '../objects/Item'
 
@@ -155,7 +153,7 @@ class Lagarde extends Agent {
 
   onHurt = () => {
     this.protection = 8
-    playSound('creatureHurt')
+    window.SOUND.playSound('creatureHurt')
   }
 
   die = () => {
@@ -163,12 +161,12 @@ class Lagarde extends Agent {
     this.frame = 0
     this.canMove = false
 
-    playSound('creatureHurt')
-    addHook(CTDLGAME.frame + 8, () => playSound('creatureHurt'))
-    addHook(CTDLGAME.frame + 16, () => playSound('creatureHurt'))
+    window.SOUND.playSound('creatureHurt')
+    addHook(CTDLGAME.frame + 8, () => window.SOUND.playSound('creatureHurt'))
+    addHook(CTDLGAME.frame + 16, () => window.SOUND.playSound('creatureHurt'))
     addHook(CTDLGAME.frame + 24, () => {
-      playSound('creatureHurt')
-      initSoundtrack('underground')
+      window.SOUND.playSound('creatureHurt')
+      window.SNDTRCK.initSoundtrack('underground')
       this.status = 'rekt'
     })
     if (this.usd) CTDLGAME.inventory.usd += this.usd
@@ -230,14 +228,14 @@ class Lagarde extends Agent {
     if (!this.hadIntro && this.sensedEnemies.length > 0) {
       CTDLGAME.lockCharacters = true
       skipCutSceneButton.active = true
-      if (getSoundtrack() !== 'lagardesIntro') initSoundtrack('lagardesIntro')
+      if (window.SNDTRCK.getSoundtrack() !== 'lagardesIntro') window.SNDTRCK.initSoundtrack('lagardesIntro')
 
       addTextToQueue('Lagarde:\nYou\'re wasting your time\nwith Bitcoin!', () => {
         this.status = 'exhausted'
       })
       addTextToQueue('Lagarde:\nYou should be happier to\nhave a job than to have\nyour savings protected.')
       addTextToQueue('Lagarde:\nNow I have to hold you\naccountable so that you can be fully trusted.', () => {
-        if (getSoundtrack() !== 'lagardesTheme') initSoundtrack('lagardesTheme')
+        if (window.SNDTRCK.getSoundtrack() !== 'lagardesTheme') window.SNDTRCK.initSoundtrack('lagardesTheme')
         this.status = 'transform'
         CTDLGAME.bossFight = true
         CTDLGAME.lockCharacters = false
@@ -258,7 +256,7 @@ class Lagarde extends Agent {
     }
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/layEgg|exhausted|transform|fall|rekt|hurt/.test(this.status)) {
-      if (getSoundtrack() !== 'lagardesTheme') initSoundtrack('lagardesTheme')
+      if (window.SNDTRCK.getSoundtrack() !== 'lagardesTheme') window.SNDTRCK.initSoundtrack('lagardesTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)

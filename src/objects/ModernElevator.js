@@ -1,7 +1,6 @@
 import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import { intersects } from '../geometryUtils'
-import { playSound } from '../sounds'
 import GameObject from '../GameObject'
 import { addTextToQueue } from '../textUtils'
 
@@ -159,10 +158,10 @@ class ModernElevator extends GameObject {
 
     if (this.action === 'up' && !this.anyDoorOpen()) {
       move = -4
-      playSound('elevator')
+      window.SOUND.playSound('elevator')
     } else if (this.action === 'down' && !this.anyDoorOpen()) {
       move = 4
-      playSound('elevator')
+      window.SOUND.playSound('elevator')
     }
 
     if (this.carY === this.moveTo) move = 0
@@ -171,7 +170,7 @@ class ModernElevator extends GameObject {
         character.context = 'bgContext'
       })
       this.action = 'opening'
-      playSound('ding')
+      window.SOUND.playSound('ding')
       this.draw()
       return
     }

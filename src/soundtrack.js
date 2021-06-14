@@ -247,9 +247,6 @@ export const initSoundtrack = async id => {
   }
 }
 
-window.initSoundtrack = initSoundtrack
-
-
 export const getSoundtrack = () => SNDTRCK.song?.id
 window.getSoundtrack = getSoundtrack
 
@@ -321,4 +318,13 @@ function parseNotes(notes) {
     velocity: note[3],
     event: note[4]
   }))
+}
+
+window.SNDTRCK = {
+  initSoundtrack,
+  getSoundtrack,
+  toggleSoundtrack,
+  startMusic,
+  stopMusic,
+  changeVolume
 }

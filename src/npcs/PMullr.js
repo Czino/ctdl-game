@@ -1,7 +1,5 @@
 import spriteData from '../sprites/pmullr'
 import NPC from './NPC'
-import { playSound } from '../sounds'
-import { changeVolume } from '../soundtrack'
 import { addHook, CTDLGAME } from '../gameUtils'
 import { sense } from '../enemies/enemyUtils'
 import { getClosest } from '../geometryUtils'
@@ -82,12 +80,12 @@ class PMullr extends NPC {
       let volume = (100 - distance) / 100
       if (volume > 1) volume = 1
       if (volume < 0) volume = 0
-      playSound('deepMagic', { volume })
-      changeVolume(1 - volume)
+      window.SOUND.playSound('deepMagic', { volume })
+      window.SNDTRCK.changeVolume(1 - volume)
       addHook(CTDLGAME.frame + 40, () => this.pulse = false)
       this.pulse = true
     } else if (sensedFriends.length === 0) {
-      changeVolume(1)
+      window.SNDTRCK.changeVolume(1)
     }
 
     this.draw()

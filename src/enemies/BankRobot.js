@@ -4,7 +4,6 @@ import bankRobot from '../sprites/bankRobot'
 import { CTDLGAME } from '../gameUtils'
 import { getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
 import { senseCharacters } from './enemyUtils'
@@ -44,7 +43,7 @@ const informSecurity = new Task({
 
     agent.status = 'alarm'
     agent.alarmCoolDown = 128
-    playSound('alarm')
+    window.SOUND.playSound('alarm')
 
     for (let i = 4; i > 0; i--) {
       CTDLGAME.objects.push(new PoliceForce(`policeForce-${Math.random()}`, {
@@ -108,9 +107,9 @@ class BankRobot extends Agent {
     blackboard: this
   })
 
-  onHurt = () => playSound('clunk')
+  onHurt = () => window.SOUND.playSound('clunk')
   hurtCondition = () => !this.protection
-  onDie = () => playSound('robotRekt')
+  onDie = () => window.SOUND.playSound('robotRekt')
 
   update = () => {
     if (CTDLGAME.lockCharacters) {
@@ -132,7 +131,7 @@ class BankRobot extends Agent {
         this.makeSound = 16
         if (this.closestEnemy) {
           let vol = 1 - (Math.abs(this.closestEnemy.getCenter().x - this.getCenter().x) / this.senseRadius)
-          playSound('sonar', vol)
+          window.SOUND.playSound('sonar', vol)
         }
       }
       this.sensedEnemies = this.sensedEnemies.filter(enemy => {

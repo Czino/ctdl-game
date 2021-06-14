@@ -5,11 +5,9 @@ import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import { addTextToQueue, setTextQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../eventUtils'
-import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import Item from '../objects/Item'
 import Shitcoin from '../objects/Shitcoin'
 import Candle from '../objects/Candle'
@@ -193,7 +191,7 @@ class Ivan extends Agent {
 
   onHurt = () => {
     this.protection = 8
-    playSound('playerHurt')
+    window.SOUND.playSound('playerHurt')
   }
 
   die = agent => {
@@ -203,7 +201,7 @@ class Ivan extends Agent {
       this.status = 'rekt'
       CTDLGAME.focusViewport = false
       hodlTarantula.killIvan = false
-      initSoundtrack('darkIsBetter')
+      window.SNDTRCK.initSoundtrack('darkIsBetter')
 
       addTextToQueue('hodl_tarantula:\nThanks, because of you I\ncould finally catch this\nannoying brat.')
       addTextToQueue('hodl_tarantula:\nHe was good for nothing but he will make a great dinner.')
@@ -251,7 +249,7 @@ class Ivan extends Agent {
     shitcoin.collected = true
 
     this.pampLoaded += .2
-    playSound('item')
+    window.SOUND.playSound('item')
 
     if (this.pampLoaded >= 1) this.holdCountdown = 5
   }
@@ -312,7 +310,7 @@ class Ivan extends Agent {
     this.sensedFriends = []
 
     if (!this.exhaustion && Math.abs(this.vy) < 3 && this.canMove && !/wrapped|fall|rekt|hurt/.test(this.status)) {
-      if (getSoundtrack() !== 'ivansTheme') initSoundtrack('ivansTheme')
+      if (window.SNDTRCK.getSoundtrack() !== 'ivansTheme') window.SNDTRCK.initSoundtrack('ivansTheme')
 
       this.sensedItems = this.sensedObjects
       .filter(enemy => enemy.getClass() === 'Shitcoin')

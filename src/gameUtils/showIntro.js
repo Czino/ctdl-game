@@ -1,7 +1,6 @@
 import { CTDLGAME } from './CTDLGAME'
 import { addTextToQueue } from '../textUtils'
 import { newGame } from './newGame'
-import { stopMusic } from '../soundtrack'
 import { newGameButton } from '../eventUtils'
 
 /**
@@ -45,7 +44,7 @@ export const showIntro = () => {
     'the magic internet money',
     'we know as Bitcoin.'
   ].join('\n'), () => {
-    stopMusic()
+    window.SNDTRCK.stopMusic()
     newGame()
     CTDLGAME.cutScene = false
   }, true)

@@ -12,8 +12,12 @@ module.exports = env => {
       host: '0.0.0.0'
     },
     entry: {
+      sounds: {
+        import: ['./src/soundtrack.js', './src/sounds.js']
+      },
       game: {
-        import: './src/game.js'
+        import: './src/game.js',
+        dependOn: ['sounds']
       }
     },
     output: {
@@ -53,7 +57,9 @@ module.exports = env => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        chunks: ['game'],
+        chunks: ['sound', 'game'],
+        inject: 'head',
+        scriptLoading: 'defer',
         excludeChunks: ['mapCreator', 'spritePreview'],
         template: './src/game.html'
       })

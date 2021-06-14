@@ -1,7 +1,6 @@
 import { unique } from '../arrayUtils'
 import * as db from '../db'
 import { maps } from '../mapUtils'
-import { playSound } from '../sounds'
 import { CTDLGAME } from './CTDLGAME'
 
 /**
@@ -43,6 +42,6 @@ export const saveGame = async silent => {
   await db.set('inventory', CTDLGAME.inventory)
   await db.set('options', CTDLGAME.options)
 
-  if (!silent) playSound('select')
+  if (!silent) window.SOUND.playSound('select')
   CTDLGAME.savedAt = CTDLGAME.frame
 }

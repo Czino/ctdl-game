@@ -4,7 +4,6 @@ import GameObject from '../GameObject'
 import Ramp from '../Ramp'
 import { Boundary } from '../geometryUtils/makeBoundary'
 import { intersects } from '../geometryUtils'
-import { playSound } from '../sounds'
 import NakadaiMonarch from '../npcs/NakadaiMonarch'
 
 let rampHeightMapLeft = []
@@ -140,7 +139,7 @@ class Ferry extends GameObject {
           obj.x += this.vx
         })
 
-      playSound('elevator')
+      window.SOUND.playSound('elevator')
     }
 
     this.draw()

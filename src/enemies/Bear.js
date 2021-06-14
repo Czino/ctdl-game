@@ -6,9 +6,7 @@ import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
-import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import Agent from '../Agent'
 
 const items = [
@@ -79,7 +77,7 @@ class Bear extends Agent {
 
       if (hasMoved) {
         this.status = 'move'
-        if (this.frame % 5 === 0) playSound('drop')
+        if (this.frame % 5 === 0) window.SOUND.playSound('drop')
         return SUCCESS
       }
       return false
@@ -94,7 +92,7 @@ class Bear extends Agent {
       const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: 0}, CTDLGAME.quadTree)
       if (hasMoved) {
         this.status = 'move'
-        if (this.frame % 5 === 0) playSound('drop')
+        if (this.frame % 5 === 0) window.SOUND.playSound('drop')
         return SUCCESS
       }
       return false
@@ -126,10 +124,10 @@ class Bear extends Agent {
         this.direction = 'right'
       }
       if (this.status === 'attack' && this.frame === 2) {
-        playSound('bearGrowl')
+        window.SOUND.playSound('bearGrowl')
       }
       if (this.status === 'attack' && this.frame === 5) {
-        playSound('woosh')
+        window.SOUND.playSound('woosh')
         let dmg = Math.round(Math.random() * 2) + 5
         this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS
@@ -147,7 +145,7 @@ class Bear extends Agent {
     blackboard: this
   })
 
-  onHurt = () => playSound('bearHurt')
+  onHurt = () => window.SOUND.playSound('bearHurt')
 
   hurt = (dmg, direction) => {
     if (!this.hurtCondition(dmg, direction)) return
@@ -186,7 +184,7 @@ class Bear extends Agent {
     setTextQueue([])
     addTextToQueue('Big Bear:\n*growl*', () => this.frame++)
     addTextToQueue(`The Big Bear got rekt\nthe bull run begins!`, () => {
-      initSoundtrack(CTDLGAME.world.map.track())
+      window.SNDTRCK.initSoundtrack(CTDLGAME.world.map.track())
 
       if (this.item) {
         let item = new Item(
@@ -231,7 +229,7 @@ class Bear extends Agent {
       CTDLGAME.lockCharacters = true
       constants.BUTTONS.find(btn => btn.action === 'skipCutScene').active = true
 
-      playSound('bearGrowl')
+      window.SOUND.playSound('bearGrowl')
       addTextToQueue('Big Bear:\n*rraawww*', () => {
         this.canMove = true
         CTDLGAME.lockCharacters = false
@@ -242,7 +240,7 @@ class Bear extends Agent {
 
     // AI logic
     if (Math.abs(this.vy) < 3 && this.canMove && !/rekt|spawn/.test(this.status)) {
-      if (getSoundtrack() !== 'bear') initSoundtrack('bear')
+      if (window.SNDTRCK.getSoundtrack() !== 'bear') window.SNDTRCK.initSoundtrack('bear')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()

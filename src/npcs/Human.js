@@ -5,7 +5,6 @@ import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { hexToRgb } from '../stringUtils'
@@ -137,7 +136,7 @@ class Human extends Agent {
 
     if (this.health / this.maxHealth <= .2) this.say('help!')
 
-    playSound('playerHurt')
+    window.SOUND.playSound('playerHurt')
   }
 
   die = () => {

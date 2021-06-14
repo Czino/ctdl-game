@@ -7,7 +7,6 @@ import { moveObject, intersects, getClosest } from './geometryUtils'
 import { capitalize } from './stringUtils'
 import constants from './constants'
 import { addTextToQueue } from './textUtils'
-import { playSound } from './sounds'
 import { duckButton, backButton } from './eventUtils'
 import Agent from './Agent'
 import { canDrawOn } from './performanceUtils'
@@ -334,8 +333,8 @@ class Character extends Agent {
   }
 
   makeDamage = multiplier => {
-    if (this.id === 'hodlonaut') playSound('lightningTorch')
-    if (this.id === 'katoshi') playSound('sword')
+    if (this.id === 'hodlonaut') window.SOUND.playSound('lightningTorch')
+    if (this.id === 'katoshi') window.SOUND.playSound('sword')
     const boundingBox = this.getBoundingBox()
     let direction = this.direction === 'left' ? 'right' : 'left'
 
@@ -368,7 +367,7 @@ class Character extends Agent {
 
     if (this.health / this.maxHealth <= .2) this.say('help!')
 
-    playSound('playerHurt')
+    window.SOUND.playSound('playerHurt')
   }
 
 

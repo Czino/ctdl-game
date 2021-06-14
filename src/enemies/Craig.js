@@ -5,11 +5,9 @@ import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import { addTextToQueue, setTextQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../eventUtils'
-import { getSoundtrack, initSoundtrack } from '../soundtrack'
 import Item from '../objects/Item'
 
 const doesNotTouchEnemy = new Task({
@@ -196,7 +194,7 @@ class Craig extends Agent {
     this.vx = direction === 'left' ? impulse : -impulse
     this.vy = -3
     this.protection = 8
-    playSound('playerHurt')
+    window.SOUND.playSound('playerHurt')
     if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
       this.health = 0
@@ -225,7 +223,7 @@ class Craig extends Agent {
         this.sprite = CTDLGAME.assets.craig
         this.strength++
         this.protection = 32
-        initSoundtrack('makeOrBreak')
+        window.SNDTRCK.initSoundtrack('makeOrBreak')
       })
       return
     }
@@ -295,8 +293,8 @@ class Craig extends Agent {
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/jump|fall|rekt|hurt/.test(this.status)) {
       if (CTDLGAME.hodlonaut.status !== 'rekt') {
-        if (getSoundtrack() !== 'craigsTheme' && this.hasArmor) initSoundtrack('craigsTheme')
-        if (getSoundtrack() !== 'makeOrBreak' && !this.hasArmor) initSoundtrack('makeOrBreak')
+        if (window.SNDTRCK.getSoundtrack() !== 'craigsTheme' && this.hasArmor) window.SNDTRCK.initSoundtrack('craigsTheme')
+        if (window.SNDTRCK.getSoundtrack() !== 'makeOrBreak' && !this.hasArmor) window.SNDTRCK.initSoundtrack('makeOrBreak')
       }
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)

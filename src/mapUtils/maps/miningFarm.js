@@ -9,7 +9,6 @@ import { makeBoundary } from '../../geometryUtils'
 import { CTDLGAME } from '../../gameUtils'
 import getHitBoxes from '../getHitBoxes'
 import PoliceForce from '../../enemies/PoliceForce'
-import { initSoundtrack } from '../../soundtrack'
 
 import miningFarm from '../../sprites/miningFarm.png'
 import policeForce from '../../sprites/policeForce.png'
@@ -100,7 +99,7 @@ const underAttack = new GameObject('underAttack', {
 underAttack.touchEvent = () => {
   if (CTDLGAME.world.map.state.underAttack) return
   CTDLGAME.world.map.state.underAttack = true
-  initSoundtrack(CTDLGAME.world.map.track())
+  window.SNDTRCK.initSoundtrack(CTDLGAME.world.map.track())
   // CTDLGAME.objects.push(new PoliceForce(
   //   'test-force',
   //   {

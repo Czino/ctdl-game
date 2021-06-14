@@ -4,7 +4,6 @@ import rabbitSprite from '../sprites/rabbit'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
@@ -200,9 +199,9 @@ class Rabbit extends Agent {
   }
 
   hurtCondition = () => !/turnEvil|spawn|hurt|rekt/.test(this.status)
-  onHurt = () => playSound('rabbitHurt')
+  onHurt = () => window.SOUND.playSound('rabbitHurt')
   onDie = () => {
-    playSound('burn')
+    window.SOUND.playSound('burn')
     addTextToQueue(`Evil Rabbit got rekt`)
   }
 

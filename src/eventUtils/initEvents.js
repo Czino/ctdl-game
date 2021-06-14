@@ -1,6 +1,5 @@
 import constants from '../constants'
 import { CTDLGAME, skipText } from '../gameUtils'
-import { playSound } from '../sounds'
 import { nahButton, yesButton } from './buttons'
 import { click } from './click'
 import { clickEnd } from './clickEnd'
@@ -78,36 +77,36 @@ export const initEvents = startScreen => {
     }
     if (CTDLGAME.showShop) {
       if (/^[sk]|arrowdown$/.test(key)) {
-        playSound('select')
+        window.SOUND.playSound('select')
         CTDLGAME.menuItem++
       }
       if (/^[wi]|arrowup$/.test(key)) {
-        playSound('select')
+        window.SOUND.playSound('select')
         CTDLGAME.menuItem--
       }
       if (key === 'enter' && CTDLGAME.eventButtons[CTDLGAME.menuItem]) {
         CTDLGAME.eventButtons[CTDLGAME.menuItem].onclick()
       }
       if (key === 'escape' ) {
-        playSound('select')
+        window.SOUND.playSound('select')
         CTDLGAME.eventButtons[CTDLGAME.eventButtons.length - 1].onclick()
       }
     }
     if (CTDLGAME.prompt) {
       if (/^[aj]|arrowleft$/.test(key)) {
-        playSound('select')
+        window.SOUND.playSound('select')
         CTDLGAME.menuItemX++
       }
       if (/^[dl]|arrowright$/.test(key)) {
-        playSound('select')
+        window.SOUND.playSound('select')
         CTDLGAME.menuItemX--
       }
       if (key === 'enter') {
-        playSound('select')
+        window.SOUND.playSound('select')
         CTDLGAME.menuItemX === 0 ? yesButton.onclick() : nahButton.onclick()
       }
       if (key === 'escape') {
-        playSound('select')
+        window.SOUND.playSound('select')
         nahButton.onclick()
       }
     }

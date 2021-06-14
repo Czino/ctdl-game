@@ -4,7 +4,6 @@ import spriteData from '../sprites/bitcoinLabrador'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 
 // TODO add attack
@@ -206,7 +205,7 @@ class BitcoinLabrador extends Agent {
       this.status = 'bark'
 
       if (this.frame === 3) {
-        playSound('bark')
+        window.SOUND.playSound('bark')
         this.say('woef')
       }
       return SUCCESS

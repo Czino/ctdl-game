@@ -1,7 +1,6 @@
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
 import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState } from '../gameUtils'
 import World from '../World'
-import { initSoundtrack } from '../soundtrack'
 import { loadMap } from './loadMap'
 
 /**
@@ -82,7 +81,7 @@ export const changeMap = async (id, from) => {
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init(from)
   updateViewport()
 
-  initSoundtrack(newWorld.map.track())
+  window.SNDTRCK.initSoundtrack(newWorld.map.track())
   // save again the new map
   if (from !== 'newGame') await saveGame()
 }

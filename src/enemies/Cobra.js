@@ -4,7 +4,6 @@ import cobraSprite from '../sprites/Cobra'
 import { CTDLGAME } from '../gameUtils'
 import { getClosest } from '../geometryUtils'
 import { addTextToQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import { sense } from './enemyUtils'
 import Agent from '../Agent'
 
@@ -60,7 +59,7 @@ class Cobra extends Agent {
     blackboard: this
   })
 
-  onHurt = () => playSound('rabbitHurt')
+  onHurt = () => window.SOUND.playSound('rabbitHurt')
 
   onDie = () => {
     this.frame = 0

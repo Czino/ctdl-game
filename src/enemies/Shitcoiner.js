@@ -4,7 +4,6 @@ import shitcoiner from '../sprites/shitcoiner'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 
@@ -174,8 +173,8 @@ class Shitcoiner extends Agent {
     return ground.length > 0 && obstacles.length === 0
   }
 
-  onHurt = () => playSound('shitcoinerHurt')
-  onDie = () => playSound('shitcoinerHurt')
+  onHurt = () => window.SOUND.playSound('shitcoinerHurt')
+  onDie = () => window.SOUND.playSound('shitcoinerHurt')
 
   update = () => {
     if (CTDLGAME.lockCharacters) {

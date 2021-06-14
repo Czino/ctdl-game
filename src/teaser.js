@@ -10,8 +10,6 @@ import {
   clearCanvas,
   saveStateExists,
 } from './gameUtils'
-import { isSoundLoaded, toggleSounds } from './sounds'
-import { toggleSoundtrack } from './soundtrack'
 import { showButtons, showFrameRate } from './debugUtils'
 import { write } from './font'
 
@@ -36,10 +34,10 @@ async function init() {
 
   let options = await db.get('options')
   if (options) CTDLGAME.options = options
-  toggleSoundtrack(CTDLGAME.options.music)
-  toggleSounds(CTDLGAME.options.sound)
+  window.SNDTRCK.toggleSoundtrack(CTDLGAME.options.music)
+  window.SOUND.toggleSounds(CTDLGAME.options.sound)
 
-  CTDLGAME.isSoundLoaded = isSoundLoaded()
+  CTDLGAME.isSoundLoaded = window.SOUND.isSoundLoaded()
 
   if (CTDLGAME.isSoundLoaded) {
     constants.BUTTONS

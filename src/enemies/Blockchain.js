@@ -3,7 +3,6 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 import blockchain from '../sprites/blockchain'
 import { CTDLGAME, getBlockSubsidy } from '../gameUtils'
 import { intersects, getClosest, moveObject, sharpLine } from '../geometryUtils'
-import { playSound } from '../sounds'
 import { sense, senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { canDrawOn } from '../performanceUtils'
@@ -114,7 +113,7 @@ class Blockchain extends Agent {
       const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: -4 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
-        playSound('drop')
+        window.SOUND.playSound('drop')
         this.status = 'move'
         this.cooldown = Math.round(Math.random() * 6) + 3
         return SUCCESS
@@ -131,7 +130,7 @@ class Blockchain extends Agent {
 
       const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: -4}, CTDLGAME.quadTree)
       if (hasMoved) {
-        playSound('drop')
+        window.SOUND.playSound('drop')
         this.status = 'move'
         this.cooldown = Math.round(Math.random() * 6) + 3
         return SUCCESS
@@ -214,7 +213,7 @@ class Blockchain extends Agent {
     this.drawHeals()
   }
 
-  onHurt = () => playSound('clunk')
+  onHurt = () => window.SOUND.playSound('clunk')
 
   onDie = () => {
     this.sensedBlocks

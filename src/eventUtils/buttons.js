@@ -3,8 +3,6 @@ import { start } from 'tone'
 
 import constants from '../constants'
 import { CTDLGAME, loadGame, saveGame, saveStateExists, showIntro } from '../gameUtils'
-import { isSoundLoaded, playSound, toggleSounds } from '../sounds'
-import { stopMusic, toggleSoundtrack } from '../soundtrack'
 import startScreenHandler from './startScreenHandler'
 import initEvents from './initEvents'
 import { setTextQueue } from '../textUtils'
@@ -28,7 +26,7 @@ export const buttons = [
     onclick: async () => {
       await start() // start tone JS
 
-      CTDLGAME.isSoundLoaded = isSoundLoaded()
+      CTDLGAME.isSoundLoaded = window.SOUND.isSoundLoaded()
 
       if (!CTDLGAME.isSoundLoaded) return
 
@@ -59,8 +57,8 @@ export const buttons = [
     h: 10,
     active: false,
     onclick: async () => {
-      stopMusic()
-      playSound('select')
+      window.SNDTRCK.stopMusic()
+      window.SOUND.playSound('select')
 
       CTDLGAME.startScreen = false
       await loadGame()
@@ -82,7 +80,7 @@ export const buttons = [
     h: 10,
     active: true,
     onclick: () => {
-      playSound('select')
+      window.SOUND.playSound('select')
 
       showIntro()
       CTDLGAME.startScreen = false
@@ -108,7 +106,7 @@ export const buttons = [
     h: 10,
     active: true,
     onclick: () => {
-      playSound('select')
+      window.SOUND.playSound('select')
       CTDLGAME.multiPlayer = false
     }
   },
@@ -120,7 +118,7 @@ export const buttons = [
     h: 10,
     active: true,
     onclick: () => {
-      playSound('select')
+      window.SOUND.playSound('select')
       CTDLGAME.multiPlayer = true
     }
   },
@@ -132,7 +130,7 @@ export const buttons = [
     h: 10,
     active: false,
     onclick: () => {
-      playSound('select')
+      window.SOUND.playSound('select')
 
       setTextQueue([]) // last text in textqueue will call callback to start game
 
@@ -203,7 +201,7 @@ export const buttons = [
     active: true,
     onclick: async () => {
       CTDLGAME.options.music = !CTDLGAME.options.music
-      toggleSoundtrack(CTDLGAME.options.music)
+      window.SNDTRCK.toggleSoundtrack(CTDLGAME.options.music)
       await db.set('options', CTDLGAME.options)
     }
   },
@@ -217,7 +215,7 @@ export const buttons = [
     onclick: async () => {
       CTDLGAME.options.sound = !CTDLGAME.options.sound
       await db.set('options', CTDLGAME.options)
-      toggleSounds(CTDLGAME.options.sound)
+      window.SOUND.toggleSounds(CTDLGAME.options.sound)
     }
   },
   { action: 'jump', x: 21 * 4, y: constants.HEIGHT - 20, w: 18, h: 18, active: false, hasBorder: true},

@@ -2,7 +2,6 @@ import constants from '../constants'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject } from '../geometryUtils'
 import spriteData from '../sprites/items'
-import { playSound } from '../sounds'
 import { addTextToQueue } from '../textUtils'
 import GameObject from '../GameObject'
 
@@ -24,21 +23,21 @@ class Item extends GameObject {
     
     if (this.id === 'pizza') {
       if (character.heal(2)) {
-        playSound('item')
+        window.SOUND.playSound('item')
       } else {
         this.remove = false
         this.collected = false
       }
     } else if (this.id === 'taco') {
       if (character.heal(5)) {
-        playSound('item')
+        window.SOUND.playSound('item')
       } else {
         this.remove = false
         this.collected = false
       }
     } else if (this.id === 'steak') {
       if (character.heal(21000000)) {
-        playSound('item')
+        window.SOUND.playSound('item')
       } else {
         this.remove = false
         this.collected = false
@@ -48,24 +47,24 @@ class Item extends GameObject {
       addTextToQueue(`You found an opendime with\nș${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
-      playSound('item')
+      window.SOUND.playSound('item')
     } else if (this.id === 'coldcard') {
       let sats = Math.round(Math.random() * 615000)
       addTextToQueue(`You found a coldcard with\nș${sats}`, () => {
         CTDLGAME.inventory.sats += sats
       })
-      playSound('item')
+      window.SOUND.playSound('item')
     } else if (this.id === 'honeybadger') {
       addTextToQueue('You gained the strength\nof the honey badger')
       character.strength += Math.round(Math.random() + 1)
       character.maxHealth += Math.round(Math.random() * 3 + 1)
       character.heal(character.maxHealth)
-      playSound('honeyBadger')
+      window.SOUND.playSound('honeyBadger')
     } else if (this.id === 'orangePill') {
       addTextToQueue('The orange pill makes\nyou more vital')
       character.maxHealth += Math.round(Math.random() * 3 + 1)
       character.heal(Math.round(character.maxHealth / 2))
-      playSound('honeyBadger')
+      window.SOUND.playSound('honeyBadger')
     } else if (this.id === 'phoenix') {
       if (CTDLGAME.inventory.phoenix >= 2) {
         this.remove = false
@@ -73,12 +72,12 @@ class Item extends GameObject {
       } else {
         addTextToQueue('Like the Phoenix, you\'ll rise\nfrom the ashes.')
         CTDLGAME.inventory.phoenix++
-        playSound('honeyBadger')
+        window.SOUND.playSound('honeyBadger')
       }
     } else if (this.id === 'securityCard') {
       addTextToQueue('You found a security card')
       CTDLGAME.inventory.securityCard = 1
-      playSound('item')
+      window.SOUND.playSound('item')
     }
   }
   update = () => {

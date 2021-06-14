@@ -2,7 +2,6 @@ import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import spriteData from '../sprites/shitcoins'
 import { moveObject } from '../geometryUtils'
-import { playSound } from '../sounds'
 import GameObject from '../GameObject'
 import { random } from '../arrayUtils'
 
@@ -39,7 +38,7 @@ class Shitcoin extends GameObject {
     this.health = Math.max(this.health - dmg, 0)
     if (this.health <= 0) {
       this.health = 0
-      playSound('block')
+      window.SOUND.playSound('block')
       for (let c = 0; c < 5; c++) {
         this.shards.push({
           x: this.x + Math.round(this.w  / 2),

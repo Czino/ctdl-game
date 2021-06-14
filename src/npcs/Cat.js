@@ -6,7 +6,6 @@ import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { write } from '../font'
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 
@@ -157,7 +156,7 @@ class Cat extends Agent {
     this.vx = direction === 'left' ? 5 : -5
     this.vy = -3
     this.protection = 8
-    playSound('rabbitHurt')
+    window.SOUND.playSound('rabbitHurt')
     if (this.health <= 0) {
       this.health = 0
       this.die()
