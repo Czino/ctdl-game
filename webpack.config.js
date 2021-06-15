@@ -44,7 +44,7 @@ module.exports = env => {
       ]
     },
     mode: dev ? 'development' : 'production',
-    devtool: 'eval-source-map',
+    devtool: dev ? 'eval-cheap-source-map' : false,
     cache: dev,
     watchOptions: {
       poll: 5000
@@ -52,6 +52,7 @@ module.exports = env => {
     optimization: dev ? {} : {
       minimize: true,
       minimizer: [new UglifyJsPlugin({
+        comments: false,
         include: /\.min\.js$/
       })]
     },
