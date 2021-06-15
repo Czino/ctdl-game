@@ -180,6 +180,14 @@ export default {
         context: 'fgContext'
       }
     ),
+    new NPC(
+      'lokul',
+      {
+        x: 56 * tileSize + 4,
+        y: 120 * tileSize - 3,
+        context: 'gameContext'
+      }
+    ),
     // new Vlad(
     //   'vlad',
     //   {

@@ -55,6 +55,36 @@ const elonEvent = npc => {
   }
 }
 
+const lokulEvent = npc => {
+  if (npc.isSelected) return
+  npc.frame = 1
+
+  let thingsToSaySelect = [
+    ['Lokul:\nI\'m the worst party guest\never.'],
+    [
+      'Lokul:\nKill your ego. POW is all that matters. We will not erode your past work',
+      'Lokul:\nbut if your ego stands in\nthe way you will get rekt.'
+    ],
+    ['Lokul:\nRule #2 the only thing you\nown is your mind prior to\nexpression.'],
+    ['Lokul:\nSo anything interesting\nhappen today? Been away\nfrom my phone all day.'],
+    ['Lokul:\nShitcoins are literally a\nsiren song.']
+  ]
+
+  npc.isSelected = true
+
+  let whatToSay = random(thingsToSaySelect)
+  whatToSay.map((text, index) => {
+    if (index === whatToSay.length - 1) {
+      addTextToQueue(text, () => {
+        npc.frame = 0
+        npc.isSelected = false
+      })
+    } else {
+      addTextToQueue(text)
+    }
+  })
+}
+
 export default {
   monk: {
     frames: [
@@ -379,7 +409,24 @@ export default {
       ['Crypto 69 Crab 420:\nHello I am your crab friend.'],
       ['Crypto 69 Crab 420:\nCome closer. I won\'t pinch']
     ]
-  }
+  },
+  lokul: {
+    frames: [
+      { x: 0, y: 88, w: 9, h: 28 },
+      { x: 10, y: 88, w: 9, h: 28 }
+    ],
+    static: true,
+    select: lokulEvent,
+    thingsToSayTouch: [
+      ['Lokul:\n...It\'s a really really really\nreally really big number.'],
+      ['Lokul:\n...Nah, fuck that guy...'],
+      ['Lokul:\n...Of course a government\nemployee is into the doge...'],
+      ['Lokul:\n...It\'s not a predator,\nit\'s a black hole.\nSmall, until it\'s not...'],
+      ['Lokul:\n...buncha sun ballin\' mfers.\nlfg!'],
+      ['Lokul:\n...Greg is the worst. There\'s a reason we say FU Greg...'],
+      ['Lokul:\n...Hit \'em with\n"Who is John Galt"...']
+    ]
+  },
   // Just converted my dads retirement fnd into $link
   // A homeless man once told me he could tell the state of the economy based on the length of the cigarette butts that people throw on the ground
 }
