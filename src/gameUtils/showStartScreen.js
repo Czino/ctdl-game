@@ -40,7 +40,7 @@ export const showStartScreen = () => {
     window.SOUND.playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('centralBankAlert')
+  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('ageispolis')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,

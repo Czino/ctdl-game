@@ -3,6 +3,8 @@ import NPC from './NPC'
 import { addHook, CTDLGAME } from '../gameUtils'
 import { sense } from '../enemies/enemyUtils'
 import { getClosest } from '../geometryUtils'
+import { random } from '../arrayUtils'
+import { addTextToQueue } from '../textUtils'
 
 class PMullr extends NPC {
   constructor(id, options) {
@@ -61,20 +63,66 @@ class PMullr extends NPC {
         'P.M.:\nKind of fkd up'
       ],
       ['petalik:\nOk guys could you please\nstop inflating your national currencies']
-      // TODO check this: ['peternacci:\ncame home, entered the door and found 4 bowls in different sizes from small to big neatly arranged in a fibonacci pattern laying on the floor im scared']
-      // TODO check this: ['PMR:\nWow man i still can't believe police cracked sha-265 using a banana']
-      // TODO check this: ['Petrus:\nBitcoin is literally the only money you can take with you to the afterlife\nNobody realized this yet']
-      // TODO check this: ['Planet Mullr:\nYou are now aware that you're standing on a giant rotating rock that revolves around a giant ball of gas with no destination in sight']
+      [
+        'Mullr Twin:\nThe Intro Sample from\n\'Aphex Twin - Ageispolis\' is\nnow playing in your mind',
+        'Mullr Twin:\nChill the fuck out\nI got this',
+        'Mullr Twin:\nGot nothing to worry about trust me',
+        'Mullr Twin:\nEverything\'s going to be\nokay'
+      ],
+      [
+        'peternacci:\nCame home, entered the\ndoor and found 4 bowls in\ndifferent sizes',
+        'peternacci:\nfrom small to big neatly\narranged in a fibonacci\npattern laying on the floor',
+        'peternacci:\nim scared'
+      ],
+      ['PMR:\nWow man i still can\'t believe police cracked sha-265 using a banana'],
+      [
+        'Petrus:\nBitcoin is literally the only\nmoney you can take with\nyou to the afterlife',
+        'Petrus:\nNobody realized this yet'
+      ],
+      [
+        'Planet Mullr:\nYou are now aware that\nyou\'re standing on a giant\nrotating rock',
+        'Planet Mullr:\nthat revolves around a giant ball of gas with no\ndestination in sight'
+      ],
+      ['P Mull:\nYou are now aware that\nyou\'re carrying a human skull with you all the time'],
+      [
+        'Pmux:\ni think im ready to\ntransmute into my next\nform beyond',
+        'Pmux:\nthe human physical body.\nSimulation Admins please\ndeploy patch',
+      ]
     ]
   }
 
   direction = 'left'
   status = 'idle'
 
+  select = () => {
+    if (!this.thingsToSaySelect || this.isSelected) return
+    this.isSelected = true
+
+    let whatToSay = random(this.thingsToSaySelect)
+    whatToSay.map((text, index) => {
+      if (/Ageispolis/.test(text)) {
+        window.SNDTRCK.initSoundtrack('ageispolis')
+        window.SNDTRCK.changeVolume(1)
+        this.playingAgeispolis = true
+      }
+      if (index === whatToSay.length - 1) {
+        addTextToQueue(text, () => {
+          this.isSelected = false
+          if (this.playingAgeispolis) {
+            this.playingAgeispolis = false
+            window.SNDTRCK.initSoundtrack('stellaSplendence')
+          }
+        })
+      } else {
+        addTextToQueue(text)
+      }
+    })
+  }
+
   update = () => {
     let sensedFriends = sense(this, /Character/)
 
-    if (sensedFriends.length > 0 && !this.pulse) {
+    if (sensedFriends.length > 0 && !this.pulse && !this.playingAgeispolis) {
       let closestFriend = getClosest(this, sensedFriends)
       let distance = Math.abs(this.getCenter().x - closestFriend.getCenter().x)
       let volume = (100 - distance) / 100
