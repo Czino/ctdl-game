@@ -52,6 +52,7 @@ import AmericanHodl from '../npcs/AmericanHodl'
 import MrsAmericanHodl from '../npcs/MrsAmericanHodl'
 import Vic from '../npcs/Vic'
 import BitcoinPoet from '../npcs/BitcoinPoet'
+import JoseSBam from '../npcs/JoseSBam'
 
 // TODO can we somehow resolve this? I don't want to load all game objects ever from the start
 export const gameObjects = {
@@ -108,5 +109,6 @@ export const gameObjects = {
     AmericanHodl,
     MrsAmericanHodl,
     Vic,
-    BitcoinPoet
+    BitcoinPoet,
+    JoseSBam
 }

@@ -18,6 +18,7 @@ import HODLvirus from '../../npcs/HODLvirus'
 import GlennHodl from '../../npcs/GlennHodl'
 import ChrisWhodl from '../../npcs/ChrisWhodl'
 import Vlad from '../../npcs/Vlad'
+import JoseSBam from '../../npcs/JoseSBam'
 import Bitdov from '../../npcs/Bitdov'
 import NPC from '../../npcs/NPC'
 
@@ -32,6 +33,7 @@ import bitdov from '../../sprites/bitdov.png'
 import glennHodl from '../../sprites/glennHodl.png'
 import chrisWhodl from '../../sprites/chrisWhodl.png'
 import vlad from '../../sprites/vlad.png'
+import joseSBam from '../../sprites/joseSBam.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -184,6 +186,14 @@ export default {
       'lokul',
       {
         x: 56 * tileSize + 4,
+        y: 120 * tileSize,
+        context: 'gameContext'
+      }
+    ),
+    new JoseSBam(
+      'joseSBam',
+      {
+        x: 53 * tileSize + 4,
         y: 120 * tileSize - 3,
         context: 'gameContext'
       }
@@ -226,7 +236,8 @@ export default {
     bitdov,
     glennHodl,
     chrisWhodl,
-    vlad
+    vlad,
+    joseSBam,
   },
   track: () => 'lambada',
   init: from => {
