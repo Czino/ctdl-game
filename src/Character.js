@@ -488,8 +488,6 @@ class Character extends Agent {
     this.applyPhysics()
 
     if (CTDLGAME.lockCharacters || this.locked) {
-      this.frame = 0
-
       this.draw()
       return
     }

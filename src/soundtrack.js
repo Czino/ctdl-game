@@ -291,6 +291,7 @@ export const stopMusic = () => {
   const event = new CustomEvent('toggleSoundtrack', { detail: false })
   window.dispatchEvent(event)
   Transport.stop()
+
   if (pulsePart) pulsePart.stop(0)
   if (pulse2Part) pulse2Part.stop(0)
   if (squarePart) squarePart.stop(0)

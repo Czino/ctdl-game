@@ -157,7 +157,6 @@ class Agent extends GameObject {
     this.protection = 0
     this.business = options.business || 1
     this.applyGravity = options.applyGravity ?? true
-
   }
 
   w = 16
@@ -541,7 +540,7 @@ class Agent extends GameObject {
       if (this.vx > 0) this.vx -= 1
     }
 
-    if (this.status === 'fall' && Math.abs(this.vy) <= 6) {
+    if (this.status === 'fall' && Math.abs(this.vy) <= 6 && !CTDLGAME.lockCharacters) {
       this.status = 'idle'
     }
   }

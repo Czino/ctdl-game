@@ -46,6 +46,8 @@ import crispy from '../sprites/crispy.png'
 import pita from '../sprites/pita.png'
 import bitcoinLabrador from '../sprites/bitcoinLabrador.png'
 import nakadaiMonarch from '../sprites/nakadaiMonarch.png'
+import agustin from '../sprites/agustin.png'
+import banker from '../sprites/banker.png'
 import bearWhale from '../sprites/bearWhale.png'
 import vic from '../sprites/vic.png'
 import bitcoinPoet from '../sprites/bitcoinPoet.png'
@@ -99,6 +101,8 @@ export const assets = {
     pita,
     bitcoinLabrador,
     nakadaiMonarch,
+    agustin,
+    banker,
     bearWhale,
     vic,
     bitcoinPoet

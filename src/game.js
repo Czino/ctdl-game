@@ -148,7 +148,7 @@ function tick() {
   }
 
   time = getTimeOfDay()
-  if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0) checkBlocks()
+  if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0 && !CTDLGAME.lockCharacters) checkBlocks()
 
   if (CTDLGAME.showShop) {
     showShop()

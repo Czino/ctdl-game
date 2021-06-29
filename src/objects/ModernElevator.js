@@ -7,7 +7,7 @@ import { addTextToQueue } from '../textUtils'
 class ModernElevator extends GameObject {
   constructor(id, options) {
     super(id, options)
-    this.ys = typeof options.ys === 'string' ? JSON.parse(options.ys) : options.ys.sort()
+    this.ys = typeof options.ys === 'string' ? JSON.parse(options.ys) : options.ys.sort((a, b) => a - b)
     this.y = this.ys[0]
     this.carY = options.carY || this.y
     this.h = this.ys[this.ys.length - 1] - this.y + this.spriteData.h
@@ -77,7 +77,7 @@ class ModernElevator extends GameObject {
   doorsCompletelyOpen = () => this.doorsOpen.some(door => door === 12)
 
   update = () => {
-    if (this.locked) return this.draw()
+    if (this.locked && !CTDLGAME.inventory.securityCard) return this.draw()
 
     let move = 0
 
@@ -188,7 +188,7 @@ class ModernElevator extends GameObject {
   }
 
   backEvent = () => {
-    if (this.locked && !this.touched) {
+    if (this.locked && !this.touched && !CTDLGAME.inventory.securityCard) {
       addTextToQueue('The elevator does not\nrespond', () => this.touched = false)
       this.touched = true
     }

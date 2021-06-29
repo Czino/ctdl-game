@@ -77,7 +77,7 @@ export const updateViewport = () => {
   }
   CTDLGAME.objects
     .map(obj => {
-      if (obj.boss && obj.hadIntro) {
+      if (obj.boss && (obj.hadIntro || obj.introScene)) {
         obj.inViewport = true
         return obj
       }

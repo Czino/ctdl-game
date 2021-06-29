@@ -93,7 +93,7 @@ class BankRobot extends Agent {
     this.spriteId = 'bankRobot'
     this.health = options.health ?? 10
     this.maxHealth = 10
-    this.senseRadius = 64
+    this.senseRadius = 40
     this.walkingSpeed = 1
     this.makeSound = 16
     this.alarmCoolDown = null

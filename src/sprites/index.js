@@ -35,6 +35,8 @@ import cat from './cat'
 import bitcoinLabrador from './bitcoinLabrador'
 import nakadaiMonarch from './nakadaiMonarch'
 import bearWhale from './bearWhale'
+import agustin from './agustin'
+import banker from './banker'
 import vic from './vic'
 import bitcoinPoet from './bitcoinPoet'
 
@@ -83,6 +85,8 @@ export default {
     bitcoinLabrador,
     nakadaiMonarch,
     bearWhale,
+    agustin,
+    banker,
     vic,
     bitcoinPoet
 }

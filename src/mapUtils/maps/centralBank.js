@@ -13,6 +13,8 @@ import SnakeBitken from '../../npcs/SnakeBitken'
 import { addTextToQueue } from '../../textUtils'
 import ModernElevator from '../../objects/ModernElevator'
 import BankRobot from '../../enemies/BankRobot'
+import Banker from '../../enemies/Banker'
+import Agustin from '../../enemies/Agustin'
 
 import centralBank from '../../sprites/centralBank.png'
 import citizen1 from '../../sprites/citizen-1.png'
@@ -22,13 +24,16 @@ import citizen4 from '../../sprites/citizen-4.png'
 import citizen5 from '../../sprites/citizen-5.png'
 import citizen6 from '../../sprites/citizen-6.png'
 import snakeBitken from '../../sprites/snakeBitken.png'
+import banker from '../../sprites/banker.png'
+import agustin from '../../sprites/agustin.png'
 import bankRobot from '../../sprites/bankRobot.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
 import explosion from '../../sprites/explosion.png'
 
+
 const worldWidth = 128
-const worldHeight = 128
+const worldHeight = 38
 const tileSize = 8
 
 stage.parallax = parsePattern(stage.parallax, 0, 0)
@@ -70,7 +75,7 @@ objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'ce
 
 const goToCapitalCity = new GameObject('goToCapitalCity', {
   x: 1 * tileSize,
-  y: 124 * tileSize,
+  y: 34 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
@@ -81,7 +86,7 @@ events.push(goToCapitalCity)
 
 const startClosingBank = new GameObject('startClosingBank', {
   x: 45 * tileSize,
-  y: 106 * tileSize,
+  y: 16 * tileSize,
   w: tileSize,
   h: 3 * tileSize,
 })
@@ -92,11 +97,25 @@ startClosingBank.touchEvent = () => {
 }
 events.push(startClosingBank)
 
+const bossIntroScene = new GameObject('bossIntroScene', {
+  x: 19 * tileSize,
+  y: 7 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+bossIntroScene.touchEvent = () => {
+  const agustin = CTDLGAME.objects.find(obj => obj.id === 'agustin')
+  if (!agustin) return
+
+  agustin.introScene = true
+}
+events.push(bossIntroScene)
+
 const fogsOfWar = [
-  { x: 0, y: 89.5, w: 64, h: 11},
-  { x: 0, y: 100.5, w: 64, h: 9},
-  { x: 0, y: 109.5, w: 64, h: 8},
-  { x: 0, y: 117.5, w: 64, h: 11},
+  { x: 0, y: -.5, w: 64, h: 11},
+  { x: 0, y: 10.5, w: 64, h: 9},
+  { x: 0, y: 19.5, w: 64, h: 8},
+  { x: 0, y: 27.5, w: 64, h: 11},
 ].map((fogOfWar, i) => new GameObject(`fogOfWar-${i}`, {
   x: fogOfWar.x * tileSize,
   y: fogOfWar.y * tileSize,
@@ -109,10 +128,10 @@ const fogsOfWar = [
 })
 
 ;[
-  [30, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'],
-  [32, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how can I help you?'],
-  [38, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'],
-  [44, 124, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?']
+  [30, 34, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'],
+  [32, 34, 'Banking clerk:\nWelcome to Ripam Centralis, how can I help you?'],
+  [38, 34, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?'],
+  [44, 34, 'Banking clerk:\nWelcome to Ripam Centralis, how may I help you?']
 ].map((clerk, i) => {
   let bankingClerk = new GameObject(`clerk-${i}`, {
     x: clerk[0] * tileSize,
@@ -134,7 +153,7 @@ const fogsOfWar = [
 
 let underCoverClerk = new GameObject(`underCoverClerk`, {
   x: 42 * tileSize,
-  y: 124 * tileSize,
+  y: 34 * tileSize,
   w: 2 * tileSize,
   h: 4 * tileSize
 })
@@ -158,7 +177,7 @@ events.push(underCoverClerk)
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    capitalCity: { x: 3 * tileSize, y: 124 * tileSize - 6 }
+    capitalCity: { x: 3 * tileSize, y: 34 * tileSize - 6 }
   },
   state: {},
   parallax: stage.parallax.map(tile => mapTile(tile, tileSize)),
@@ -173,9 +192,9 @@ export default {
       {
         x: 5 * tileSize,
         ys: [
-          105 * tileSize,
-          113 * tileSize,
-          123 * tileSize
+          15 * tileSize,
+          23 * tileSize,
+          33 * tileSize
         ]
       }
     ),
@@ -184,8 +203,8 @@ export default {
       {
         x: 59 * tileSize,
         ys: [
-          96 * tileSize,
-          123 * tileSize
+          6 * tileSize,
+          33 * tileSize
         ],
         locked: true
       }
@@ -194,7 +213,7 @@ export default {
       'snakeBitken',
       {
         x: 1 * tileSize,
-        y: 105 * tileSize + 4,
+        y: 15 * tileSize + 4,
         context: 'parallaxContext'
       }
     ),
@@ -202,8 +221,57 @@ export default {
       'bankrobot-1',
       {
         x: 55 * tileSize,
-        y: 105 * tileSize,
+        y: 15 * tileSize,
         direction: 'left'
+      }
+    ),
+    new Agustin(
+      'agustin',
+      {
+        x: 0 * tileSize,
+        y: 3 * tileSize - 3,
+        status: 'sitIdle',
+        direction: 'right'
+      }
+    ),
+    new Banker(
+      'banker-1',
+      {
+        x: 4 * tileSize - 2,
+        y: 7 * tileSize - 4,
+        status: 'back'
+      }
+    ),
+    new Banker(
+      'banker-2',
+      {
+        x: 7 * tileSize - 1,
+        y: 7 * tileSize - 4,
+        status: 'back'
+      }
+    ),
+    new Banker(
+      'banker-3',
+      {
+        x: 10 * tileSize - 2,
+        y: 7 * tileSize - 4,
+        status: 'back'
+      }
+    ),
+    new Banker(
+      'banker-4',
+      {
+        x: 13 * tileSize - 2,
+        y: 7 * tileSize - 4,
+        status: 'back'
+      }
+    ),
+    new Banker(
+      'banker-5',
+      {
+        x: 16 * tileSize - 1,
+        y: 7 * tileSize - 4,
+        status: 'back'
       }
     )
   ],
@@ -251,7 +319,7 @@ export default {
       }
     }
 
-    if (CTDLGAME.world.map.state.codeRed && window.SNDTRCK.getSoundtrack() !== 'centralBankAlert') window.SNDTRCK.initSoundtrack('centralBankAlert')
+    if (CTDLGAME.world.map.state.codeRed && !/centralBankAlert|lagarde/.test(window.SNDTRCK.getSoundtrack())) window.SNDTRCK.initSoundtrack('centralBankAlert')
 
     if (CTDLGAME.world.map.state.codeRed && !CTDLGAME.world.map.state.codeRedCalled) {
       window.SNDTRCK.initSoundtrack('centralBankAlert')
@@ -270,6 +338,8 @@ export default {
     citizen5,
     citizen6,
     snakeBitken,
+    banker,
+    agustin,
     bankRobot,
     policeForce,
     policeForceWithShield,
