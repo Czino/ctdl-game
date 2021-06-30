@@ -242,7 +242,11 @@ class Agustin extends Agent {
         CTDLGAME.focusViewport = null
         CTDLGAME.objects
           .filter(obj => obj.getClass() === 'Banker')
-          .map(banker => banker.status = 'idle')
+          .map(banker => {
+            banker.status = 'slide'
+            banker.direction = 'right'
+            banker.goalX = (banker.x + window.SELECTEDCHARACTER.x) / 2
+          })
         // TODO this.status = 'expand' when all bankers rekt and programm button projectile
       })
 
