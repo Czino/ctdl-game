@@ -35,6 +35,7 @@ import Item from './objects/Item'
 window.SELECTED = null
 window.SELECTEDCHARACTER = null
 
+// TODO ADD ATTACK BOXES EVERYWHERE!
 let time
 
 init()

@@ -111,8 +111,10 @@ class Character extends Agent {
     this.context = options.context || 'charContext'
     this.maxHealth = options.maxHealth ?? 21
     this.health = options.health ?? 21
+    this.stamina = options.stamina || 10
     this.selected = options.selected
     this.strength = options.strength || (/hodlonaut/.test(id) ? 1 : 3)
+    this.slidingSpeed = 4
     this.attackRange = /hodlonaut/.test(id) ? 4 : 8
     this.senseRadius = options.senseRadius || 50
     this.follow = options.follow ?? true
@@ -260,6 +262,55 @@ class Character extends Agent {
         this.status = /duck/i.test(this.status) ? 'duckMoveAttack': 'moveAttack'
         if (this.id === 'katoshi' && this.frame !== 3) return RUNNING
         this.makeDamage(this.id === 'katoshi' ? .8 : 1)
+        return SUCCESS
+      }
+      return FAILURE
+    }
+  }
+  slideAttackLeft = {
+    condition: () => this.stamina === 10,
+    effect: () => {
+      this.direction = 'left'
+
+      if (this.status !== 'slideAttack') {
+        this.status = 'slideAttack'
+        this.frame = 0
+        this.stamina -= 10
+      }
+
+      const hasMoved = !moveObject(this, { x: -this.slidingSpeed, y: 0 }, CTDLGAME.quadTree)
+      if (hasMoved) {
+        if (this.id === 'katoshi' && this.frame === 3) this.makeDamage(this.id === 'katoshi' ? .8 : 1)
+        if (this.frame !== 6) return RUNNING
+        if (this.frame === 6) {
+          this.status = 'idle'
+          return FAILURE
+        }
+        // TODO dont forget hodlonaut
+        return SUCCESS
+      }
+      return FAILURE
+    }
+  }
+  slideAttackRight = {
+    condition: () => this.stamina === 10,
+    effect: () => {
+      this.direction = 'right'
+      if (this.status !== 'slideAttack') {
+        this.status = 'slideAttack'
+        this.frame = 0
+        this.stamina -= 10
+      }
+
+      const hasMoved = !moveObject(this, { x: this.slidingSpeed, y: 0}, CTDLGAME.quadTree)
+      if (hasMoved) {
+        if (this.id === 'katoshi' && this.frame === 3) this.makeDamage(this.id === 'katoshi' ? .8 : 1)
+        if (this.frame !== 6) return RUNNING
+        if (this.frame === 6) {
+          this.status = 'idle'
+          return FAILURE
+        }
+        // TODO dont forget hodlonaut
         return SUCCESS
       }
       return FAILURE
@@ -420,14 +471,21 @@ class Character extends Agent {
         .filter(key => window.BUTTONS.some(button => button.action === constants.CONTROLS[id][key]))
         .map(key => constants.CONTROLS[id][key])
     } else {
-      controls = Object.keys(constants.CONTROLS[id])
-        .filter(key => window.KEYS.indexOf(key) !== -1)
+      controls = window.KEYS
+        .filter(key => Object.keys(constants.CONTROLS[id]).indexOf(key) !== -1)
         .map(key => constants.CONTROLS[id][key])
+      // controls = Object.keys(constants.CONTROLS[id])
+      //   .filter(key => window.KEYS.indexOf(key) !== -1)
+      //   .map(key => constants.CONTROLS[id][key])
     }
 
     let action = 'idle'
     // merge mixed behaviours
-    if (controls.indexOf('attack') !== -1 && controls.indexOf('moveLeft') !== -1) {
+    if (controls.indexOf('attack') === 0 && controls.indexOf('moveLeft') === 1) {
+      action = 'slideAttackLeft'
+    } else if (controls.indexOf('attack') === 0 && controls.indexOf('moveRight') === 1) {
+      action = 'slideAttackRight'
+    } else if (controls.indexOf('attack') !== -1 && controls.indexOf('moveLeft') !== -1) {
       action = 'attackMoveLeft'
     } else if (controls.indexOf('attack') !== -1 && controls.indexOf('moveRight') !== -1) {
       action = 'attackMoveRight'
@@ -547,7 +605,9 @@ class Character extends Agent {
       }
     }
 
-    if (Math.abs(this.vy) < 3 && !/jump|fall|rekt|hurt|action/.test(this.status)) {
+    if (this.stamina < 10) this.stamina++
+
+    if (Math.abs(this.vy) < 3 && !/jump|slide|fall|rekt|hurt|action/.test(this.status)) {
       if (CTDLGAME.multiPlayer || this.selected) {
         this.senseControls()
       } else {
@@ -555,6 +615,9 @@ class Character extends Agent {
         this.closestFriend = getClosest(this, this.sensedFriends)
         this.bTree.step()
       }
+    } else if (this.status === 'slideAttack') {
+      if (this.direction === 'left') this.slideAttackLeft.effect()
+      if (this.direction === 'right') this.slideAttackRight.effect()
     }
 
     if (/hodlonaut/.test(this.id)) {
@@ -602,7 +665,7 @@ class Character extends Agent {
     window.SELECTEDCHARACTER = null
   }
 
-  getBoundingBox = () => /duck/i.test(this.status)
+  getBoundingBox = () => /duck|slide/i.test(this.status)
     ? ({ // ducking
       id: this.id,
       x: this.x + 6,

@@ -62,6 +62,15 @@ export default {
       { x: 4 * w, y: 1 * h, w, h},
       { x: 5 * w, y: 1 * h, w, h}
     ],
+    slideAttack: [
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 0 * w, y: 5 * h, w, h },
+      { x: 0 * w, y: 5 * h, w, h },
+    ],
     duckMoveAttack: [
       { x: 2 * w, y: 6 * h, w, h},
       { x: 3 * w, y: 6 * h, w, h},
@@ -132,6 +141,15 @@ export default {
       { x: (6 + 3) * w, y: 1 * h, w, h},
       { x: (6 + 4) * w, y: 1 * h, w, h},
       { x: (6 + 5) * w, y: 1 * h, w, h}
+    ],
+    slideAttack: [
+      { x: (6 + 0) * w, y: 5 * h, w, h },
+      { x: (6 + 0) * w, y: 5 * h, w, h },
+      { x: (6 + 0) * w, y: 5 * h, w, h },
+      { x: (6 + 0) * w, y: 5 * h, w, h },
+      { x: (6 + 0) * w, y: 5 * h, w, h },
+      { x: (6 + 0) * w, y: 5 * h, w, h },
+      { x: (6 + 0) * w, y: 5 * h, w, h },
     ],
     duckMoveAttack: [
       { x: (6 + 2) * w, y: 6 * h, w, h},

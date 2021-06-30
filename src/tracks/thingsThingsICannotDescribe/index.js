@@ -23,5 +23,25 @@ export default {
     SNDTRCK.devices.triangleSynth.envelope.release = 16
     SNDTRCK.devices.sineSynth.envelope.release = 16
     SNDTRCK.devices.squareSynth.envelope.release = 16
+    SNDTRCK.devices.triangleSynth.set({
+      detune: 40
+    })
+    SNDTRCK.devices.sineSynth.set({
+      detune: 40
+    })
+    SNDTRCK.devices.squareSynth.set({
+      detune: 40
+    })
+  },
+  deinit: SNDTRCK => {
+    SNDTRCK.devices.triangleSynth.set({
+      detune: 0
+    })
+    SNDTRCK.devices.sineSynth.set({
+      detune: 0
+    })
+    SNDTRCK.devices.squareSynth.set({
+      detune: 0
+    })
   }
 }
