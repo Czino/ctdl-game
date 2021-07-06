@@ -77,7 +77,7 @@ class ModernElevator extends GameObject {
   doorsCompletelyOpen = () => this.doorsOpen.some(door => door === 12)
 
   update = () => {
-    if (this.locked && !CTDLGAME.inventory.securityCard) return this.draw()
+    if (this.locked && !CTDLGAME.inventory.securityCard || CTDLGAME.bossFight) return this.draw()
 
     let move = 0
 
@@ -188,7 +188,7 @@ class ModernElevator extends GameObject {
   }
 
   backEvent = () => {
-    if (this.locked && !this.touched && !CTDLGAME.inventory.securityCard) {
+    if (this.locked && !this.touched && !CTDLGAME.inventory.securityCard || CTDLGAME.bossFight) {
       addTextToQueue('The elevator does not\nrespond', () => this.touched = false)
       this.touched = true
     }

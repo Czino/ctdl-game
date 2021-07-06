@@ -229,7 +229,7 @@ export default {
       'agustin',
       {
         x: 0 * tileSize,
-        y: 3 * tileSize - 3,
+        y: 3 * tileSize - 2,
         status: 'sitIdle',
         direction: 'right'
       }
@@ -237,9 +237,10 @@ export default {
     new Banker(
       'banker-1',
       {
-        x: 4 * tileSize - 2,
+        x: 0 * tileSize + 4,
         y: 7 * tileSize - 4,
-        status: 'back'
+        status: 'idle',
+        direction: 'right'
       }
     ),
     new Banker(

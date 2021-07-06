@@ -93,7 +93,7 @@ class BankRobot extends Agent {
     this.spriteId = 'bankRobot'
     this.health = options.health ?? 10
     this.maxHealth = 10
-    this.senseRadius = 40
+    this.senseRadius = 30
     this.walkingSpeed = 1
     this.makeSound = 16
     this.alarmCoolDown = null
@@ -122,9 +122,8 @@ class BankRobot extends Agent {
     this.applyPhysics()
     if (this.status === 'fall') this.status = 'idle'
 
-
     if (Math.abs(this.vy) < 3 && this.status !== 'rekt') {
-      this.sensedEnemies = senseCharacters(this)
+      this.sensedEnemies = senseCharacters(this, true)
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.makeSound--
       if (this.makeSound < 0 && this.alarmCoolDown === 0) {

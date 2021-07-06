@@ -13,7 +13,10 @@ export default {
       { x: 1 * w, y: 0 * h, w , h }
     ],
     sitAngry: [
-      { x: 2 * w, y: 1 * h, w , h }
+      { x: 2 * w, y: 0 * h, w , h }
+    ],
+    sitFurious: [
+      { x: 3 * w, y: 0 * h, w , h }
     ],
     expand: [
       { x: 2 * w, y: 0 * h, w , h },

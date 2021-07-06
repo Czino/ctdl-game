@@ -2,14 +2,13 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 
 import agustin from '../sprites/agustin'
 import { addHook, CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
+import { intersects, getClosest, Boundary } from '../geometryUtils'
 import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils'
+import { addTextToQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 import { skipCutSceneButton } from '../eventUtils'
 import Item from '../objects/Item'
-
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -130,6 +129,8 @@ class Agustin extends Agent {
     }
   }
 
+  hurtCondition = (dmg, direction) => !/hurt|rekt|block|/.test(this.status) && !this.protection && this.canMove
+
   onHurt = () => {
     this.protection = 8
     window.SOUND.playSound('creatureHurt')
@@ -176,7 +177,6 @@ class Agustin extends Agent {
   }
 
   update = () => {
-    console.log(this.x, this.y)
     if (CTDLGAME.lockCharacters) {
       if (CTDLGAME.focusViewport && CTDLGAME.focusViewport.x > this.x) CTDLGAME.focusViewport.x -= 2
       this.frame++
@@ -204,8 +204,14 @@ class Agustin extends Agent {
     this.sensedEnemies = this.sensedObjects
       .filter(enemy => enemy.getClass() === 'Character' && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
-
+    this.bankers = CTDLGAME.objects.filter(obj => obj.getClass() === 'Banker')
     if (!this.hadIntro && this.introScene) {
+      CTDLGAME.objects.push(new Boundary({
+        x: this.x + 50,
+        y: this.y,
+        h: this.h,
+        w: 4
+      }))
       CTDLGAME.lockCharacters = true
       CTDLGAME.focusViewport = window.SELECTEDCHARACTER.getBoundingBox()
 
@@ -216,9 +222,8 @@ class Agustin extends Agent {
       addTextToQueue('Agustin:\nWe know that the payment has finality.', () => { this.status = 'sit' })
       addTextToQueue('Agustin:\nWhat makes an electronic\npayment to be the same...', () => { this.status = 'sitIdle' })
       addTextToQueue('Agustin:\n...to be the same as\ntransfer of the paper\nis finality.', () => { this.status = 'sit' })
-      addTextToQueue('Agustin:\nAnd to the day these\ncybercurrencies don\'t\ngaruantee finality...', () => { this.status = 'sitIdle' })
+      addTextToQueue('Agustin:\nAnd to the day these\ncybercurrencies don\'t\ngaruantee finality...', () => { this.status = 'sitAngry' })
       addTextToQueue('Agustin:\nHey! Who are you?', () => {
-        this.status = 'sitAngry'
         addHook(CTDLGAME.frame + 8, () => {
           CTDLGAME.focusViewport = null
           CTDLGAME.hodlonaut.vy = -6
@@ -233,34 +238,31 @@ class Agustin extends Agent {
           CTDLGAME.katoshi.status = 'idle'
         })
       })
-      addTextToQueue('Agustin:\nYou are not invited!', () => CTDLGAME.focusViewport = this)
+      addTextToQueue('Agustin:\nYou are not invited!', () => {
+        CTDLGAME.focusViewport = this
+        this.status = 'sitFurious'
+      })
       addTextToQueue('Agustin:\nSeize them!', () => {
         if (window.SNDTRCK.getSoundtrack() !== 'lagardesTheme') window.SNDTRCK.initSoundtrack('lagardesTheme')
+        this.status = 'sitAngry'
         CTDLGAME.bossFight = true
         CTDLGAME.lockCharacters = false
         skipCutSceneButton.active = false
         CTDLGAME.focusViewport = null
-        CTDLGAME.objects
-          .filter(obj => obj.getClass() === 'Banker')
-          .map(banker => {
-            banker.status = 'slide'
-            banker.direction = 'right'
-            banker.goalX = (banker.x + window.SELECTEDCHARACTER.x) / 2
-          })
-        // TODO this.status = 'expand' when all bankers rekt and programm button projectile
-      })
+        this.bankers.map(banker => {
+          banker.status = 'slide'
+          banker.direction = 'right'
+          banker.goalX = (banker.x + window.SELECTEDCHARACTER.x) / 2
+        })
+        this.hadIntro = true
 
-      // when bankers fought
-      addTextToQueue('Agustin:\nThat\'s the trouble with you kids, you have no idea what you are doing.', () => {})
-      addTextToQueue('Agustin:\nBitcoin will break down altogether!', () => {})
-      addTextToQueue('Agustin:\nAnd the central bank will have absolute control.', () => {})
-      addTextToQueue('Agustin:\nWe will have the technology to enforce that.', () => {})
-      this.hadIntro = true
+      })
     }
 
     this.sensedFriends = []
 
-    if (this.status === 'expand' && this.frame === 8) {
+    console.log(this.status, this.frame)
+    if (this.status === 'expand' && this.frame === 30) {
       this.status = 'standup'
     }
     if (this.status === 'fall') {
@@ -277,6 +279,22 @@ class Agustin extends Agent {
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)
       this.bTree.step()
+    } else if (this.hadIntro) {
+      if (Math.random() < .2) this.status = this.status === 'sitAngry' ? 'sitFurious' : 'sitAngry'
+      if (!this.canMove) {
+        let bankersAlive = this.bankers.some(banker => banker.status !== 'rekt')
+        if (!bankersAlive) {
+          // when bankers fought
+          CTDLGAME.lockCharacters = true
+          CTDLGAME.focusViewport = this
+          addTextToQueue('Agustin:\nThat\'s the trouble with you kids, you have no idea what you are doing.', () => {})
+          addTextToQueue('Agustin:\nBitcoin will break down\naltogether!', () => {})
+          addTextToQueue('Agustin:\nAnd the central bank will\nhave absolute control.', () => {})
+          addTextToQueue('Agustin:\nWe will have the technology to enforce that.', () => {
+            this.status = 'expand'
+          })
+        }
+      }
     }
 
     if (this.exhaustion) this.exhaustion--
