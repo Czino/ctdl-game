@@ -63,9 +63,8 @@ const SNDTRCK = {
     drumSynth: new Synth(sineOptions),
     noiseSynth: new NoiseSynth(),
     brownNoiseSynth: new NoiseSynth()
-  },
+  }
 }
-
 
 SNDTRCK.devices.drumSynth.portamento = .1
 SNDTRCK.devices.brownNoiseSynth.noise.type = 'brown'
@@ -81,7 +80,7 @@ SNDTRCK.synths = [
   SNDTRCK.devices.brownNoiseSynth
 ]
 
-SNDTRCK.synths .map(synth => synth.volume.value = -19)
+SNDTRCK.synths.map(synth => synth.volume.value = -19)
 
 let enabled
 
@@ -93,10 +92,37 @@ let sinePart = new Part()
 let noisePart = new Part()
 let brownNoisePart = new Part()
 let drumPart = new Part()
+let eventPart = new Part()
 
+/**
+ * @description Method to reset soundtrack settings to initial state
+ */
+const deinit = () => {
+  SNDTRCK.synths.map(synth => {
+    synth.envelope.attack = 0.005
+    synth.envelope.decay = .1
+    synth.envelope.sustain = 0.3
+    synth.envelope.release = 0.07
+    synth.portamento = 0
+  })
+  SNDTRCK.devices.sineSynth.envelope.sustain = .8
+  SNDTRCK.devices.sineSynth.envelope.release = .8
+  SNDTRCK.devices.noiseSynth.envelope.attack = 0.01
+  SNDTRCK.devices.noiseSynth.envelope.sustain = 0
+  SNDTRCK.devices.noiseSynth.envelope.release = 1
+  SNDTRCK.devices.noiseSynth.noise.type = 'white'
+  SNDTRCK.devices.brownNoiseSynth.envelope.attack = 0.01
+  SNDTRCK.devices.brownNoiseSynth.envelope.sustain = 0
+  SNDTRCK.devices.brownNoiseSynth.envelope.release = 1
+  SNDTRCK.devices.brownNoiseSynth.noise.type = 'brown'
+  SNDTRCK.devices.drumSynth.portamento = .1
+  SNDTRCK.devices.drumSynth.envelope.sustain = .8
+  SNDTRCK.devices.drumSynth.envelope.release = .8
+}
 
 export const initSoundtrack = async id => {
   if (SNDTRCK.song?.deinit) SNDTRCK.song.deinit(SNDTRCK)
+  deinit()
   let song = await import(
     /* webpackMode: "lazy" */
     `./tracks/${id}/index.js`
@@ -115,6 +141,11 @@ export const initSoundtrack = async id => {
   SNDTRCK.synths.map(synth =>
     synth.disconnect() && synth.connect(SNDTRCK.devices.gain)
   )
+
+  Transport.loop = SNDTRCK.song.loop
+  Transport.loopStart = 0
+  Transport.loopEnd = SNDTRCK.song.length
+
   if (SNDTRCK.song.reverbs) {
     SNDTRCK.devices.reverb = new Reverb({
       decay: 7,
@@ -161,10 +192,6 @@ export const initSoundtrack = async id => {
 
   if (SNDTRCK.song.init) SNDTRCK.song.init(SNDTRCK)
 
-  Transport.loop = SNDTRCK.song.loop
-  Transport.loopStart = 0
-  Transport.loopEnd = SNDTRCK.song.length
-
   if (SNDTRCK.song.tracks.pulse) {
     pulsePart = new Part((time, note) => {
       SNDTRCK.devices.pulseSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
@@ -175,25 +202,21 @@ export const initSoundtrack = async id => {
       SNDTRCK.devices.pulse2Synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.pulse2))
   }
-
   if (SNDTRCK.song.tracks.square) {
     squarePart = new Part((time, note) => {
       SNDTRCK.devices.squareSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.square))
   }
-
   if (SNDTRCK.song.tracks.triangle) {
     trianglePart = new Part((time, note) => {
       SNDTRCK.devices.triangleSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.triangle))
   }
-
   if (SNDTRCK.song.tracks.sine) {
     sinePart = new Part((time, note) => {
       SNDTRCK.devices.sineSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.sine))
   }
-
   if (SNDTRCK.song.tracks.noise) {
     noisePart = new Part((time, note) => {
       SNDTRCK.devices.noiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
@@ -206,19 +229,23 @@ export const initSoundtrack = async id => {
   }
   if (SNDTRCK.song.tracks.drum) {
     drumPart = new Part((time, note) => {
-      SNDTRCK.devices.drumSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-      SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.01, note.velocity)
-      SNDTRCK.devices.brownNoiseSynth.triggerAttackRelease(note.duration, time, note.velocity)
+      SNDTRCK.devices.drumSynth.setNote('D4', time)
+      SNDTRCK.devices.drumSynth.triggerAttackRelease(note.name, note.duration, time + 0.01, note.velocity)
+      SNDTRCK.devices.drumSynth.triggerAttackRelease('D1', note.duration, time + 0.02, note.velocity)
     }, parseNotes(SNDTRCK.song.tracks.drum))
+  }
+
+  if (SNDTRCK.song.tracks.event) {
+    eventPart = new Part((time, note) => {
+      const event = new CustomEvent(getSoundtrack(), { detail: note.event })
+      window.dispatchEvent(event)
+    }, parseNotes(SNDTRCK.song.tracks.event))
   }
 
   if (enabled && Transport.state !== 'started') {
     startMusic()
   }
 }
-
-window.initSoundtrack = initSoundtrack
-
 
 export const getSoundtrack = () => SNDTRCK.song?.id
 window.getSoundtrack = getSoundtrack
@@ -227,15 +254,27 @@ export const toggleSoundtrack = enable => {
   enabled = enable
   if (!enabled) {
     stopMusic()
-  } else if (enabled && SNDTRCK.song) {
+  } else if (SNDTRCK.song) {
     startMusic()
   }
 }
 
 export const startMusic = async () => {
-  if (!SNDTRCK.song || !enabled) return
+  if ((!SNDTRCK.song || !enabled) && SNDTRCK.song.tracks.event) {
+    // start event part even if generally music is disabled
+    await Transport.start('+.1', 0)
+    eventPart.start(0)
+    return
+  } else if (!SNDTRCK.song || !enabled) {
+    return
+  }
+
+  const event = new CustomEvent('toggleSoundtrack', { detail: true })
+  window.dispatchEvent(event)
 
   await Transport.start('+.1', 0)
+
+  if (SNDTRCK.song.tracks.event) eventPart.start(0)
   if (SNDTRCK.song.tracks.pulse) pulsePart.start(0)
   if (SNDTRCK.song.tracks.pulse2) pulse2Part.start(0)
   if (SNDTRCK.song.tracks.square) squarePart.start(0)
@@ -249,7 +288,10 @@ export const startMusic = async () => {
 export const stopMusic = () => {
   if (!SNDTRCK.song) return
 
+  const event = new CustomEvent('toggleSoundtrack', { detail: false })
+  window.dispatchEvent(event)
   Transport.stop()
+
   if (pulsePart) pulsePart.stop(0)
   if (pulse2Part) pulse2Part.stop(0)
   if (squarePart) squarePart.stop(0)
@@ -258,8 +300,13 @@ export const stopMusic = () => {
   if (noisePart) noisePart.stop(0)
   if (brownNoisePart) brownNoisePart.stop(0)
   if (drumPart) drumPart.stop(0)
+  if (eventPart) eventPart.stop(0)
 }
 
+/**
+ * @description Method to change the musiv volume
+ * @param {value} value 0-1
+ */
 export const changeVolume = value => {
   SNDTRCK.devices.gain.gain.rampTo(value, 0)
 }
@@ -269,6 +316,16 @@ function parseNotes(notes) {
     time: note[0],
     duration: note[1],
     name: note[2],
-    velocity: note[3]
+    velocity: note[3],
+    event: note[4]
   }))
+}
+
+window.SNDTRCK = {
+  initSoundtrack,
+  getSoundtrack,
+  toggleSoundtrack,
+  startMusic,
+  stopMusic,
+  changeVolume
 }

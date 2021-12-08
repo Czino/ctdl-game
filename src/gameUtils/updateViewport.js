@@ -14,7 +14,10 @@ const canTeleport = character => character.status !== 'rekt' && character.follow
  * @returns {void}
  */
 export const updateViewport = () => {
-  if (CTDLGAME.multiPlayer) {
+  if (CTDLGAME.focusViewport) {
+    CTDLGAME.viewport.x = Math.round(CTDLGAME.focusViewport.x + CTDLGAME.focusViewport.w / 2 - constants.WIDTH / 2)
+    CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h, Math.round(CTDLGAME.focusViewport.y + CTDLGAME.focusViewport.h - constants.HEIGHT / 2))
+  } else if (CTDLGAME.multiPlayer) {
     CTDLGAME.viewport.x = Math.round((CTDLGAME.hodlonaut.x + CTDLGAME.katoshi.x) / 2 - constants.WIDTH / 2)
     CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h, Math.round((CTDLGAME.hodlonaut.y + CTDLGAME.katoshi.y) / 2))
   } else {
@@ -31,6 +34,14 @@ export const updateViewport = () => {
     CTDLGAME.hodlonaut.x = CTDLGAME.katoshi.x
     CTDLGAME.hodlonaut.y = CTDLGAME.katoshi.y
     CTDLGAME.hodlonaut.protection = 16
+  }
+  if (CTDLGAME.bitcoinLabrador && canTeleport(CTDLGAME.bitcoinLabrador)) {
+    CTDLGAME.bitcoinLabrador.x = window.SELECTEDCHARACTER.x
+    CTDLGAME.bitcoinLabrador.y = window.SELECTEDCHARACTER.y
+  }
+  if (CTDLGAME.nakadaiMon && canTeleport(CTDLGAME.nakadaiMon)) {
+    CTDLGAME.nakadaiMon.x = window.SELECTEDCHARACTER.x
+    CTDLGAME.nakadaiMon.y = window.SELECTEDCHARACTER.y
   }
 
   CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)
@@ -58,9 +69,24 @@ export const updateViewport = () => {
     w: CTDLGAME.viewport.w + 32,
     h: CTDLGAME.viewport.h + 256
   }
+  const extraExtendedViewport = {
+    x: CTDLGAME.viewport.x - 32,
+    y: CTDLGAME.viewport.y - 144,
+    w: CTDLGAME.viewport.w + 64,
+    h: CTDLGAME.viewport.h + 288
+  }
   CTDLGAME.objects
     .map(obj => {
-      obj.inViewport = intersects(extendedViewport, obj.getBoundingBox('whole'))
+      if (obj.boss && (obj.hadIntro || obj.introScene)) {
+        obj.inViewport = true
+        return obj
+      }
+
+      if (/Boundary|Ramp/.test(obj.getClass())) {
+        obj.inViewport = intersects(extraExtendedViewport, obj.getBoundingBox('whole'))
+      } else {
+        obj.inViewport = intersects(extendedViewport, obj.getBoundingBox('whole'))
+      }
       return obj
     })
 }

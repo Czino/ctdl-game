@@ -5,15 +5,13 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
-import NPC from '../../npcs/NPC'
+import { CTDLGAME } from '../../gameUtils'
 import { addTextToQueue, setTextQueue } from '../../textUtils'
-import { easeInOut, makeBoundary } from '../../geometryUtils'
+import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
-import darken from '../darken'
-import drawLightSources from '../drawLightSources'
 import parseLightSources from '../parseLightSources'
 import Citizen from '../../npcs/Citizen'
+import Prophetoshi from '../../npcs/Prophetoshi'
 import PoliceForce from '../../enemies/PoliceForce'
 import Car from '../../objects/Car'
 
@@ -25,6 +23,7 @@ import citizen3 from '../../sprites/citizen-3.png'
 import citizen4 from '../../sprites/citizen-4.png'
 import citizen5 from '../../sprites/citizen-5.png'
 import citizen6 from '../../sprites/citizen-6.png'
+import prophetoshi from '../../sprites/prophetoshi.png'
 import cars from '../../sprites/cars.png'
 import policeForce from '../../sprites/policeForce.png'
 import policeForceWithShield from '../../sprites/policeForceWithShield.png'
@@ -56,13 +55,19 @@ const lights = {
   }
 }
 const doors = [
-  [3, 124],
-  [30, 124],
-  [44, 124, character => { CTDLGAME.showShop = character}],
-  [113, 124],
-  [216, 124],
-  [229, 124],
-  [251, 124],
+  [3, 124, 1, 3],
+  [30, 124, 1, 3],
+  [44, 124, 1, 3, character => {
+    CTDLGAME.menuItem = 0
+    CTDLGAME.showShop = character
+  }],
+  [77, 124, 3, 3, () => {
+    changeMap('centralBank', 'capitalCity')
+  }],
+  [113, 124, 1, 3],
+  [216, 124, 1, 3],
+  [229, 124, 1, 3],
+  [251, 124, 1, 3],
 ]
 let lightSources = parseLightSources(lights, stage.fg, tileSize)
 
@@ -153,10 +158,10 @@ doors.map(door => {
   const doorEvent = new GameObject(`door-${door[0]}-${door[1]}`, {
     x: door[0] * tileSize,
     y: door[1] * tileSize,
-    w: tileSize,
-    h: 3 * tileSize,
+    w: door[2] * tileSize,
+    h: door[3] * tileSize,
   })
-  doorEvent.backEvent = door[2] ? door[2] : () => {
+  doorEvent.backEvent = door[4] ? door[4] : () => {
     addTextToQueue('You cannot enter here')
   }
   events.push(doorEvent)
@@ -173,12 +178,25 @@ goToMtGox.touchEvent = () => {
 }
 events.push(goToMtGox)
 
+const goToPier = new GameObject('goToPier', {
+  x: 255 * tileSize,
+  y: 124 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+goToPier.touchEvent = () => {
+  changeMap('pier', 'capitalCity')
+}
+events.push(goToPier)
+
 objects = objects.concat(getHitBoxes(stage.base, ramps, solids, spawnPoints, 'capitalCity', tileSize))
 
 export default {
   world: { w: worldWidth * tileSize, h: worldHeight * tileSize },
   start: {
-    mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 }
+    mtGox: { x: 8 * tileSize, y: 124 * tileSize - 6 },
+    centralBank: { x: 77 * tileSize, y: 124 * tileSize - 6 },
+    pier: { x: 252 * tileSize, y: 124 * tileSize - 6 },
   },
   state: {
     protestScene: true,
@@ -192,7 +210,8 @@ export default {
   objects,
   npcs: () => [
     new Car('cotxe', { type: 'familyRed', x: 158 * tileSize, y: 128 * tileSize - 4 - 25, vx: 0 }),
-    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, isUnhappy: true})
+    new Citizen('protest-leader', { x: 163 * tileSize, y: 128 * tileSize - 4 - 25 - 30, direction: 'right', spriteId: 'citizen6', applyGravity: false, isUnhappy: true}),
+    new Prophetoshi('prophetoshi', { x: 30 * tileSize, y: 123 * tileSize})
   ]
     .concat(protesters)
     .concat(policeForces),
@@ -207,12 +226,13 @@ export default {
     citizen4,
     citizen5,
     citizen6,
+    prophetoshi,
     cars,
     policeForce,
     policeForceWithShield,
     explosion
   },
-  track: () => 'aNewHope',
+  track: () => 'capitalCity',
   init: () => {
     if (!CTDLGAME.world.map.state.protestScene) {
       CTDLGAME.objects
@@ -222,20 +242,6 @@ export default {
 
     if (CTDLGAME.world.map.state.protestSceneActivated && !CTDLGAME.world.map.state.protestSceneEscalated) {
       activateProtestScene()
-    }
-  },
-  update: () => {
-    let timeOfDay = getTimeOfDay()
-    let y = timeOfDay < 4 || timeOfDay > 20 ? 1 : 0
-
-    if (timeOfDay >= 4 && timeOfDay <= 6) {
-      y = 1 - easeInOut((4 - timeOfDay) / -2, 3)
-    } else if (timeOfDay >= 17 && timeOfDay <= 20) {
-      y = easeInOut((timeOfDay - 17) / 3, 3)
-    }
-    if (y > 0) {
-      darken(y / 2, y / 2, '#212121')
-      drawLightSources(lightSources, 'capitalCity', tileSize, y)
     }
   },
   canSetBlocks: false,

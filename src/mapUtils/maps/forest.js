@@ -1,5 +1,6 @@
 import stage from './stage/forest'
 
+import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
@@ -7,7 +8,8 @@ import GameObject from '../../GameObject'
 import { makeBoundary } from '../../geometryUtils'
 import Bear from '../../enemies/Bear'
 import NPC from '../../npcs/NPC'
-import { CTDLGAME } from '../../gameUtils'
+import Limburgert from '../../npcs/Limburgert'
+import BitcoinPoet from '../../npcs/BitcoinPoet'
 import getHitBoxes from '../getHitBoxes'
 
 import forest from '../../sprites/forest.png'
@@ -15,6 +17,8 @@ import rabbit from '../../sprites/rabbit.png'
 import goldbugs from '../../sprites/goldbugs.png'
 import cobra from '../../sprites/cobra.png'
 import bear from '../../sprites/bear.png'
+import limburgert from '../../sprites/limburgert.png'
+import bitcoinPoet from '../../sprites/bitcoinPoet.png'
 import moon from '../../sprites/moon.png'
 
 const worldWidth = 256
@@ -152,6 +156,20 @@ export default {
         y: 124 * tileSize + 1
       }
     ),
+    new Limburgert(
+      'l1mburg3rt',
+      {
+        x: 73 * tileSize,
+        y: 124 * tileSize - 4
+      }
+    ),
+    new BitcoinPoet(
+      'bitcoinPoet',
+      {
+        x: 120 * tileSize,
+        y: 118 * tileSize + 4
+      }
+    ),
     new NPC(
       'leprikon',
       {
@@ -182,6 +200,8 @@ export default {
     cobra,
     goldbugs,
     bear,
+    limburgert,
+    bitcoinPoet,
     moon
   },
   track: () => 'santaMaria',

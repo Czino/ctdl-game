@@ -34,13 +34,5 @@ export default {
     SNDTRCK.devices.sineSynth.envelope.release = 2.36
 
     SNDTRCK.devices.noiseSynth.noise.type = 'pink'
-  },
-  deinit: SNDTRCK => {
-    SNDTRCK.devices.pulseSynth.envelope.attack = 0.005
-    SNDTRCK.devices.pulseSynth.envelope.release = 0.8
-    SNDTRCK.devices.sineSynth.envelope.attack = 0.005
-    SNDTRCK.devices.sineSynth.envelope.release = 0.8
-
-    SNDTRCK.devices.noiseSynth.noise.type = 'white'
   }
 }

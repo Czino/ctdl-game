@@ -4,17 +4,14 @@ import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
-import NPC from '../../npcs/NPC'
-import { addTextToQueue, setTextQueue } from '../../textUtils'
-import { easeInOut, makeBoundary } from '../../geometryUtils'
+import { makeBoundary } from '../../geometryUtils'
 import getHitBoxes from '../getHitBoxes'
+import { addTextToQueue, setTextQueue } from '../../textUtils'
+import Pmullr from '../../npcs/PMullr'
 
 import mtGox from '../../sprites/mtGox.png'
 import moon from '../../sprites/moon.png'
-import drawLightSources from '../drawLightSources'
-import darken from '../darken'
-import parseLightSources from '../parseLightSources'
+import pmullr from '../../sprites/pmullr.png'
 
 const worldWidth = 128
 const worldHeight = 128
@@ -88,8 +85,20 @@ goToDogeCoinMine.touchEvent = () => {
 }
 events.push(goToDogeCoinMine)
 
+const toCapitalCitySign = new GameObject('toCapitalCitySign', {
+  x: 80 * tileSize,
+  y: 109 * tileSize,
+  w: 3 * tileSize,
+  h: 3 * tileSize,
+})
+toCapitalCitySign.backEvent = () => {
+  if (toCapitalCitySign.reading) return
+  toCapitalCitySign.reading = true
+  setTextQueue([])
+  addTextToQueue('Capital City 2km -->', () => toCapitalCitySign.reading = false)
+}
+events.push(toCapitalCitySign)
 
-// TODO add event for sign to read "capital city"
 const goToCapitalCity = new GameObject('goToCapitalCity', {
   x: 127 * tileSize,
   y: 118 * tileSize,
@@ -118,12 +127,18 @@ export default {
   fg: stage.fg.map(tile => mapTile(tile, tileSize)),
   objects,
   npcs: () => [
+    new Pmullr('pmullr',
+    {
+      x: 107.5 * tileSize,
+      y: 114.25 * tileSize
+    })
   ],
   items: () => [],
   events,
   assets: {
     mtGox,
-    moon
+    moon,
+    pmullr
   },
   track: () => 'stellaSplendence',
   canSetBlocks: false,

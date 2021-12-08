@@ -2,7 +2,6 @@ import { CTDLGAME } from '../gameUtils'
 import constants from '../constants'
 import spriteData from '../sprites/items'
 import { intersects, moveObject } from '../geometryUtils'
-import { playSound } from '../sounds'
 import Explosion from '../Explosion'
 import { senseCharacters } from '../enemies/enemyUtils'
 import GameObject from '../GameObject'
@@ -62,7 +61,7 @@ class Flashbang extends GameObject {
     this.countdown--
     if (this.countdown === 0) {
       this.exploding = 10
-      playSound('explode')
+      window.SOUND.playSound('explode')
       CTDLGAME.objects.push(new Explosion(
         constants.fgContext,
         {

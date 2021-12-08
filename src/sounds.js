@@ -4,7 +4,7 @@ const gain = new Gain(1).toDestination()
 const crusher = new BitCrusher({
   bits: 8,
   wet: 1
-});
+})
 
 const pulseOptions = {
   oscillator: {
@@ -244,6 +244,119 @@ const sounds = {
     noise2Synth.triggerAttack(present, .4)
     noise2Synth.triggerRelease(present + dur)
   },
+  ding: () => {
+    const present = now()
+    const dur = .005
+
+    squareSynth.portamento = 0
+    squareSynth.envelope.attack = .005
+    squareSynth.envelope.decay = .1
+    squareSynth.envelope.sustain = .3
+    squareSynth.envelope.release = 1.7
+
+    squareSynth.triggerAttack('B4', present + dur / 2, .2)
+    squareSynth.triggerRelease(present + dur / 2 + dur)
+  },
+  sonar: (vol = 1) => {
+    const notes = ['C4', 'D4', 'E4', 'G4', 'C4', 'A5']
+    const dur = .015
+    let time = now()
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .01
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .005
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .15)
+      time += dur
+    })
+    time += dur
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .1)
+      time += dur
+    })
+    time += dur * 2
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .05)
+      time += dur
+    })
+    time += dur * 3
+
+    notes.forEach(note => {
+      triangleSynth.triggerAttack(note, time, vol * .025)
+      time += dur
+    })
+    triangleSynth.triggerRelease(time + dur)
+  },
+  alarm: (vol = 1) => {
+    const notes = ['G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5', 'A6', 'G5']
+    const dur = .3
+    let time = now()
+
+    triangleSynth.portamento = dur / 10
+    triangleSynth.envelope.attack = 0.005
+    triangleSynth.envelope.decay = 1
+    triangleSynth.envelope.sustain = 1
+    triangleSynth.envelope.release = .005
+
+    triangleSynth.triggerAttack('A6', time, vol * .1)
+    notes.forEach(note => {
+      time += dur
+      triangleSynth.setNote(note, time)
+    })
+    time += dur
+    triangleSynth.triggerRelease(time)
+  },
+  robotRekt: (vol = 1) => {
+    const dur = 8
+    let time = now()
+    triangleSynth.dispose()
+    triangleSynth = new Synth(triangleOptions).connect(gain)
+
+    triangleSynth.portamento = dur
+    triangleSynth.envelope.attack = 0.005
+    triangleSynth.envelope.decay = dur
+    triangleSynth.envelope.sustain = 0
+    triangleSynth.envelope.release = 0
+
+    triangleSynth.triggerAttack('G3', time, vol * .1)
+    time += 0.01
+    triangleSynth.setNote('G1', time)
+    time += dur
+    triangleSynth.triggerRelease(time)
+  },
+  splash: () => {
+    const present = now()
+    const dur = .7
+
+    noise2Synth.noise.type = 'white'
+
+    noise2Synth.envelope.attack = .05
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = 1
+    noise2Synth.envelope.release = 3.3
+
+    noise2Synth.triggerAttack(present, .03)
+    noise2Synth.triggerRelease(present + dur)
+  },
+  longNoise: () => {
+    const present = now()
+    const dur = .7
+
+    noise2Synth.noise.type = 'pink'
+
+    noise2Synth.envelope.attack = .7
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = 1
+    noise2Synth.envelope.release = 3.3
+
+    noise2Synth.triggerAttack(present, .4)
+    noise2Synth.triggerRelease(present + dur)
+  },
   sword: () => {
     const present = now()
     const dur = .05
@@ -390,6 +503,101 @@ const sounds = {
     pulseSynth.setNote('G7', present + dur / 2 * 1.5, .005)
     pulseSynth.triggerRelease(present + dur / 2 + dur)
   },
+  creatureHurt: () => {
+    const present = now()
+    const dur = .15
+
+    noise2Synth.dispose()
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+    noise2Synth.noise.type = 'brown'
+
+    noise2Synth.envelope.attack = .2
+    noise2Synth.envelope.decay = .1
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = .07
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .1)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    squareSynth.portamento = dur / 3
+    squareSynth.envelope.attack = dur
+    squareSynth.envelope.decay = .1
+    squareSynth.envelope.sustain = .3
+    squareSynth.envelope.release = .07
+
+    squareSynth.triggerAttack('G1', present + dur / 3, .2)
+    squareSynth.setNote('G0', present + dur / 2 * 1.5, .5)
+    squareSynth.triggerRelease(present + dur / 2 + dur)
+  },
+  rumble: () => {
+    const present = now()
+    const dur = .2
+
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+
+    noise2Synth.noise.type = 'brown'
+    noise2Synth.envelope.attack = dur / 2
+    noise2Synth.envelope.decay = dur
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = dur
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .02)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    triangleSynth.envelope.attack = dur
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = dur / 4
+
+    triangleSynth.triggerAttack('A0', present, .1)
+    triangleSynth.triggerAttack('F#0', present + dur * 0.75, .3)
+    triangleSynth.triggerRelease(present + dur)
+  },
+  bark: () => {
+    const present = now()
+    const dur = .2
+
+    noise2Synth = new NoiseSynth()
+    noise2Synth.connect(gain)
+
+    noise2Synth.noise.type = 'brown'
+    noise2Synth.envelope.attack = dur / 3
+    noise2Synth.envelope.decay = dur
+    noise2Synth.envelope.sustain = .3
+    noise2Synth.envelope.release = dur
+
+    noise2Synth.triggerRelease(present)
+    noise2Synth.triggerAttack(present + 0.001, .1)
+    noise2Synth.triggerRelease(present + dur / 2)
+
+    noiseSynth.dispose()
+    noiseSynth = new NoiseSynth()
+    noiseSynth.chain(crusher, gain)
+    crusher.bits = 8
+
+    noiseSynth.noise.type = 'pink'
+    noiseSynth.envelope.attack = dur
+    noiseSynth.envelope.decay = dur
+    noiseSynth.envelope.sustain = .3
+    noiseSynth.envelope.release = dur
+
+    noiseSynth.triggerRelease(present)
+    noiseSynth.triggerAttack(present + dur / 4, .03)
+    noiseSynth.triggerRelease(present + dur)
+
+    triangleSynth.envelope.attack = dur
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = dur / 4
+
+    triangleSynth.triggerAttack('A3', present, .1)
+    triangleSynth.triggerAttack('F#2', present + dur * 0.5, .8)
+    triangleSynth.triggerRelease(present + dur)
+  },
   bearGrowl: () => {
     const present = now()
     const dur = .3
@@ -506,6 +714,21 @@ const sounds = {
     noiseSynth.triggerRelease(time + dur)
     triangleSynth.triggerRelease(time + dur)
   },
+  deepMagic: ({ volume }) => {
+    const dur = .9
+    if (volume > 1) volume = 1
+    if (volume < 0) volume = 0
+    let time = now()
+
+    triangleSynth.portamento = 0
+    triangleSynth.envelope.attack = .4
+    triangleSynth.envelope.decay = .1
+    triangleSynth.envelope.sustain = .3
+    triangleSynth.envelope.release = .07
+
+    triangleSynth.triggerAttack('C1', time, .5 * volume)
+    triangleSynth.triggerRelease(time + dur)
+  },
   burn: () => {
     const present = now()
     const dur = .3
@@ -561,13 +784,17 @@ export const toggleSounds = enable => {
   enabled = enable
 }
 
-export const playSound = id => {
+export const playSound = (id, options) => {
   try {
-    if (enabled) sounds[id]()
+    if (enabled) sounds[id](options)
   } catch(e) {
     if (window.DEBUG) console.log(e)
     // do nothing
   }
 }
 
-window.playSound = playSound
+window.SOUND = {
+  isSoundLoaded,
+  toggleSounds,
+  playSound
+}

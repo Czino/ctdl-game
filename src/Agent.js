@@ -1,26 +1,49 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
-import Item from './Item'
+import Item from './objects/Item'
 import { CTDLGAME } from './gameUtils'
 import { moveObject, intersects } from './geometryUtils'
 import { addTextToQueue } from './textUtils'
 import constants from './constants'
 import { canDrawOn } from './performanceUtils'
 import GameObject from './GameObject'
+import { write } from './font'
+
+BehaviorTree.register('log', new Task({
+  run: agent => {
+    console.info(agent)
+    return SUCCESS
+  }
+}))
 
 BehaviorTree.register('seesItem', new Task({
   run: agent => agent.sensedItems.length > 0 ? SUCCESS : FAILURE
 }))
+BehaviorTree.register('lookAtEnemy', new Task({
+  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
+}))
+
 BehaviorTree.register('seesEnemy', new Task({
   run: agent => agent.sensedEnemies.length > 0 ? SUCCESS : FAILURE
 }))
-BehaviorTree.register('touchesEnemy', new Task({
-  run: agent => agent.attack.condition() ? SUCCESS : FAILURE
+
+BehaviorTree.register('canAttackEnemy', new Task({
+  run: agent => agent.attack.condition() || (agent.attack2 && agent.attack2.condition()) || (agent.attack3 && agent.attack3.condition()) ? SUCCESS : FAILURE
 }))
+
+BehaviorTree.register('touchesEnemy', new Task({
+  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
+}))
+
 BehaviorTree.register('doesNotTouchEnemy', new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 }))
 BehaviorTree.register('idle', new Task({
   run: agent => agent.idle.condition() ? agent.idle.effect() : FAILURE
+}))
+BehaviorTree.register('move', new Task({
+  run: agent => agent.direction === 'left'
+    ? agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
+    : agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
 }))
 BehaviorTree.register('moveLeft', new Task({
   run: agent => agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
@@ -40,7 +63,7 @@ BehaviorTree.register('moveRandom', new Task({
 BehaviorTree.register('moveToPointX', new Task({
   run: agent => {
     if (!agent.goal && Math.random() < .05 * agent.business) agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
-    if (agent.x % agent.goal < 5) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 5) agent.goal = null
     if (!agent.goal) return FAILURE
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
     if (agent.x > agent.goal) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
@@ -53,8 +76,11 @@ BehaviorTree.register('jump', new Task({
 BehaviorTree.register('attack', new Task({
   run: agent => agent.attack.condition() ? agent.attack.effect() : FAILURE
 }))
-BehaviorTree.register('moveTo', new Task({
-  run: agent => agent.moveTo.condition() ? agent.moveTo.effect() : FAILURE
+BehaviorTree.register('attack2', new Task({
+  run: agent => agent.attack2.condition() ? agent.attack2.effect() : FAILURE
+}))
+BehaviorTree.register('attack3', new Task({
+  run: agent => agent.attack3.condition() ? agent.attack3.effect() : FAILURE
 }))
 BehaviorTree.register('hasLowHealth', new Task({
   run: agent => agent.health / agent.maxHealth < .2 ? SUCCESS : FAILURE
@@ -64,6 +90,7 @@ BehaviorTree.register('runAwayFromClosestEnemy', new Task({
     ? agent.runAwayFrom.effect({ other: agent.closestEnemy })
     : FAILURE
 }))
+
 BehaviorTree.register('moveToClosestEnemy', new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 })
     ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 })
@@ -73,6 +100,28 @@ BehaviorTree.register('moveToClosestFriend', new Task({
   run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: -1 })
     ? agent.moveTo.effect({ other: agent.closestFriend, distance: -1 })
     : FAILURE
+}))
+
+
+BehaviorTree.register('follows', new Task({
+  run: agent => agent.follow ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('seesFriend', new Task({
+  run: agent => agent.sensedFriends.length > 0 ? SUCCESS : FAILURE
+}))
+BehaviorTree.register('moveToFriend', new Task({
+  run: agent => agent.closestFriend && agent.moveTo.condition({ other: agent.closestFriend, distance: 10 }) ? agent.moveTo.effect({ other: agent.closestFriend, distance: 10 }) : FAILURE
+}))
+BehaviorTree.register('goToFriend', new Sequence({
+  nodes: [
+    'follows',
+    'seesFriend',
+    new Selector({
+      nodes: [
+        'moveToFriend'
+      ]
+    })
+  ]
 }))
 
 BehaviorTree.register('survive', new Sequence({
@@ -97,21 +146,24 @@ class Agent extends GameObject {
   constructor(id, options) {
     super(id, options)
     this.health = options.health ?? 5
+    this.maxHealth = 5
     this.usd = options.usd ?? 0
     this.status = options.status || 'idle'
     this.direction = options.direction || 'left'
     this.frame = options.frame || 0
     this.walkingSpeed = options.walkingSpeed || 2
+    this.context = options.context || 'gameContext'
     this.senseRadius = 30
     this.protection = 0
     this.business = options.business || 1
+    this.applyGravity = options.applyGravity ?? true
   }
 
-  applyGravity = true
   w = 16
   h = 30
   dmgs = []
   heals = []
+  says = []
 
   bTree = new BehaviorTree({
     tree,
@@ -130,7 +182,7 @@ class Agent extends GameObject {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'move'
@@ -173,15 +225,15 @@ class Agent extends GameObject {
   }
   attack = {
     condition: () => {
-      if (!this.closestEnemy) return FAILURE
+      if (!this.closestEnemy) return false
 
-      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return FAILURE // not in biting distance
+      if (!this.closestEnemy || !intersects(this.getBoundingBox(), this.closestEnemy.getBoundingBox())) return false // not in biting distance
 
-      return SUCCESS
+      return true
     },
     effect: () => {
       if (this.status === 'attack' && this.frame === 3) {
-        this.closestEnemy.hurt(1, this.direction === 'left' ? 'right' : 'left', this)
+        this.closestEnemy.hurt(this.strength || 1, this.direction === 'left' ? 'right' : 'left', this)
         return SUCCESS
       }
       if (this.status === 'attack') return SUCCESS
@@ -193,19 +245,33 @@ class Agent extends GameObject {
     }
   }
   moveTo = {
-    condition: ({ other }) => other && Math.abs(other.getCenter().x - this.getCenter().x) <= this.senseRadius,
+    condition: ({ other }) => {
+      const senseBox = this.getSenseBox()
+      return other && intersects(senseBox, other.getBoundingBox())
+    },
     effect: ({ other, distance }) => {
-      let action = 'idle'
+      const ducks = /duck/i.test(this.status)
+      let action = ducks ? 'duck' : 'idle'
 
       if (this.getBoundingBox().x > other.getBoundingBox().x + other.getBoundingBox().w + distance) {
-        action = 'moveLeft'
+        action = ducks ? 'duckMoveLeft' : 'moveLeft'
       } else if (other.getBoundingBox().x > this.getBoundingBox().x + this.getBoundingBox().w + distance) {
-        action = 'moveRight'
+        action = ducks ? 'duckMoveRight' : 'moveRight'
       }
+
       if (this[action].condition()) return this[action].effect()
       return FAILURE
     }
   }
+  action = {
+    condition: () => this.canStandUp(),
+    effect: () => {
+      this.frame = 0
+      this.status = 'action'
+      return SUCCESS
+    }
+  }
+
   lookAt = {
     condition: obj => obj,
     effect: obj => {
@@ -247,6 +313,26 @@ class Agent extends GameObject {
     return obstacles.length === 0
   }
 
+  canStandUp = () => {
+    if (!/duck/i.test(this.status)) return true
+    let standUpTo = this.getBoundingBox()
+      standUpTo.y -= 6
+      // standUpTo.x += this.direction === 'right' ? 2 : -2 // do not stand up if you face obstacle
+      standUpTo.h = 6
+
+    if (window.DRAWSENSORS) {
+      constants.overlayContext.globalAlpha = .5
+      constants.overlayContext.fillStyle = 'green'
+      constants.overlayContext.fillRect(standUpTo.x, standUpTo.y, standUpTo.w, standUpTo.h)
+      constants.overlayContext.globalAlpha = 1
+    }
+    let obstacles = CTDLGAME.quadTree.query(standUpTo)
+      .filter(obj => obj.isSolid && !obj.enemy && /Tile|Ramp/.test(obj.getClass()))
+      .filter(obj => intersects(obj, standUpTo))
+
+    return obstacles.length === 0
+  }
+
   makeDamage = multiplier => {
     const boundingBox = this.getBoundingBox()
 
@@ -266,7 +352,6 @@ class Agent extends GameObject {
       })
   }
 
-  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|burning/.test(this.status) && !this.protection
   onHurt = () => {}
   onDie = () => {
     if (this.usd) {
@@ -276,39 +361,59 @@ class Agent extends GameObject {
     }
   }
 
-  hurt = (dmg, direction) => {
-    if (!this.hurtCondition(dmg, direction)) return
+  stun = direction => {
+    this.status = 'hurt'
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
+  }
 
-    this.dmgs.push({y: -8, dmg})
+  hurtCondition = (dmg, direction) => !/spawn|hurt|rekt|block|burning|dive/.test(this.status) && !this.protection
+  hurt = (dmg, direction, agent) => {
+    if (!this.hurtCondition(dmg, direction)) return
+    if (this.status === 'exhausted') dmg *= 4
+
+    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
     this.health = Math.max(this.health - dmg, 0)
+
+    if (!lostFullPoint) return
+
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.status = 'hurt'
     this.vx = direction === 'left' ? 2 : -2
     this.protection = 4
     if (this.health <= 0) {
       this.health = 0
-      return this.die()
+      return this.die(agent) // :(
     }
 
-    return this.onHurt()
+    return this.onHurt(dmg, direction, agent)
   }
 
   heal = heal => {
     if (/rekt/.test(this.status)) return
     let maxHeal = this.maxHealth - this.health
-    if (maxHeal < heal) heal = maxHeal
+    if (maxHeal < heal) heal = Math.floor(maxHeal)
 
     if (heal) {
-      this.heals.push({y: -8, heal})
+      this.heals.push({
+        x: Math.round((Math.random() - .5) * 8),
+        y: -8, heal
+      })
       this.health = Math.min(this.health + heal, this.maxHealth)
     }
     return heal > 0
   }
 
-  die = () => {
+  die = agent => {
     this.status = 'rekt'
     this.frame = 0
 
     if (this.usd) CTDLGAME.inventory.usd += this.usd
+    if (this.sats) CTDLGAME.inventory.sats += this.sats
     if (this.item) {
       let item = new Item(
         this.item.id,
@@ -322,12 +427,12 @@ class Agent extends GameObject {
       CTDLGAME.objects.push(item)
     }
 
-    return this.onDie()
+    return this.onDie(agent)
   }
 
   draw = () => {
-    if (!canDrawOn('gameContext')) return
-
+    if (!canDrawOn(this.context)) return
+    if (!this.sprite && this.spriteId) this.sprite = CTDLGAME.assets[this.spriteId]
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -338,19 +443,78 @@ class Agent extends GameObject {
     this.w = data.w
     this.h = data.h
 
-    constants.gameContext.globalAlpha = data.opacity ?? 1
-    if (this.protection > 0 && this.status !== 'rekt') {
+    constants[this.context].globalAlpha = data.opacity ?? 1
+    if (this.protection > 0) {
       this.protection--
-      constants.gameContext.globalAlpha = this.protection % 2
+      constants[this.context].globalAlpha = this.protection % 2
     }
 
-    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
-    constants.gameContext.drawImage(
+    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + (this.strength || 1))) : this.x
+    constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
       x, this.y, this.w, this.h
     )
-    constants.gameContext.globalAlpha = 1
+    constants[this.context].globalAlpha = 1
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
+  }
+
+  drawDmgs = () => {
+    if (!this.dmgs) return
+    this.dmgs = this.dmgs
+      .filter(dmg => dmg.y > -24)
+      .map(dmg => {
+        let dmgVal = this.maxHealth ? Math.round(Math.min(dmg.dmg, this.maxHealth) / this.maxHealth * 1000) / 10 : dmg.dmg
+        let dmgText = this.maxHealth ? `-${dmgVal}%` : `-${dmgVal}`
+        write(constants.overlayContext, dmgText, {
+          x: this.getCenter().x - 24 + dmg.x,
+          y: this.y + dmg.y,
+          w: 48
+        }, 'center', false, 8, true, '#F00')
+        dmg.y--
+        return dmg
+      })
+  }
+  drawHeals = () => {
+    if (!this.heals) return
+    this.heals = this.heals
+      .filter(heal => heal.y > -24)
+      .map(heal => {
+        let healVal = this.maxHealth ? Math.round(Math.min(heal.heal, this.maxHealth) / this.maxHealth * 1000) / 10 : heal.heal
+        let healText = this.maxHealth ? `+${healVal}%` : `+${heal.heal}`
+        write(constants.overlayContext, healText, {
+          x: this.getCenter().x - 24 + heal.x,
+          y: this.y + heal.y,
+          w: 48
+        }, 'center', false, 8, true, '#0F0')
+
+        heal.y--
+        return heal
+      })
+  }
+
+  say = say => {
+    this.says = [{y: -8, say}]
+  }
+
+  drawSays = () => {
+    if (!this.says) return
+    this.says = this.says
+      .filter(say => say.y > -24)
+      .map(say => {
+        write(constants.overlayContext, say.say, {
+          x: this.getCenter().x - 50,
+          y: this.y + say.y,
+          w: 100
+        }, 'center', false, 20, false, '#FFF')
+        return {
+          ...say,
+          y: say.y - 1
+        }
+      })
   }
 
   applyPhysics = () => {
@@ -360,7 +524,13 @@ class Agent extends GameObject {
       if (this.vy > 12) this.vy = 12
       if (this.vy < -12) this.vy = -12
 
-      const hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
+      let hasCollided = false
+      if (this.context === 'fgContext') {
+        this.x += this.vx
+        this.y += this.vy
+      } else {
+        hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
+      }
 
       if (!hasCollided && !/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
         this.status = 'fall'
@@ -370,7 +540,7 @@ class Agent extends GameObject {
       if (this.vx > 0) this.vx -= 1
     }
 
-    if (this.status === 'fall' && Math.abs(this.vy) <= 6) {
+    if (this.status === 'fall' && Math.abs(this.vy) <= 6 && !CTDLGAME.lockCharacters) {
       this.status = 'idle'
     }
   }
@@ -378,9 +548,9 @@ class Agent extends GameObject {
   getSenseBox = () => ({
     id: this.id,
     x: this.x - this.senseRadius,
-    y: this.y - this.senseRadius / 2,
+    y: this.y - this.senseRadius / 4,
     w: this.w + this.senseRadius * 2,
-    h: this.h + this.senseRadius
+    h: this.h + this.senseRadius / 2
   })
 
   getAnchor = () => ({

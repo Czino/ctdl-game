@@ -8,6 +8,7 @@ export default {
   honeybadger: { x: 12, y: 11, w: 19, h: 8},
   phoenix: { x: 30, y: 0, w: 19, h: 13},
   orangePill: { x: 0, y: 15, w: 8, h: 8},
+  securityCard: { x: 31, y: 14, w: 3, h: 5},
   flashbang: [
     { x: 0, y: 24, w: 4, h: 4},
     { x: 4, y: 24, w: 4, h: 4},

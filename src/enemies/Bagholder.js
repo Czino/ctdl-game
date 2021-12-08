@@ -3,9 +3,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../
 import bagholder from '../sprites/bagholder'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
@@ -18,7 +16,7 @@ const items = [
   { id: 'taco', chance: 0.02 }
 ]
 
-const touchesEnemy = new Task({
+const canAttackEnemy = new Task({
   run: agent => agent.status === 'attack' || agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
 const moveToClosestEnemy = new Task({
@@ -28,7 +26,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    canAttackEnemy,
     'attack'
   ]
 })
@@ -36,7 +34,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    canAttackEnemy,
     moveToClosestEnemy
   ]
 })
@@ -125,12 +123,12 @@ class Bagholder extends Agent {
 
   onHurt = () => {
     this.protection = 8
-    playSound('shitcoinerHurt')
+    window.SOUND.playSound('shitcoinerHurt')
   }
   onDie = () => {
     addTextToQueue(`${this.getClass()} got rekt,\nyou found $${this.usd}`)
-    playSound('shitcoinerHurt')
-    playSound('burn')
+    window.SOUND.playSound('shitcoinerHurt')
+    window.SOUND.playSound('burn')
   }
 
   update = () => {
@@ -173,20 +171,6 @@ class Bagholder extends Agent {
 
     this.frame++
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
   }
 
   getBoundingBox = () => this.crawls

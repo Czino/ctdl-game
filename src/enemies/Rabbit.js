@@ -1,18 +1,12 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
 
-import rabbit from '../sprites/rabbit'
+import rabbitSprite from '../sprites/rabbit'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import { addTextToQueue } from '../textUtils'
-
-const sprites = {
-  rabbit
-}
 
 const isEvil = new Task({
   run: agent => agent.isEvil ? SUCCESS : FAILURE
@@ -24,10 +18,6 @@ const isGood = new Task({
   run: agent => !agent.isEvil ? SUCCESS : FAILURE
 })
 
-const touchesEnemy = new Task({
-  // in biting distance
-  run: agent => agent.attack.condition() ? SUCCESS : FAILURE
-})
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
 })
@@ -50,7 +40,7 @@ const disappear = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -58,7 +48,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    'canAttackEnemy',
     moveToClosestEnemy,
     'jump'
   ]
@@ -138,7 +128,8 @@ class Rabbit extends Agent {
   }
 
   activity = .05
-  spriteData = sprites.rabbit
+  spriteId = 'rabbit'
+  spriteData = rabbitSprite.special
   item = null
   w = 8
   h = 6
@@ -208,36 +199,19 @@ class Rabbit extends Agent {
   }
 
   hurtCondition = () => !/turnEvil|spawn|hurt|rekt/.test(this.status)
-  onHurt = () => playSound('rabbitHurt')
+  onHurt = () => window.SOUND.playSound('rabbitHurt')
   onDie = () => {
-    playSound('burn')
+    window.SOUND.playSound('burn')
     addTextToQueue(`Evil Rabbit got rekt`)
   }
 
-  draw = () => {
-    if (this.isSpecial && this.status === 'turnEvil') this.status = 'idle'
-    let spriteData = this.spriteData[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good'][this.direction][this.status]
-
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-      if (/jump/.test(this.status)) this.status = 'idle'
-    }
-
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      CTDLGAME.assets.rabbit,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-  }
-
   update = () => {
+    if (this.isSpecial && this.status === 'turnEvil') this.status = 'idle'
+
     if (CTDLGAME.lockCharacters) {
       constants.charContext.globalAlpha = 1
 
+      this.spriteData = rabbitSprite[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good']
       this.draw()
       return
     }
@@ -289,21 +263,14 @@ class Rabbit extends Agent {
       this.remove = true
     }
 
-    this.draw()
+    this.spriteData = rabbitSprite[this.isEvil ? 'evil' : this.isSpecial ? 'special' : 'good']
 
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
+    if (this.frame >= this.spriteData[this.direction][this.status].length) {
+      this.frame = 0
+      if (/jump/.test(this.status)) this.status = 'idle'
+    }
+
+    this.draw()
   }
 
   getAnchor = () => ({

@@ -4,9 +4,7 @@ import spritePoliceForce from '../sprites/policeForce'
 import spritePoliceForceWithShield from '../sprites/policeForceWithShield'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 import Flashbang from '../objects/Flashbang'
@@ -18,17 +16,11 @@ const items = [
   { id: 'taco', chance: 0.02 }
 ]
 
-const touchesEnemy = new Task({
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const holdPositionOrder = new Task({
   run: () => CTDLGAME.world.map.state.protestScene ? SUCCESS : FAILURE
 })
 const hasShield = new Task({
   run: agent => agent.hasShield ? SUCCESS : FAILURE
-})
-const moveToClosestEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
 })
 const throwFlashbang = new Task({
   run: agent => agent.closestEnemy && agent.throwFlashbang.condition() ? agent.throwFlashbang.effect() : FAILURE
@@ -41,7 +33,7 @@ const push = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -50,7 +42,7 @@ const attackEnemy = new Sequence({
 const pushEnemy = new Sequence({
   nodes: [
     hasShield,
-    touchesEnemy,
+    'canAttackEnemy',
     push
   ]
 })
@@ -58,8 +50,8 @@ const pushEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
-    moveToClosestEnemy,
+    'canAttackEnemy',
+    'moveToClosestEnemy',
     'jump'
   ]
 })
@@ -91,11 +83,12 @@ class PoliceForce extends Agent {
   constructor(id, options) {
     super(id, options)
     this.health = options.health ?? Math.round(Math.random() * 7 + 10)
+    this.maxHealth = options.maxHealth ?? this.health
     this.usd = options.usd ?? Math.round(Math.random() * 400 + 1)
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.senseRadius = Math.round(Math.random() * 50) + 30
     this.flashbangs = options.flashbangs ?? (Math.random() > .8 ? 1 : 0)
-    this.enemy = options.enemy
+    this.enemy = !!options.enemy
     this.sensedCriminals = options.sensedCriminals || []
     this.hasShield = options.hasShield ?? (Math.random() > .8)
     this.spriteData = this.hasShield ? spritePoliceForceWithShield : spritePoliceForce
@@ -104,7 +97,6 @@ class PoliceForce extends Agent {
   }
 
   class = 'PoliceForce'
-  enemy = false
   w = 16
   h = 30
 
@@ -124,7 +116,7 @@ class PoliceForce extends Agent {
       }
 
       if (this.status === 'attack' && this.frame === 3) {
-        playSound('woosh')
+        window.SOUND.playSound('woosh')
         return this.closestEnemy.hurt(Math.round(Math.random() * 2) + 1, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack') return SUCCESS
@@ -175,16 +167,18 @@ class PoliceForce extends Agent {
     }
   }
 
-  hurtCondition = (dmg, direction) => this.hasShield && direction === this.direction
-    ? !/hurt|rekt/.test(this.status) && this.protection === 0 && /attack/.test(this.status) && Math.random() > .5
-    :  !/hurt|rekt/.test(this.status) && this.protection === 0
+  hurtCondition = (dmg, direction) => !/hurt|rekt/.test(this.status) && this.protection === 0
+    ? this.hasShield && direction === this.direction
+      ? /attack/.test(this.status) && Math.random() > .5
+      : true
+    : false
 
   onHurt = () => {
-    playSound('policeForceHurt') // TODO add sound
+    window.SOUND.playSound('policeForceHurt')
   }
   onDie = () => {
     this.removeTimer = 64
-    playSound('policeForceHurt')
+    window.SOUND.playSound('policeForceHurt')
     addTextToQueue(`Police Force got rekt,\nyou found $${this.usd}`)
   }
 
@@ -220,7 +214,7 @@ class PoliceForce extends Agent {
         .forEach(enemy => this.sensedCriminals.push(enemy.id))
 
       if (this.sensedCriminals.length > 0) {
-        this.sensedCriminals = this.sensedCriminals
+        this.sensedCriminals = this.sensedCriminals.filter(unique())
         this.sensedFriends.forEach(friend => {
           friend.sensedCriminals = friend.sensedCriminals.concat(this.sensedCriminals).filter(unique())
         })
@@ -238,24 +232,7 @@ class PoliceForce extends Agent {
       this.status = 'idle'
     }
 
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
   }
 
   getBoundingBox = () => ({

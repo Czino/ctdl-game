@@ -117,8 +117,8 @@ export default {
     overlayContext: 4,
     menuContext: 4
   },
-  SAVERATE: Math.pow(2, 12), // render every X frame
   GRAVITY: 2,
+  INFLATIONRATE: 1.02,
   canvases: [
     skyCanvas,
     parallaxCanvas,
@@ -129,7 +129,7 @@ export default {
     overlayCanvas,
     menuCanvas
   ],
-  skyContext, // TODO use .canvases and .contexts ?
+  skyContext,
   parallaxContext,
   bgCanvas,
   bgContext,

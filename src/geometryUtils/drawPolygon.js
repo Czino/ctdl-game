@@ -15,5 +15,5 @@ export const drawPolygon = (context, coords) => {
   })
   context.closePath()
   context.stroke()
-  context.fill();
+  context.fill()
 }

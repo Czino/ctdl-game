@@ -2,12 +2,15 @@ import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
 import { canDrawOn } from '../performanceUtils'
+import { write } from '../font'
+import { saveButton } from '../eventUtils'
 
 /**
  * @description Method to show save icon
  * @param {Number} opacity opacity value
  */
 export const showSaveIcon = opacity => {
+  if (!saveButton.active) return
   if (!canDrawOn('menuContext')) return
 
   drawIcon(
@@ -18,4 +21,20 @@ export const showSaveIcon = opacity => {
       opacity
     }
   )
+
+  if (CTDLGAME.savedAt && CTDLGAME.frame - CTDLGAME.savedAt < 128) {
+    let opacity = (128 - (CTDLGAME.frame - CTDLGAME.savedAt)) / 128
+    constants.menuContext.globalAlpha = opacity
+    write(
+      constants.menuContext,
+      'saved', {
+        x: CTDLGAME.viewport.x + 12,
+        y: CTDLGAME.viewport.y + 1,
+        w: 60
+      },
+      'left',
+      false,
+    )
+    constants.menuContext.globalAlpha = 1
+  }
 }

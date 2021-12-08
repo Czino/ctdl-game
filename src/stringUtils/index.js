@@ -1,3 +1,5 @@
 export { capitalize } from './capitalize'
 export { hexToRgb } from './hexToRgb'
+export { rgbToHsl } from './rgbToHsl'
+export { hexToHsl } from './hexToHsl'
 export { toCurrency } from './toCurrency'

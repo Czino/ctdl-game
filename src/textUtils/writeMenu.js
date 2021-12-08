@@ -2,7 +2,7 @@ import constants from '../constants'
 import { write } from '../font'
 import { textQueue } from './textQueue'
 import { CTDLGAME } from '../gameUtils'
-import { skipCutSceneButton } from '../events'
+import { skipCutSceneButton } from '../eventUtils'
 import { canDrawOn } from '../performanceUtils'
 
 const timeToShowFinishedText = 256

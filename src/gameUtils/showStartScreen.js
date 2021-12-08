@@ -3,9 +3,7 @@ import { CTDLGAME } from './CTDLGAME'
 import { write } from '../font'
 import { canDrawOn } from '../performanceUtils'
 import { showSettings } from './showSettings'
-import { playSound } from '../sounds'
-import { initSoundtrack } from '../soundtrack'
-import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../events'
+import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../eventUtils'
 
 const velocity = 4
 let logoOffsetTop = -100
@@ -32,17 +30,17 @@ export const showStartScreen = () => {
     shock(1, .5)
   }
    if (logoOffsetTop === -velocity && CTDLGAME.options.sound) {
-    playSound('drop')
+    window.SOUND.playSound('drop')
   }
   if (logoOffsetBottom > 0) logoOffsetBottom -= velocity
   if (logoOffsetBottom === velocity) {
     shock(-1, .5)
   }
   if (logoOffsetBottom === velocity && CTDLGAME.options.sound) {
-    playSound('drop')
+    window.SOUND.playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) initSoundtrack('mariamMatremVirginem')
+  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('theyCameFromAbove')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,
@@ -68,10 +66,17 @@ export const showStartScreen = () => {
   showSettings()
 
   if (!canDrawOn('menuContext')) return // do net render menu yet
+  if (CTDLGAME.menuItem > 1) CTDLGAME.menuItem = 0
+  if (CTDLGAME.menuItem < 0) CTDLGAME.menuItem = 1
+
   if (newGameButton.active) {
     write(
       constants.menuContext,
-      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4 ? '~ new game' : 'new game',
+        CTDLGAME.menuItem === 0
+        ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
+          ? '~ new game'
+          :'new game'
+        : 'new game',
       {
         x: CTDLGAME.viewport.x + newGameButton.x - 10,
         y: CTDLGAME.viewport.y + newGameButton.y,
@@ -84,7 +89,11 @@ export const showStartScreen = () => {
   if (!CTDLGAME.newGame && loadGameButton.active) {
     write(
       constants.menuContext,
-      CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4 ? '~ resume game' : 'resume game',
+      CTDLGAME.menuItem === 1
+      ? CTDLGAME.frame % (constants.FRAMERATES.menuContext * 8) > constants.FRAMERATES.menuContext * 4
+          ? '~ resume game'
+          :'resume game'
+        : 'resume game',
       {
         x: CTDLGAME.viewport.x + loadGameButton.x - 10,
         y: CTDLGAME.viewport.y + loadGameButton.y,

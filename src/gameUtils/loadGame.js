@@ -3,16 +3,17 @@ import { CTDLGAME, setWorld } from './CTDLGAME'
 import World from '../World'
 import Character from '../Character'
 import { getTimeOfDay } from './getTimeOfDay'
-import { initSoundtrack } from '../soundtrack'
 import { updateViewport } from './updateViewport'
 import { gameObjects } from './gameObjects'
 import { loadMap } from '../mapUtils'
+import { loadGameButton, saveButton } from '../eventUtils'
 
 /**
  * @description Method to load game
  * @returns {void}
  */
 export const loadGame = async () => {
+  loadGameButton.active = false
   let time = await db.get('time')
   let worldId = await db.get('worldId')
 
@@ -20,6 +21,7 @@ export const loadGame = async () => {
   let katoshi = await db.get('katoshi')
   let objects = await db.get(`objects-${worldId}`)
   let worldState = await db.get(`worldState-${worldId}`)
+  let timePassed = await db.get('timePassed')
   let blockHeight = await db.get('blockHeight')
   let inventory = await db.get('inventory')
   let options = await db.get('options')
@@ -40,14 +42,18 @@ export const loadGame = async () => {
   } else {
     // we already have objects, only get tiles and ramps
     CTDLGAME.world.map.objects
-    .filter(obj => /Tile|Ramp|Boundary/.test(obj.getClass()))
-    .map(obj => CTDLGAME.objects.push(obj))
+      .filter(obj => /Tile|Ramp|Boundary/.test(obj.getClass()))
+      .map(obj => CTDLGAME.objects.push(obj))
   }
-  if (worldState) CTDLGAME.world.map.state = worldState;
+  if (worldState) CTDLGAME.world.map.state = worldState
 
+  CTDLGAME.timePassed = timePassed || 0
   if (blockHeight) CTDLGAME.blockHeight = blockHeight
   if (inventory) CTDLGAME.inventory = inventory
   if (options) CTDLGAME.options = options
+
+  CTDLGAME.gameOver = false
+  saveButton.active = true
 
   CTDLGAME.hodlonaut = new Character(
     'hodlonaut',
@@ -59,7 +65,6 @@ export const loadGame = async () => {
   )
 
   if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
-
 
   if (CTDLGAME.hodlonaut.selected) window.SELECTEDCHARACTER = CTDLGAME.hodlonaut
   if (CTDLGAME.katoshi.selected) window.SELECTEDCHARACTER = CTDLGAME.katoshi
@@ -80,5 +85,5 @@ export const loadGame = async () => {
     CTDLGAME.isNight = false
   }
 
-  initSoundtrack(CTDLGAME.world.map.track())
+  window.SNDTRCK.initSoundtrack(CTDLGAME.world.map.track())
 }

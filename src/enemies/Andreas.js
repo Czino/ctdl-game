@@ -4,11 +4,9 @@ import andreas from '../sprites/andreas'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
 import { capitalize } from '../stringUtils'
-import { write } from '../font';
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
-import Agent from '../Agent'
+import { addTextToQueue } from '../textUtils'
+import Human from '../npcs/Human'
 import { random } from '../arrayUtils'
 
 const sprites = {
@@ -32,9 +30,6 @@ const touchesEnemy = new Task({
     return intersects(attackBox, agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
   }
 })
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const duck = new Task({
   run: agent => agent.duck.condition() ? agent.duck.effect() : FAILURE
 })
@@ -45,7 +40,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    lookAtEnemy,
+    'lookAtEnemy',
     touchesEnemy,
     'attack'
   ]
@@ -76,7 +71,7 @@ const tree = new Selector({
   ]
 })
 
-class Andreas extends Agent {
+class Andreas extends Human {
   constructor(id, options) {
     super(id, options)
     this.spriteData = sprites[id]
@@ -90,7 +85,6 @@ class Andreas extends Agent {
     this.protection = 0
   }
 
-  says = []
   w = 16
   h = 30
 
@@ -252,26 +246,6 @@ class Andreas extends Agent {
     return obstacles.length === 0
   }
 
-  hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
-
-    if (!lostFullPoint) return
-
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-    this.protection = 8
-    playSound('playerHurt')
-    if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
-  }
-
   die = () => {
     this.status = 'rekt'
     this.health = 0
@@ -301,6 +275,10 @@ class Andreas extends Agent {
       this.x, this.y, this.w, this.h
     )
     constants.charContext.globalAlpha = 1
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
   }
 
   update = () => {
@@ -354,31 +332,6 @@ class Andreas extends Agent {
 
 
     this.draw()
-
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   thingsToSay = [

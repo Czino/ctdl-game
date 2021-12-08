@@ -1,6 +1,6 @@
 import { CTDLGAME } from './CTDLGAME'
 import { addTextToQueue } from '../textUtils'
-import { playSound } from '../sounds'
+import { setTextQueue, textQueue } from '../textUtils/textQueue'
 
 /**
  * @description Method to add a block to the inventory
@@ -8,8 +8,14 @@ import { playSound } from '../sounds'
  * @returns {void}
  */
 const addBlockToInventory = block => {
+  CTDLGAME.timePassed++
   if (CTDLGAME.blockHeight >= block.height && block.height !== 0) return
-  playSound('blockFound')
+
+  if (textQueue.length === 0 || textQueue.some(text => !/Found a new block/.test(text))) {
+    window.SOUND.playSound('blockFound')
+  }
+
+  setTextQueue(textQueue.filter(text => !/Found a new block/.test(text.text)))
   addTextToQueue(`Found a new block: ${block.height}`)
   CTDLGAME.blockHeight = block.height
   CTDLGAME.inventory.blocks.push({

@@ -3,9 +3,7 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } fro
 import shitcoiner from '../sprites/shitcoiner'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 
@@ -22,10 +20,6 @@ const climb = new Task({
   run: agent => agent.climb.condition() ? agent.climb.effect() : FAILURE
 })
 
-const touchesEnemy = new Task({
-   // in biting distance
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
 })
@@ -33,7 +27,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     'attack'
   ]
 })
@@ -41,7 +35,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     moveToClosestEnemy,
     climb
   ]
@@ -67,6 +61,7 @@ class Shitcoiner extends Agent {
   enemy = true
   w = 16
   h = 30
+  spriteId = 'shitcoiner'
   spriteData = sprites.shitcoiner
   kneels = false
 
@@ -178,21 +173,12 @@ class Shitcoiner extends Agent {
     return ground.length > 0 && obstacles.length === 0
   }
 
-  onHurt = () => playSound('shitcoinerHurt')
-  onDie = () => playSound('shitcoinerHurt')
+  onHurt = () => window.SOUND.playSound('shitcoinerHurt')
+  onDie = () => window.SOUND.playSound('shitcoinerHurt')
 
   update = () => {
-    const sprite = CTDLGAME.assets.shitcoiner
-
     if (CTDLGAME.lockCharacters) {
-      let data = this.spriteData[this.direction][this.status][0]
-      constants.charContext.globalAlpha = 1
-
-      constants.charContext.drawImage(
-        sprite,
-        data.x, data.y, this.w, this.h,
-        this.x, this.y, this.w, this.h
-      )
+      this.draw()
       return
     }
 
@@ -223,29 +209,7 @@ class Shitcoiner extends Agent {
       this.frame = 0
     }
 
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
+    this.draw()
   }
 
   getBoundingBox = () => ({

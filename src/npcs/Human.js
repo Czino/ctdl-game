@@ -3,13 +3,46 @@ import { BehaviorTree, Selector, SUCCESS, FAILURE } from '../../node_modules/beh
 import citizenSpriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue } from '../textUtils'
 import Agent from '../Agent'
-import { random } from '../arrayUtils';
+import { random } from '../arrayUtils'
+import { hexToRgb } from '../stringUtils'
 
+const colorOverrides = {
+  hair: hexToRgb('#00ff00'),
+  skin: [hexToRgb('#ffffff'), hexToRgb('#aaaaaa')],
+  top: [hexToRgb('#ff0000'), hexToRgb('#ffff00')],
+  pants: [hexToRgb('#0000ff'), hexToRgb('#00ffff'), hexToRgb('#ff00ff')]
+}
+
+const colorSchemes = {
+  hair: [
+    hexToRgb('#d5a01a'),
+    hexToRgb('#b68f2d'),
+    hexToRgb('#5a3525'),
+    hexToRgb('#1f1510')
+  ],
+  skin: [
+    hexToRgb('#cca094'),
+    hexToRgb('#5d301e'),
+    hexToRgb('#a36f60')
+  ],
+  clothes: [
+    [hexToRgb('#E88210'), hexToRgb('#A0140D')],
+    [hexToRgb('#575757'), hexToRgb('#851c1c')],
+    [hexToRgb('#734b3a'), hexToRgb('#3b587b')],
+    [hexToRgb('#eeeeee'), hexToRgb('#2c2c2d')],
+    [hexToRgb('#242424'), hexToRgb('#212121')],
+    [hexToRgb('#1a523a'), hexToRgb('#2c2c2d')],
+    [hexToRgb('#666666'), hexToRgb('#425D8C')],
+    [hexToRgb('#1b02ab'), hexToRgb('#98befa')],
+    [hexToRgb('#0c5e17'), hexToRgb('#12283d')],
+    [hexToRgb('#f3f5d3'), hexToRgb('#080808')],
+    [hexToRgb('#0e2ab3'), hexToRgb('#956ec4')],
+    [hexToRgb('#3f888f'), hexToRgb('#e6e6fa')],
+  ]
+}
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
@@ -43,13 +76,16 @@ class Human extends Agent {
     this.protection = 0
     this.thingsToSay = options.thingsToSay
 
+
+    this.hair = options.hair || random(colorSchemes.hair)
+    this.skin = options.skin || random(colorSchemes.skin)
+    this.clothes = options.clothes || random(colorSchemes.clothes)
     this.delay = Math.round(Math.random() * 2) * constants.FRAMERATE
     this.speed = Math.round(Math.random() * 3) * constants.FRAMERATE
     this.goal = options.goal
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  says = []
   w = 16
   h = 30
 
@@ -64,7 +100,7 @@ class Human extends Agent {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'run'
@@ -90,32 +126,17 @@ class Human extends Agent {
     }
   }
 
-  // TODO move to Agent?
-  stun = direction => {
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
-  }
+  onHurt = (dmg, direction, agent) => {
+    if (agent) agent.enemy = true
 
-  // TODO compare to Agent and Character class
-  hurt = (dmg, direction) => {
-    if (/hurt|rekt/.test(this.status) || this.protection > 0) return
-    const lostFullPoint = Math.floor(this.health) - Math.floor(this.health - dmg) > 0
-    this.health = Math.max(this.health - dmg, 0)
-
-    if (!lostFullPoint) return
-
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
-    this.status = 'hurt'
-    this.vx = direction === 'left' ? 5 : -5
-    this.vy = -3
     this.protection = 8
-    playSound('playerHurt')
+
+    this.vx = direction === 'left' ? 5 : -5
+    this.vy = -3
+
     if (this.health / this.maxHealth <= .2) this.say('help!')
-    if (this.health <= 0) {
-      this.health = 0
-      this.die()
-    }
+
+    window.SOUND.playSound('playerHurt')
   }
 
   die = () => {
@@ -129,7 +150,89 @@ class Human extends Agent {
   }
 
   draw = () => {
-    if (!this.sprite) this.sprite = CTDLGAME.assets[this.spriteId]
+    if (!this.sprite && this.hair && this.skin && this.clothes) {
+      this.sprite = CTDLGAME.assets[this.spriteId]
+      constants.helperCanvas.width = this.sprite.width
+      constants.helperCanvas.height = this.sprite.height
+      constants.helperContext.clearRect(0, 0, this.sprite.width, this.sprite.height)
+      constants.helperContext.drawImage(
+        this.sprite,
+        0, 0, this.sprite.width, this.sprite.height,
+        0, 0, this.sprite.width, this.sprite.height
+      )
+
+      // pull the entire image into an array of pixel data
+      let imageData = constants.helperContext.getImageData(0, 0, this.sprite.width, this.sprite.height)
+
+      // examine every pixel,
+      // change any old rgb to the new-rgb
+      for (let i = 0, len = imageData.data.length; i < len; i += 4) {
+        if (imageData.data[i] === colorOverrides.hair.r &&
+          imageData.data[i + 1] === colorOverrides.hair.g &&
+          imageData.data[i + 2] === colorOverrides.hair.b
+        ) {
+          imageData.data[i] = this.hair.r
+          imageData.data[i + 1] = this.hair.g
+          imageData.data[i + 2] = this.hair.b
+        } else if (imageData.data[i] === colorOverrides.skin[0].r &&
+          imageData.data[i + 1] === colorOverrides.skin[0].g &&
+          imageData.data[i + 2] === colorOverrides.skin[0].b
+        ) {
+          imageData.data[i] = this.skin.r
+          imageData.data[i + 1] = this.skin.g
+          imageData.data[i + 2] = this.skin.b
+        } else if (imageData.data[i] === colorOverrides.skin[1].r &&
+          imageData.data[i + 1] === colorOverrides.skin[1].g &&
+          imageData.data[i + 2] === colorOverrides.skin[1].b
+        ) {
+          imageData.data[i] = Math.round(this.skin.r / 3 * 2)
+          imageData.data[i + 1] = Math.round(this.skin.g / 3 * 2)
+          imageData.data[i + 2] = Math.round(this.skin.b / 3 * 2)
+        } else if (imageData.data[i] === colorOverrides.top[0].r &&
+          imageData.data[i + 1] === colorOverrides.top[0].g &&
+          imageData.data[i + 2] === colorOverrides.top[0].b
+        ) {
+          imageData.data[i] = this.clothes[0].r
+          imageData.data[i + 1] = this.clothes[0].g
+          imageData.data[i + 2] = this.clothes[0].b
+        } else if (imageData.data[i] === colorOverrides.top[1].r &&
+          imageData.data[i + 1] === colorOverrides.top[1].g &&
+          imageData.data[i + 2] === colorOverrides.top[1].b
+        ) {
+          imageData.data[i] = Math.round(this.clothes[0].r / 2)
+          imageData.data[i + 1] = Math.round(this.clothes[0].g / 2)
+          imageData.data[i + 2] = Math.round(this.clothes[0].b / 2)
+        } else if (imageData.data[i] === colorOverrides.pants[0].r &&
+          imageData.data[i + 1] === colorOverrides.pants[0].g &&
+          imageData.data[i + 2] === colorOverrides.pants[0].b
+        ) {
+          imageData.data[i] = this.clothes[1].r
+          imageData.data[i + 1] = this.clothes[1].g
+          imageData.data[i + 2] = this.clothes[1].b
+        } else if (imageData.data[i] === colorOverrides.pants[1].r &&
+          imageData.data[i + 1] === colorOverrides.pants[1].g &&
+          imageData.data[i + 2] === colorOverrides.pants[1].b
+        ) {
+          imageData.data[i] = Math.round(this.clothes[1].r / 3 * 2)
+          imageData.data[i + 1] = Math.round(this.clothes[1].g / 3 * 2)
+          imageData.data[i + 2] = Math.round(this.clothes[1].b / 3 * 2)
+        } else if (imageData.data[i] === colorOverrides.pants[2].r &&
+          imageData.data[i + 1] === colorOverrides.pants[2].g &&
+          imageData.data[i + 2] === colorOverrides.pants[2].b
+        ) {
+          imageData.data[i] = Math.round(this.clothes[1].r / 2)
+          imageData.data[i + 1] = Math.round(this.clothes[1].g / 2)
+          imageData.data[i + 2] = Math.round(this.clothes[1].b / 2)
+        }
+      }
+      // put the altered data back on the canvas
+      constants.helperContext.putImageData(imageData, 0, 0)
+
+      this.sprite = new Image()
+      this.sprite.src = constants.helperCanvas.toDataURL()
+    } else if (!this.sprite) {
+      this.sprite = CTDLGAME.assets[this.spriteId]
+    }
     let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.frame >= spriteData.length) {
@@ -145,19 +248,20 @@ class Human extends Agent {
       this.protection--
       constants[this.context].globalAlpha = this.protection % 2
     }
-
-    let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + this.strength)) : this.x
     constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
-      x, this.y, this.w, this.h
+      this.x, this.y, this.w, this.h
     )
     constants[this.context].globalAlpha = 1
+
+    this.drawDmgs()
+    this.drawHeals()
+    this.drawSays()
   }
 
   update = () => {
     if (CTDLGAME.lockCharacters) {
-
       this.draw()
       return
     }
@@ -183,7 +287,7 @@ class Human extends Agent {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemey && enemy.health && enemy.health > 0)
+      .filter(enemy => enemy.enemy && enemy.health && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
@@ -209,58 +313,23 @@ class Human extends Agent {
       if (/action/.test(this.status)) this.status = 'idle'
     }
 
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     this.draw()
-
-    // TODO refactor this
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
-    this.says = this.says
-      .filter(say => say.y > -24)
-      .map(say => {
-        write(constants.charContext, say.say, {
-          x: this.getCenter().x - 26,
-          y: this.y + say.y,
-          w: 52
-        }, 'center', false, 5, false, '#FFF')
-        return {
-          ...say,
-          y: say.y - 1
-        }
-      })
   }
 
   select = () => {
-    if (!this.thingsToSay || this.isTouched) return
-    this.isTouched = true
+    if (!this.thingsToSay || this.isSelected) return
+    this.isSelected = true
 
     let whatToSay = random(this.thingsToSay)
       whatToSay.map((text, index) => {
         if (index === whatToSay.length - 1) {
           addTextToQueue(text, () => {
-            this.isTouched = false
+            this.isSelected = false
           })
         } else {
           addTextToQueue(text)
         }
       })
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   getBoundingBox = () =>this.status !== 'rekt'

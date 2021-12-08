@@ -3,10 +3,7 @@ import { BehaviorTree, Selector, Sequence } from '../../node_modules/behaviortre
 import cobraSprite from '../sprites/Cobra'
 import { CTDLGAME } from '../gameUtils'
 import { getClosest } from '../geometryUtils'
-import { write } from '../font'
 import { addTextToQueue } from '../textUtils'
-import constants from '../constants'
-import { playSound } from '../sounds'
 import { sense } from './enemyUtils'
 import Agent from '../Agent'
 
@@ -17,7 +14,7 @@ const items = [
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -62,7 +59,7 @@ class Cobra extends Agent {
     blackboard: this
   })
 
-  onHurt = () => playSound('rabbitHurt')
+  onHurt = () => window.SOUND.playSound('rabbitHurt')
 
   onDie = () => {
     this.frame = 0
@@ -83,28 +80,11 @@ class Cobra extends Agent {
       this.bTree.step()
     }
 
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
-
     if (!/rekt|idle/.test(this.status)) this.frame++
     if (/idle/.test(this.status) && (this.frame > 0 || Math.random() < .2)) this.frame++
     if (/rekt/.test(this.status) && this.frame < 3) this.frame++
 
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
   }
 
   getBoundingBox = () => ({

@@ -1,12 +1,11 @@
 import stage from './stage/mempool'
 
+import { addHook, CTDLGAME, getTimeOfDay } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
 import GameObject from '../../GameObject'
-import NPC from '../../npcs/NPC'
-import { CTDLGAME, getTimeOfDay } from '../../gameUtils'
-import Item from '../../Item'
+import Item from '../../objects/Item'
 import Human from '../../npcs/Human'
 import darken from '../darken'
 import drawLightSources from '../drawLightSources'
@@ -16,12 +15,20 @@ import { checkMempool } from '../../gameUtils/checkBlocks'
 import constants from '../../constants'
 import { random } from '../../arrayUtils'
 import { addTextToQueue } from '../../textUtils'
-import { playSound } from '../../sounds'
+import { intersects } from '../../geometryUtils'
+import Des from '../../npcs/Des'
+import Soulexporter from '../../npcs/Soulexporter'
+import SoulexBoy from '../../npcs/SoulexBoy'
 
 import mempool from '../../sprites/mempool.png'
 import citizen1 from '../../sprites/citizen-1.png'
+import wiz from '../../sprites/wiz.png'
 import everitt from '../../sprites/everitt.png'
-import { intersects } from '../../geometryUtils'
+import des from '../../sprites/des.png'
+import soulexporter from '../../sprites/soulexporter.png'
+import soulexBoy from '../../sprites/soulexBoy.png'
+import Wiz from '../../npcs/Wiz'
+import { hexToRgb } from '../../stringUtils'
 
 const worldWidth = 76
 const worldHeight = 45
@@ -114,6 +121,24 @@ goToRabbitHole.touchEvent = () => {
 events.push(goToRabbitHole)
 
 
+const jumpIntoThePool = new GameObject('jumpIntoThePool', {
+  x: 26 * tileSize,
+  y: 20 * tileSize,
+  w: tileSize,
+  h: 3 * tileSize,
+})
+
+jumpIntoThePool.jumpEvent = char => {
+  if (CTDLGAME.mempool.vsize < 40000000) return
+  char.context = 'fgContext'
+  addHook(CTDLGAME.frame + 80, () => {
+    window.SOUND.playSound('splash')
+    // TODO add visual splash effect
+    char.context = 'charContext'
+  })
+}
+events.push(jumpIntoThePool)
+
 const npcBarrier = new GameObject('npcBarrier', {
   x: 65 * tileSize,
   y: 20 * tileSize,
@@ -148,9 +173,9 @@ const treasure = new GameObject('treasure', {
 
 treasure.select = () => {
   if (!CTDLGAME.world.map.state.hasCollectedTreasure && CTDLGAME.mempool.vsize < mempoolSize * .3) {
-    playSound('block')
-    playSound('clunk')
-    playSound('honeyBadger')
+    window.SOUND.playSound('block')
+    window.SOUND.playSound('clunk')
+    window.SOUND.playSound('honeyBadger')
     CTDLGAME.world.map.state.hasCollectedTreasure = true
     CTDLGAME.objects.push(new Item(
       'honeybadger',
@@ -240,7 +265,7 @@ const updateBucket = () => {
   constants.fgContext.drawImage(
     CTDLGAME.assets.mempool,
     64, 72, bucket.w, bucket.h,
-    bucket.x, Math.min(bucket.y - bucket.h, 37*tileSize) - bucketOffset, bucket.w, bucket.h
+    bucket.x, Math.min(bucket.y - bucket.h, 37 * tileSize) - bucketOffset, bucket.w, bucket.h
   )
   for (let i = 0; i < bucket.y - bucket.h; i+=8) {
     constants.fgContext.drawImage(
@@ -252,7 +277,8 @@ const updateBucket = () => {
 }
 
 const mempoolCallback = () => {
-  bucket.y = Math.round(poolTop + (1 - CTDLGAME.mempool.vsize / mempoolSize) * (maxPoolHeight - 3 * tileSize))
+  bucket.y = Math.round(poolTop + (1 - Math.min(CTDLGAME.mempool.vsize, mempoolSize) / mempoolSize) * (maxPoolHeight - 3 * tileSize))
+  if (CTDLGAME.mempool.vsize > mempoolSize / 10) bucket.y += 2
 }
 
 export default {
@@ -283,23 +309,49 @@ export default {
         business: 0.03
       }
     ),
-    new Human(
-      'tbd-1',
+    new Des(
+      'des',
       {
-        spriteId: 'citizen1',
-        x: 43 * tileSize,
-        y: 18 * tileSize - 4,
-        walkingSpeed: 2,
-        business: 0.04
+        x: 18 * tileSize,
+        y: 24 * tileSize - 2
+      }
+    ),
+    new Soulexporter(
+      'soulexporter',
+      {
+        x: 38 * tileSize -2,
+        y: 18 * tileSize -2,
+        context: 'fgContext'
+      }
+    ),
+    new SoulexBoy(
+      'soulexBoy',
+      {
+        x: 59 * tileSize,
+        y: 26 * tileSize - 2,
+        direction: 'right'
       }
     ),
     new Human(
-      'tbd-2',
+      'softsimon',
       {
         spriteId: 'citizen1',
         x: 43 * tileSize,
         y: 18 * tileSize - 4,
         walkingSpeed: 2,
+        business: 0.04,
+        hair: hexToRgb('#3C354A'),
+        skin: hexToRgb('#DEAEC2'),
+        clothes: [hexToRgb('#00193B'), hexToRgb('#050D29')]
+      }
+    ),
+    new Wiz(
+      'wiz',
+      {
+        spriteId: 'wiz',
+        x: 43 * tileSize,
+        y: 18 * tileSize - 4,
+        walkingSpeed: 1,
         business: 0.04
       }
     ),
@@ -319,19 +371,27 @@ export default {
   assets: {
     mempool,
     everitt,
-    citizen1
+    des,
+    soulexporter,
+    soulexBoy,
+    citizen1,
+    wiz
   },
   track: () => 'mempool',
   bgColor: () => '#250d07',
   init: () => {
     const everitt = CTDLGAME.objects.find(obj => obj.id === 'everitt')
-    const tbd1 = CTDLGAME.objects.find(obj => obj.id === 'tbd-1')
-    const tbd2 = CTDLGAME.objects.find(obj => obj.id === 'tbd-2')
+    const softsimon = CTDLGAME.objects.find(obj => obj.id === 'softsimon')
+    const wiz = CTDLGAME.objects.find(obj => obj.id === 'wiz')
     const tbd3 = CTDLGAME.objects.find(obj => obj.id === 'tbd-3')
-    if (!tbd1) return
+    if (!softsimon) return
 
     everitt.thingsToSay = [
-      ['Jack Everitt:\nI am relaxed']
+      ['Jack THNDR:\nI know at least 100,000\npeople who are interested in the Lightning Network.'],
+      [
+        'Jack THNDR:\nOne of my no-coiner friends asked me to let him know if bitcoin',
+        'Jack THNDR:\ngoes back to 5k so he can\nbuy. How do I break it\nto him?'
+      ]
     ]
     tbd3.thingsToSay = [
       [
@@ -345,8 +405,12 @@ export default {
       ]
     ]
 
-    tbd1.select = () => {
-      if (tbd1.isTouched) return
+    softsimon.hair = hexToRgb('#3C354A')
+    softsimon.skin = hexToRgb('#DEAEC2')
+    softsimon.clothes = [hexToRgb('#00193B'), hexToRgb('#050D29')]
+
+    softsimon.select = () => {
+      if (softsimon.isTouched) return
       let recommendation
       if (CTDLGAME.recommendedFees) {
         recommendation = Math.random() < .5
@@ -355,15 +419,15 @@ export default {
       } else {
         recommendation = 'I like to watch the mempool.'
       }
-      tbd1.isTouched = true
+      softsimon.isTouched = true
 
-      addTextToQueue('tbd1:\n' + recommendation, () => {
-        tbd1.isTouched = false
+      addTextToQueue('softsimon:\n' + recommendation, () => {
+        softsimon.isTouched = false
       })
     }
 
-    tbd2.select = () => {
-      if (tbd2.isTouched) return
+    wiz.select = () => {
+      if (wiz.isTouched) return
       let recommendation
       if (CTDLGAME.mempool) {
         recommendation = Math.random() < .5
@@ -372,10 +436,10 @@ export default {
       } else {
         recommendation = 'I like to watch the mempool.'
       }
-      tbd2.isTouched = true
+      wiz.isTouched = true
 
-      addTextToQueue('tbd2:\n' + recommendation, () => {
-        tbd2.isTouched = false
+      addTextToQueue('wiz:\n' + recommendation, () => {
+        wiz.isTouched = false
       })
     }
 
@@ -403,14 +467,14 @@ export default {
 
       // prevent NPCs from falling down and collecting in the pool
       CTDLGAME.objects
-        .filter(obj => /Human/.test(obj.getClass()))
+        .filter(obj => /Human|Wiz/.test(obj.getClass()))
         .filter(npc => intersects(npc, npcBarrier) || intersects(npc, npcBarrier2) || intersects(npc, npcBarrier3))
         .map(npc => npc.goal = null)
 
-      CTDLGAME.objects.filter(obj => /Character|Human/.test(obj.getClass()))
+      CTDLGAME.objects.filter(obj => /Character|Human|SoulexBoy/.test(obj.getClass()))
         .map(char => {
           if (char.y + 11 > poolTop + maxPoolHeight - poolHeight) {
-            char.y-=2
+            char.y -= 2
             if (char.vy > 2) char.vy = 0
             char.applyGravity = false
             char.swims = true

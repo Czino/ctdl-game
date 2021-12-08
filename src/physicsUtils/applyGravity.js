@@ -6,8 +6,6 @@ import { CTDLGAME } from '../gameUtils'
  * @returns {void}
  */
 export const applyGravity = () => {
-    if (CTDLGAME.lockCharacters) return
-
     CTDLGAME.objects
       .filter(obj => obj.applyGravity)
       .filter(obj => obj.inViewport) // only apply gravity to objects in viewport

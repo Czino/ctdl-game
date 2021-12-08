@@ -3,9 +3,8 @@ import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/ind
 import spriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
+import { addTextToQueue } from '../textUtils'
 import Human from './Human'
 
 // Selector: runs until one node calls success
@@ -86,11 +85,11 @@ class Czino extends Human {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemey && enemy.health && enemy.health > 0)
+      .filter(enemy => enemy.enemy && enemy.health && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
-      .filter(friend => /Character|Human/.test(friend.class) && friend.id !== this.id && friend.status !== 'rekt')
+      .filter(friend => /Character|Human/.test(friend.getClass()) && friend.id !== this.id && friend.status !== 'rekt')
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {

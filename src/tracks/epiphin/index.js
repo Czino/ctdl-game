@@ -25,8 +25,5 @@ export default {
   },
   init: SNDTRCK => {
     SNDTRCK.devices.triangleSynth.portamento = .1
-  },
-  deinit: SNDTRCK => {
-    SNDTRCK.devices.triangleSynth.portamento = 0
   }
 }

@@ -3,10 +3,9 @@ import { BehaviorTree, Selector, Task, SUCCESS, FAILURE } from '../../node_modul
 import catSpriteData from '../sprites/cat'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
+import { write } from '../font'
 import constants from '../constants'
-import { addTextToQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
 
@@ -41,7 +40,7 @@ const moveToPointX = new Task({
       agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
       agent.status = 'move'
     }
-    if (agent.x % agent.goal < 5) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 5) agent.goal = null
     if (!agent.goal || agent.status !== 'move') return FAILURE
 
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
@@ -56,7 +55,7 @@ const runToPointX = new Task({
       agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
       agent.status = 'run'
     }
-    if (agent.x % agent.goal < 10) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 10) agent.goal = null
     if (!agent.goal || agent.status !== 'run') return FAILURE
     if (agent.x < agent.goal) return agent.runRight.condition() ? agent.runRight.effect() : FAILURE
     if (agent.x > agent.goal) return agent.runLeft.condition() ? agent.runLeft.effect() : FAILURE
@@ -101,7 +100,6 @@ class Cat extends Agent {
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
-  says = []
   w = 15
   h = 9
   applyGravity = true
@@ -116,7 +114,7 @@ class Cat extends Agent {
     effect: () => {
       this.direction = 'left'
       this.isMoving = 'left'
-      const hasMoved =  !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
+      const hasMoved = !moveObject(this, { x: -this.runningSpeed, y: 0 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
         this.status = 'run'
@@ -149,12 +147,16 @@ class Cat extends Agent {
 
     if (!lostFullPoint) return
 
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.status = 'hurt'
     this.vx = direction === 'left' ? 5 : -5
     this.vy = -3
     this.protection = 8
-    playSound('rabbitHurt')
+    window.SOUND.playSound('rabbitHurt')
     if (this.health <= 0) {
       this.health = 0
       this.die()
@@ -188,6 +190,8 @@ class Cat extends Agent {
       this.protection--
       constants.charContext.globalAlpha = this.protection % 2
     }
+
+    // TODO check if this can be refactored
     constants.charContext.drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
@@ -225,7 +229,7 @@ class Cat extends Agent {
     }
 
     this.sensedEnemies = this.sensedObjects
-      .filter(enemy => enemy.enemey && enemy.health && enemy.health > 0)
+      .filter(enemy => enemy.enemy && enemy.health && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     this.sensedFriends = this.sensedObjects
@@ -246,9 +250,6 @@ class Cat extends Agent {
       this.frame = 0
       if (/action/.test(this.status)) this.status = 'idle'
     }
-
-    if (this.removeTimer) this.removeTimer--
-    if (this.removeTimer === 0) this.remove = true
 
     this.draw()
 
@@ -278,10 +279,6 @@ class Cat extends Agent {
           y: say.y - 1
         }
       })
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   getBoundingBox = () => ({ // rekt

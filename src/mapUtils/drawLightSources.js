@@ -9,8 +9,7 @@ import { CTDLGAME } from '../gameUtils'
  * @param {Number} [intensity] light intensity
  * @param {Boolean} [glows] if true draw object bright
  */
-export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1, glows = true) => {
-  if (!lightSources) return
+export const drawLightSources = (lightSources = [], mapAsset, tileSize, intensity = 1, glows = true) => {
   constants.skyContext.globalAlpha = .0125 * intensity
   constants.skyContext.globalCompositeOperation = 'source-atop'
 
@@ -27,10 +26,10 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
   constants.gameContext.globalCompositeOperation = 'source-atop'
 
   const objectLightSources = CTDLGAME.objects
-    .filter(obj => obj.glows)
+    .filter(obj => obj.glows && obj.getLightSource)
     .map((obj => obj.getLightSource()))
 
-  CTDLGAME.lightSources.concat(objectLightSources)
+  ;(CTDLGAME.lightSources || []).concat(objectLightSources)
     .filter(lightSource => lightSource)
     .map(lightSource => {
       let x = lightSource.id ? lightSource.x : lightSource.x + .5 * tileSize
@@ -57,8 +56,7 @@ export const drawLightSources = (lightSources, mapAsset, tileSize, intensity = 1
       }
     })
 
-  ;
-  [
+  ;[
     constants.skyContext,
     constants.bgContext,
     constants.fgContext,

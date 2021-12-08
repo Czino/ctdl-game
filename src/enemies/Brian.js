@@ -1,17 +1,14 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
 
 import brianSprite from '../sprites/brian'
-import Item from '../Item'
+import Item from '../objects/Item'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
 import { addTextToQueue, setTextQueue } from '../textUtils'
 import constants from '../constants'
-import { playSound } from '../sounds'
-import { getSoundtrack, initSoundtrack } from '../soundtrack';
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
-import { skipCutSceneButton } from '../events'
+import { skipCutSceneButton } from '../eventUtils'
 
 const items = [
   { id: 'pizza', chance: 0.01 },
@@ -27,7 +24,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    'touchesEnemy',
+    'canAttackEnemy',
     'attack'
   ]
 })
@@ -66,6 +63,9 @@ class Brian extends Agent {
   }
 
   enemy = true
+  boss = true
+  spriteId = 'brian'
+  spriteData = brianSprite
   w = 16
   h = 30
   walkingSpeed = 3
@@ -116,7 +116,7 @@ class Brian extends Agent {
       }
 
       if (this.status === 'attack' && this.frame === 3) {
-        playSound('woosh')
+        window.SOUND.playSound('woosh')
         return this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left', this)
       }
       if (this.status === 'attack' && this.frame < 4) return SUCCESS
@@ -135,7 +135,7 @@ class Brian extends Agent {
       attackBox.x -= this.attackRange
       attackBox.w += this.attackRange * 2
 
-      playSound('woosh')
+      window.SOUND.playSound('woosh')
 
       this.sensedEnemies
         .filter(enemy => intersects(attackBox, enemy.getBoundingBox()))
@@ -165,12 +165,16 @@ class Brian extends Agent {
     return obstacles.length === 0
   }
 
-  onHurt = () => playSound('shitcoinerHurt')
+  onHurt = () => window.SOUND.playSound('shitcoinerHurt')
 
   hurt = dmg => {
     if (/hurt|rekt/.test(this.status)) return
 
-    this.dmgs.push({y: -12, dmg})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -12,
+      dmg: Math.ceil(dmg)
+    })
     this.health = Math.max(this.health - dmg, 0)
     this.status = 'hurt'
     this.hurtAttackCounter = 6
@@ -188,11 +192,11 @@ class Brian extends Agent {
     addTextToQueue('Brian:\nHow could this happen?', () => this.frame++)
     addTextToQueue('Brian:\nI am ruined..', () => {
       this.frame++
-      playSound('drop')
+      window.SOUND.playSound('drop')
     })
     addTextToQueue('Brian:\nI should have stayed\nBitcoin only...')
     addTextToQueue(`Brian got rekt,\nyou found $${this.usd}`, () => {
-      initSoundtrack(CTDLGAME.world.map.track())
+      window.SNDTRCK.initSoundtrack(CTDLGAME.world.map.track())
       CTDLGAME.objects.push(new Item(
         this.item.id,
         {
@@ -213,10 +217,6 @@ class Brian extends Agent {
   }
 
   update = () => {
-    const sprite = CTDLGAME.assets.brian
-
-    if (!sprite) return
-
     this.applyPhysics()
 
     this.sensedEnemies = senseCharacters(this)
@@ -239,7 +239,7 @@ class Brian extends Agent {
     }
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/fall|rekt|hurt/.test(this.status)) {
-      if (getSoundtrack() !== 'briansTheme') initSoundtrack('briansTheme')
+      if (window.SNDTRCK.getSoundtrack() !== 'briansTheme') window.SNDTRCK.initSoundtrack('briansTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
@@ -248,7 +248,6 @@ class Brian extends Agent {
     }
 
     if (this.status === 'hurt') this.hurtAttackCounter--
-
 
     let spriteData = brianSprite[this.direction][this.status]
 
@@ -262,29 +261,7 @@ class Brian extends Agent {
       if (/jump/.test(this.status)) this.status = 'idle'
     }
 
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -30)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
+    this.draw()
   }
 
   getBoundingBox = () => ({

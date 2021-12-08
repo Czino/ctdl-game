@@ -20,10 +20,8 @@ import { CTDLGAME } from '../../gameUtils'
 import constants from '../../constants'
 import Character from '../../Character'
 import { addTextToQueue } from '../../textUtils'
-import Item from '../../Item'
-import { skipCutSceneButton } from '../../events'
-import { playSound } from '../../sounds'
-import { initSoundtrack } from '../../soundtrack'
+import Item from '../../objects/Item'
+import { skipCutSceneButton } from '../../eventUtils'
 
 const worldWidth = 64
 const worldHeight = 64
@@ -124,8 +122,8 @@ export default {
 
     CTDLGAME.hodlonaut.direction = 'left'
     addTextToQueue('*locks gate*', () => {
-      playSound('block')
-      playSound('clunk')
+      window.SOUND.playSound('block')
+      window.SOUND.playSound('clunk')
     })
     addTextToQueue('hodlonaut:\nKatia, I can\'t allow him to\nhurt you.')
     addTextToQueue('hodlonaut:\nI need to face him alone.', () => {
@@ -187,7 +185,7 @@ export default {
     if (!katoshisWrath && CTDLGAME.hodlonaut.status === 'rekt') {
       CTDLGAME.katoshi.x = 17.5 * 8
       CTDLGAME.katoshi.say('you bastard!')
-      initSoundtrack('hurry')
+      window.SNDTRCK.initSoundtrack('hurry')
       katoshisWrath = true
       CTDLGAME.objects = CTDLGAME.objects.filter(obj => !obj.oneHitWonder)
     }
@@ -207,7 +205,7 @@ export default {
         CTDLGAME.katoshi.x = CTDLGAME.viewport.x - 20
         CTDLGAME.katoshi.follow = true
         CTDLGAME.objects = CTDLGAME.objects.filter(obj => !obj.oneHitWonder)
-        initSoundtrack('singlePoint')
+        window.SNDTRCK.initSoundtrack('singlePoint')
       } else {
         craig.protection--
       }

@@ -1,7 +1,6 @@
-import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState } from '../gameUtils'
 import { CTDLGAME, setWorld } from '../gameUtils/CTDLGAME'
+import { loadWorldObjects, saveGame, updateViewport, gameObjects, loadWorldState } from '../gameUtils'
 import World from '../World'
-import { initSoundtrack } from '../soundtrack'
 import { loadMap } from './loadMap'
 
 /**
@@ -14,7 +13,7 @@ export const changeMap = async (id, from) => {
   if (CTDLGAME.world && !CTDLGAME.world.ready) return
   // save state before changing
 
-  if (from !== 'newGame') await saveGame()
+  if (from !== 'newGame') await saveGame(true)
 
   // remove all objects but characters
   CTDLGAME.objects = CTDLGAME.objects.filter(obj => obj.getClass() === 'Character')
@@ -29,7 +28,7 @@ export const changeMap = async (id, from) => {
   if (CTDLGAME.world) CTDLGAME.world.ready = false
   setWorld(newWorld)
 
-  if (worldState) CTDLGAME.world.map.state = worldState;
+  if (worldState) CTDLGAME.world.map.state = worldState
 
   if (objects && objects.length > 0) {
     // we have saved objects, let's initialize them
@@ -62,11 +61,27 @@ export const changeMap = async (id, from) => {
     CTDLGAME.katoshi.y = newWorld.map.start[from].y
     CTDLGAME.katoshi.protection = 24
   }
+  if (!CTDLGAME.bitcoinLabrador) {
+    CTDLGAME.bitcoinLabrador = CTDLGAME.objects.find(obj => obj.id === 'bitcoinLabrador')
+  }
+  if (CTDLGAME.bitcoinLabrador && CTDLGAME.bitcoinLabrador.follow) {
+    CTDLGAME.bitcoinLabrador.x = newWorld.map.start[from].x
+    CTDLGAME.bitcoinLabrador.y = newWorld.map.start[from].y
+    CTDLGAME.objects.push(CTDLGAME.bitcoinLabrador)
+  }
+  if (!CTDLGAME.nakadaiMon) {
+    CTDLGAME.nakadaiMon = CTDLGAME.objects.find(obj => obj.id === 'nakadai_mon')
+  }
+  if (CTDLGAME.nakadaiMon && CTDLGAME.nakadaiMon.follow) {
+    CTDLGAME.nakadaiMon.x = newWorld.map.start[from].x
+    CTDLGAME.nakadaiMon.y = newWorld.map.start[from].y
+    CTDLGAME.objects.push(CTDLGAME.nakadaiMon)
+  }
 
-  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init()
+  if (CTDLGAME.world.map.init) CTDLGAME.world.map.init(from)
   updateViewport()
 
-  initSoundtrack(newWorld.map.track())
+  window.SNDTRCK.initSoundtrack(newWorld.map.track())
   // save again the new map
   if (from !== 'newGame') await saveGame()
 }

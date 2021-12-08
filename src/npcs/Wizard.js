@@ -1,10 +1,9 @@
 import constants from '../constants'
 import { CTDLGAME, checkBlocks } from '../gameUtils'
 import { addTextToQueue } from '../textUtils'
-import { playSound } from '../sounds'
 import Explosion from '../Explosion'
 import Agent from '../Agent'
-import { skipCutSceneButton } from '../events'
+import { skipCutSceneButton } from '../eventUtils'
 
 class Wizard extends Agent {
   constructor(id, options) {
@@ -24,7 +23,7 @@ class Wizard extends Agent {
     const sprite = CTDLGAME.assets.wizard
 
     if (!this.hasAppeared) {
-      playSound('magic')
+      window.SOUND.playSound('magic')
       this.hasAppeared = true
       this.explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
 
@@ -97,7 +96,7 @@ class Wizard extends Agent {
   }
 
   disappear = () => {
-    playSound('magic')
+    window.SOUND.playSound('magic')
     this.explosion = new Explosion(constants.charContext, { x: this.getCenter().x, y: this.getCenter().y })
     this.status = 'disappear'
     CTDLGAME.lockCharacters = false

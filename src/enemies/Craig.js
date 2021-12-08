@@ -3,20 +3,17 @@ import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } fro
 import craig from '../sprites/craig'
 import { CTDLGAME } from '../gameUtils'
 import { moveObject, intersects, getClosest } from '../geometryUtils'
-import { write } from '../font';
 import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils';
-import { playSound } from '../sounds';
+import { addTextToQueue, setTextQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
-import { skipCutSceneButton } from '../events'
-import { getSoundtrack, initSoundtrack } from '../soundtrack'
-import Item from '../Item';
+import { skipCutSceneButton } from '../eventUtils'
+import Item from '../objects/Item'
 
 const doesNotTouchEnemy = new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
 })
-const touchesEnemy = new Task({
+const canAttackEnemy = new Task({
   run: agent => {
     if (!agent.closestEnemy) return FAILURE
     const attackBox = {
@@ -28,9 +25,6 @@ const touchesEnemy = new Task({
     return intersects(attackBox, agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
   }
 })
-const lookAtEnemy = new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
-})
 const lookAtItem = new Task({
   run: agent => agent.closestItem && agent.lookAt.condition(agent.closestItem) ? agent.lookAt.effect(agent.closestItem) : FAILURE
 })
@@ -41,8 +35,8 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    lookAtEnemy,
-    touchesEnemy,
+    'lookAtEnemy',
+    canAttackEnemy,
     'attack'
   ]
 })
@@ -101,7 +95,7 @@ class Craig extends Agent {
     this.hitsToSuckUp = options.hitsToSuckUp || 0
   }
 
-  says = []
+  boss = true
   w = 16
   h = 30
 
@@ -190,13 +184,17 @@ class Craig extends Agent {
 
     if (!lostFullPoint) return
 
-    this.dmgs.push({y: -8, dmg: Math.ceil(dmg)})
+    this.dmgs.push({
+      x: Math.round((Math.random() - .5) * 8),
+      y: -8,
+      dmg: Math.ceil(dmg)
+    })
     this.status = 'hurt'
     let impulse = this.hasArmor ? 2 : 5
     this.vx = direction === 'left' ? impulse : -impulse
     this.vy = -3
     this.protection = 8
-    playSound('playerHurt')
+    window.SOUND.playSound('playerHurt')
     if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
       this.health = 0
@@ -225,7 +223,7 @@ class Craig extends Agent {
         this.sprite = CTDLGAME.assets.craig
         this.strength++
         this.protection = 32
-        initSoundtrack('makeOrBreak')
+        window.SNDTRCK.initSoundtrack('makeOrBreak')
       })
       return
     }
@@ -295,8 +293,8 @@ class Craig extends Agent {
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/jump|fall|rekt|hurt/.test(this.status)) {
       if (CTDLGAME.hodlonaut.status !== 'rekt') {
-        if (getSoundtrack() !== 'craigsTheme' && this.hasArmor) initSoundtrack('craigsTheme')
-        if (getSoundtrack() !== 'makeOrBreak' && !this.hasArmor) initSoundtrack('makeOrBreak')
+        if (window.SNDTRCK.getSoundtrack() !== 'craigsTheme' && this.hasArmor) window.SNDTRCK.initSoundtrack('craigsTheme')
+        if (window.SNDTRCK.getSoundtrack() !== 'makeOrBreak' && !this.hasArmor) window.SNDTRCK.initSoundtrack('makeOrBreak')
       }
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
@@ -315,51 +313,6 @@ class Craig extends Agent {
     }
 
     this.draw()
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
-    this.heals = this.heals
-      .filter(heal => heal.y > -24)
-      .map(heal => {
-        write(constants.charContext, `+${heal.heal}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + heal.y,
-          w: 12
-        }, 'center', false, 4, true, '#0F0')
-        return {
-          ...heal,
-          y: heal.y - 1
-        }
-      })
-
-    this.says = this.says
-      .filter(say => say.y > -24)
-      .map(say => {
-        write(constants.charContext, say.say, {
-          x: this.getCenter().x - 50,
-          y: this.y + say.y,
-          w: 100
-        }, 'center', false, 20, false, '#FFF')
-        return {
-          ...say,
-          y: say.y - 1
-        }
-      })
-  }
-
-  say = say => {
-    this.says = [{y: -8, say}]
   }
 
   thingsToSay = [

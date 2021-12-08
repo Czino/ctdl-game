@@ -1,8 +1,9 @@
 import constants from '../constants'
 import { CTDLGAME } from './CTDLGAME'
 import { drawIcon } from '../icons'
-import { musicButton, soundButton } from '../events'
+import { musicButton, soundButton } from '../eventUtils'
 import { canDrawOn } from '../performanceUtils'
+import { showSaveIcon } from './showSaveIcon'
 
 /**
  * @description Method to render in game settings (music, sound)
@@ -25,6 +26,8 @@ export const showSettings = () => {
   constants.menuContext.lineWidth = 1
 
   constants.menuContext.beginPath()
+
+  if (CTDLGAME.world) showSaveIcon(1)
 
   drawIcon(constants.menuContext, 'music', {
     x: posMusic.x,

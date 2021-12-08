@@ -20,11 +20,11 @@ export const showFrameRate = () => {
     constants.menuContext,
     String(Math.round(1000 / (newTime - oldTime))),
     {
-      x: CTDLGAME.viewport.x || 0,
+      x: CTDLGAME.viewport ? CTDLGAME.viewport.x + constants.WIDTH / 2 - 40 : 0,
       y: CTDLGAME.viewport.y || 0,
       w: 80
     },
-    'left'
+    'center'
   )
   oldTime = newTime
 }

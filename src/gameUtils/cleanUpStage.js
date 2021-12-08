@@ -7,21 +7,23 @@ import { CTDLGAME } from './CTDLGAME'
 export const cleanUpStage = () => {
   CTDLGAME.objects = CTDLGAME.objects
     .filter(obj => {
-      // remove objects that have obviously fallen into the abyss
-      return obj.y < CTDLGAME.world.h * 2
+      // remove objects that have obviously fallen into the abyss except bosses
+      return obj.boss || obj.y < CTDLGAME.world.h * 2
     })
     .filter(obj => obj && !obj.remove && obj.y < 2048) // remove objects that are marked for removal
 
-  if (!CTDLGAME.isNight) {
-    CTDLGAME.objects = CTDLGAME.objects.filter(obj => {
-      if (obj.class !== 'Shitcoiner') return true
-      if (obj.status !== 'rekt' && obj.status !== 'burning') return true
-      if (obj.status === 'burning' && Math.random() < .25) {
-        return false
-      }
+  CTDLGAME.objects = CTDLGAME.objects.filter(obj => {
+    if (obj.getClass() === 'Shitcoiner' && obj.status === 'rekt' && !CTDLGAME.isNight) obj.status = 'burning'
+    if (obj.removeTimer) obj.removeTimer--
+    if (obj.removeTimer === 0) return false
 
-      obj.status = 'burning'
-      return true
-    })
-  }
+
+    if (obj.getClass() === 'Shitcoiner' && !CTDLGAME.isNight && obj.status === 'burning' && Math.random() < .25) {
+      return false
+    }
+
+    if (obj.status !== 'rekt' && obj.status !== 'burning') return true
+
+    return true
+  })
 }

@@ -5,8 +5,10 @@ import { CTDLGAME } from './CTDLGAME'
 
 /**
  * @description Method to save game to database
+ * @param {Boolean} silent if true don't play sound
  */
-export const saveGame = async () => {
+export const saveGame = async silent => {
+  if (CTDLGAME.gameOver) return
   if (CTDLGAME.startedNewGame) {
     CTDLGAME.startedNewGame = false
     await db.remove('time')
@@ -16,6 +18,7 @@ export const saveGame = async () => {
     for (let map in maps) {
       await db.remove(`objects-${map}`)
     }
+    await db.remove('timePassed')
     await db.remove('blockHeight')
     await db.remove('inventory')
     await db.remove('options')
@@ -29,11 +32,16 @@ export const saveGame = async () => {
     await db.set(`objects-${CTDLGAME.world.id}`, CTDLGAME.objects
       .filter(obj => obj && obj.getClass() !== 'Character' && obj.toJSON)
       .filter(unique('id'))
+      .filter(obj => obj.id !== 'bitcoinLabrador' || !obj.follow)
       .map(obj => {
         return obj.toJSON()
       }))
   }
+  await db.set('timePassed', CTDLGAME.timePassed)
   await db.set('blockHeight', CTDLGAME.blockHeight)
   await db.set('inventory', CTDLGAME.inventory)
   await db.set('options', CTDLGAME.options)
+
+  if (!silent) window.SOUND.playSound('select')
+  CTDLGAME.savedAt = CTDLGAME.frame
 }

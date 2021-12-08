@@ -1,6 +1,6 @@
 import constants from './constants'
-import GameObject from './GameObject'
 import { CTDLGAME, getTimeOfDay } from './gameUtils'
+import GameObject from './GameObject'
 import { easeInOut } from './geometryUtils'
 import { canDrawOn } from './performanceUtils'
 

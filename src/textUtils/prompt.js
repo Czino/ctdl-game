@@ -1,7 +1,7 @@
 import constants from '../constants'
 import { write } from '../font'
 import { CTDLGAME } from '../gameUtils'
-import { yesButton, nahButton } from '../events'
+import { yesButton, nahButton } from '../eventUtils'
 
 /**
  * @description Method to write text from queue to the textbox
@@ -47,6 +47,20 @@ export const prompt = ({ text, payload, ok, cancel }) => {
     nahButton.disable()
   }
 
+
+  if (CTDLGAME.menuItemX > 1) CTDLGAME.menuItemX = 0
+  if (CTDLGAME.menuItemX < 0) CTDLGAME.menuItemX = 1
+
+  write(
+    constants.menuContext,
+    '>', {
+      x: CTDLGAME.viewport.x + (CTDLGAME.menuItemX === 0 ? yesButton.x - 6 : nahButton.x + 10),
+      y: CTDLGAME.viewport.y + yesButton.y,
+      w: 10
+    },
+    'left',
+    false
+  )
   write(
     constants.menuContext,
     'yes', {

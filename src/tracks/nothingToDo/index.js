@@ -9,6 +9,6 @@ export default {
   loop: true,
   tracks: {
     triangle,
-    sine: square,
+    square,
   }
 }

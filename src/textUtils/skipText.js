@@ -25,6 +25,6 @@ export const skipText = () => {
       if (CTDLGAME.frame + lastFrame > constants.FRAMERESET) lastFrame = CTDLGAME.frame - constants.FRAMERESET + lastFrame
       text.frame = lastFrame
       return text
-    }))
+    }), true)
   }
 }

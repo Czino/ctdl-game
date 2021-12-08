@@ -17,8 +17,5 @@ export default {
   },
   init: SNDTRCK => {
     SNDTRCK.devices.squareSynth.envelope.release = 8.36
-  },
-  deinit: SNDTRCK => {
-    SNDTRCK.devices.squareSynth.envelope.release = 0.8
   }
 }

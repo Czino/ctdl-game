@@ -1,23 +1,13 @@
 import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
 
-import goldbugs from '../sprites/goldbugs'
+import goldbugSprite from '../sprites/goldbugs'
 import { CTDLGAME } from '../gameUtils'
 import { intersects, getClosest } from '../geometryUtils'
-import { write } from '../font'
-import constants from '../constants'
-import { playSound } from '../sounds'
 import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
 
-const sprites = {
-  goldbugs
-}
 const items = []
 
-const touchesEnemy = new Task({
-   // in biting distance
-  run: agent => agent.closestEnemy && intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
-})
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -5 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -5 }) : FAILURE
 })
@@ -25,7 +15,7 @@ const moveToClosestEnemy = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     'attack'
   ]
 })
@@ -33,7 +23,7 @@ const attackEnemy = new Sequence({
 // Selector: runs until one node calls success
 const goToEnemy = new Selector({
   nodes: [
-    touchesEnemy,
+    'touchesEnemy',
     moveToClosestEnemy
   ]
 })
@@ -56,9 +46,10 @@ class Goldbugs extends Agent {
   }
 
   enemy = true
+  spriteId = 'goldbugs'
+  spriteData = goldbugSprite
   w = 10
   h = 10
-  spriteData = sprites.goldbugs
 
   bTree = new BehaviorTree({
     tree,
@@ -88,20 +79,11 @@ class Goldbugs extends Agent {
     }
   }
 
-  onHurt = () => playSound('goldbugsHurt')
+  onHurt = () => window.SOUND.playSound('goldbugsHurt')
 
   update = () => {
-    const sprite = CTDLGAME.assets.goldbugs
-
     if (CTDLGAME.lockCharacters) {
-      let data = this.spriteData[this.direction][this.status][0]
-      constants.charContext.globalAlpha = 1
-
-      constants.charContext.drawImage(
-        sprite,
-        data.x, data.y, this.w, this.h,
-        this.x, this.y, this.w, this.h
-      )
+      this.draw()
       return
     }
 
@@ -114,7 +96,6 @@ class Goldbugs extends Agent {
     }
 
     if (this.status === 'fall') this.status = 'idle'
-    let spriteData = this.spriteData[this.direction][this.status]
 
     if (this.protection > 0) {
       this.protection--
@@ -127,33 +108,7 @@ class Goldbugs extends Agent {
       this.remove = true
     }
 
-    if (this.frame >= spriteData.length) {
-      this.frame = 0
-    }
-
-    let data = spriteData[this.frame]
-    this.w = data.w
-    this.h = data.h
-
-    constants.gameContext.drawImage(
-      sprite,
-      data.x, data.y, this.w, this.h,
-      this.x, this.y, this.w, this.h
-    )
-
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.gameContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
+    this.draw()
   }
 
   getBoundingBox = () => ({

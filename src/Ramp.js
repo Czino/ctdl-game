@@ -9,6 +9,7 @@ class Ramp extends GameObject {
     this.context = context
     this.w = options.w || 8
     this.h = options.h || 8
+    this.heightMap = options.heightMap
     this.spriteData = options.spriteData || { x: 0, y: 0, w: this.w, h: this.h}
     this.isSolid = options.isSolid
     this.spawnPoint = options.spawnPoint

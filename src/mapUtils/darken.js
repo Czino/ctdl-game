@@ -11,6 +11,9 @@ export const darken = (darkness, darkness2, color) => {
     constants.skyContext.globalAlpha = darkness
     constants.skyContext.globalCompositeOperation = 'source-over'
 
+    constants.parallaxContext.globalAlpha = darkness
+    constants.parallaxContext.globalCompositeOperation = 'source-atop'
+
     constants.bgContext.globalAlpha = darkness
     constants.bgContext.globalCompositeOperation = 'source-atop'
 
@@ -25,13 +28,26 @@ export const darken = (darkness, darkness2, color) => {
 
     ;[
         constants.skyContext,
+        constants.parallaxContext,
         constants.bgContext,
         constants.fgContext,
         constants.charContext,
         constants.gameContext
     ].map(context => {
         context.fillStyle = color
-        context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+        if (context.canvas.id === 'ctdl-game-parallax') {
+            let parallaxViewport = {
+                x: Math.round(CTDLGAME.viewport.x / 2),
+                y: Math.round(CTDLGAME.viewport.y / 4 + CTDLGAME.world.h / 4 * 3 - 144),
+                w: CTDLGAME.viewport.w,
+                h: CTDLGAME.viewport.h
+              }
+            context.fillRect(parallaxViewport.x, parallaxViewport.y, constants.WIDTH, constants.HEIGHT)
+        } else {
+            context.fillRect(CTDLGAME.viewport.x, CTDLGAME.viewport.y, constants.WIDTH, constants.HEIGHT)
+        }
+        context.globalAlpha = 1
+        context.globalCompositeOperation = 'source-over'
     })
 }
 

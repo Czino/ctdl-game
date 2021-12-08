@@ -1,5 +1,6 @@
 import stage from './stage/grasslands'
 
+import { CTDLGAME } from '../../gameUtils'
 import { changeMap } from '../changeMap'
 import { mapTile } from '../mapTile'
 import { parsePattern } from '../parsePattern'
@@ -13,7 +14,6 @@ import moon from '../../sprites/moon.png'
 import shitcoiner from '../../sprites/shitcoiner.png'
 import bagholder from '../../sprites/bagholder.png'
 import constants from '../../constants'
-import { CTDLGAME } from '../../gameUtils'
 
 const worldWidth = 128
 const worldHeight = 64
