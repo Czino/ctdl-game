@@ -28,8 +28,8 @@ export default {
     'pulse2Synth'
   ],
   bpm: 140,
-  delay: 0.510,
-  delayFeedback: .4,
+  delay: 0.5,
+  delayFeedback: .3,
   delays: [
     'pulseSynth'
   ],

@@ -40,7 +40,7 @@ export const showStartScreen = () => {
     window.SOUND.playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('thingsThingsICannotDescribe')
+  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('theyCameFromAbove')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,
