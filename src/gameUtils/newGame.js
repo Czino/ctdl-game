@@ -40,7 +40,7 @@ export const newGame = async () => {
   CTDLGAME.gameOver = false
   // CTDLGAME.wizardCountdown = 64
 
-  await changeMap('czinosCitadel', 'grasslands')
+  await changeMap('citadelFlat', 'citadel')
 
   CTDLGAME.objects.forEach(obj => CTDLGAME.quadTree.insert(obj))
   CTDLGAME.objects.forEach(obj => obj.update())

@@ -503,6 +503,7 @@ class Character extends Agent {
   }
 
   draw = () => {
+    return
     if (!canDrawOn(this.context)) return
     let spriteData = this.spriteData[this.direction][this.status]
 

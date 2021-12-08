@@ -248,6 +248,7 @@ class Human extends Agent {
       this.protection--
       constants[this.context].globalAlpha = this.protection % 2
     }
+
     constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,

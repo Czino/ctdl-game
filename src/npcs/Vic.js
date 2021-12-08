@@ -36,11 +36,11 @@ class Vic extends NPC {
   constructor(id, options) {
     super(id, options)
     this.spriteId = 'vic'
+    this.status = options.status || 'sleep'
     this.spriteData = spriteData
     this.w = this.spriteData[this.direction][this.status][0].w
     this.h = this.spriteData[this.direction][this.status][0].h
     this.senseRadius = 30
-    this.status = options.status || 'sleep'
     this.awake = options.awake
 
     this.thingsToSayTouchSleep = [

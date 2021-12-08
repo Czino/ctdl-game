@@ -1,4 +1,5 @@
-import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/index.node'
+
+import { BehaviorTree, Selector, SUCCESS } from '../../node_modules/behaviortree/dist/index.node'
 
 import spriteData from '../sprites/citizen'
 import { CTDLGAME } from '../gameUtils'
@@ -6,6 +7,7 @@ import { intersects, getClosest } from '../geometryUtils'
 import constants from '../constants'
 import { addTextToQueue } from '../textUtils'
 import Human from './Human'
+import { write } from '../font'
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
@@ -32,6 +34,7 @@ class Czino extends Human {
   constructor(id, options) {
     super(id, options)
     this.spriteData = spriteData
+    this.context = 'charContext'
     this.maxHealth = options.maxHealth ?? Math.round(Math.random() * 5) + 5
     this.health = options.health ?? this.maxHealth
     this.strength = 1
@@ -53,6 +56,77 @@ class Czino extends Human {
 
   onDie = () => {
     addTextToQueue(`Czino got rekt`)
+  }
+
+  moveLeft = {
+    condition: () => true,
+    effect: () => {
+      this.direction = 'left'
+      this.status = 'move'
+      return SUCCESS
+    }
+  }
+  moveRight = {
+    condition: () => true,
+    effect: () => {
+      this.direction = 'right'
+      this.status = 'move'
+
+      return SUCCESS
+    }
+  }
+  
+  back = {
+    condition: () => true,
+    effect: () => {
+      this.status = 'back'
+
+      return SUCCESS
+    }
+  }
+
+  duck = {
+    condition: () => true,
+    effect: () => {
+      this.status = 'duck'
+
+      return SUCCESS
+    }
+  }
+
+  attack = {
+    condition: () => true,
+    effect: () => {
+      this.status ='attack'
+
+      return SUCCESS
+    }
+  }
+
+  senseControls = () => {
+    let id = CTDLGAME.multiPlayer ? this.id : 'singlePlayer'
+
+    let controls = []
+    if (CTDLGAME.touchScreen && this.selected) {
+      controls = Object.keys(constants.CONTROLS[id])
+        .filter(key => window.BUTTONS.some(button => button.action === constants.CONTROLS[id][key]))
+        .map(key => constants.CONTROLS[id][key])
+    } else {
+      controls = window.KEYS
+        .filter(key => Object.keys(constants.CONTROLS[id]).indexOf(key) !== -1)
+        .map(key => constants.CONTROLS[id][key])
+      // controls = Object.keys(constants.CONTROLS[id])
+      //   .filter(key => window.KEYS.indexOf(key) !== -1)
+      //   .map(key => constants.CONTROLS[id][key])
+    }
+
+    let action = 'idle'
+    // merge mixed behaviours
+    if (controls.length > 0) {
+      action = controls.pop()
+    }
+
+    if (this[action] && this[action].condition()) this[action].effect()
   }
 
   update = () => {
@@ -93,17 +167,7 @@ class Czino extends Human {
       .filter(friend => Math.abs(friend.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
     if (Math.abs(this.vy) < 3 && !/fall|rekt|hurt/.test(this.status)) {
-      this.closestEnemy = getClosest(this, this.sensedEnemies)
-      this.closestFriend = getClosest(this, this.sensedFriends)
-      this.bTree.step()
-    }
-
-    if (/attack/i.test(this.status)) {
-      if ((CTDLGAME.frame + this.delay) % this.speed === 0) {
-        this.frame++
-      }
-    } else if (this.status !== 'idle' || Math.random() < .05) {
-      this.frame++
+      this.senseControls()
     }
 
     if (this.frame >= this.spriteData[this.direction][this.status].length) {
@@ -111,49 +175,19 @@ class Czino extends Human {
       if (/action/.test(this.status)) this.status = 'idle'
     }
 
-    this.draw()
+    CTDLGAME.focusViewport = this
 
-    if (this.selected) {
-      constants.charContext.fillStyle = '#0F0'
-      constants.charContext.fillRect(
-        this.x + this.w / 2, this.y - 2, 1, 1
-      )
-    }
+
+    this.draw()
 
     if (meter.volume > 0.01 && Math.random() > 0.3) {
       constants.charContext.fillStyle = '#380d0d'
       constants.charContext.fillRect(
-        this.x + this.w / 2 - 1, this.y + 8, 1, 1
+        this.x + this.w / 2 - 1 + (this.direction === 'left' ? 0 : 1) - (this.status === 'jump' && this.direction === 'left' ? 1 : 0),
+        this.y + 7,
+        1, 1
       )
     }
-
-    // TODO refactor this
-    this.dmgs = this.dmgs
-      .filter(dmg => dmg.y > -24)
-      .map(dmg => {
-        write(constants.charContext, `-${dmg.dmg}`, {
-          x: this.getCenter().x - 6,
-          y: this.y + dmg.y,
-          w: 12
-        }, 'center', false, 4, true, '#F00')
-        return {
-          ...dmg,
-          y: dmg.y - 1
-        }
-      })
-    this.says = this.says
-      .filter(say => say.y > -24)
-      .map(say => {
-        write(constants.charContext, say.say, {
-          x: this.getCenter().x - 26,
-          y: this.y + say.y,
-          w: 52
-        }, 'center', false, 5, false, '#FFF')
-        return {
-          ...say,
-          y: say.y - 1
-        }
-      })
   }
 }
 export default Czino

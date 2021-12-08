@@ -29,19 +29,19 @@ const lick = new Task({
 
 const moveToFriend = new Task({
   run: agent => {
-    if (!agent.closestFriend || agent.goal || Math.random() < .95) return FAILURE
+    if (!agent.closestFriend || agent.goal || Math.random() < .99) return FAILURE
     agent.goal = agent.closestFriend.x
     return SUCCESS
   }
 })
 const moveToPointX = new Task({
   run: agent => {
-    if (!agent.goal && Math.random() < .008) {
+    if (!agent.goal && Math.random() < .003) {
       agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
       agent.status = 'move'
     }
     if (Math.abs(agent.x - agent.goal) < 5) agent.goal = null
-    if (!agent.goal || agent.status !== 'move') return FAILURE
+    if (!agent.goal) return FAILURE
 
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
     if (agent.x > agent.goal) return agent.moveLeft.condition() ? agent.moveLeft.effect() : FAILURE
@@ -96,7 +96,6 @@ class Cat extends Agent {
     this.runningSpeed = options.runningSpeed || 6
     this.protection = 0
 
-    this.goal = options.goal
     if (!this.goal && Math.random() < .5 && CTDLGAME.world) this.goal = Math.round(Math.random() * CTDLGAME.world.w)
   }
 
