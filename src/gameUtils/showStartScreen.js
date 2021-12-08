@@ -68,7 +68,6 @@ export const showStartScreen = () => {
   showSettings()
 
   if (!canDrawOn('menuContext')) return // do net render menu yet
-  newGameButton.active = false
   if (newGameButton.active) {
     write(
       constants.menuContext,
@@ -93,6 +92,7 @@ export const showStartScreen = () => {
       },
       'right'
     )
+    // loadGameButton.onclick()
   }
 
   if (!CTDLGAME.touchScreen) {

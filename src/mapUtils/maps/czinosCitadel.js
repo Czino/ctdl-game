@@ -112,7 +112,6 @@ export default {
     )
   ],
   init: () => {
-    CTDLGAME.hodlonaut.applyGravity = false
   },
   items: () => [],
   events,

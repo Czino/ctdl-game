@@ -1,5 +1,5 @@
-const WIDTH = 32 // viewport
-const HEIGHT = 18 // viewport
+const WIDTH = 320 || 32 // viewport
+const HEIGHT = 180 || 18 // viewport
 const START = { x: 512, y: 1024 - HEIGHT, w: WIDTH, h: HEIGHT }
 const MENU = { x: 0, y: HEIGHT - 64, w: WIDTH, h: 0 }
 const TEXTBOX = { x: 0, y: HEIGHT - MENU.h + 24, w: WIDTH }
@@ -97,7 +97,7 @@ const CONTROLS = {
 let BUTTONS = []
 
 export default {
-  SLOT: '',
+  SLOT: 'voicepaper',
   WIDTH,
   HEIGHT,
   START,
