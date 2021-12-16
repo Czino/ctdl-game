@@ -179,7 +179,7 @@ class Czino extends Human {
 
 
     this.draw()
-
+    console.log(meter.volume)
     if (meter.volume > 0.01 && Math.random() > 0.3) {
       constants.charContext.fillStyle = '#380d0d'
       constants.charContext.fillRect(
@@ -234,9 +234,6 @@ function gotStream(stream) {
     // Create a new volume meter and connect it.
     meter = createAudioMeter(audioContext);
     mediaStreamSource.connect(meter);
-
-    // kick off the visual updating
-    drawLoop();
 }
 
 
@@ -295,12 +292,4 @@ function volumeAudioProcess(event) {
   // to the previous sample - take the max here because we
   // want "fast attack, slow release."
   this.volume = Math.max(rms, this.volume * this.averaging);
-}
-
-
-function drawLoop() {
-  // draw a bar based on the current volume
-  
-  // set up the next visual callback
-  window.requestAnimationFrame( drawLoop );
 }

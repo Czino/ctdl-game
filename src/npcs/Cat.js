@@ -40,7 +40,7 @@ const moveToPointX = new Task({
       agent.goal = Math.round(Math.random() * CTDLGAME.world.w)
       agent.status = 'move'
     }
-    if (Math.abs(agent.x - agent.goal) < 5) agent.goal = null
+    if (Math.abs(agent.x - agent.goal) < 15) agent.goal = null
     if (!agent.goal) return FAILURE
 
     if (agent.x < agent.goal) return agent.moveRight.condition() ? agent.moveRight.effect() : FAILURE
