@@ -1,9 +1,9 @@
 import constants from '../constants'
-import { CTDLGAME } from './CTDLGAME'
+import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../eventUtils'
 import { write } from '../font'
 import { canDrawOn } from '../performanceUtils'
+import { CTDLGAME } from './CTDLGAME'
 import { showSettings } from './showSettings'
-import { loadGameButton, multiPlayerButton, newGameButton, singlePlayerButton } from '../eventUtils'
 
 const velocity = 4
 let logoOffsetTop = -100
@@ -40,7 +40,7 @@ export const showStartScreen = () => {
     window.SOUND.playSound('drop')
   }
   if (musicStart > 0) musicStart -= velocity
-  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('theyCameFromAbove')
+  if (musicStart === velocity) window.SNDTRCK.initSoundtrack('mariamMatremVirginem')
 
   constants.gameContext.clearRect(
     CTDLGAME.viewport.x,
