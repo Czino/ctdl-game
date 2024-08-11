@@ -1,10 +1,9 @@
-import { CTDLGAME } from '../gameUtils'
-import constants from '../constants'
 import GameObject from '../GameObject'
 import Ramp from '../Ramp'
-import { Boundary } from '../geometryUtils/makeBoundary'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
 import { intersects } from '../geometryUtils'
-import NakadaiMonarch from '../npcs/NakadaiMonarch'
+import { Boundary } from '../geometryUtils/makeBoundary'
 
 let rampHeightMapLeft = []
 for (var i = 11; i > 0; i--) {
@@ -22,15 +21,7 @@ class Ferry extends GameObject {
     this.context = 'fgContext'
     this.deckPushed = false
     this.direction = options.direction || 'right'
-    this.captain = new NakadaiMonarch(
-      'nakadai_mon',
-      {
-        x: this.direction === 'right' ? this.x + 38 : this.x + 98,
-        y: this.y + 16
-      }
-    )
-    this.captain.toJSON = null // this NPC does not need to be stored in the DB
-
+    
     this.back = new Boundary({
       id: 'back-ferry',
       x: this.direction === 'right' ? this.x : this.x + this.w + 146,
@@ -86,7 +77,6 @@ class Ferry extends GameObject {
     this.back.isSolid = true
     this.direction = velocity >= 0 ? 'right' : 'left'
 
-    this.captain.x = velocity >= 0 ? this.x + 38 : this.x + 98
     this.back.x = velocity >= 0 ? this.x : this.x + 146
     this.ramp.x = velocity >= 0 ? this.x + 110 : this.x + 2 + 3 + 29
     this.ramp.heightMap = velocity >= 0 ? rampHeightMapRight : rampHeightMapLeft
@@ -101,7 +91,6 @@ class Ferry extends GameObject {
 
   update = () => {
     if (!this.deckPushed) {
-      CTDLGAME.objects.push(this.captain)
       CTDLGAME.objects.push(this.back)
       CTDLGAME.objects.push(this.ramp)
       CTDLGAME.objects.push(this.deck)
@@ -139,7 +128,6 @@ class Ferry extends GameObject {
           obj.x += this.vx
         })
 
-      window.SOUND.playSound('elevator')
     }
 
     this.draw()

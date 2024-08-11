@@ -1,14 +1,14 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, Selector, Sequence, SUCCESS } from '../../node_modules/behaviortree/dist/index.node'
 
-import agustin from '../sprites/agustin'
-import { addHook, CTDLGAME } from '../gameUtils'
-import { intersects, getClosest, Boundary } from '../geometryUtils'
-import constants from '../constants'
-import { addTextToQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
+import constants from '../constants'
 import { skipCutSceneButton } from '../eventUtils'
+import { addHook, CTDLGAME } from '../gameUtils'
+import { Boundary, getClosest, intersects } from '../geometryUtils'
 import Item from '../objects/Item'
+import agustin from '../sprites/agustin'
+import { addTextToQueue } from '../textUtils'
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
@@ -62,7 +62,7 @@ class Agustin extends Agent {
     this.senseRadius = 50
     this.protection = 0
     this.hadIntro = options.hadIntro || false
-    this.canMove = options.hadIntro || false
+    this.canMove = true
     this.walkingSpeed = 2
     this.transformed = options.transformed
   }
@@ -133,7 +133,6 @@ class Agustin extends Agent {
 
   onHurt = () => {
     this.protection = 8
-    window.SOUND.playSound('creatureHurt')
   }
 
   die = () => {
@@ -141,12 +140,7 @@ class Agustin extends Agent {
     this.frame = 0
     this.canMove = false
 
-    window.SOUND.playSound('creatureHurt')
-    addHook(CTDLGAME.frame + 8, () => window.SOUND.playSound('creatureHurt'))
-    addHook(CTDLGAME.frame + 16, () => window.SOUND.playSound('creatureHurt'))
     addHook(CTDLGAME.frame + 24, () => {
-      window.SOUND.playSound('creatureHurt')
-      window.SNDTRCK.initSoundtrack('underground')
       this.status = 'rekt'
     })
     if (this.usd) CTDLGAME.inventory.usd += this.usd
@@ -216,7 +210,6 @@ class Agustin extends Agent {
       CTDLGAME.focusViewport = window.SELECTEDCHARACTER.getBoundingBox()
 
       skipCutSceneButton.active = true
-      if (window.SNDTRCK.getSoundtrack() !== 'lagardesIntro') window.SNDTRCK.initSoundtrack('lagardesIntro')
 
 
       addTextToQueue('Agustin:\nWe know that the payment has finality.', () => { this.status = 'sit' })
@@ -243,7 +236,6 @@ class Agustin extends Agent {
         this.status = 'sitFurious'
       })
       addTextToQueue('Agustin:\nSeize them!', () => {
-        if (window.SNDTRCK.getSoundtrack() !== 'lagardesTheme') window.SNDTRCK.initSoundtrack('lagardesTheme')
         this.status = 'sitAngry'
         CTDLGAME.bossFight = true
         CTDLGAME.lockCharacters = false
@@ -274,7 +266,6 @@ class Agustin extends Agent {
     }
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/fall|rekt|hurt/.test(this.status)) {
-      if (window.SNDTRCK.getSoundtrack() !== 'lagardesTheme') window.SNDTRCK.initSoundtrack('lagardesTheme')
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)

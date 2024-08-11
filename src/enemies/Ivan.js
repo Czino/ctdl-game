@@ -1,16 +1,15 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, SUCCESS, Selector, Sequence, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import ivan from '../sprites/ivan'
-import { CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
-import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
-import { skipCutSceneButton } from '../eventUtils'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { getClosest, intersects } from '../geometryUtils'
+import Candle from '../objects/Candle'
 import Item from '../objects/Item'
 import Shitcoin from '../objects/Shitcoin'
-import Candle from '../objects/Candle'
+import ivan from '../sprites/ivan'
+import { addTextToQueue, setTextQueue } from '../textUtils'
 
 const lookAtItem = new Task({
   run: agent => agent.closestItem && agent.lookAt.condition(agent.closestItem) ? agent.lookAt.effect(agent.closestItem) : FAILURE
@@ -27,14 +26,12 @@ const endScene = new Task({
 // Sequence: runs each node until fail
 const attackEnemy = new Sequence({
   nodes: [
-    'lookAtEnemy',
     'attack'
   ]
 })
 // Sequence: runs each node until fail
 const attack2Enemy = new Sequence({
   nodes: [
-    'lookAtEnemy',
     'attack2'
   ]
 })
@@ -66,7 +63,6 @@ const moveToPointX = new Task({
 
 const tree = new Selector({
   nodes: [
-    endScene,
     hold,
     attackEnemy,
     attack2Enemy,
@@ -90,7 +86,7 @@ class Ivan extends Agent {
     this.senseRadius = 200
     this.protection = 0
     this.hadIntro = options.hadIntro || false
-    this.canMove = options.hadIntro || false
+    this.canMove = true
     this.applyGravity = options.applyGravity || true
     this.walkingSpeed = 3
     this.pampLoaded = options.pampLoaded || 0
@@ -115,13 +111,9 @@ class Ivan extends Agent {
   })
 
   attack = {
-    condition: () => this.closestEnemy
-      && Math.random() < .03 && this.pampLoaded > .1
-      && Math.abs(this.closestEnemy.x - this.x) > 24,
+    condition: () => false,
     effect: () => {
       if (!/attack/i.test(this.status)) {
-        setTextQueue([])
-        addTextToQueue('Ivan:\nCheck out this\nsecret gem!')
         this.frame = 0
         this.pampLoaded -= .1
       }
@@ -163,22 +155,20 @@ class Ivan extends Agent {
     condition: () => this.isPamping || this.pampLoaded >= 1,
     effect: () => {
       if (!/attack/i.test(this.status)) this.frame = 0
+      this.direction = 'left'
       this.status = 'attack'
 
       this.isPamping = this.pampLoaded > 0
       if (Math.random() < .3) return SUCCESS
       this.pampLoaded -= .1
 
-      let enemy = random(this.sensedEnemies)
-      if (enemy) {
         CTDLGAME.objects.push(new Candle(
           'candle-' + CTDLGAME.frame,
           {
-            x: enemy.x + Math.round((Math.random() - .5) * 8),
-            y: enemy.y + enemy.h + 4
+            x: this.x - Math.round((Math.random() * 128)),
+            y: CTDLGAME.viewport.y + constants.HEIGHT - 20
           }
         ))
-      }
 
       if (this.pampLoaded < .1) {
         this.exhaustion = 24
@@ -201,7 +191,6 @@ class Ivan extends Agent {
       this.status = 'rekt'
       CTDLGAME.focusViewport = false
       hodlTarantula.killIvan = false
-      window.SNDTRCK.initSoundtrack('darkIsBetter')
 
       addTextToQueue('hodl_tarantula:\nThanks, because of you I\ncould finally catch this\nannoying brat.')
       addTextToQueue('hodl_tarantula:\nHe was good for nothing but he will make a great dinner.')
@@ -249,27 +238,15 @@ class Ivan extends Agent {
     shitcoin.collected = true
 
     this.pampLoaded += .2
-    window.SOUND.playSound('item')
 
     if (this.pampLoaded >= 1) this.holdCountdown = 5
   }
 
   update = () => {
     if (!this.sprite) this.sprite = CTDLGAME.assets.ivan
-
-    if (CTDLGAME.lockCharacters) {
-      this.draw()
-      return
-    }
-
-    if (!this.endScene && !this.exhaustion && !/wrapped|rekt/.test(this.status) && Math.random() < .1) {
-      CTDLGAME.objects.push(new Shitcoin(
-        'shitcoin-' + CTDLGAME.frame,
-        {
-          x: (92 + Math.round(Math.random() * 18)) * 8,
-          y: 41 * 8
-        }
-      ))
+    if (Math.random() > 0.97) {
+      this.pampLoaded += .2
+      console.log('loading pamp', this.pampLoaded)
     }
 
     this.applyPhysics()
@@ -292,25 +269,9 @@ class Ivan extends Agent {
       .filter(enemy => enemy.getClass() === 'Character' && enemy.health > 0)
       .filter(enemy => Math.abs(enemy.getCenter().x - this.getCenter().x) <= this.senseRadius)
 
-    if (!this.hadIntro && this.sensedEnemies.length > 0) {
-      CTDLGAME.lockCharacters = true
-      skipCutSceneButton.active = true
-
-      addTextToQueue('Ivan:\nThe pumpamentals are\nstrong, I smell it!')
-      addTextToQueue('Ivan:\nA storm is brewing as\nwe are speaking!')
-      addTextToQueue('Ivan:\nGoguen is bringing us the\npower of the pamp, I can\nonly respect it.', () => {
-        this.canMove = true
-        CTDLGAME.bossFight = true
-        CTDLGAME.lockCharacters = false
-        skipCutSceneButton.active = false
-      })
-      this.hadIntro = true
-    }
-
     this.sensedFriends = []
 
-    if (!this.exhaustion && Math.abs(this.vy) < 3 && this.canMove && !/wrapped|fall|rekt|hurt/.test(this.status)) {
-      if (window.SNDTRCK.getSoundtrack() !== 'ivansTheme') window.SNDTRCK.initSoundtrack('ivansTheme')
+    if (!/wrapped|fall|rekt|hurt/.test(this.status)) {
 
       this.sensedItems = this.sensedObjects
       .filter(enemy => enemy.getClass() === 'Shitcoin')
@@ -321,7 +282,6 @@ class Ivan extends Agent {
         .filter(obj => intersects(this.getBoundingBox(), obj.getBoundingBox()))
         .forEach(obj => obj.touch(this, this.collectShitcoin))
 
-      this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)
       this.closestItem = getClosest(this, this.sensedItems)
       this.bTree.step()

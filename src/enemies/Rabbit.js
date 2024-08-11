@@ -1,12 +1,12 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, RUNNING, SUCCESS, Selector, Sequence, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import rabbitSprite from '../sprites/rabbit'
-import { CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
-import constants from '../constants'
-import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { getClosest, intersects } from '../geometryUtils'
+import rabbitSprite from '../sprites/rabbit'
 import { addTextToQueue } from '../textUtils'
+import { senseCharacters } from './enemyUtils'
 
 const isEvil = new Task({
   run: agent => agent.isEvil ? SUCCESS : FAILURE
@@ -20,21 +20,6 @@ const isGood = new Task({
 
 const moveToClosestEnemy = new Task({
   run: agent => agent.closestEnemy && agent.moveTo.condition({ other: agent.closestEnemy, distance: -1 }) ? agent.moveTo.effect({ other: agent.closestEnemy, distance: -1 }) : FAILURE
-})
-const disappear = new Task({
-  run: agent => {
-    if (!agent.disappearing && Math.random() > .01) return FAILURE
-    let action = 'moveRandom'
-    // if already moving, continue journey
-    agent.disappearing = agent.disappearing || 1
-    agent.y += 1
-    agent.disappearing++
-    agent.brightness -= 0.03
-    if (agent.disappearing > agent.getBoundingBox().h) agent.remove = true
-    if (agent.isMoving === 'left')  action = 'moveLeft'
-    if (agent.isMoving === 'right')  action = 'moveRight'
-    return agent[action].condition() ? agent[action].effect() : FAILURE
-  }
 })
 
 // Sequence: runs each node until fail
@@ -84,7 +69,6 @@ const goodSequence = new Sequence({
     new Selector({
       nodes: [
         runAwayFromEnemy,
-        disappear,
         'moveRandom',
         'jump',
         'idle'
@@ -97,7 +81,6 @@ const specialSequence = new Sequence({
     isSpecial,
     new Selector({
       nodes: [
-        disappear,
         'moveRandom',
         'jump',
         'idle'
@@ -133,7 +116,7 @@ class Rabbit extends Agent {
   item = null
   w = 8
   h = 6
-  turnEvilRate = 0.1 // will be squared, so 0.01
+  turnEvilRate = 0.01 // will be squared, so 0.01
 
 
   bTree = new BehaviorTree({
@@ -218,11 +201,6 @@ class Rabbit extends Agent {
 
     this.applyPhysics()
 
-    // cleanup out of world
-    if (CTDLGAME.world.map.removeEnemy && Math.random() < .025) {
-      const touchesRemoveBlock = CTDLGAME.world.map.removeEnemy.some(block => intersects(block, this.getBoundingBox()))
-      if (touchesRemoveBlock) this.remove = true
-    }
     if (!this.isSpecial && CTDLGAME.lightSources) {
       const touchesLightSource = CTDLGAME.lightSources.some(source => intersects(source, this.getBoundingBox()))
       if (touchesLightSource) {

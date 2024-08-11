@@ -1,10 +1,10 @@
-import { BehaviorTree, Sequence, Task, Selector, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, SUCCESS, Selector, Sequence, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import spriteData from '../sprites/nakadaiMonarch'
-import { CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
-import constants from '../constants'
 import Agent from '../Agent'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { getClosest, intersects } from '../geometryUtils'
+import spriteData from '../sprites/nakadaiMonarch'
 import { addTextToQueue } from '../textUtils'
 
 const sit = new Task({
@@ -33,7 +33,7 @@ const regularBehaviour = new Selector({
   nodes: [
     attackEnemy,
     goToEnemy,
-    'goToFriend',
+    'moveRandom',
     'idle'
   ]
 })

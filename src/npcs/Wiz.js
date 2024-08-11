@@ -1,17 +1,17 @@
 import { BehaviorTree, Selector } from '../../node_modules/behaviortree/dist/index.node'
 
-import spriteData from '../sprites/wiz'
-import { CTDLGAME } from '../gameUtils'
-import constants from '../constants'
-import { addTextToQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import spriteData from '../sprites/wiz'
+import { addTextToQueue } from '../textUtils'
 
 
 // Selector: runs until one node calls success
 const regularBehaviour = new Selector({
   nodes: [
-    'moveToPointX',
+    'moveRandom',
     'idle'
   ]
 })

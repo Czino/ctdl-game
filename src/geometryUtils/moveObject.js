@@ -1,4 +1,5 @@
 import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
 import { collidesWithHeightMap } from './collidesWithHeightMap'
 import { intersects } from './intersects'
 
@@ -88,6 +89,16 @@ export const moveObject = (object, vector, tree) => {
   if (hasCollided && isVertical) {
     object.vy = 0
   }
+
+  if (object.x < CTDLGAME.viewport.x + 20) {
+    object.x = CTDLGAME.viewport.x + 20
+    return true
+  }
+  if (object.x > CTDLGAME.viewport.x + constants.WIDTH - 40) {
+    object.x = CTDLGAME.viewport.x + constants.WIDTH - 40
+    return true
+  }
+
 
   return hasCollided
 }

@@ -1,13 +1,13 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, SUCCESS, Selector, Sequence, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import blockchain from '../sprites/blockchain'
-import { CTDLGAME, getBlockSubsidy } from '../gameUtils'
-import { intersects, getClosest, moveObject, sharpLine } from '../geometryUtils'
-import { sense, senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
-import { canDrawOn } from '../performanceUtils'
 import constants from '../constants'
+import { CTDLGAME, getBlockSubsidy } from '../gameUtils'
+import { getClosest, intersects, moveObject, sharpLine } from '../geometryUtils'
+import { canDrawOn } from '../performanceUtils'
+import blockchain from '../sprites/blockchain'
 import { addTextToQueue } from '../textUtils'
+import { sense, senseCharacters } from './enemyUtils'
 
 const items = []
 
@@ -113,7 +113,6 @@ class Blockchain extends Agent {
       const hasMoved = !moveObject(this, { x: -this.walkingSpeed, y: -4 }, CTDLGAME.quadTree)
 
       if (hasMoved) {
-        window.SOUND.playSound('drop')
         this.status = 'move'
         this.cooldown = Math.round(Math.random() * 6) + 3
         return SUCCESS
@@ -130,7 +129,6 @@ class Blockchain extends Agent {
 
       const hasMoved = !moveObject(this, { x: this.walkingSpeed , y: -4}, CTDLGAME.quadTree)
       if (hasMoved) {
-        window.SOUND.playSound('drop')
         this.status = 'move'
         this.cooldown = Math.round(Math.random() * 6) + 3
         return SUCCESS
@@ -205,7 +203,7 @@ class Blockchain extends Agent {
     constants[this.context].drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
-      x, this.y, this.w, this.h
+      x, CTDLGAME.viewport.y + constants.HEIGHT - 50, this.w, this.h
     )
     constants[this.context].globalAlpha = 1
 
@@ -213,7 +211,6 @@ class Blockchain extends Agent {
     this.drawHeals()
   }
 
-  onHurt = () => window.SOUND.playSound('clunk')
 
   onDie = () => {
     this.sensedBlocks

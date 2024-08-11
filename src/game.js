@@ -1,33 +1,19 @@
-import * as db from './db'
-import { initEvents, loadGameButton, initGameButton, buttons } from './eventUtils'
 import constants from './constants'
+import * as db from './db'
+import { buttons, initEvents, initGameButton, loadGameButton } from './eventUtils'
 import {
   CTDLGAME,
-  loadAsset,
-  showStartGameScreen,
-  showStartScreen,
-  showGameOverScreen,
-  showProgressBar,
-  showOverlay,
-  updateViewport,
-  showMenu,
-  saveGame,
-  checkBlocks,
-  getTimeOfDay,
   clearCanvas,
+  getTimeOfDay,
+  loadAsset,
+  saveGame,
   saveStateExists,
-  fadeIntoGameOver,
-  circadianRhythm,
-  spawnEnemies,
-  cleanUpStage,
-  showShop, showSettings, executeHooks
+  showProgressBar,
+  showStartScreen
 } from './gameUtils'
-import { addTextToQueue, prompt, writeMenu } from './textUtils'
-import Wizard from './npcs/Wizard'
-import { applyGravity } from './physicsUtils'
 import { changeMap } from './mapUtils'
-import { showButtons, showFrameRate } from './debugUtils'
 import Item from './objects/Item'
+import { addTextToQueue } from './textUtils'
 
 // window.SOUND.playSound('robotRekt')
 // setInterval(() => window.SOUND.playSound('robotRekt'), 5000)
@@ -43,12 +29,26 @@ init()
 let assetsLoaded = 0
 let initialAssetCount = Object.keys(CTDLGAME.assets).length
 
+
 /**
  * @description Method to init the game
  * @returns {void}
  */
 async function init() {
+
   constants.BUTTONS = constants.BUTTONS.concat(buttons)
+  for (let key in CTDLGAME.assets) {
+    loadAsset(CTDLGAME.assets[key]).then(asset => {
+      CTDLGAME.assets[key] = asset
+      assetsLoaded++
+    })
+  }
+  for (let key in CTDLGAME.assets) {
+    loadAsset(CTDLGAME.assets[key]).then(asset => {
+      CTDLGAME.assets[key] = asset
+      assetsLoaded++
+    })
+  }
   for (let key in CTDLGAME.assets) {
     loadAsset(CTDLGAME.assets[key]).then(asset => {
       CTDLGAME.assets[key] = asset
@@ -91,146 +91,18 @@ function tick() {
 
   if (!CTDLGAME.loaded) {
     clearCanvas()
-    showProgressBar(assetsLoaded / initialAssetCount)
-    CTDLGAME.loaded = assetsLoaded === initialAssetCount
+    showProgressBar(assetsLoaded / (initialAssetCount * 3))
+    CTDLGAME.loaded = assetsLoaded === initialAssetCount * 3
     return window.requestAnimationFrame(tick)
   }
   if (CTDLGAME.startScreen) {
     clearCanvas()
-
     showStartScreen()
-    if (window.SHOWBUTTONS) showButtons()
-    showFrameRate()
     return window.requestAnimationFrame(tick)
   } else if (CTDLGAME.frame % constants.FRAMERATE !== 0) {
     // throttle framerate
     return window.requestAnimationFrame(tick)
   }
-
-  if (!CTDLGAME.isSoundLoaded) {
-    showStartGameScreen()
-
-    if (window.SHOWBUTTONS) showButtons()
-
-    showFrameRate()
-    return window.requestAnimationFrame(tick)
-  }
-  
-  if (CTDLGAME.cutScene) {
-    clearCanvas()
-
-    writeMenu()
-    showSettings()
-
-    showFrameRate()
-    return window.requestAnimationFrame(tick)
-  }
-
-  if (!CTDLGAME.hodlonaut || !CTDLGAME.world?.ready) {
-    showFrameRate()
-
-    return window.requestAnimationFrame(tick)
-  }
-
-  if (CTDLGAME.gameOver) {
-    if (CTDLGAME.frame / constants.FRAMERATE % 16 === 0) CTDLGAME.frame = 0
-    clearCanvas()
-    showGameOverScreen()
-
-    if (window.SHOWBUTTONS) showButtons()
-
-    showFrameRate()
-    return window.requestAnimationFrame(tick)
-  }
-
-
-  if ((CTDLGAME.frame * 1.5) % constants.FRAMERATE === 0) {
-    circadianRhythm(time)
-  }
-
-  time = getTimeOfDay()
-  if (CTDLGAME.frame !== 0 && CTDLGAME.frame % constants.CHECKBLOCKTIME === 0 && !CTDLGAME.lockCharacters) checkBlocks()
-
-  if (CTDLGAME.showShop) {
-    showShop()
-    showMenu(CTDLGAME.inventory)
-    writeMenu()
-
-    if (window.SHOWBUTTONS) showButtons()
-
-    return window.requestAnimationFrame(tick)
-  }
-
-  if (CTDLGAME.prompt) {
-    prompt(CTDLGAME.prompt)
-
-    if (window.SHOWBUTTONS) showButtons()
-
-    return window.requestAnimationFrame(tick)
-  }
-
-  clearCanvas()
-
-  if (CTDLGAME.world) cleanUpStage()
-
-  spawnEnemies()
-
-
-  // TODO reactivate wizard
-  // if (CTDLGAME.wizardCountdown === 0) {
-  //   CTDLGAME.wizardCountdown = null
-  //   CTDLGAME.objects.push(new Wizard(
-  //     'wizard',
-  //     {
-  //       x: window.SELECTEDCHARACTER.x - 40,
-  //       y: window.SELECTEDCHARACTER.y - 4
-  //     }
-  //   ))
-  // } else if (CTDLGAME.wizardCountdown) {
-  //   CTDLGAME.wizardCountdown--
-  // }
-
-
-  CTDLGAME.world.update()
-
-  applyGravity()
-
-  // update objects that shall update and are in viewport
-  CTDLGAME.objects
-    .filter(obj => obj.update && obj.inViewport)
-    .forEach(obj => obj.update())
-
-  if (CTDLGAME.world.map.update) CTDLGAME.world.map.update()
-
-  executeHooks()
-
-  CTDLGAME.world.applyShaders()
-
-  updateViewport()
-
-  CTDLGAME.quadTree.clear()
-  CTDLGAME.objects
-    .filter(obj => obj.inViewport)
-    .forEach(obj => CTDLGAME.quadTree.insert(obj))
-
-  if (CTDLGAME.showOverlay) showOverlay()
-
-  showMenu(CTDLGAME.inventory)
-  writeMenu()
-
-  // TODO abstract into all in one debug function
-  if (window.SHOWBUTTONS) showButtons()
-  if (window.SHOWQUAD) CTDLGAME.quadTree.show(constants.overlayContext)
-
-  if (CTDLGAME.frame > constants.FRAMERESET) {
-    CTDLGAME.frame = 0
-  }
-
-  if (!CTDLGAME.hodlonaut.health && !CTDLGAME.katoshi.health) {
-    fadeIntoGameOver()
-  }
-
-  showFrameRate()
 
 
   return window.requestAnimationFrame(tick)

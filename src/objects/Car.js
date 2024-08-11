@@ -1,9 +1,9 @@
-import { CTDLGAME } from '../gameUtils'
-import constants from '../constants'
-import spriteData from '../sprites/cars'
-import { random } from '../arrayUtils'
-import { intersects } from '../geometryUtils'
 import GameObject from '../GameObject'
+import { random } from '../arrayUtils'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { intersects } from '../geometryUtils'
+import spriteData from '../sprites/cars'
 
 const types = [
   'beetleWhite',
@@ -20,7 +20,7 @@ class Car extends GameObject {
     super(id, options)
     this.offsetY = options.offsetY || 0
     this.type = options.type || random(types)
-    this.context = options.context || 'fgContext'
+    this.context = options.context || 'menuContext'
     this.spriteData = spriteData[this.vx > 0 ? 'right' : 'left'][this.type]
     this.w = this.spriteData.w
     this.h = this.spriteData.h

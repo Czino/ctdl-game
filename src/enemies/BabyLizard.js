@@ -1,10 +1,10 @@
 import { BehaviorTree, Selector, Sequence } from '../../node_modules/behaviortree/dist/index.node'
 
-import babyLizard from '../sprites/babyLizard'
+import Agent from '../Agent'
+import constants from '../constants'
 import { CTDLGAME } from '../gameUtils'
 import { getClosest } from '../geometryUtils'
-import constants from '../constants'
-import Agent from '../Agent'
+import babyLizard from '../sprites/babyLizard'
 import { addTextToQueue } from '../textUtils'
 
 
@@ -25,9 +25,7 @@ const goToEnemy = new Selector({
 })
 const tree = new Selector({
   nodes: [
-    attackEnemy,
-    goToEnemy,
-    'moveToPointX',
+    'moveRandom',
     'idle'
   ]
 })

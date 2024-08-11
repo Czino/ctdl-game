@@ -1,14 +1,14 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, RUNNING, SUCCESS, Selector, Sequence, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import craig from '../sprites/craig'
-import { CTDLGAME } from '../gameUtils'
-import { moveObject, intersects, getClosest } from '../geometryUtils'
-import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
+import constants from '../constants'
 import { skipCutSceneButton } from '../eventUtils'
+import { CTDLGAME } from '../gameUtils'
+import { getClosest, intersects, moveObject } from '../geometryUtils'
 import Item from '../objects/Item'
+import craig from '../sprites/craig'
+import { addTextToQueue, setTextQueue } from '../textUtils'
 
 const doesNotTouchEnemy = new Task({
   run: agent => !agent.closestEnemy || !intersects(agent.getBoundingBox(), agent.closestEnemy.getBoundingBox()) ? SUCCESS : FAILURE
@@ -89,7 +89,7 @@ class Craig extends Agent {
     this.senseRadius = 50
     this.protection = 0
     this.hadIntro = options.hadIntro || false
-    this.canMove = options.hadIntro || false
+    this.canMove = true
     this.hasArmor = options.hasArmor ?? true
     this.walkingSpeed = this.hasArmor ? 2 : 3
     this.hitsToSuckUp = options.hitsToSuckUp || 0
@@ -194,7 +194,6 @@ class Craig extends Agent {
     this.vx = direction === 'left' ? impulse : -impulse
     this.vy = -3
     this.protection = 8
-    window.SOUND.playSound('playerHurt')
     if (this.health / this.maxHealth <= .2) this.say('help!')
     if (this.health <= 0) {
       this.health = 0
@@ -223,7 +222,6 @@ class Craig extends Agent {
         this.sprite = CTDLGAME.assets.craig
         this.strength++
         this.protection = 32
-        window.SNDTRCK.initSoundtrack('makeOrBreak')
       })
       return
     }
@@ -292,10 +290,6 @@ class Craig extends Agent {
     this.sensedFriends = []
 
     if (Math.abs(this.vy) < 3 && this.canMove && !/jump|fall|rekt|hurt/.test(this.status)) {
-      if (CTDLGAME.hodlonaut.status !== 'rekt') {
-        if (window.SNDTRCK.getSoundtrack() !== 'craigsTheme' && this.hasArmor) window.SNDTRCK.initSoundtrack('craigsTheme')
-        if (window.SNDTRCK.getSoundtrack() !== 'makeOrBreak' && !this.hasArmor) window.SNDTRCK.initSoundtrack('makeOrBreak')
-      }
 
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.closestFriend = getClosest(this, this.sensedFriends)

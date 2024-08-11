@@ -1,4 +1,4 @@
-import { Synth, NoiseSynth, Transport, AutoFilter, Part, Gain, Reverb, PingPongDelay, Oscillator } from 'tone'
+import { AutoFilter, Gain, NoiseSynth, Oscillator, Part, PingPongDelay, Reverb, Synth, Transport } from 'tone'
 
 // TODO add "Nomen a solempnibus II" ?
 // TODO add "Procurans odium II" ?

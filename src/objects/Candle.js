@@ -63,7 +63,6 @@ class Candle extends GameObject {
       return this.draw()
     }
     if (this.spawnCountdown) {
-      window.SOUND.playSound('rumble')
       for (let c = 0; c < 2; c++) {
         this.shards.push({
           x: this.x + Math.round(this.w  / 2),

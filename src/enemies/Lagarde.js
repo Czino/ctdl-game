@@ -1,15 +1,15 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, Selector, Sequence, SUCCESS, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import lagarde from '../sprites/lagarde'
-import { addHook, CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
-import constants from '../constants'
-import { addTextToQueue, setTextQueue } from '../textUtils'
 import Agent from '../Agent'
 import { random } from '../arrayUtils'
+import constants from '../constants'
 import { skipCutSceneButton } from '../eventUtils'
-import BabyLizard from './BabyLizard'
+import { addHook, CTDLGAME } from '../gameUtils'
+import { getClosest, intersects } from '../geometryUtils'
 import Item from '../objects/Item'
+import lagarde from '../sprites/lagarde'
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import BabyLizard from './BabyLizard'
 
 const layEgg = new Task({
   run: agent => agent.layEgg.condition() ? agent.layEgg.effect() : FAILURE
@@ -42,8 +42,7 @@ const tree = new Selector({
     layEgg,
     attackEnemy,
     attack2Enemy,
-    goToEnemy,
-    'moveToPointX',
+    'moveRandom',
     'idle'
   ]
 })
@@ -65,7 +64,7 @@ class Lagarde extends Agent {
     this.senseRadius = 50
     this.protection = 0
     this.hadIntro = options.hadIntro || false
-    this.canMove = options.hadIntro || false
+    this.canMove = options.canMove
     this.walkingSpeed = 2
     this.transformed = options.transformed
     this.eggCountdown = options.eggCountdown || 128
@@ -235,7 +234,6 @@ class Lagarde extends Agent {
       })
       addTextToQueue('Lagarde:\nYou should be happier to\nhave a job than to have\nyour savings protected.')
       addTextToQueue('Lagarde:\nNow I have to hold you\naccountable so that you can be fully trusted.', () => {
-        if (window.SNDTRCK.getSoundtrack() !== 'lagardesTheme') window.SNDTRCK.initSoundtrack('lagardesTheme')
         this.status = 'transform'
         CTDLGAME.bossFight = true
         CTDLGAME.lockCharacters = false

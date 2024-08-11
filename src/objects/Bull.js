@@ -1,13 +1,13 @@
-import { CTDLGAME } from '../gameUtils'
-import constants from '../constants'
-import spriteData from '../sprites/bull'
-import { intersects } from '../geometryUtils'
 import GameObject from '../GameObject'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { intersects } from '../geometryUtils'
+import spriteData from '../sprites/bull'
 
 class Bull extends GameObject {
   constructor(id, options) {
     super(id, options)
-    this.vx = options.vx || 3
+    this.vx = options.vx ?? 3
     this.frame = 0
     this.status = 'run'
     this.context = options.context || 'bgContext'

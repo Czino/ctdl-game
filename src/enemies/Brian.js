@@ -1,14 +1,13 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../../node_modules/behaviortree/dist/index.node'
+import { BehaviorTree, FAILURE, RUNNING, SUCCESS, Selector, Sequence, Task } from '../../node_modules/behaviortree/dist/index.node'
 
-import brianSprite from '../sprites/brian'
-import Item from '../objects/Item'
-import { CTDLGAME } from '../gameUtils'
-import { intersects, getClosest } from '../geometryUtils'
-import { addTextToQueue, setTextQueue } from '../textUtils'
-import constants from '../constants'
-import { senseCharacters } from './enemyUtils'
 import Agent from '../Agent'
-import { skipCutSceneButton } from '../eventUtils'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import { getClosest, intersects } from '../geometryUtils'
+import Item from '../objects/Item'
+import brianSprite from '../sprites/brian'
+import { addTextToQueue, setTextQueue } from '../textUtils'
+import { senseCharacters } from './enemyUtils'
 
 const items = [
   { id: 'pizza', chance: 0.01 },
@@ -44,8 +43,7 @@ const goToEnemy = new Sequence({
 })
 const tree = new Selector({
   nodes: [
-    attackEnemy,
-    goToEnemy,
+    'attack',
     'moveRandom',
     'idle'
   ]
@@ -58,7 +56,7 @@ class Brian extends Agent {
     this.usd = options.usd ?? Math.round(Math.random() * 400 + 200)
     this.item = options.item || items.find(item => item.chance >= Math.random())
     this.hadIntro = options.hadIntro || false
-    this.canMove = options.hadIntro || false
+    this.canMove = true
     this.hurtAttackCounter = options.hurtAttackCounter || 0
   }
 
@@ -91,7 +89,7 @@ class Brian extends Agent {
   }
   attack = {
     condition: () => {
-        if (!this.closestEnemy) return
+        if (Math.random() < 0.99 ) return
 
         const attackBox = this.getBoundingBox()
         attackBox.x -= this.attackRange
@@ -104,20 +102,18 @@ class Brian extends Agent {
         }
 
         // attack distance
-        return intersects(attackBox, this.closestEnemy.getBoundingBox())
+        return true
     },
     effect: () => {
-      const dmg = Math.round(Math.random()) * 2 + 3
 
-      if (this.getCenter().x > this.closestEnemy.getCenter().x) {
+      if (Math.random() > 0.5) {
         this.direction = 'left'
       } else {
         this.direction = 'right'
       }
 
       if (this.status === 'attack' && this.frame === 3) {
-        window.SOUND.playSound('woosh')
-        return this.closestEnemy.hurt(dmg, this.direction === 'left' ? 'right' : 'left', this)
+        return
       }
       if (this.status === 'attack' && this.frame < 4) return SUCCESS
 
@@ -135,7 +131,6 @@ class Brian extends Agent {
       attackBox.x -= this.attackRange
       attackBox.w += this.attackRange * 2
 
-      window.SOUND.playSound('woosh')
 
       this.sensedEnemies
         .filter(enemy => intersects(attackBox, enemy.getBoundingBox()))
@@ -221,26 +216,7 @@ class Brian extends Agent {
 
     this.sensedEnemies = senseCharacters(this)
 
-    if (!this.hadIntro && this.sensedEnemies.length > 0) {
-      CTDLGAME.lockCharacters = true
-      skipCutSceneButton.active = true
-
-      setTextQueue([])
-      addTextToQueue('Brian:\nWelcome to crypto!')
-      addTextToQueue('Brian:\nGrab a conbase account\nwhen you\'re ready to use\nthat Bitcoin')
-      addTextToQueue('Brian:\nand get into any of the\nmany other cryptos\nout there.')
-      addTextToQueue('Brian:\nWhat?\nYou want to delete\nyour account?')
-      addTextToQueue('Brian:\nI will delete you!', () => {
-        this.canMove = true
-        CTDLGAME.lockCharacters = false
-        skipCutSceneButton.active = false
-      })
-      this.hadIntro = true
-    }
-
     if (Math.abs(this.vy) < 3 && this.canMove && !/fall|rekt|hurt/.test(this.status)) {
-      if (window.SNDTRCK.getSoundtrack() !== 'briansTheme') window.SNDTRCK.initSoundtrack('briansTheme')
-
       this.closestEnemy = getClosest(this, this.sensedEnemies)
       this.bTree.step()
     } else if (this.hurtAttack.condition()) {

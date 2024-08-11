@@ -44,10 +44,10 @@ export const updateViewport = () => {
     CTDLGAME.nakadaiMon.y = window.SELECTEDCHARACTER.y
   }
 
-  CTDLGAME.viewport.x = Math.max(0, CTDLGAME.viewport.x)
-  CTDLGAME.viewport.x = Math.min(CTDLGAME.world.w - constants.WIDTH, CTDLGAME.viewport.x)
-  CTDLGAME.viewport.y = Math.max(0, CTDLGAME.viewport.y)
-  CTDLGAME.viewport.y = Math.min(CTDLGAME.world.h - constants.HEIGHT + constants.MENU.h, CTDLGAME.viewport.y)
+  CTDLGAME.viewport.x = 0
+  CTDLGAME.viewport.x = 0
+  CTDLGAME.viewport.y = 0
+  CTDLGAME.viewport.y = 0
 
   constants.parallaxContext.setTransform(1, 0, 0, 1, -Math.round(CTDLGAME.viewport.x / 2), -Math.round(CTDLGAME.viewport.y / 4 + CTDLGAME.world.h / 4 * 3 - 144))
 

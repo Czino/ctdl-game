@@ -1,9 +1,10 @@
 // Czino - Bear
 
-import triangle from './triangle'
+import { Reverb } from 'tone'
+import noise from './noise'
 import pulse1 from './pulse1'
 import sine from './sine'
-import noise from './noise'
+import triangle from './triangle'
 
 export default {
   id: 'bear',
@@ -17,6 +18,10 @@ export default {
   },
   loop: true,
   init: SNDTRCK => {
+    SNDTRCK.devices.reverb = new Reverb({
+      decay: 7,
+      wet: .5,
+    })
     SNDTRCK.devices.autoFilter = new SNDTRCK.constructor.AutoFilter(1 / 1.3636)
     SNDTRCK.devices.sineSynth.envelope.attack = 0.0
     SNDTRCK.devices.sineSynth.envelope.release = 1.36

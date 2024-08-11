@@ -1,12 +1,11 @@
-import { BehaviorTree, Selector, Sequence, Task, SUCCESS, FAILURE, RUNNING } from '../node_modules/behaviortree/dist/index.node'
-import Item from './objects/Item'
-import { CTDLGAME } from './gameUtils'
-import { moveObject, intersects } from './geometryUtils'
-import { addTextToQueue } from './textUtils'
-import constants from './constants'
-import { canDrawOn } from './performanceUtils'
+import { BehaviorTree, FAILURE, RUNNING, SUCCESS, Selector, Sequence, Task } from '../node_modules/behaviortree/dist/index.node'
 import GameObject from './GameObject'
+import constants from './constants'
 import { write } from './font'
+import { CTDLGAME } from './gameUtils'
+import { intersects, moveObject } from './geometryUtils'
+import Item from './objects/Item'
+import { addTextToQueue } from './textUtils'
 
 BehaviorTree.register('log', new Task({
   run: agent => {
@@ -19,7 +18,7 @@ BehaviorTree.register('seesItem', new Task({
   run: agent => agent.sensedItems.length > 0 ? SUCCESS : FAILURE
 }))
 BehaviorTree.register('lookAtEnemy', new Task({
-  run: agent => agent.closestEnemy && agent.lookAt.condition(agent.closestEnemy) ? agent.lookAt.effect(agent.closestEnemy) : FAILURE
+  run: agent => SUCCESS
 }))
 
 BehaviorTree.register('seesEnemy', new Task({
@@ -27,7 +26,7 @@ BehaviorTree.register('seesEnemy', new Task({
 }))
 
 BehaviorTree.register('canAttackEnemy', new Task({
-  run: agent => agent.attack.condition() || (agent.attack2 && agent.attack2.condition()) || (agent.attack3 && agent.attack3.condition()) ? SUCCESS : FAILURE
+  run: agent => Math.random() > 0.99
 }))
 
 BehaviorTree.register('touchesEnemy', new Task({
@@ -156,7 +155,7 @@ class Agent extends GameObject {
     this.senseRadius = 30
     this.protection = 0
     this.business = options.business || 1
-    this.applyGravity = options.applyGravity ?? true
+    this.applyGravity = false
   }
 
   w = 16
@@ -431,7 +430,7 @@ class Agent extends GameObject {
   }
 
   draw = () => {
-    if (!canDrawOn(this.context)) return
+    // if (!canDrawOn(this.context)) return
     if (!this.sprite && this.spriteId) this.sprite = CTDLGAME.assets[this.spriteId]
     let spriteData = this.spriteData[this.direction][this.status]
 
@@ -450,15 +449,13 @@ class Agent extends GameObject {
     }
 
     let x = this.swims ? this.x + Math.round(Math.sin(CTDLGAME.frame / 16 + (this.strength || 1))) : this.x
-    constants[this.context].drawImage(
+    constants.menuContext.drawImage(
       this.sprite,
       data.x, data.y, this.w, this.h,
       x, this.y, this.w, this.h
     )
     constants[this.context].globalAlpha = 1
 
-    this.drawDmgs()
-    this.drawHeals()
     this.drawSays()
   }
 
@@ -518,31 +515,7 @@ class Agent extends GameObject {
   }
 
   applyPhysics = () => {
-    if ((this.vx !== 0 || this.vy !== 0) && this.inViewport) {
-      if (this.vx > 12) this.vx = 12
-      if (this.vx < -12) this.vx = -12
-      if (this.vy > 12) this.vy = 12
-      if (this.vy < -12) this.vy = -12
-
-      let hasCollided = false
-      if (this.context === 'fgContext') {
-        this.x += this.vx
-        this.y += this.vy
-      } else {
-        hasCollided = moveObject(this, { x: this.vx , y: this.vy }, CTDLGAME.quadTree)
-      }
-
-      if (!hasCollided && !/jump|rekt|hurt|burning/.test(this.status) && Math.abs(this.vy) > 5) {
-        this.status = 'fall'
-      }
-
-      if (this.vx < 0) this.vx += 1
-      if (this.vx > 0) this.vx -= 1
-    }
-
-    if (this.status === 'fall' && Math.abs(this.vy) <= 6 && !CTDLGAME.lockCharacters) {
-      this.status = 'idle'
-    }
+    return
   }
 
   getSenseBox = () => ({

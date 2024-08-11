@@ -1,8 +1,8 @@
 import Agent from '../Agent'
-import dogeSprite from '../sprites/doge'
-import { CTDLGAME } from '../gameUtils'
-import constants from '../constants'
 import { random } from '../arrayUtils'
+import constants from '../constants'
+import { CTDLGAME } from '../gameUtils'
+import dogeSprite from '../sprites/doge'
 import { addTextToQueue } from '../textUtils'
 class Doge extends Agent {
   constructor(id, options) {
@@ -67,7 +67,6 @@ class Doge extends Agent {
     if ((CTDLGAME.frame + this.delay) % this.speed === 0) {
       this.frame++
       if (this.frame === 1) {
-        window.SOUND.playSound('clunk')
         this.reward = 4
         this.coins = []
         for (let c = 0; c < 5; c++) {
